@@ -84,7 +84,7 @@ public class GraphicsPanel extends JPanel{
 	public class WillMouseMotionListener implements MouseListener, MouseMotionListener {
 
 		int mouseX, mouseY;
-
+		
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			
