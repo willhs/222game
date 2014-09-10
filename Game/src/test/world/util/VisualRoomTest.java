@@ -1,4 +1,4 @@
-package test.world.visual;
+package test.world.util;
 
 import game.world.dimensions.*;
 
