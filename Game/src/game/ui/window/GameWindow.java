@@ -1,6 +1,6 @@
 package game.ui.window;
 
-import game.ui.renderer.GraphicsPanel;
+import game.ui.render.GraphicsPanel;
 
 import java.awt.Dimension;
 
