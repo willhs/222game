@@ -2,15 +2,20 @@ package game.ui.window;
 
 import game.ui.renderer.GraphicsPanel;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 
 import javax.swing.JFrame;
+/**
+ * @author Nicky van HUlst
+ * */
 
 public class GameWindow extends JFrame{
-	private MainMenu mainMenu;
+
+	private static final long serialVersionUID = 1L;
+
+	private BlankPanel blankPanel;
 	private GraphicsPanel graphicsPanel;
+
 
 	private static final String title = "Game";
 
@@ -26,17 +31,18 @@ public class GameWindow extends JFrame{
 
 		this.graphicsPanel = new GraphicsPanel();
 
+
 		//set the size of the frame
 		setResizable(false);
 		setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		setLocationRelativeTo(null);
 		setVisible(true);
 
-		this.mainMenu = new MainMenu();
-		add(mainMenu);
+		this.blankPanel = new BlankPanel();
+		add(blankPanel);
 
 
-		mainMenu.repaint();
+		blankPanel.repaint();
 	}
 
 	public static void main(String[] args){

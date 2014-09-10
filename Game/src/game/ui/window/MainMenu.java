@@ -1,30 +1,30 @@
 package game.ui.window;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
-import javax.swing.JPanel;
 
-public class MainMenu extends JPanel {
+/**
+ * @author Nicky van HUlst
+ * */
+
+
+public class MainMenu implements Menu{
 	private final int numbOfButtons = 5;
+	private BlankPanel panel;
 
 	private int selectedButton;
 
 	Rectangle[] buttons;
 
-	public MainMenu(){
-		setSize(new Dimension(GameWindow.FRAME_WIDTH,GameWindow.FRAME_HEIGHT));
+	public MainMenu(BlankPanel panel){
+		this.panel = panel;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.selectedButton = Integer.MAX_VALUE;
-		setBackground(Color.black);
 		setUpButtons();
-		setUpMouseListnet();
 	}
 
 
@@ -32,13 +32,12 @@ public class MainMenu extends JPanel {
 	 * Sets up all of the button locations for the main menu
 	 * */
 	public void setUpButtons(){
-		int width = GameWindow.FRAME_WIDTH;
 		int height = GameWindow.FRAME_HEIGHT;
 
 
 		int y = height/numbOfButtons;
 
-		int buttonGap = 60;
+		int buttonGap = 20;
 
 		int recHeight = 50;
 		int recWidth = 200;
@@ -55,7 +54,7 @@ public class MainMenu extends JPanel {
 	/**
 	 *
 	 * */
-	public void paint(Graphics g){
+	public void render(Graphics g){
 		drawButtons(g);
 	}
 
@@ -67,29 +66,13 @@ public class MainMenu extends JPanel {
 			g2d.fill(buttons[i]);
 			if(selectedButton == i){
 				g.setColor(Color.black);
-				g2d.draw(buttons[i]);
+				g2d.fill(buttons[i]);
 				g.setColor(Color.red);
 			}
 		}
 	}
 
-	public void setUpMouseListnet(){
-		this.addMouseMotionListener(new MouseAdapter() {
 
-			@Override
-			public void mouseMoved(MouseEvent e){
-				handleMouseMoved(e);
-				repaint();
-			}
-		});
-
-		this.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e){
-				handleMouseReleased(e);
-			}
-		});
-	}
 
 	/**
 	 *
@@ -106,6 +89,9 @@ public class MainMenu extends JPanel {
 		}
 	}
 
+	/**
+	 * This method is called when the mouse is released in the main menu
+	 * */
 	public void handleMouseReleased(MouseEvent e){
 		System.out.println("Mouse Released");
 
@@ -114,11 +100,14 @@ public class MainMenu extends JPanel {
 				return;
 			case 1: System.out.println("Multiplayer");
 				return;
+			case 2 : panel.setMenu(new OptionMenu(panel));
+				return;
+			case 3 : System.out.println("Help");
+				return;
+			case 4 : System.exit(0);
+				return;
 		}
 	}
-
-
-
 
 
 }
