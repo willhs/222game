@@ -17,12 +17,12 @@ import javax.swing.JPanel;
  */
 public class GraphicsPanel extends JPanel{
 
-	Vector3D point = new Vector3D(20, 20, 20);
-	Vector3D centre = new Vector3D(50, 50, 20);
-	Vector3D viewerDir = new Vector3D(0,0,1);
-	Vector3D viewerPos = new Vector3D(200, 200, 100); // half screen height and width
+	private Vector3D point = new Vector3D(100, 100, 20);
+	private Vector3D centre = new Vector3D(200, 200, -100);
+	private Vector3D viewerDir = new Vector3D(0,0,1);
 	
-	int objSize = 50;
+	private int objSize = 50;
+	private int cetreSize = 10;
 
 	public GraphicsPanel(){
 		WillMouseMotionListener mouseListener = new WillMouseMotionListener();
@@ -33,38 +33,24 @@ public class GraphicsPanel extends JPanel{
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Vector3D screen = get2DFrom3D(point, viewerDir, centre, viewerPos);
 		// z component used for size, not display
-		g.fillRect((int)screen.x, (int)screen.y ,objSize, objSize);
+		g.fillRect((int)point.x-(objSize/2), (int)point.y-(objSize/2) ,objSize, objSize);
+		g.fillOval((int)centre.x-(cetreSize/2), (int)centre.y-(cetreSize/2), cetreSize, cetreSize);
 		
-		System.out.println("Screen\nx = " + screen.x + "\ny = " + screen.y +"\nz = " + screen.z);
+		//System.out.println("Screen\nx = " + point.x + "\ny = " + point.y +"\nz = " + point.z);
 	}
 
-	public Vector3D get2DFrom3D(Vector3D point, Vector3D pan, Vector3D centre, Vector3D position){
-		float x = point.x + position.x;
-		float y = point.y + position.y;
-		float z = point.z + position.z;
-		
-		Vector3D temp = new Vector3D( (float) (x*Math.cos(pan.x) - z*Math.sin(pan.x)), 
-				(float) (y*Math.cos(pan.y) - z*Math.sin(pan.y)), 
-				(float) (x*Math.sin(pan.x) + z*Math.cos(pan.x)));
-		
-		
-		z = (float) (temp.y*Math.cos(pan.y) - temp.z*Math.sin(pan.y));
-		x = (float) (temp.x*Math.cos(pan.z) - temp.y*Math.sin(pan.z));
-		y = (float) (temp.x*Math.sin(pan.z) + temp.y*Math.cos(pan.z));
-		 
-		System.out.println("Real\nx = " + x + "\ny = " + y +"\nz = " + z);
-		
-		int zoom = 1;
-		//if (z > 0){
-		return new Vector3D(x / z * zoom + centre.x, y / z * zoom + centre.y, z);
-	}
 	
 	public void rotate(int x, int y){
 		float scalar = 10;
+		
+		Transform translate1 = Transform.newTranslation(-centre.x, -centre.y, -centre.z);
 		Transform rotation = Transform.newYRotation(x/scalar).compose(Transform.newXRotation(y/scalar));
-		viewerDir = rotation.multiply(viewerDir);
+		Transform translate2 = Transform.newTranslation(centre.x, centre.y, centre.z);
+		
+		point = translate1.multiply(point);
+		point = rotation.multiply(point);
+		point = translate2.multiply(point);
 	}
 	
 
