@@ -1,5 +1,8 @@
 package game.world.model;
 
+import game.world.dimensions.Dimension;
+
+import java.awt.Point;
 import java.util.*;
 
 /**
@@ -13,12 +16,14 @@ public class Room implements Place{
 	private final List<Exit> exits;
 	private final List<Player> players;
 	private final List<Item> items;
+	private final Dimension dimension;
 	
 	
-	public Room (List<Exit> exits, List<Item> items){
+	public Room (List<Exit> exits, List<Item> items, Dimension dimension){
 		this.exits = exits;
 		this.players = new ArrayList<Player>();
 		this.items = items;
+		this.dimension = dimension;
 	}
 	
 	@Override
@@ -34,6 +39,11 @@ public class Room implements Place{
 	@Override
 	public List<Player> getPlayers() {
 		return players;
+	}
+
+	@Override
+	public boolean isIn(Point point) {
+		return dimension.contains(point.x, point.y);
 	}
 	
 }

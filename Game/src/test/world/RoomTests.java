@@ -1,6 +1,8 @@
 package test.world;
 
 import static org.junit.Assert.*;
+import game.world.dimensions.Dimension;
+import game.world.dimensions.Rectangle;
 import game.world.model.*;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ public class RoomTests {
 
 	// ===============HelperMethods================//
 	public Room getARoom() {
-		return new Room(new ArrayList<Exit>(), new ArrayList<Item>());
+		return new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Rectangle(0,0,200,200));
 	}
 
 }

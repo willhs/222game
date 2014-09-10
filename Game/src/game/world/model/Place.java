@@ -1,5 +1,6 @@
 package game.world.model;
 
+import java.awt.Point;
 import java.util.*;
 
 /**
@@ -33,5 +34,10 @@ public interface Place {
 	 */
 	public List<Player> getPlayers();
 	
-	
+	/**
+	 * Checks weather a point is in a place or not.
+	 * @param point - point to be checked
+	 * @return - returns true if the point is within the place.
+	 */
+	public boolean isIn(Point point);
 }
