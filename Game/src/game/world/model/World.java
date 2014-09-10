@@ -62,4 +62,14 @@ public class World {
 	public Place getPlaceOfPlayer(Player player){
 		return null;
 	}
+	
+	/**
+	 * This method will return a list of players in a place.
+	 * not really needed if you have the place but added.
+	 * @param place - place that the players are in.
+	 * @return - returns the list of players in that place.
+	 */
+	public List<Player> getPlayerOfPlace(Place place){
+		return place.getPlayers();
+	}
 }
