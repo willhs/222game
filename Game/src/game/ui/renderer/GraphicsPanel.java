@@ -1,14 +1,20 @@
-package game.ui.renderer;
+ package game.ui.renderer;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 /**
  * @author hardwiwill
@@ -17,42 +23,103 @@ import javax.swing.JPanel;
  */
 public class GraphicsPanel extends JPanel{
 
-	private Vector3D point = new Vector3D(100, 100, 20);
-	private Vector3D centre = new Vector3D(200, 200, -100);
-	private Vector3D viewerDir = new Vector3D(0,0,1);
+	private Point3D point = new Point3D(100, 100, 20);
+	private Point3D centre = new Point3D(200, 200, -100);
 	
+	private Floor floor;
+	
+	/**
+	 * viewer direction will always be 0,0,1 (environment will move, not viewer)
+	 * but may use a 'fake' viewer direction in future to make model closer to reality
+	 */
+	private Vector3D viewerDir = new Vector3D(0,0,1);
+
 	private int objSize = 50;
-	private int cetreSize = 10;
+	private int centreSize = 10;
+	
+	private final String LEFT = "LEFT", RIGHT = "RIGHT";
+	
+	private Action rotateLeft = new AbstractAction(LEFT){
+    	public void actionPerformed(ActionEvent e){
+    		rotate(0, 0, -1);
+    	}
+    };
+    
+    private Action rotateRight = new AbstractAction(RIGHT){
+    	public void actionPerformed(ActionEvent e){
+    		rotate(0, 0, 1);
+    	}
+    };
 
 	public GraphicsPanel(){
 		WillMouseMotionListener mouseListener = new WillMouseMotionListener();
 		addMouseListener(mouseListener);
 		addMouseMotionListener(mouseListener);
+		
+		this.getInputMap().put(
+	            KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), LEFT);
+		
+		this.getInputMap().put(
+	            KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0),RIGHT);
+		
+		this.getActionMap().put(LEFT, rotateLeft);
+		this.getActionMap().put(RIGHT, rotateRight);
+		
+		// define floor (for testing)
+		Point3D[] floorPoints = new Point3D[]{ new Point3D(0,0,0), new Point3D(500, 0, 0), new Point3D(500, 300, 0), new Point3D(0, 300, 0)};
+		floor = new Floor(floorPoints);
 	}
 
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		// z component used for size, not display
-		g.fillRect((int)point.x-(objSize/2), (int)point.y-(objSize/2) ,objSize, objSize);
-		g.fillOval((int)centre.x-(cetreSize/2), (int)centre.y-(cetreSize/2), cetreSize, cetreSize);
 		
+		Polygon floorPoly = floorToPolygon(floor);
+		g.setColor(Color.blue);
+		g.fillPolygon(floorPoly);
+		
+		g.setColor(Color.red);
+		g.fillRect((int)point.getX()-(objSize/2), (int)point.getY()-(objSize/2) ,objSize, objSize);
+		g.fillOval((int)centre.getX()-(centreSize/2), (int)centre.getY()-(centreSize/2), centreSize, centreSize);
+
 		//System.out.println("Screen\nx = " + point.x + "\ny = " + point.y +"\nz = " + point.z);
 	}
 
-	
-	public void rotate(int x, int y){
+	public void rotate(int rotateX, int rotateY, int rotateZ){
 		float scalar = 10;
+
+		Transform translateToOrigin = Transform.newTranslation(-centre.getX(), -centre.getY(), -centre.getZ());
+		Transform rotation = Transform.newYRotation(rotateX/scalar).compose(Transform.newXRotation(rotateY/scalar)).compose(Transform.newZRotation(rotateZ/scalar));
+		Transform translateBack = Transform.newTranslation(centre.getX(), centre.getY(), centre.getZ());
+
+		point.transform(translateToOrigin);
+		point.transform(rotation);
+		point.transform(translateBack);
 		
-		Transform translate1 = Transform.newTranslation(-centre.x, -centre.y, -centre.z);
-		Transform rotation = Transform.newYRotation(x/scalar).compose(Transform.newXRotation(y/scalar));
-		Transform translate2 = Transform.newTranslation(centre.x, centre.y, centre.z);
+		floor.transform(translateToOrigin);
+		floor.transform(rotation);
+		floor.transform(translateBack);
 		
-		point = translate1.multiply(point);
-		point = rotation.multiply(point);
-		point = translate2.multiply(point);
+		repaint();
 	}
-	
+
+	/**
+	 * @param floor
+	 * @return a polygon representing the floor
+	 */
+	private Polygon floorToPolygon(Floor floor){
+		Point3D[] points = floor.getPoints();
+		int[] xpoints = new int[points.length];
+		int[] ypoints = new int[points.length];
+		
+		for (int i = 0; i < points.length; i++){
+			Point3D point = points[i];
+			xpoints[i] = (int)point.getX();
+			ypoints[i] = (int)point.getY();
+		}
+		return new Polygon(xpoints, ypoints, points.length);
+	}
 
 	/**
 	 * For testing as a module on it's own
@@ -70,16 +137,15 @@ public class GraphicsPanel extends JPanel{
 	public class WillMouseMotionListener implements MouseListener, MouseMotionListener {
 
 		int mouseX, mouseY;
-		
+
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			
+
 			int dx = e.getX()-mouseX;
 			int dy = e.getY()-mouseY;
-			
-			rotate(dx, dy);
-			repaint();
-			
+
+			rotate(dx, dy, 0);
+
 			mouseX = e.getX();
 			mouseY = e.getY();
 		}
@@ -121,5 +187,5 @@ public class GraphicsPanel extends JPanel{
 		}
 
 	}
-
 }
+
