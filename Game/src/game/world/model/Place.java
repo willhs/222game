@@ -2,6 +2,12 @@ package game.world.model;
 
 import java.util.*;
 
+/**
+ * Place
+ * Defines what it is to be a place in the world
+ * @author Shane Brewer
+ *
+ */
 public interface Place {
 	
 	/**

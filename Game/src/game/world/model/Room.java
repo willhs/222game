@@ -2,11 +2,18 @@ package game.world.model;
 
 import java.util.*;
 
+/**
+ * Room Class 
+ * This class defines every thing to do with a room.
+ * @author Shane Brewer
+ *
+ */
 public class Room implements Place{
 
 	private final List<Exit> exits;
 	private final List<Player> players;
 	private final List<Item> items;
+	
 	
 	public Room (List<Exit> exits, List<Item> items){
 		this.exits = exits;

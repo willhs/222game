@@ -2,6 +2,15 @@ package game.world.model;
 
 import java.util.*;
 
+/**
+ * World
+ * This describes what it is to be a world 
+ * Worlds have places in then that players can go to 
+ * they have a list of player that is all the players
+ * the world.
+ * @author Shane Brewer
+ *
+ */
 public class World {
 	
 	// both of these once set should not change.
