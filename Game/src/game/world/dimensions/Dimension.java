@@ -1,5 +1,7 @@
 package game.world.dimensions;
 
+import java.util.List;
+
 /**
  * Dimensions 
  * For use in room to define the floor space.
@@ -45,4 +47,11 @@ public interface Dimension {
 	 * @return - max height.
 	 */
 	public float getHeight();
+	
+	/**
+	 * Gets a list of all the corners that define a dimension
+	 * @return
+	 */
+	public List<Point3D> getCorners();
+	
 }

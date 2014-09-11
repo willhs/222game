@@ -1,5 +1,7 @@
 package game.world.dimensions;
 
+import java.util.*;
+
 /**
  * Rectangle 
  * Used to define the dimensions of a room.
@@ -51,6 +53,16 @@ public class Rectangle implements Dimension{
 	@Override
 	public float getHeight() {
 		return height;
+	}
+
+	@Override
+	public List<Point3D> getCorners() {
+		List<Point3D> pointList = new ArrayList<Point3D>();
+		pointList.add(new Point3D(x,0,y));
+		pointList.add(new Point3D(x+width,0,y));
+		pointList.add(new Point3D(x,0,y+height));
+		pointList.add(new Point3D(x+width,0,y+height));
+		return pointList;
 	}
 	
 }

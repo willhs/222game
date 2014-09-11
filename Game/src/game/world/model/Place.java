@@ -43,9 +43,5 @@ public interface Place {
 	 */
 	public boolean isIn(Point point);
 	
-	/**
-	 * Gets the floor of the current room
-	 * @return - returns the floor of the room you ask for.
-	 */
-	public Floor getFloor();
+	
 }

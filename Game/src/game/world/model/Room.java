@@ -1,7 +1,6 @@
 package game.world.model;
 
-import game.world.dimensions.Dimension;
-
+import game.world.dimensions.*;
 import game.world.util.Floor;
 
 import java.awt.Point;
@@ -50,11 +49,5 @@ public class Room implements Place{
 		return dimension.contains(point.x, point.y);
 	}
 
-	@Override
-	public Floor getFloor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
-
 }
