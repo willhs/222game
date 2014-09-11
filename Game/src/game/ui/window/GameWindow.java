@@ -22,7 +22,7 @@ public class GameWindow extends JFrame{
 	private GraphicsPanel graphicsPanel;
 
 
-	private static final String title = "Game";
+	private static final String title = "Trixel";
 
 	private static final int WINDOW_SIZE = 90;
 	public static final int FRAME_HEIGHT = WINDOW_SIZE*9;
