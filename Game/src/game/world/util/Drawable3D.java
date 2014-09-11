@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface Drawable3D extends Drawable{
 
-	public List<Trixel> getPoints();
+	public List<Trixel> getTrixels();
 
 }

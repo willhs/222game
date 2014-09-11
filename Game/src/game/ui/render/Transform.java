@@ -13,6 +13,10 @@ matrices, and methods to multiply a translation by a vector or another matrix.
  */
 
 
+/**
+ * @author hardwiwill & pondy
+ *
+ */
 public class Transform{
 
     private final float[][] values;

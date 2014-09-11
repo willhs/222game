@@ -16,7 +16,7 @@ public class Floor implements Transformable{
 	public Point3D[] getPoints(){
 		return points;
 	}
-	
+
 	@Override
 	public void transform(Transform transform){
 		for (Point3D p : points){
