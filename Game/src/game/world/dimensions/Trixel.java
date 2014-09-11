@@ -1,4 +1,4 @@
-package game.world.util;
+package game.world.dimensions;
 
 import java.awt.Color;
 
