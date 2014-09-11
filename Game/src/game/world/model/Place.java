@@ -1,5 +1,7 @@
 package game.world.model;
 
+import game.world.util.Floor;
+
 import java.awt.Point;
 import java.util.*;
 
@@ -40,4 +42,10 @@ public interface Place {
 	 * @return - returns true if the point is within the place.
 	 */
 	public boolean isIn(Point point);
+	
+	/**
+	 * Gets the floor of the current room
+	 * @return - returns the floor of the room you ask for.
+	 */
+	public Floor getFloor();
 }
