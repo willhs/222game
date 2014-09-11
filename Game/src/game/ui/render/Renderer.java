@@ -1,7 +1,7 @@
 package game.ui.render;
 
+import game.world.dimensions.Trixel;
 import game.world.util.GameImage;
-import game.world.util.Trixel;
 
 import java.awt.Graphics;
 import java.awt.Polygon;

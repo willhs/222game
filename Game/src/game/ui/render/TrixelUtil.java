@@ -1,8 +1,8 @@
 package game.ui.render;
 
 import game.world.dimensions.Point3D;
-import game.world.util.Trixel;
-import game.world.util.Trixition;
+import game.world.dimensions.Trixel;
+import game.world.dimensions.Trixition;
 
 /**
  * @author hardwiwill

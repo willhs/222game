@@ -1,6 +1,7 @@
 package game.world.util;
 
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Trixel;
 
 import java.util.List;
 
