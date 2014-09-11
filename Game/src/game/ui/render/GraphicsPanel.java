@@ -1,6 +1,7 @@
  package game.ui.render;
 
 import game.world.dimensions.Point3D;
+import game.world.util.Floor;
 
 import java.awt.Color;
 import java.awt.Dimension;
