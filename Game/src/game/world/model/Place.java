@@ -26,7 +26,7 @@ public interface Place {
 	 * example a container or player.
 	 * @return - List of items currently in the place.
 	 */
-	public List<Item> getItems();
+	public Iterator<Item> getItems();
 	
 	/**
 	 * Should return a list of players that are in a room 
@@ -34,7 +34,7 @@ public interface Place {
 	 * removed and added to the list.
 	 * @return - list of players.
 	 */
-	public List<Player> getPlayers();
+	public Iterator<Player> getPlayers();
 	
 	/**
 	 * Checks weather a point is in a place or not.

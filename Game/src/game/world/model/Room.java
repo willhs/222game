@@ -35,13 +35,13 @@ public class Room implements Place{
 	}
 
 	@Override
-	public List<Item> getItems() {
-		return items;
+	public Iterator<Item> getItems() {
+		return items.iterator();
 	}
 
 	@Override
-	public List<Player> getPlayers() {
-		return players;
+	public Iterator<Player> getPlayers() {
+		return players.iterator();
 	}
 
 	@Override
