@@ -1,6 +1,7 @@
 package game.ui.window;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -19,10 +20,13 @@ public class MainMenu implements Menu{
 	private int selectedButton;
 
 	Rectangle[] buttons;
+	String[] buttonNames;
+
 
 	public MainMenu(BlankPanel panel){
 		this.panel = panel;
 		this.buttons = new Rectangle[numbOfButtons];
+		this.buttonNames = new String[numbOfButtons];
 		this.selectedButton = Integer.MAX_VALUE;
 		setUpButtons();
 	}
@@ -47,8 +51,14 @@ public class MainMenu implements Menu{
 		for(int i = 0; i < buttons.length; i++){
 			buttons[i] = new Rectangle(x,y,recWidth,recHeight);
 			y += recHeight + buttonGap;
-
 		}
+
+		//name the buttons
+		buttonNames[0] = "Single Player";
+		buttonNames[1] = "Multiplayer";
+		buttonNames[2] = "Options";
+		buttonNames[3] = "Help";
+		buttonNames[4] = "Quit";
 	}
 
 	/**
@@ -60,23 +70,28 @@ public class MainMenu implements Menu{
 
 	public void drawButtons(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
-		g.setColor(Color.red);
+
+		Font myFont = new Font("arial",0,20);
+		g.setFont(myFont);
 
 		for(int i = 0; i < buttons.length; i++){
+			g2d.setColor(new Color(1f,0f,0f,0.1f ));
 			g2d.fill(buttons[i]);
+			g2d.setColor(Color.black);
+			g2d.draw(buttons[i]);
+
 			if(selectedButton == i){
 				g.setColor(Color.black);
 				g2d.fill(buttons[i]);
 				g.setColor(Color.red);
 			}
+			g.setColor(Color.white);
+			g2d.drawString(buttonNames[i], buttons[i].x + 20, buttons[i].y + 25);
 		}
 	}
 
 
-
-	/**
-	 *
-	 * */
+	@Override
 	public void handleMouseMoved(MouseEvent e){
 
 		//set selected button
@@ -89,11 +104,8 @@ public class MainMenu implements Menu{
 		}
 	}
 
-	/**
-	 * This method is called when the mouse is released in the main menu
-	 * */
+	@Override
 	public void handleMouseReleased(MouseEvent e){
-		System.out.println("Mouse Released");
 
 		switch(selectedButton){
 			case 0: System.out.println("Single Player");
@@ -102,11 +114,17 @@ public class MainMenu implements Menu{
 				return;
 			case 2 : panel.setMenu(new OptionMenu(panel));
 				return;
-			case 3 : System.out.println("Help");
+			case 3 : panel.setMenu(new HelpMenu(panel));
 				return;
 			case 4 : System.exit(0);
 				return;
 		}
+	}
+
+
+	@Override
+	public void keyPressed(String keyEvent) {
+
 	}
 
 

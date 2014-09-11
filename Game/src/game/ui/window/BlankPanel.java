@@ -30,7 +30,10 @@ public class BlankPanel extends JPanel{
 		currentMenu.render(g);
 	}
 
-
+	public void keyPressed(String keyPressed){
+		currentMenu.keyPressed(keyPressed);
+		repaint();
+	}
 
 	public void setUpMouseListner(){
 		this.addMouseMotionListener(new MouseAdapter() {
