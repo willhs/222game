@@ -52,6 +52,7 @@ public interface Dimension {
 	 * Gets a list of all the corners that define a dimension
 	 * @return
 	 */
+	@Deprecated
 	public List<Point3D> getCorners();
 	
 }
