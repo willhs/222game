@@ -1,5 +1,7 @@
  package game.ui.render;
 
+import game.world.dimensions.Point3D;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;

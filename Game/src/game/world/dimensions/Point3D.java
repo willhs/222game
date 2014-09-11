@@ -1,4 +1,7 @@
-package game.ui.render;
+package game.world.dimensions;
+
+import game.ui.render.Transform;
+import game.ui.render.Transformable;
 
 /**
  * @author pondy & will

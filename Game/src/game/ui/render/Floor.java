@@ -1,5 +1,7 @@
 package game.ui.render;
 
+import game.world.dimensions.Point3D;
+
 
 public class Floor implements Transformable{
 
