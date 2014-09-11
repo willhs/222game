@@ -14,7 +14,7 @@ public interface Dimension {
 	 * @param y - a point on the y axis
 	 * @return - return true only if the point is in the axis.
 	 */
-	public boolean contains(double x, double y);
+	public boolean contains(float x, float y);
 	
 	/**
 	 * Gets the bounding box for this Dimension.
@@ -26,23 +26,23 @@ public interface Dimension {
 	 * Gets the minimum most x corod in the Dimensions
 	 * @return - returns X
 	 */
-	public double getX();
+	public float getX();
 	
 	/**
 	 * Gets the minum most y Corod in the dimension
 	 * @return - minmum y
 	 */
-	public double getY();
+	public float getY();
 	
 	/**
 	 * Gets the maximum width from the dimension
 	 * @return - max width.
 	 */
-	public double getWidth();
+	public float getWidth();
 	
 	/**
 	 * Gets the max height from the dimension
 	 * @return - max height.
 	 */
-	public double getHeight();
+	public float getHeight();
 }

@@ -22,7 +22,7 @@ public class Union extends Rectangle implements Dimension {
 	}
 	
 	@Override
-	public boolean contains(double x, double y){
+	public boolean contains(float x, float y){
 		return dimensionOne.contains(x, y) || dimensionTwo.contains(x, y);
 	}
 	
