@@ -22,4 +22,9 @@ public interface Menu{
 	 * This method is called on the menu object when the mouse click is released
 	 * */
 	public void handleMouseReleased(MouseEvent e);
+
+	/**
+	 * Handles a key being pressed
+	 * */
+	public void keyPressed(String keyEvent);
 }

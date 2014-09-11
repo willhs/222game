@@ -1,16 +1,20 @@
 package game.ui.window;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-
+/**
+ * @author Nicky van Hulst
+ * */
 public class OptionMenu implements Menu {
 	private BlankPanel panel;
 	private int numbOfButtons;
 
 	private Rectangle[] buttons;
+	private String[] buttonNames;
 
 	private int selectedButton;
 
@@ -19,6 +23,7 @@ public class OptionMenu implements Menu {
 		this.numbOfButtons = 1;
 		this.selectedButton = Integer.MAX_VALUE;
 		this.buttons = new Rectangle[numbOfButtons];
+		this.buttonNames = new String[numbOfButtons];
 		setupButtons();
 	}
 
@@ -27,23 +32,34 @@ public class OptionMenu implements Menu {
 	 * */
 	private void setupButtons(){
 		buttons[0] = new Rectangle(50,50,200,50);
+		buttonNames[0] = "Back";
 	}
 
 
 	@Override
 	public void render(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
-		g.setColor(Color.red);
+		g2d.setColor(new Color(1f,0f,0f,0.1f ));
+
+		Font myFont = new Font("arial",0,20);
+		g.setFont(myFont);
 
 
 		for(int i = 0; i < buttons.length; i++){
+			g2d.setColor(new Color(1f,0f,0f,0.1f ));
 			g2d.fill(buttons[i]);
+			g2d.setColor(Color.black);
+			g2d.draw(buttons[i]);
+
 			if(selectedButton == i){
 				g.setColor(Color.black);
 				g2d.fill(buttons[i]);
-				g.setColor(Color.red);
 			}
+			g.setColor(Color.white);
+			g.drawString(buttonNames[i], buttons[i].x + 20, buttons[i].y + 25);
 		}
+		g.drawString("OPTIONS", GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2);
+
 	}
 
 	@Override
@@ -62,6 +78,13 @@ public class OptionMenu implements Menu {
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(selectedButton == 0){
+			panel.setMenu(new MainMenu(panel));
+		}
+	}
+
+	@Override
+	public void keyPressed(String keyEvent) {
+		if(keyEvent.equals("escape")){
 			panel.setMenu(new MainMenu(panel));
 		}
 	}
