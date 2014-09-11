@@ -4,9 +4,6 @@ import game.world.dimensions.Dimension;
 
 import game.world.util.Floor;
 
-
-
-
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -58,5 +55,6 @@ public class Room implements Place{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 }
