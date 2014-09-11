@@ -1,6 +1,5 @@
 package game.world.util;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**

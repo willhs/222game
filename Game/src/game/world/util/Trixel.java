@@ -1,27 +1,29 @@
 package game.world.util;
 
-import game.world.dimensions.Point3D;
-
 import java.awt.Color;
 
 /**
  * @author hardwiwill
- * Like a 3D pixel, a cube
+ * Like a 3D pixel, or a cube.
  *
  */
 public class Trixel {
 
 	/**
-	 * The center of the trixel!
+	 * trixel width, height and depth
 	 */
-	private Point3D point;
+	public static final int SIZE = 10;
+	/**
+	 * The trixel's position in the trixel grid (trid)!
+	 */
+	private Trixition trixition;
 	/**
 	 * TODO Will need to be one of these for each face of the
 	 */
 	private Color c;
 
-	public Trixel (Point3D point, Color c){
-		this.point = point;
+	public Trixel (Trixition trisition, Color c){
+		this.trixition = trisition;
 		this.c = c;
 	}
 
