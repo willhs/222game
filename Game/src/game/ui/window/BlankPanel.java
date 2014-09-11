@@ -7,34 +7,64 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
-
+/**
+ *@author Nicky van Hulst
+ * */
 public class BlankPanel extends JPanel{
 
 
+	private static final long serialVersionUID = 1L;
+
+	//the menu the panel is displaying at the moment
 	private Menu currentMenu;
 
-
+	
+	/**
+	 * Constructor for the blank panel sets up the panel
+	 * with the current menu being the main menu
+	 * */
 	public BlankPanel(){
 
+		//set the size of the panel
 		setSize(new Dimension(GameWindow.FRAME_WIDTH,GameWindow.FRAME_HEIGHT));
+
 		setBackground(Color.black);
+
+		//set up the mouse listener
 		setUpMouseListner();
+
+		//set the main menu to be the current menu
 		currentMenu = new MainMenu(this);
 
 	}
 
+	
+	/**
+	 *Repaints the graphics of the panel
+	 * */
 	public void paint(Graphics g){
 
 		g.setColor(Color.blue);
 		g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT);
+
+		//make the current menu draw itself on the graphics object
 		currentMenu.render(g);
 	}
 
+
+	/**
+	 *handles a key being pressed on the keyboard
+	 *passes the key pressed on to the current menu
+	 * */
 	public void keyPressed(String keyPressed){
 		currentMenu.keyPressed(keyPressed);
 		repaint();
 	}
 
+	
+	/**
+	 * Sets up the mouse listner for the panel
+	 * */
 	public void setUpMouseListner(){
 		this.addMouseMotionListener(new MouseAdapter() {
 
@@ -54,6 +84,10 @@ public class BlankPanel extends JPanel{
 		});
 	}
 
+	
+	/**
+	 * Sets the current menu
+	 * */
 	public void setMenu(Menu menu){
 		this.currentMenu = menu;
 	}

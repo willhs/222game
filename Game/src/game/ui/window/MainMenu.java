@@ -2,10 +2,17 @@ package game.ui.window;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 
 
 /**
@@ -18,6 +25,7 @@ public class MainMenu implements Menu{
 	private BlankPanel panel;
 
 	private int selectedButton;
+	private BufferedImage backgroundImage;
 
 	Rectangle[] buttons;
 	String[] buttonNames;
@@ -28,6 +36,7 @@ public class MainMenu implements Menu{
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		this.selectedButton = Integer.MAX_VALUE;
+		loadImages();
 		setUpButtons();
 	}
 
@@ -65,6 +74,7 @@ public class MainMenu implements Menu{
 	 *
 	 * */
 	public void render(Graphics g){
+		g.drawImage(backgroundImage, 0, 0,panel);
 		drawButtons(g);
 	}
 
@@ -75,18 +85,18 @@ public class MainMenu implements Menu{
 		g.setFont(myFont);
 
 		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,0f,0f,0.1f ));
+			g2d.setColor(new Color(1f,1f,1f,0.1f ));
 			g2d.fill(buttons[i]);
 			g2d.setColor(Color.black);
 			g2d.draw(buttons[i]);
 
 			if(selectedButton == i){
-				g.setColor(Color.black);
+				g2d.setColor(new Color(0f,0f,0f,0.5f ));
 				g2d.fill(buttons[i]);
-				g.setColor(Color.red);
 			}
+			//draws the string in the centre of the current button
 			g.setColor(Color.white);
-			g2d.drawString(buttonNames[i], buttons[i].x + 20, buttons[i].y + 25);
+			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
 		}
 	}
 
@@ -125,6 +135,20 @@ public class MainMenu implements Menu{
 	@Override
 	public void keyPressed(String keyEvent) {
 
+	}
+
+	public void loadImages(){
+		java.net.URL imagefile = MainMenu.class.getResource("images/bocks.jpg");
+
+
+		//load background image
+		try {
+			this.backgroundImage = ImageIO.read(imagefile);
+			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
+		} catch (IOException e) {
+			System.out.println("failed reading imagge");
+			e.printStackTrace();
+		}
 	}
 
 

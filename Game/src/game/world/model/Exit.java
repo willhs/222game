@@ -2,6 +2,12 @@ package game.world.model;
 
 import java.util.List;
 
+/**
+ * Exit
+ * Defines what it is to be an exit in the game.
+ * @author Shane Brewer
+ *
+ */
 public abstract class Exit {
 	
 	private final List<Place> contectedPlaces;
