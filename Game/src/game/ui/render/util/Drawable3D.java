@@ -1,7 +1,7 @@
-package game.world.util;
+package game.ui.render.util;
 
-import game.world.dimensions.Point3D;
 import game.world.dimensions.Trixel;
+import game.world.util.Drawable;
 
 import java.util.List;
 
