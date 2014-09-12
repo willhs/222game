@@ -1,61 +1,92 @@
-package game.ui.window;
+package game.ui.window.menus;
+
+import game.ui.window.BlankPanel;
+import game.ui.window.GameWindow;
+import game.ui.window.GraphicsPane;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-/**
- * @author Nicky van Hulst
- * */
-public class OptionMenu implements Menu {
-	private BlankPanel panel;
-	private int numbOfButtons;
 
-	private Rectangle[] buttons;
-	private String[] buttonNames;
+
+
+/**
+ * @author Nicky van HUlst
+ * */
+
+
+public class MainMenu implements GraphicsPane{
+	private final int numbOfButtons = 5;
+	private BlankPanel panel;
 
 	private int selectedButton;
 	private BufferedImage backgroundImage;
 
-	public OptionMenu(BlankPanel panel){
+	Rectangle[] buttons;
+	String[] buttonNames;
+
+
+	public MainMenu(BlankPanel panel){
 		this.panel = panel;
-		this.numbOfButtons = 1;
-		this.selectedButton = Integer.MAX_VALUE;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
+		this.selectedButton = Integer.MAX_VALUE;
 		loadImages();
-		setupButtons();
+		setUpButtons();
+	}
+
+
+	/**
+	 * Sets up all of the button locations for the main menu
+	 * */
+	public void setUpButtons(){
+		int height = GameWindow.FRAME_HEIGHT;
+
+
+		int y = height/numbOfButtons;
+
+		int buttonGap = 20;
+
+		int recHeight = 50;
+		int recWidth = 200;
+
+		int x = (GameWindow.FRAME_WIDTH/2)- (recWidth/2);
+
+		for(int i = 0; i < buttons.length; i++){
+			buttons[i] = new Rectangle(x,y,recWidth,recHeight);
+			y += recHeight + buttonGap;
+		}
+
+		//name the buttons
+		buttonNames[0] = "Single Player";
+		buttonNames[1] = "Multiplayer";
+		buttonNames[2] = "Options";
+		buttonNames[3] = "Help";
+		buttonNames[4] = "Quit";
 	}
 
 	/**
-	 * Sets up the buttons for the option menu
+	 *
 	 * */
-	private void setupButtons(){
-		buttons[0] = new Rectangle(50,50,200,50);
-		buttonNames[0] = "Back";
-	}
-
-
-	@Override
 	public void render(Graphics g){
 		g.drawImage(backgroundImage, 0, 0,panel);
 		drawButtons(g);
-		g.drawString("OPTIONS", GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2);
-
 	}
 
-	private void drawButtons(Graphics g){
+	public void drawButtons(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
 		Font myFont = new Font("arial",0,20);
 		g.setFont(myFont);
-
 
 		for(int i = 0; i < buttons.length; i++){
 			g2d.setColor(new Color(1f,1f,1f,0.1f ));
@@ -67,13 +98,12 @@ public class OptionMenu implements Menu {
 				g2d.setColor(new Color(0f,0f,0f,0.5f ));
 				g2d.fill(buttons[i]);
 			}
-
-			//draws the name of the buttons
+			//draws the string in the centre of the current button
 			g.setColor(Color.white);
 			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
-
 		}
 	}
+
 
 	@Override
 	public void handleMouseMoved(MouseEvent e){
@@ -89,21 +119,30 @@ public class OptionMenu implements Menu {
 	}
 
 	@Override
-	public void handleMouseReleased(MouseEvent e) {
-		if(selectedButton == 0){
-			panel.setMenu(new MainMenu(panel));
+	public void handleMouseReleased(MouseEvent e){
+
+		switch(selectedButton){
+			case 0: System.out.println("Single Player");
+				return;
+			case 1: System.out.println("Multiplayer");
+				return;
+			case 2 : panel.setMenu(new OptionMenu(panel));
+				return;
+			case 3 : panel.setMenu(new HelpMenu(panel));
+				return;
+			case 4 : System.exit(0);
+				return;
 		}
 	}
+
 
 	@Override
 	public void keyPressed(String keyEvent) {
-		if(keyEvent.equals("escape")){
-			panel.setMenu(new MainMenu(panel));
-		}
+
 	}
 
 	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("images/bocks.jpg");
+		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
 
 
 		//load background image
@@ -115,5 +154,6 @@ public class OptionMenu implements Menu {
 			e.printStackTrace();
 		}
 	}
+
 
 }

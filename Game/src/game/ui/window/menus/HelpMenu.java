@@ -1,4 +1,8 @@
-package game.ui.window;
+package game.ui.window.menus;
+
+import game.ui.window.BlankPanel;
+import game.ui.window.GameWindow;
+import game.ui.window.GraphicsPane;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -11,7 +15,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class HelpMenu implements Menu {
+public class HelpMenu implements GraphicsPane {
 	private BlankPanel panel;
 	private int numbOfButtons;
 
@@ -103,7 +107,7 @@ public class HelpMenu implements Menu {
 	}
 
 	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("images/bocks.jpg");
+		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
 
 
 		//load background image
@@ -111,10 +115,15 @@ public class HelpMenu implements Menu {
 			this.backgroundImage = ImageIO.read(imagefile);
 			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
 		} catch (IOException e) {
-			System.out.println("failed reading imagge");
+			System.out.println("failed reading image");
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Reads in the help text for the menu from a file
+	 * */
+	public void readHelpText(){
 
+	}
 }
