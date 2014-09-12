@@ -1,4 +1,8 @@
-package game.ui.window;
+package game.ui.window.menus;
+
+import game.ui.window.BlankPanel;
+import game.ui.window.GameWindow;
+import game.ui.window.GraphicsPane;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -7,11 +11,13 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
-public class HelpMenu implements Menu {
+public class HelpMenu implements GraphicsPane {
 	private BlankPanel panel;
 	private int numbOfButtons;
 
@@ -20,6 +26,8 @@ public class HelpMenu implements Menu {
 
 	private int selectedButton;
 	private BufferedImage backgroundImage;
+
+	private String helpText;
 
 	public HelpMenu(BlankPanel panel){
 		this.panel = panel;
@@ -30,6 +38,7 @@ public class HelpMenu implements Menu {
 
 		loadImages();
 		setupButtons();
+		readHelpText();
 
 	}
 
@@ -103,7 +112,7 @@ public class HelpMenu implements Menu {
 	}
 
 	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("images/bocks.jpg");
+		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
 
 
 		//load background image
@@ -111,10 +120,30 @@ public class HelpMenu implements Menu {
 			this.backgroundImage = ImageIO.read(imagefile);
 			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
 		} catch (IOException e) {
-			System.out.println("failed reading imagge");
+			System.out.println("failed reading image");
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Reads in the help text for the menu from a file
+	 * */
+	public void readHelpText(){
+		helpText = "";
 
+		InputStreamReader helpTextFile = new InputStreamReader(HelpMenu.class.getResourceAsStream("HelpText.txt"));
+
+		BufferedReader textReader = new BufferedReader(helpTextFile);
+
+		try {
+			while(textReader.read()  == -1){
+
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+	}
 }

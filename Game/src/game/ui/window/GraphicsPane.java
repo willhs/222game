@@ -6,7 +6,7 @@ package game.ui.window;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
-public interface Menu{
+public interface GraphicsPane{
 
 	/**
 	 * Draws all of the components of the menu onto the graphics object passed in

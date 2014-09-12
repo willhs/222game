@@ -22,7 +22,7 @@ public class GameWindow extends JFrame{
 	private GraphicsPanel graphicsPanel;
 
 
-	private static final String title = "Trixel";
+	private static final String title = "Game";
 
 	private static final int WINDOW_SIZE = 90;
 	public static final int FRAME_HEIGHT = WINDOW_SIZE*9;
@@ -39,7 +39,7 @@ public class GameWindow extends JFrame{
 		this.graphicsPanel = new GraphicsPanel();
 		this.blankPanel = new BlankPanel();
 
-		//set up the globalKey listner
+		//set up the globalKey listener
 		setUpKeyListner();
 		keyMap = setUpkeys();
 

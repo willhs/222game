@@ -1,5 +1,7 @@
 package game.world.dimensions;
 
+import java.util.*;
+
 /**
  * Rectangle 
  * Used to define the dimensions of a room.
@@ -8,12 +10,12 @@ package game.world.dimensions;
  */
 public class Rectangle implements Dimension{
 	
-	private final double x;
-	private final double y;
-	private final double width;
-	private final double height;
+	private final float x;
+	private final float y;
+	private final float width;
+	private final float height;
 	
-	public Rectangle (double x, double y, double width, double height){
+	public Rectangle (float x, float y, float width, float height){
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -21,7 +23,7 @@ public class Rectangle implements Dimension{
 	}
 	
 	@Override
-	public boolean contains(double x, double y) {
+	public boolean contains(float x, float y) {
 		if (x < this.x || y < this.y || x > this.width || y > this.height){
 			return false;
 		}
@@ -34,23 +36,33 @@ public class Rectangle implements Dimension{
 	}
 
 	@Override
-	public double getX() {
+	public float getX() {
 		return x;
 	}
 
 	@Override
-	public double getY() {
+	public float getY() {
 		return y;
 	}
 
 	@Override
-	public double getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
 	@Override
-	public double getHeight() {
+	public float getHeight() {
 		return height;
+	}
+
+	@Override
+	public List<Point3D> getCorners() {
+		List<Point3D> pointList = new ArrayList<Point3D>();
+		pointList.add(new Point3D(x,0,y));
+		pointList.add(new Point3D(x+width,0,y));
+		pointList.add(new Point3D(x,0,y+height));
+		pointList.add(new Point3D(x+width,0,y+height));
+		return pointList;
 	}
 	
 }

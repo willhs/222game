@@ -1,5 +1,7 @@
 package game.ui.window;
 
+import game.ui.window.menus.MainMenu;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -16,9 +18,9 @@ public class BlankPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
 
 	//the menu the panel is displaying at the moment
-	private Menu currentMenu;
+	private GraphicsPane currentMenu;
 
-	
+
 	/**
 	 * Constructor for the blank panel sets up the panel
 	 * with the current menu being the main menu
@@ -38,15 +40,12 @@ public class BlankPanel extends JPanel{
 
 	}
 
-	
+
 	/**
 	 *Repaints the graphics of the panel
 	 * */
 	public void paint(Graphics g){
-
-		g.setColor(Color.blue);
-		g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT);
-
+		
 		//make the current menu draw itself on the graphics object
 		currentMenu.render(g);
 	}
@@ -61,7 +60,7 @@ public class BlankPanel extends JPanel{
 		repaint();
 	}
 
-	
+
 	/**
 	 * Sets up the mouse listner for the panel
 	 * */
@@ -84,11 +83,11 @@ public class BlankPanel extends JPanel{
 		});
 	}
 
-	
+
 	/**
 	 * Sets the current menu
 	 * */
-	public void setMenu(Menu menu){
+	public void setMenu(GraphicsPane menu){
 		this.currentMenu = menu;
 	}
 }

@@ -1,5 +1,6 @@
 package game.world.model;
 
+import game.world.dimensions.Point3D;
 import game.world.util.Floor;
 
 import java.awt.Point;
@@ -26,7 +27,7 @@ public interface Place {
 	 * example a container or player.
 	 * @return - List of items currently in the place.
 	 */
-	public List<Item> getItems();
+	public Iterator<Item> getItems();
 	
 	/**
 	 * Should return a list of players that are in a room 
@@ -34,18 +35,20 @@ public interface Place {
 	 * removed and added to the list.
 	 * @return - list of players.
 	 */
-	public List<Player> getPlayers();
+	public Iterator<Player> getPlayers();
 	
 	/**
 	 * Checks weather a point is in a place or not.
 	 * @param point - point to be checked
 	 * @return - returns true if the point is within the place.
 	 */
-	public boolean isIn(Point point);
+	public boolean contains(Point point);
 	
 	/**
-	 * Gets the floor of the current room
-	 * @return - returns the floor of the room you ask for.
+	 * Checks weather a point in the 3D space is in the place
+	 * @param point - 3D point is space.
+	 * @return - true if it is in the place.
 	 */
-	public Floor getFloor();
+	public boolean contains(Point3D point);
+	
 }

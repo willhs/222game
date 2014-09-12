@@ -30,7 +30,8 @@ public class RoomTests {
 		if (room.getPlayers() == null) {
 			fail("A list of players should never be null");
 		}
-		for (Player player : room.getPlayers()) {
+		Iterator<Player> iterator = room.getPlayers();
+		while (iterator.hasNext()) {
 			fail("No player were added to the room");
 		}
 	}
@@ -41,7 +42,8 @@ public class RoomTests {
 		if (room.getItems() == null) {
 			fail("A List of items should never be null");
 		}
-		for (Item item: room.getItems()) {
+		Iterator<Item> iterator = room.getItems();
+		while (iterator.hasNext()) {
 			fail("No Items were previded or added to the room");
 		}
 	}
