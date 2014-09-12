@@ -138,7 +138,6 @@ public class PauseMenu implements GraphicsPane {
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("escape")){
-			//panel.setMenu(new MainMenu(panel));
 			System.out.println("Escape");
 			//TODO change it to go back to the game screen
 		}

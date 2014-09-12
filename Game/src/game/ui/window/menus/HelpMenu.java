@@ -11,7 +11,9 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
@@ -25,6 +27,8 @@ public class HelpMenu implements GraphicsPane {
 	private int selectedButton;
 	private BufferedImage backgroundImage;
 
+	private String helpText;
+
 	public HelpMenu(BlankPanel panel){
 		this.panel = panel;
 		this.numbOfButtons = 1;
@@ -34,6 +38,7 @@ public class HelpMenu implements GraphicsPane {
 
 		loadImages();
 		setupButtons();
+		readHelpText();
 
 	}
 
@@ -124,6 +129,21 @@ public class HelpMenu implements GraphicsPane {
 	 * Reads in the help text for the menu from a file
 	 * */
 	public void readHelpText(){
+		helpText = "";
+
+		InputStreamReader helpTextFile = new InputStreamReader(HelpMenu.class.getResourceAsStream("HelpText.txt"));
+
+		BufferedReader textReader = new BufferedReader(helpTextFile);
+
+		try {
+			while(textReader.read()  == -1){
+
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 
 	}
 }
