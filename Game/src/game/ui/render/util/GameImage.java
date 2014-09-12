@@ -1,4 +1,4 @@
-package game.world.util;
+package game.ui.render.util;
 
 import game.world.dimensions.Point3D;
 

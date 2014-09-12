@@ -1,7 +1,7 @@
 package game.ui.render;
 
 /**
- * @author pondy & will
+ * @author pondy & will. pondy wrote most of this class.
  *
  */
 public class Vector3D implements Transformable {
@@ -106,11 +106,11 @@ public class Vector3D implements Transformable {
 		float newX = values[0][3];
 		float newY = values[1][3];
 		float newZ = values[2][3];
-		
+
 		newX += values[0][0] * this.x + values[0][1] * this.y + values[0][2] * this.z;
 		newY += values[1][0] * this.x + values[1][1] * this.y + values[1][2] * this.z;
 		newZ += values[2][0] * this.x + values[2][1] * this.y + values[2][2] * this.z;
-		
+
 		x = newX;
 		y = newY;
 		z = newZ;

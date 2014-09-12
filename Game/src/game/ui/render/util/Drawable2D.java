@@ -1,4 +1,6 @@
-package game.world.util;
+package game.ui.render.util;
+
+import game.world.util.Drawable;
 
 import java.util.List;
 
