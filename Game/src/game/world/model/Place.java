@@ -1,6 +1,7 @@
 package game.world.model;
 
 import game.world.dimensions.Point3D;
+import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Point;
@@ -38,6 +39,12 @@ public interface Place {
 	public Iterator<Player> getPlayers();
 	
 	/**
+	 * Gets all the drawable items in the room.
+	 * @return - returns a iterator over all the drawable things in the room.
+	 */
+	public Iterator<Drawable> getDrawable();
+	
+	/**
 	 * Checks weather a point is in a place or not.
 	 * @param point - point to be checked
 	 * @return - returns true if the point is within the place.
@@ -50,5 +57,6 @@ public interface Place {
 	 * @return - true if it is in the place.
 	 */
 	public boolean contains(Point3D point);
+	
 	
 }

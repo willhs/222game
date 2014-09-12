@@ -1,13 +1,12 @@
 package game.world.model;
 
 import game.world.dimensions.*;
+import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Point;
 import java.awt.Polygon;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Room Class
@@ -20,7 +19,6 @@ public class Room implements Place{
 	private final List<Exit> exits;
 	private final List<Player> players;
 	private final List<Item> items;
-	//private final Dimension dimension;
 	private final Polygon floor;
 
 
@@ -45,16 +43,23 @@ public class Room implements Place{
 	public Iterator<Player> getPlayers() {
 		return players.iterator();
 	}
+	
+	@Override
+	public Iterator<Drawable> getDrawable() {
+		List<Drawable> drawables = new ArrayList<Drawable>(exits);
+		drawables.addAll(players);
+		drawables.addAll(items);
+		return drawables.iterator();
+	}
 
 	@Override
 	public boolean contains(Point point) {
-		return false;//dimension.contains(point.x, point.y);
+		return floor.contains(point);
 	}
 
 	@Override
 	public boolean contains(Point3D point) {
-		return false;//dimension.contains(point.getX(), point.getZ());
+		return floor.contains(point.getX(), point.getZ());
 	}
-
 	
 }

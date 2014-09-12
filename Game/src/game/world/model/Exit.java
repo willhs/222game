@@ -1,5 +1,7 @@
 package game.world.model;
 
+import game.world.util.Drawable;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,7 @@ import java.util.List;
  * @author Shane Brewer
  *
  */
-public abstract class Exit {
+public abstract class Exit implements Drawable{
 	
 	private final List<Place> contectedPlaces;
 	

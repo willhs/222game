@@ -1,6 +1,7 @@
 package game.world.model;
 
 import game.world.dimensions.Point3D;
+import game.world.util.Drawable;
 
 /**
  * Item. 
@@ -10,7 +11,7 @@ import game.world.dimensions.Point3D;
  * @author Shane Brewer
  * 
  */
-public interface Item {
+public interface Item extends Drawable{
 
 	/**
 	 * All items have names and you need to be able to get them.
