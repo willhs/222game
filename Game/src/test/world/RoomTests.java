@@ -5,6 +5,7 @@ import game.world.dimensions.Dimension;
 import game.world.dimensions.Rectangle;
 import game.world.model.*;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -50,7 +51,10 @@ public class RoomTests {
 
 	// ===============HelperMethods================//
 	public Room getARoom() {
-		return new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Rectangle(0,0,200,200));
+		int[] xpoints = new int[]{0,200,200,0,0};
+		int[] ypoints = new int[]{0,0,200,200,0};
+		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
+		return new Room(new ArrayList<Exit>(), new ArrayList<Item>(), p);
 	}
 
 }

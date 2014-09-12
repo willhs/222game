@@ -4,6 +4,7 @@ import game.world.dimensions.*;
 import game.world.util.Floor;
 
 import java.awt.Point;
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,14 +20,15 @@ public class Room implements Place{
 	private final List<Exit> exits;
 	private final List<Player> players;
 	private final List<Item> items;
-	private final Dimension dimension;
+	//private final Dimension dimension;
+	private final Polygon floor;
 
 
-	public Room (List<Exit> exits, List<Item> items, Dimension dimension){
+	public Room (List<Exit> exits, List<Item> items, Polygon floor){
 		this.exits = exits;
 		this.players = new ArrayList<Player>();
 		this.items = items;
-		this.dimension = dimension;
+		this.floor = floor;
 	}
 
 	@Override
@@ -46,12 +48,12 @@ public class Room implements Place{
 
 	@Override
 	public boolean contains(Point point) {
-		return dimension.contains(point.x, point.y);
+		return false;//dimension.contains(point.x, point.y);
 	}
 
 	@Override
 	public boolean contains(Point3D point) {
-		return dimension.contains(point.getX(), point.getZ());
+		return false;//dimension.contains(point.getX(), point.getZ());
 	}
 
 	
