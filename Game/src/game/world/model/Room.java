@@ -45,8 +45,13 @@ public class Room implements Place{
 	}
 
 	@Override
-	public boolean isIn(Point point) {
+	public boolean contains(Point point) {
 		return dimension.contains(point.x, point.y);
+	}
+
+	@Override
+	public boolean contains(Point3D point) {
+		return dimension.contains(point.getX(), point.getZ());
 	}
 
 	

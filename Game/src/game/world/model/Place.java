@@ -1,5 +1,6 @@
 package game.world.model;
 
+import game.world.dimensions.Point3D;
 import game.world.util.Floor;
 
 import java.awt.Point;
@@ -41,7 +42,13 @@ public interface Place {
 	 * @param point - point to be checked
 	 * @return - returns true if the point is within the place.
 	 */
-	public boolean isIn(Point point);
+	public boolean contains(Point point);
 	
+	/**
+	 * Checks weather a point in the 3D space is in the place
+	 * @param point - 3D point is space.
+	 * @return - true if it is in the place.
+	 */
+	public boolean contains(Point3D point);
 	
 }
