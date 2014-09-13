@@ -4,6 +4,7 @@ import game.ui.window.BlankPanel;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -28,6 +29,9 @@ public class HelpMenu implements GraphicsPane {
 	private BufferedImage backgroundImage;
 
 	private String helpText;
+	private Font helpTextFont;
+	
+	private Rectangle textBox;
 
 	public HelpMenu(BlankPanel panel){
 		this.panel = panel;
@@ -35,11 +39,12 @@ public class HelpMenu implements GraphicsPane {
 		this.selectedButton = Integer.MAX_VALUE;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
-
+		this.helpTextFont = new Font("arial",Font.BOLD,15);
+		
 		loadImages();
 		setupButtons();
+		setUpTextBox();
 		readHelpText();
-
 	}
 
 
@@ -52,13 +57,34 @@ public class HelpMenu implements GraphicsPane {
 		buttonNames[0] = "Back";
 
 	}
+	
+	private void setUpTextBox(){
+		int gap = 50;//the gap between button and text box 
+		int x = buttons[0].x + buttons[0].width + gap;
+		int y = buttons[0].y;
+		
+		int width = GameWindow.FRAME_WIDTH - (x*2);
+		int height = GameWindow.FRAME_HEIGHT - (y*2);
+		
+		textBox = new Rectangle(x,y,width,height);
+		
+	}
 
 
 	@Override
 	public void render(Graphics g){
+		Graphics2D g2d = (Graphics2D)g;
 		g.drawImage(backgroundImage, 0, 0,panel);
 		drawButtons(g);
-		g.drawString("HELP", GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2);
+		
+		g2d.draw(textBox);
+		g2d.setColor(new Color(0f,0f,0f,0.6f));
+		g2d.fill(textBox);	
+
+		
+		g.setColor(Color.white);
+		g.setFont(helpTextFont);
+		drawString(g,helpText, (int)(textBox.getX() + 20),(int)( textBox.getY() + 20));//draws the string within the text box
 	}
 
 	private void drawButtons(Graphics g){
@@ -66,8 +92,6 @@ public class HelpMenu implements GraphicsPane {
 
 		Font myFont = new Font("arial",0,20);
 		g.setFont(myFont);
-
-
 
 		for(int i = 0; i < buttons.length; i++){
 			g2d.setColor(new Color(1f,1f,1f,0.1f ));
@@ -83,6 +107,15 @@ public class HelpMenu implements GraphicsPane {
 			g.drawString(buttonNames[i], buttons[i].x + 20, buttons[i].y + 25);
 		}
 	}
+	/**
+	 * Draws the string on the graphics object splitting the string when a \n 
+	 * pattern is reached
+	 * */
+	void drawString(Graphics g, String text, int x, int y) {
+	    for (String line : text.split("\n"))
+	        g.drawString(line, x, y += g.getFontMetrics().getHeight());
+	}
+	
 
 	@Override
 	public void handleMouseMoved(MouseEvent e){
@@ -126,21 +159,44 @@ public class HelpMenu implements GraphicsPane {
 	}
 
 	/**
-	 * Reads in the help text for the menu from a file
+	 * Reads in the help text for the menu from a file checks to make sure the text
+	 * is within bounds of the text box
 	 * */
 	public void readHelpText(){
-		helpText = "";
+		this.helpText = "";
+		Canvas canvas = new Canvas();
 
-		InputStreamReader helpTextFile = new InputStreamReader(HelpMenu.class.getResourceAsStream("HelpText.txt"));
-
+		InputStreamReader helpTextFile = new InputStreamReader(HelpMenu.class.getResourceAsStream("resources/HelpText.txt"));
 		BufferedReader textReader = new BufferedReader(helpTextFile);
-
+		
+		int curLineWidth = 0;
 		try {
-			while(textReader.read()  == -1){
+			
+			int i = textReader.read();//reads a single character 
+			char c = (char)i; 
+			
+			while(i != -1){//not the end of input stream
+				
+				if(curLineWidth >= (textBox.width - 40)){//check if we should place a new line character
+					helpText = helpText.concat("\n");
+					curLineWidth = 0;//reset the line width
+				}
+								
+				helpText = helpText.concat(""+c);//adds the char at the end of the string
 
+				
+				i = textReader.read();
+				c = (char)i;
+				
+				if(c == '\n'){
+					curLineWidth = 0;
+				}
+				
+				int charWidth = canvas.getFontMetrics(helpTextFont).stringWidth(""+c);
+				curLineWidth += charWidth;// TODO use graphics object to get  font metrics
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Failed at reading HelpText File");
 			e.printStackTrace();
 		}
 
