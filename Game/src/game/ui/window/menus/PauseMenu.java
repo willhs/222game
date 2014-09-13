@@ -1,6 +1,7 @@
 package game.ui.window.menus;
 
 import game.ui.window.BlankPanel;
+import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
@@ -19,10 +20,11 @@ public class PauseMenu implements GraphicsPane {
 
 	private int numbOfButtons;
 	private int selectedButton;
+	private GameScreen game;
 
 
-
-	public PauseMenu(BlankPanel panel, GameWindow gameWindow){
+	public PauseMenu(BlankPanel panel, GameScreen game){
+		this.game = game;
 		this.numbOfButtons = 4;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
@@ -115,14 +117,14 @@ public class PauseMenu implements GraphicsPane {
 				selectedButton = i;//set selected button
 				return;
 			}
-			selectedButton = Integer.MAX_VALUE;//no button is selected
 		}
+		selectedButton = Integer.MAX_VALUE;//no button is selected
 	}
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(selectedButton == 0){
-			//panel.setMenu(new MainMenu(panel));//TODO change it to go back to the game screen
+			game.setMenu(null);//so no menu shows up on the game screen
 		}
 		else if(selectedButton == 1){
 			System.out.println("options");
@@ -139,7 +141,7 @@ public class PauseMenu implements GraphicsPane {
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("escape")){
 			System.out.println("Escape");
-			//TODO change it to go back to the game screen
+			game.setMenu(null);
 		}
 	}
 }

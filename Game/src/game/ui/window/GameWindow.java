@@ -67,9 +67,7 @@ public class GameWindow extends JFrame{
 
 	}
 
-	public static void main(String[] args){
-		new GameWindow();
-	}
+
 
 	//Custom dispatcher
 	class MyKeyDispatcher implements KeyEventDispatcher {
@@ -102,6 +100,12 @@ public class GameWindow extends JFrame{
 		tempKeyMap.put("interact", KeyEvent.VK_F);//f
 
 		return tempKeyMap;
+	}
+	
+	public static void main(String[] args){
+		//GameWindow gWindow = 
+		new GameWindow();
+		//new TestWindow(gWindow);
 	}
 
 }

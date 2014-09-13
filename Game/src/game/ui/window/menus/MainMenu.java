@@ -1,6 +1,7 @@
 package game.ui.window.menus;
 
 import game.ui.window.BlankPanel;
+import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
@@ -30,6 +31,7 @@ public class MainMenu implements GraphicsPane{
 
 	private int selectedButton;
 	private BufferedImage backgroundImage;
+	private BufferedImage updatedImage;
 
 	Rectangle[] buttons;
 	String[] buttonNames;
@@ -79,6 +81,7 @@ public class MainMenu implements GraphicsPane{
 	 * */
 	public void render(Graphics g){
 		g.drawImage(backgroundImage, 0, 0,panel);
+		//drawBackGroundImage(g);
 		drawButtons(g);
 	}
 
@@ -89,13 +92,13 @@ public class MainMenu implements GraphicsPane{
 		g.setFont(myFont);
 
 		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.1f ));
+			g2d.setColor(new Color(1f,1f,1f,0.1f));
 			g2d.fill(buttons[i]);
 			g2d.setColor(Color.black);
 			g2d.draw(buttons[i]);
 
 			if(selectedButton == i){
-				g2d.setColor(new Color(0f,0f,0f,0.5f ));
+				g2d.setColor(new Color(0f,0f,0f,0.5f));
 				g2d.fill(buttons[i]);
 			}
 			//draws the string in the centre of the current button
@@ -122,7 +125,7 @@ public class MainMenu implements GraphicsPane{
 	public void handleMouseReleased(MouseEvent e){
 
 		switch(selectedButton){
-			case 0: System.out.println("Single Player");
+			case 0: panel.setMenu(new GameScreen(panel));
 				return;
 			case 1: System.out.println("Multiplayer");
 				return;
@@ -149,6 +152,7 @@ public class MainMenu implements GraphicsPane{
 		try {
 			this.backgroundImage = ImageIO.read(imagefile);
 			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
+			System.out.println(backgroundImage.getWidth());
 		} catch (IOException e) {
 			System.out.println("failed reading imagge");
 			e.printStackTrace();
