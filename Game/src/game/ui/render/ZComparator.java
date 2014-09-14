@@ -1,15 +1,16 @@
 package game.ui.render;
 
-import game.world.util.Drawable;
-
 import java.util.Comparator;
 
-public class ZComparator implements Comparator<Drawable> {
+/**
+ * @author will
+ * compares z components
+ */
+public class ZComparator implements Comparator<ZComparable> {
 
 	@Override
-	public int compare(Drawable o1, Drawable o2) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compare(ZComparable o1, ZComparable o2) {
+		return Float.compare(o1.getZ(), o2.getZ());
 	}
 
 }

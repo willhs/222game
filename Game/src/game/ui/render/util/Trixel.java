@@ -1,11 +1,12 @@
-package game.world.dimensions;
+package game.ui.render.util;
+
+import game.world.dimensions.Point3D;
 
 import java.awt.Color;
 
 /**
  * @author hardwiwill
- * Like a 3D pixel, or a cube.
- *
+ * A 3D pixel/voxel/cube.
  */
 public class Trixel {
 
@@ -20,11 +21,18 @@ public class Trixel {
 	/**
 	 * TODO Will need to be one of these for each face of the
 	 */
-	private Color c;
+	private Color colour;
 
 	public Trixel (Trixition trisition, Color c){
 		this.trixition = trisition;
-		this.c = c;
+		this.colour = c;
 	}
-
+	
+	public Color getColor(){
+		return colour;
+	}
+	
+	public Trixition getTrixition(){
+		return trixition;
+	}
 }

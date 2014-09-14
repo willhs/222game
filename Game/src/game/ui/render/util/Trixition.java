@@ -1,4 +1,4 @@
-package game.world.dimensions;
+package game.ui.render.util;
 
 public class Trixition {
 

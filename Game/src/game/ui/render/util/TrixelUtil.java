@@ -1,8 +1,6 @@
-package game.ui.render;
+package game.ui.render.util;
 
 import game.world.dimensions.Point3D;
-import game.world.dimensions.Trixel;
-import game.world.dimensions.Trixition;
 
 /**
  * @author hardwiwill
@@ -28,5 +26,17 @@ public class TrixelUtil {
 		return new Point3D(trixition.x * Trixel.SIZE,
 				trixition.y * Trixel.SIZE,
 				trixition.z * Trixel.SIZE);
+	}
+	
+	/**
+	 * @return 6 faces of a trixel
+	 */
+	public TrixelFace[] getTrixelFaces(Trixel trixel){
+		TrixelFace[] faces = new TrixelFace[6];
+		Point3D trixelCenter = TrixelUtil.trixitionToPosition(trixel.getTrixition());
+		
+		float face1X[] = {trixelCenter.getX()-(Trixel.SIZE/2), trixelCenter.getX()-(Trixel.SIZE/2), trixelCenter.getX()-(Trixel.SIZE/2), trixelCenter.getX()-(Trixel.SIZE/2)};
+		
+		return faces;
 	}
 }

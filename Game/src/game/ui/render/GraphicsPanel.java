@@ -1,5 +1,7 @@
  package game.ui.render;
 
+import game.ui.render.util.Transform;
+import game.ui.render.util.Vector3D;
 import game.world.dimensions.Point3D;
 import game.world.util.Floor;
 

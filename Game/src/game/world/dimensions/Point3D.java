@@ -1,13 +1,14 @@
 package game.world.dimensions;
 
-import game.ui.render.Transform;
 import game.ui.render.Transformable;
+import game.ui.render.util.Transform;
 
 /**
  * @author pondy & will
- *
+ * A representation of a 3d point
  */
 public class Point3D implements Transformable {
+	// ---- PONDY'S COMMENTS:
 	// I made a float version of this class so that vectors could be used in the
 	// transform class and so it could
 	// be faster for the 3d rendering

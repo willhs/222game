@@ -1,7 +1,5 @@
-package game.ui.render;
-/* Code for COMP261 Assignment
- * Author: pondy
- */
+package game.ui.render.util;
+
 
 /** 3x4 array representing an affine transformation
 (= a 4x4 matrix in which the bottom row is always {0 0 0 1} )

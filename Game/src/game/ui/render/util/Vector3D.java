@@ -1,8 +1,10 @@
-package game.ui.render;
+package game.ui.render.util;
+
+import game.ui.render.Transformable;
 
 /**
  * @author pondy & will. pondy wrote most of this class.
- *
+ * Represents a vector with 3d
  */
 public class Vector3D implements Transformable {
 	// I made a float version of this class so that vectors could be used in the
