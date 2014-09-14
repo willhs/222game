@@ -14,16 +14,14 @@ import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
 public class InventoryMenu implements GraphicsPane {
-	private BlankPanel panel;
 	private GameScreen game;
 
-	
 	//the draw able space for the inventory menu
 	private Rectangle frame;
 	private int width = 500;
 	private int startX;
 	private int startY = GameWindow.FRAME_HEIGHT/9;
-	
+
 	//inventory grid 
 	private int gridX;
 	private int gridY;
@@ -31,51 +29,54 @@ public class InventoryMenu implements GraphicsPane {
 	private int gap = 20;
 	private int numbCol = 5;
 	private int numbRow = 3;
-	
+
 	private Color backColor;
-	
-	
+
 	int selectedGrid = -1;
-	
-	
+
+	/**
+	 *The constructor for the InventoryMenu
+	 * */
 	public InventoryMenu(BlankPanel panel, GameScreen game){
 		this.game = game;
 		this.backColor = new Color(0f,0f,0f,0.5f);
+		
+		this.startX = (GameWindow.FRAME_WIDTH/2) - (width/2);//places the frame in the middle of the screen 
+		this.frame = new Rectangle(startX, startY, width, GameWindow.FRAME_HEIGHT - (startY*2));//creates the frame as a rectangle
 
-		this.panel = panel;
-		this.startX = (GameWindow.FRAME_WIDTH/2) - (width/2);
-
-		this.frame = new Rectangle(startX, startY, width, GameWindow.FRAME_HEIGHT - (startY*2));
-
-		this.gridX = startX + 20;
+		this.gridX = startX + 20;//set the start of the grid
 		this.gridY = (int) (startY + frame.height/2);//start the grid half way down the frame
 		this.gridSize = (int) ((frame.getWidth() - (gap*2))/numbCol);//creates a grid that fits within the frame
 	}
-	
+
 
 	/**
 	 * draws the grid on the screen representing the inventory
+	 * changes the grid color if one of the squares is selected
 	 * */
 	public void drawInventoryGrid(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
+		
+		//modify the stroke size to 4
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
-		
+
 		int x = gridX;
 		int y = gridY;
-		
-		int curGrid = 0;
-		
+
+		int curGrid = 0;//the number value of the grid square that is currently being drawn
+
 		for(int i = 0; i < numbRow; i++ ){
 			for(int j = 0; j < numbCol; j++){
 				
+				//if the current grid square is selected change the color
 				if(curGrid == selectedGrid){
 					g.setColor(new Color(0f,0f,0f,0.5f));
-
 				}
 				else{
 					g.setColor(new Color(1f,1f,1f,0.5f));
 				}
+				//draw the current grid square
 				g.fillRect(x, y, gridSize, gridSize);
 				g.setColor(Color.black);
 				g.drawRect(x, y, gridSize, gridSize);
@@ -85,16 +86,21 @@ public class InventoryMenu implements GraphicsPane {
 			x = gridX;//reset x
 			y += gridSize;
 		}
-		
 		g2d.setStroke(oldStroke);
 	}
 	
-	public void drawCharactrInventory(Graphics g){
+	
+	/**
+	 * Draws the character information part of the inventory screen 
+	 * on top of the game screen
+	 * */
+	private void drawCharactrInventory(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 		
+		//set the border size to 4
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
-		
+
 		int width = 200;
 		int x = (GameWindow.FRAME_WIDTH/2) - (width/2);
 		int y = startY+20;
@@ -104,25 +110,35 @@ public class InventoryMenu implements GraphicsPane {
 		g.setColor(new Color(1f,1f,1f,0.5f));
 		g.fillRect(x, y, width, height);
 		
+		//reset the border size
 		g2d.setStroke(oldStroke);
 	}
-	
+
+
+	/**
+	 *Draws the outside of the inventory menu on the game screen  
+	 * */
 	public void drawFrame(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
+
+		//increase the border size to 4 
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
 
+		//draw the inside of the frame
 		g2d.setColor(backColor);
 		g2d.fill(frame);
-		
+
+		//draw the border of the frame
 		g2d.setColor(Color.black);
 		g2d.draw(frame);
-		
+
+		//reset the border size
 		g2d.setStroke(oldStroke);
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Returns the number of the square in the 
 	 * grid of the inventory screen returns -1 if not on the grid
@@ -130,13 +146,13 @@ public class InventoryMenu implements GraphicsPane {
 	public int getGridClicked(int x, int y){
 		int xStart = gridX;
 		int yStart = gridY;
-		
-		int numbGrid = 0;
-		
+
+		int numbGrid = 0;//the number of the grid across then down
+
 		for(int i = 0; i < numbRow; i++ ){
 			for(int j = 0; j < numbCol; j++){
 				Rectangle gridRec = new Rectangle(xStart,yStart,gridSize,gridSize);
-				if(gridRec.contains(x,y)){
+				if(gridRec.contains(x,y)){//checks if the mouse press is inside the current grid square
 					return numbGrid;
 				}
 				xStart += gridSize;
@@ -145,41 +161,40 @@ public class InventoryMenu implements GraphicsPane {
 			xStart = gridX;
 			yStart+=gridSize;
 		}
-		
-		return -1;
+		return -1;//no grid square selected
 	}
+
 
 	@Override
 	public void render(Graphics g) {
-		Graphics2D g2d = (Graphics2D)g;
-
-		drawFrame(g);
-		drawCharactrInventory(g);
+		drawFrame(g);//draws the outside of the inventory 
+		drawCharactrInventory(g);//draws the character part of the inventory
 		g.setColor(Color.black);
-		//draws the grid on the screen 
-		drawInventoryGrid(g);
-		// TODO Auto-generated method stub
-		
+		drawInventoryGrid(g);//draws the grid on the screen 
 	}
+
 
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
+
+		//sets the selected grid square -1 if none selected
 		selectedGrid = getGridClicked(e.getX(), e.getY());
-		
+
+		//TODO check the rest of the menu
 	}
+
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		// TODO send some info to the game 
 	}
+
 
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("escape") || keyEvent.equals("inventory")){
-			game.setMenu(null);
+			game.setMenu(null);//inventory menu no longer to be required to render so set to null in the gameScreen
 		}
-		
 	}
 
 }
