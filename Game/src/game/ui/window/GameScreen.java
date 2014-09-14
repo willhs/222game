@@ -46,7 +46,6 @@ public class GameScreen implements GraphicsPane  {
 		if(currentMenu != null){
 			currentMenu.handleMouseReleased(e);//pass the mouse movement onto the current menu
 		}
-
 	}
 
 	@Override
