@@ -2,6 +2,7 @@ package game.world.model;
 
 import game.world.dimensions.*;
 import game.world.util.Drawable;
+import game.world.util.Floor;
 
 import java.awt.Point;
 import java.awt.Polygon;
@@ -59,6 +60,17 @@ public class Room implements Place{
 	@Override
 	public boolean contains(Point3D point) {
 		return floor.contains(point.getX(), point.getZ());
+	}
+
+	@Override
+	public Floor getFloor() {
+		int[] x = floor.xpoints;
+		int[] z = floor.ypoints;
+		Point3D[] points = new Point3D[x.length];
+		for (int i =0; i < x.length; i++){
+			points[i] = new Point3D(x[i], 0, z[i]);
+		}
+		return new Floor(points);
 	}
 	
 }

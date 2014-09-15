@@ -2,6 +2,7 @@ package game.world.model;
 
 import game.world.dimensions.Point3D;
 import game.world.util.Drawable;
+import game.world.util.Floor;
 
 import java.awt.Point;
 import java.util.*;
@@ -56,6 +57,8 @@ public interface Place {
 	 * @return - true if it is in the place.
 	 */
 	public boolean contains(Point3D point);
+	
+	public Floor getFloor();
 	
 	
 }
