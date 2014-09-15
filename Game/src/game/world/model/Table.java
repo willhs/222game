@@ -33,5 +33,10 @@ public class Table implements Item{
 	public boolean canDrop() {
 		return false;
 	}
+
+	@Override
+	public Rectangle3D getBoundingBox() {
+		return boundingBox;
+	}
 	
 }
