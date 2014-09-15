@@ -55,11 +55,11 @@ public class Rectangle3D {
 
 	private boolean compareValues(float point1, float modeifier1, float point2,
 			float modeifier2) {
-		if (point1 < point2 && point1 + modeifier1 > point2) {
+		if (point1 <= point2 && point1 + modeifier1 >= point2) {
 			return true;
 		}
-		if (point1 < point2 + modeifier2
-				&& point1 + modeifier1 > point2 + modeifier2) {
+		if (point1 <= point2 + modeifier2
+				&& point1 + modeifier1 >= point2 + modeifier2) {
 			return true;
 		}
 		return false;
