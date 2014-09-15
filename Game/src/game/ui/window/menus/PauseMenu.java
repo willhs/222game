@@ -5,11 +5,13 @@ import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 
 public class PauseMenu implements GraphicsPane {
@@ -17,17 +19,17 @@ public class PauseMenu implements GraphicsPane {
 	private Rectangle[] buttons;
 	private String[] buttonNames;
 	private BlankPanel panel;
-	
+
 	//numb of buttons to be created
 	private int numbOfButtons;
-	
+
 	//currently selected button by the mouse
 	private int selectedButton;
-	
-	
+
+
 	/**
-	 * The constructor for the pause menu sets up the pause menu to be rendered 
-	 * on the screen. 
+	 * The constructor for the pause menu sets up the pause menu to be rendered
+	 * on the screen.
 	 * */
 	public PauseMenu(BlankPanel panel, GameScreen game){
 		this.game = game;
@@ -39,7 +41,7 @@ public class PauseMenu implements GraphicsPane {
 
 	}
 
-	
+
 	/**
 	 * Sets up all of the button locations for the pause menu
 	 * */
@@ -49,7 +51,7 @@ public class PauseMenu implements GraphicsPane {
 		int recHeight = 50;
 		int recWidth = 200;
 		int x = (GameWindow.FRAME_WIDTH/2)- (recWidth/2);//centre the buttons
-		
+
 		//create buttons represented by rectangles
 		for(int i = 0; i < buttons.length; i++){
 			buttons[i] = new Rectangle(x,y,recWidth,recHeight);
@@ -62,41 +64,52 @@ public class PauseMenu implements GraphicsPane {
 		buttonNames[2] = "Main Menu";
 		buttonNames[3] = "Quit";
 	}
-	
-	
+
+
 	@Override
 	public void render(Graphics g) {
+		Graphics2D g2d = (Graphics2D)g;
+
 		int borderGap = 20;
 		int x = buttons[0].x - borderGap;
 		int y = buttons[0].y - borderGap;
 
 		int width = (int)( buttons[buttons.length-1].getWidth() + borderGap*2);
 		int height = (int)(buttons[buttons.length-1].getMaxY() - y + borderGap);
-		
+
 		//TODO add this to setup instead to not require above calculations every time render is called
 		//draws the rectangle around the button
-		g.setColor(new Color(0.5f,0.5f,0.5f,0.1f));
+		g.setColor(new Color(0f,0f,0f,0.7f));
 		g.fillRect(x, y, width, height);
+
+
+
+		Stroke oldStroke = g2d.getStroke();
+		g2d.setStroke(new BasicStroke(4));
+
 		g.setColor(Color.black);
 		g.drawRect(x, y, width, height);
 
+		g2d.setStroke(oldStroke);
 		drawButtons(g);
+
+
 	}
-	
-	
+
+
 	/**
 	 * Draws all of the buttons on the screen
 	 * */
 	public void drawButtons(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
-		
+
 		//set the font
 		Font myFont = new Font("arial",0,20);
 		g.setFont(myFont);
 
 		//draw the buttons from the buttons array
 		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.1f ));
+			g2d.setColor(new Color(1f,1f,1f,0.5f ));
 			g2d.fill(buttons[i]);
 			g2d.setColor(Color.black);
 			g2d.draw(buttons[i]);
@@ -123,7 +136,7 @@ public class PauseMenu implements GraphicsPane {
 		selectedButton = Integer.MAX_VALUE;//no button is selected
 	}
 
-	
+
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(selectedButton == 0){//resume game button
@@ -132,15 +145,15 @@ public class PauseMenu implements GraphicsPane {
 		else if(selectedButton == 1){//options button
 			System.out.println("options"); //TODO
 		}
-		else if(selectedButton == 2){//main menu button 
+		else if(selectedButton == 2){//main menu button
 			panel.setMenu(new MainMenu(panel));
 		}
 		else if(selectedButton == 3){//quit button
 			System.exit(0);//exit the game
 		}
 	}
-	
-	
+
+
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("escape")){

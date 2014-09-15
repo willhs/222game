@@ -59,12 +59,9 @@ public class GameWindow extends JFrame{
 	 * Sets up a global key listner
 	 * */
 	public void setUpKeyListner(){
-
 		//get the keyboard manager
 		KeyboardFocusManager manager  = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher( new MyKeyDispatcher());
-
-
 	}
 
 
@@ -72,6 +69,7 @@ public class GameWindow extends JFrame{
 	//Custom dispatcher
 	class MyKeyDispatcher implements KeyEventDispatcher {
 	    public boolean dispatchKeyEvent(KeyEvent e) {
+	    	System.out.println(e.getKeyChar());
 	        if(e.getID() == KeyEvent.KEY_PRESSED){
 	            for(String key : keyMap.keySet() ){
 	            	if(keyMap.get(key) == e.getKeyCode()){
@@ -80,7 +78,6 @@ public class GameWindow extends JFrame{
 	            	}
 	            }
 	        }
-
 	        return false;
 	    }
 	}
@@ -101,9 +98,9 @@ public class GameWindow extends JFrame{
 
 		return tempKeyMap;
 	}
-	
+
 	public static void main(String[] args){
-		//GameWindow gWindow = 
+		//GameWindow gWindow =
 		new GameWindow();
 		//new TestWindow(gWindow);
 	}
