@@ -38,5 +38,10 @@ public class Table implements Item{
 	public Rectangle3D getBoundingBox() {
 		return boundingBox;
 	}
+
+	@Override
+	public String getImageName() {
+		return "Table";
+	}
 	
 }

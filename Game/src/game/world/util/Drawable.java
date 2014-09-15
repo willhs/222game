@@ -10,4 +10,5 @@ public interface Drawable {
 	public String getName();
 	public Point3D getPosition();
 	public Rectangle3D getBoundingBox();
+	public String getImageName();
 }

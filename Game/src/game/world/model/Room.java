@@ -2,7 +2,6 @@ package game.world.model;
 
 import game.world.dimensions.*;
 import game.world.util.Drawable;
-import game.world.util.Floor;
 
 import java.awt.Point;
 import java.awt.Polygon;

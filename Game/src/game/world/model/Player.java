@@ -34,5 +34,10 @@ public class Player implements Character{
 	public Rectangle3D getBoundingBox() {
 		return boundngBox;
 	}
+
+	@Override
+	public String getImageName() {
+		return "Player";
+	}
 	
 }
