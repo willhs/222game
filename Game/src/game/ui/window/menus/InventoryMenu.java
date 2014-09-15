@@ -4,9 +4,14 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
@@ -15,6 +20,7 @@ import game.ui.window.GraphicsPane;
 
 public class InventoryMenu implements GraphicsPane {
 	private GameScreen game;
+	private BlankPanel panel;
 
 	//the draw able space for the inventory menu
 	private Rectangle frame;
@@ -22,7 +28,7 @@ public class InventoryMenu implements GraphicsPane {
 	private int startX;
 	private int startY = GameWindow.FRAME_HEIGHT/9;
 
-	//inventory grid 
+	//inventory grid
 	private int gridX;
 	private int gridY;
 	private int gridSize;
@@ -31,22 +37,27 @@ public class InventoryMenu implements GraphicsPane {
 	private int numbRow = 3;
 
 	private Color backColor;
-
+	private BufferedImage characterImage;
+	private Rectangle characterFrame;
 	int selectedGrid = -1;
 
 	/**
 	 *The constructor for the InventoryMenu
 	 * */
 	public InventoryMenu(BlankPanel panel, GameScreen game){
+		this.panel = panel;
 		this.game = game;
 		this.backColor = new Color(0f,0f,0f,0.5f);
-		
-		this.startX = (GameWindow.FRAME_WIDTH/2) - (width/2);//places the frame in the middle of the screen 
+
+		this.startX = (GameWindow.FRAME_WIDTH/2) - (width/2);//places the frame in the middle of the screen
 		this.frame = new Rectangle(startX, startY, width, GameWindow.FRAME_HEIGHT - (startY*2));//creates the frame as a rectangle
 
 		this.gridX = startX + 20;//set the start of the grid
 		this.gridY = (int) (startY + frame.height/2);//start the grid half way down the frame
 		this.gridSize = (int) ((frame.getWidth() - (gap*2))/numbCol);//creates a grid that fits within the frame
+
+		setCharacterInventory();
+		loadImages();
 	}
 
 
@@ -56,10 +67,10 @@ public class InventoryMenu implements GraphicsPane {
 	 * */
 	public void drawInventoryGrid(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
-		
+
 		//modify the stroke size to 4
 		Stroke oldStroke = g2d.getStroke();
-		g2d.setStroke(new BasicStroke(4));
+		g2d.setStroke(new BasicStroke(2));
 
 		int x = gridX;
 		int y = gridY;
@@ -68,7 +79,7 @@ public class InventoryMenu implements GraphicsPane {
 
 		for(int i = 0; i < numbRow; i++ ){
 			for(int j = 0; j < numbCol; j++){
-				
+
 				//if the current grid square is selected change the color
 				if(curGrid == selectedGrid){
 					g.setColor(new Color(0f,0f,0f,0.5f));
@@ -88,40 +99,36 @@ public class InventoryMenu implements GraphicsPane {
 		}
 		g2d.setStroke(oldStroke);
 	}
-	
-	
+
+
 	/**
-	 * Draws the character information part of the inventory screen 
+	 * Draws the character information part of the inventory screen
 	 * on top of the game screen
 	 * */
 	private void drawCharactrInventory(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
-		
+
 		//set the border size to 4
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
 
-		int width = 200;
-		int x = (GameWindow.FRAME_WIDTH/2) - (width/2);
-		int y = startY+20;
-		int height = gridY - 20 - y;
-		
-		g.drawRect(x, y, width, height);
+		g2d.draw(characterFrame);
 		g.setColor(new Color(1f,1f,1f,0.5f));
-		g.fillRect(x, y, width, height);
-		
+		g2d.fill(characterFrame);
+
+
 		//reset the border size
 		g2d.setStroke(oldStroke);
 	}
 
 
 	/**
-	 *Draws the outside of the inventory menu on the game screen  
+	 *Draws the outside of the inventory menu on the game screen
 	 * */
 	public void drawFrame(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
-		//increase the border size to 4 
+		//increase the border size to 4
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
 
@@ -137,10 +144,18 @@ public class InventoryMenu implements GraphicsPane {
 		g2d.setStroke(oldStroke);
 	}
 
+	public void setCharacterInventory(){
+		int width = 200;
+		int x = (GameWindow.FRAME_WIDTH/2) - (width/2);
+		int y = startY+20;
+		int height = gridY - 20 - y;
+
+		characterFrame = new Rectangle(x, y, width, height);
+	}
 
 
 	/**
-	 * Returns the number of the square in the 
+	 * Returns the number of the square in the
 	 * grid of the inventory screen returns -1 if not on the grid
 	 * */
 	public int getGridClicked(int x, int y){
@@ -167,10 +182,12 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void render(Graphics g) {
-		drawFrame(g);//draws the outside of the inventory 
+		drawFrame(g);//draws the outside of the inventory
 		drawCharactrInventory(g);//draws the character part of the inventory
+		g.drawImage(characterImage, (int)characterFrame.getX(),(int)characterFrame.getY(),panel);
+
 		g.setColor(Color.black);
-		drawInventoryGrid(g);//draws the grid on the screen 
+		drawInventoryGrid(g);//draws the grid on the screen
 	}
 
 
@@ -186,7 +203,7 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
-		// TODO send some info to the game 
+		// TODO send some info to the game
 	}
 
 
@@ -197,4 +214,24 @@ public class InventoryMenu implements GraphicsPane {
 		}
 	}
 
+	public void loadImages(){
+		java.net.URL imagefile = InventoryMenu.class.getResource("resources/characterAlph.jpg");
+
+
+		//load background image
+		try {
+			this.characterImage = ImageIO.read(imagefile);
+			Image tempImage =  characterImage.getScaledInstance((int)characterFrame.getWidth(),(int)characterFrame.getHeight(), BufferedImage.SCALE_DEFAULT);//TODO change to the selected image by the user
+			characterImage = new BufferedImage(tempImage.getWidth(null), tempImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+			//writes the temp image onto the bufferedimage
+		    Graphics2D bGr = characterImage.createGraphics();
+		    bGr.drawImage(tempImage, 0, 0, null);
+		    bGr.dispose();
+
+		} catch (IOException e) {
+			System.out.println("failed reading image");
+			e.printStackTrace();
+		}
+	}
 }

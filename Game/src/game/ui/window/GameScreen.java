@@ -16,10 +16,10 @@ public class GameScreen implements GraphicsPane  {
 	//the menu drawn ontop on the game screen
 	private GraphicsPane currentMenu;
 	private BlankPanel panel;
-	
+
 	private BufferedImage testBackGroundImage;
-	
-	
+
+
 	public GameScreen(BlankPanel panel){
 		this.panel = panel;
 		loadImages();
@@ -70,18 +70,17 @@ public class GameScreen implements GraphicsPane  {
 
 
 	/**
-	 *loads all of the images required for the game screen 
+	 *loads all of the images required for the game screen
 	 *scaled the images to the size of the screen
 	 * */
 	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("resources/test-game.jpg");
+		java.net.URL imagefile = MainMenu.class.getResource("resources/test-Game.jpg");
 
-
+		//TODO accualy do scaling this current does nothing it needs to be assigned
 		//load background image
 		try {
 			this.testBackGroundImage = ImageIO.read(imagefile);
 			testBackGroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
-			System.out.println(testBackGroundImage.getWidth());
 		} catch (IOException e) {
 			System.out.println("failed reading imagge");
 			e.printStackTrace();
