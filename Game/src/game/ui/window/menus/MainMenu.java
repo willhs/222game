@@ -28,10 +28,11 @@ import javax.imageio.ImageIO;
 public class MainMenu implements GraphicsPane{
 	private final int numbOfButtons = 5;
 	private BlankPanel panel;
+	private GameWindow window;
 
 	private int selectedButton;
 	private BufferedImage backgroundImage;
-	private BufferedImage updatedImage;
+
 
 	Rectangle[] buttons;
 	String[] buttonNames;

@@ -2,10 +2,12 @@ package game.ui.window;
 
 import game.ui.render.GraphicsPanel;
 
+import java.awt.AWTKeyStroke;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
+import java.security.acl.LastOwnerException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +30,7 @@ public class GameWindow extends JFrame{
 	public static final int FRAME_HEIGHT = WINDOW_SIZE*9;
 	public static final int FRAME_WIDTH = WINDOW_SIZE*16;
 
-	Map<String , Integer> keyMap;
+	public static HashMap<String , Integer> keyMap;
 
 	/**
 	 * Constructor for the GameFrame
@@ -64,23 +66,28 @@ public class GameWindow extends JFrame{
 		manager.addKeyEventDispatcher( new MyKeyDispatcher());
 	}
 
-
+	private static KeyEvent lastKeyEvent;
+	public static KeyEvent getLastKeyEvent(){return lastKeyEvent;}
 
 	//Custom dispatcher
 	class MyKeyDispatcher implements KeyEventDispatcher {
 	    public boolean dispatchKeyEvent(KeyEvent e) {
 	    	System.out.println(e.getKeyChar());
+	    	lastKeyEvent = e;
 	        if(e.getID() == KeyEvent.KEY_PRESSED){
 	            for(String key : keyMap.keySet() ){
 	            	if(keyMap.get(key) == e.getKeyCode()){
 	            		System.out.println(key);
 	            		blankPanel.keyPressed(key);
+	            		return false;
 	            	}
 	            }
+        		blankPanel.keyPressed("Not in Map");
 	        }
 	        return false;
 	    }
 	}
+
 
 	/**
 	 * Sets up the key values corrosponding to the actions
@@ -99,10 +106,13 @@ public class GameWindow extends JFrame{
 		return tempKeyMap;
 	}
 
+	public static HashMap<String,Integer> getKeyMap(){
+		return keyMap;
+	}
+
 	public static void main(String[] args){
 		//GameWindow gWindow =
 		new GameWindow();
 		//new TestWindow(gWindow);
 	}
-
 }
