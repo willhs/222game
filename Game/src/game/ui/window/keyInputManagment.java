@@ -11,20 +11,26 @@ public class keyInputManagment  implements KeyEventDispatcher{
 
 	private static KeyEvent lastKeyEvent;
 
-	public keyInputManagment(BlankPanel panel){
-		super();
+	private int escapeKey;
 
+	public keyInputManagment(BlankPanel panel){
 		this.panel = panel;
 
 		//assign keys to the map
 		keyMap = setUpkeys();
+		this.escapeKey = KeyEvent.VK_ESCAPE;//set the escape key here so the user cannot change it
 	}
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
-		System.out.println(e.getKeyChar());
+
+		//set the last key event used by rebinding menu
 		lastKeyEvent = e;
+
+		//if a key is pressed
 		if(e.getID() == KeyEvent.KEY_PRESSED){
+			if(e.getKeyCode() == escapeKey)panel.keyPressed("escape");
+
 			for(String key : keyMap.keySet() ){
 				if(keyMap.get(key) == e.getKeyCode()){
 					System.out.println(key);
@@ -44,7 +50,8 @@ public class keyInputManagment  implements KeyEventDispatcher{
 	private HashMap<String,Integer> setUpkeys(){
 		HashMap<String, Integer> tempKeyMap = new HashMap<String, Integer>();
 
-		tempKeyMap.put("escape", KeyEvent.VK_ESCAPE);//esc
+
+		//place the keys into the map
 		tempKeyMap.put("move up", KeyEvent.VK_W);//w
 		tempKeyMap.put("move down", KeyEvent.VK_S);//s
 		tempKeyMap.put("move right", KeyEvent.VK_D);//d
@@ -55,6 +62,10 @@ public class keyInputManagment  implements KeyEventDispatcher{
 		return tempKeyMap;
 	}
 
+
+	/**
+	 * Returns the keyMap
+	 * */
 	public static HashMap<String,Integer> getKeyMap(){
 		return keyMap;
 	}
