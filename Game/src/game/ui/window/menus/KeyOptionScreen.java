@@ -38,6 +38,7 @@ public class KeyOptionScreen implements GraphicsPane {
 	private boolean selectedRow;//if the user has clicked on a valid row
 	private String keySelected;
 
+	private String errorMessege;
 
 	public KeyOptionScreen(BlankPanel panel){
 		keyMap = keyInputManagment.getKeyMap();//set  the key map
@@ -46,6 +47,7 @@ public class KeyOptionScreen implements GraphicsPane {
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		this.panel = panel;
+		this.errorMessege = "";
 
 	}
 
@@ -72,7 +74,7 @@ public class KeyOptionScreen implements GraphicsPane {
 
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
-		//sets the currently sellectd row by the mouse
+		//sets the currently select row by the mouse
 		if(!selectedRow){
 			mouseOnRow = getSelectedRow(e.getX(), e.getY());
 		}
@@ -90,18 +92,29 @@ public class KeyOptionScreen implements GraphicsPane {
 
 	@Override
 	public void keyPressed(String keyEvent) {
+
+		//check if escape is pressed
 		if(keyEvent.equals("escape")){
 			if(selectedRow){
-				selectedRow = false;
+				selectedRow = false;//a row is selected currently so unselect it
 			}
 			else{
-				panel.setMenu(new OptionMenu(panel));
+				panel.setMenu(new OptionMenu(panel));//no row is selected but escape is pressed so return to option menu
 			}
 		}
 
+		//a row is selected
 		if(selectedRow){
-			System.out.println("Selected Row");
 			KeyEvent e = keyInputManagment.getLastKeyEvent();//need to real key event
+
+			//check is key already bound
+			for(int keyValue : keyMap.values()){
+				if(e.getKeyCode() == keyValue){
+					this.errorMessege = "The Key is Already Bound to another action!";
+					return;
+				}
+			}
+			this.errorMessege = "";//no error
 			keyMap.put(keySelected, e.getKeyCode());
 			selectedRow = false;
 		}
@@ -118,6 +131,9 @@ public class KeyOptionScreen implements GraphicsPane {
 		int row = 0;
 
 		//draw the outer frame of the table
+		g.setColor(Color.red);
+		g.drawString(errorMessege, x, y-10);
+
 		for(String key : keyMap.keySet()){
 
 			if(row == mouseOnRow){
