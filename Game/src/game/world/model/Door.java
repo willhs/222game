@@ -5,6 +5,12 @@ import game.world.dimensions.Rectangle3D;
 
 import java.util.List;
 
+/**
+ * Door.
+ * Is a way to exit a place should always have two exits.
+ * @author Shane Brewer
+ *
+ */
 public class Door extends Exit{
 	
 	private final String name;
