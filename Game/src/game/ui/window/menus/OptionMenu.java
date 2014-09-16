@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Menu;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -27,9 +28,12 @@ public class OptionMenu implements GraphicsPane {
 	private int selectedButton;
 	private BufferedImage backgroundImage;
 
+	private GraphicsPane currentMenu;
+
+
 	public OptionMenu(BlankPanel panel){
 		this.panel = panel;
-		this.numbOfButtons = 1;
+		this.numbOfButtons = 2;
 		this.selectedButton = Integer.MAX_VALUE;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
@@ -41,14 +45,29 @@ public class OptionMenu implements GraphicsPane {
 	 * Sets up the buttons for the option menu
 	 * */
 	private void setupButtons(){
-		buttons[0] = new Rectangle(50,50,200,50);
+		int buttonGap = 20;
+		int x = 50;
+		int y = 50;
+		int width = 200;
+		int height = 50;
+
+		buttons[0] = new Rectangle(x,y,width,height);
+		y += height + buttonGap;
+		buttons[1] = new Rectangle(x,y,width,height);
+
 		buttonNames[0] = "Back";
+		buttonNames[1] = "Key Bindings";
 	}
 
 
 	@Override
 	public void render(Graphics g){
 		g.drawImage(backgroundImage, 0, 0,panel);
+		if(currentMenu != null){
+			currentMenu.render(g);
+			return;
+		}
+
 		drawButtons(g);
 		g.drawString("OPTIONS", GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2);
 
@@ -81,6 +100,10 @@ public class OptionMenu implements GraphicsPane {
 
 	@Override
 	public void handleMouseMoved(MouseEvent e){
+		if(currentMenu != null){
+			currentMenu.handleMouseMoved(e);
+			return;
+		}
 
 		//set selected button
 		for(int i = 0; i < buttons.length; i++){
@@ -94,16 +117,31 @@ public class OptionMenu implements GraphicsPane {
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
+		if(currentMenu != null){
+			currentMenu.handleMouseReleased(e);
+			return;
+		}
+
 		if(selectedButton == 0){
 			panel.setMenu(new MainMenu(panel));
+		}
+		else if(selectedButton == 1){
+			System.out.println("Key Bindings");
+			currentMenu = new KeyOptionScreen(panel);
 		}
 	}
 
 	@Override
 	public void keyPressed(String keyEvent) {
+		if(currentMenu != null){
+			currentMenu.keyPressed(keyEvent);
+			return;
+		}
+
 		if(keyEvent.equals("escape")){
 			panel.setMenu(new MainMenu(panel));
 		}
+
 	}
 
 	public void loadImages(){
