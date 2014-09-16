@@ -10,8 +10,8 @@ import game.world.model.Place;
 import game.world.util.Drawable;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -23,12 +23,12 @@ import java.util.Queue;
 public class Renderer {
 
 	/**
+	 * Draws a place using Graphics parameter
 	 * @param g
 	 * @param place
-	 * Draws a place using Graphics parameter
 	 */
 	public static void renderPlace(Graphics g, Place place){
-		// all objects to be drawn (either trixels or 2d images).
+		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<ZComparable> placeObjects = new PriorityQueue<ZComparable>(50, new ZComparator());
 
 		// convert floor into trixels
@@ -38,19 +38,38 @@ public class Renderer {
 		Iterator<Drawable> drawables = place.getDrawable();
 
 		for (Drawable drawable = drawables.next(); drawables.hasNext(); drawable = drawables.next()){
-			String imageName = drawable.getImageName();
-			Point3D z = drawable.getPosition();
 			if (isImage(drawable)){
-				GameImage image = new GameImage(Res.getImageFromName(imageName), z);
-				placeObjects.offer(image);
+				//Dimension dimension = new Dimension(drawable.getBoundingBox().; // TODO
+				//GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
+				//placeObjects.offer(image);
 			}
+		}
+		
+		// draw all objects in correct order
+		while (!placeObjects.isEmpty()){
+			ZComparable gameObject = placeObjects.poll();
+			if (gameObject instanceof GameImage){
+				GameImage image = (GameImage) gameObject;
+				Point3D position = image.getPoint();
+				Dimension dimension = image.getDimension();
+				g.drawImage(image.getImage(), (int)position.getX(), (int)position.getY(), dimension.width, dimension.height, null);
+			}
+				
 		}
 	}
 
+	/**
+	 * @param drawable
+	 * @return whether a Drawable object should be represented as an image.
+	 */
 	private static boolean isImage(Drawable drawable) {
 		return Res.isImage(drawable.getImageName());
 	}
 
+	/**
+	 * @param trixels
+	 * @return a list of trixel faces visible to current viewing direction
+	 */
 	private List<TrixelFace> getVisibleTrixelFaces(List<Trixel> trixels){
 		List<TrixelFace> faces = new ArrayList<TrixelFace>();
 		for (Trixel trixel : trixels){
@@ -60,9 +79,10 @@ public class Renderer {
 	}
 
 	/**
+	 * makes a list of trixels to represent a 2d polygon
+	 * PRE: polygon vertices must all have same z values (like a with a floor).
 	 * @param poly
 	 * @return list of trixels which make up the polygon
-	 * PRE: polygon must have equal z values (like a floor).
 	 */
 	private List<Trixel> polygon2DToTrixels(Polygon poly, float z){
 		List<Trixel> trixels = new ArrayList<Trixel>();
@@ -70,13 +90,16 @@ public class Renderer {
 		for (int x = polyBounds.x; x < polyBounds.x + polyBounds.width; x += Trixel.SIZE){
 			for (int y = polyBounds.y; poly.contains(x,y); y += Trixel.SIZE){
 				Trixition trixition = TrixelUtil.positionToTrixition(new Point3D(x, y, z));
-				trixels.add(new Trixel(trixition, getRandomColor()));
+				trixels.add(new Trixel(trixition, getRandomColour()));
 			}
 		}
 		return trixels;
 	}
 
-	public static Color getRandomColor(){
+	/**
+	 * @return random colour
+	 */
+	public static Color getRandomColour(){
 		int r = (int)(Math.random()*255);
 		int g = (int)(Math.random()*255);
 		int b = (int)(Math.random()*255);

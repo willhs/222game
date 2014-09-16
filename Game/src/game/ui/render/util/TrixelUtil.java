@@ -30,6 +30,7 @@ public class TrixelUtil {
 	
 	/**
 	 * @return 6 faces of a trixel
+	 * POST: 6 TrixelFaces
 	 */
 	public TrixelFace[] getTrixelFaces(Trixel trixel){
 		TrixelFace[] faces = new TrixelFace[6];
