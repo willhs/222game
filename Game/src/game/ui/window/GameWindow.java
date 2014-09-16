@@ -43,7 +43,6 @@ public class GameWindow extends JFrame{
 
 		//set up the globalKey listener
 		setUpKeyListner();
-		keyMap = setUpkeys();
 
 		//set the size of the frame
 		setResizable(false);
@@ -51,68 +50,27 @@ public class GameWindow extends JFrame{
 		setLocationRelativeTo(null);
 		setVisible(true);
 
+		//adds the main panel where everythin will be drawn on
 		add(blankPanel);
 
-
+		//repaint the main panel
 		blankPanel.repaint();
 	}
 
+
 	/**
-	 * Sets up a global key listner
+	 * Sets up a global key listener
 	 * */
 	public void setUpKeyListner(){
 		//get the keyboard manager
 		KeyboardFocusManager manager  = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher( new MyKeyDispatcher());
+
+		//add my own custom event dispatcher
+		manager.addKeyEventDispatcher( new keyInputManagment(blankPanel));
 	}
 
-	private static KeyEvent lastKeyEvent;
-	public static KeyEvent getLastKeyEvent(){return lastKeyEvent;}
-
-	//Custom dispatcher
-	class MyKeyDispatcher implements KeyEventDispatcher {
-	    public boolean dispatchKeyEvent(KeyEvent e) {
-	    	System.out.println(e.getKeyChar());
-	    	lastKeyEvent = e;
-	        if(e.getID() == KeyEvent.KEY_PRESSED){
-	            for(String key : keyMap.keySet() ){
-	            	if(keyMap.get(key) == e.getKeyCode()){
-	            		System.out.println(key);
-	            		blankPanel.keyPressed(key);
-	            		return false;
-	            	}
-	            }
-        		blankPanel.keyPressed("Not in Map");
-	        }
-	        return false;
-	    }
-	}
-
-
-	/**
-	 * Sets up the key values corrosponding to the actions
-	 * */
-	private HashMap<String,Integer> setUpkeys(){
-		HashMap<String, Integer> tempKeyMap = new HashMap<String, Integer>();
-
-		tempKeyMap.put("escape", KeyEvent.VK_ESCAPE);//esc
-		tempKeyMap.put("move up", KeyEvent.VK_W);//w
-		tempKeyMap.put("move down", KeyEvent.VK_S);//s
-		tempKeyMap.put("move right", KeyEvent.VK_D);//d
-		tempKeyMap.put("move left", KeyEvent.VK_A);//a
-		tempKeyMap.put("inventory", KeyEvent.VK_I);//i
-		tempKeyMap.put("interact", KeyEvent.VK_F);//f
-
-		return tempKeyMap;
-	}
-
-	public static HashMap<String,Integer> getKeyMap(){
-		return keyMap;
-	}
 
 	public static void main(String[] args){
-		//GameWindow gWindow =
 		new GameWindow();
-		//new TestWindow(gWindow);
 	}
 }

@@ -139,7 +139,7 @@ public class HelpMenu implements GraphicsPane {
 
 	@Override
 	public void keyPressed(String keyEvent) {
-		if(keyEvent.equals("escape")){
+		if(keyEvent.equals("escape") || keyEvent.equals("backspace")  ){
 			panel.setMenu(new MainMenu(panel));
 		}
 	}
@@ -166,7 +166,7 @@ public class HelpMenu implements GraphicsPane {
 		this.helpText = "";
 		Canvas canvas = new Canvas();
 
-		InputStreamReader helpTextFile = new InputStreamReader(HelpMenu.class.getResourceAsStream("resources/HelpText.txt"));
+		InputStreamReader helpTextFile = new InputStreamReader(HelpMenu.class.getResourceAsStream("resources/helpText.txt"));
 		BufferedReader textReader = new BufferedReader(helpTextFile);
 
 		int curLineWidth = 0;

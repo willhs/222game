@@ -34,15 +34,15 @@ public class MainMenu implements GraphicsPane{
 	private BufferedImage backgroundImage;
 
 
-	Rectangle[] buttons;
-	String[] buttonNames;
+	private Rectangle[] buttons;
+	 private String[] buttonNames;
 
 
 	public MainMenu(BlankPanel panel){
 		this.panel = panel;
-		this.buttons = new Rectangle[numbOfButtons];
+		buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
-		this.selectedButton = Integer.MAX_VALUE;
+		this.selectedButton = -1;
 		loadImages();
 		setUpButtons();
 	}
@@ -118,31 +118,61 @@ public class MainMenu implements GraphicsPane{
 				selectedButton = i;//set selected button
 				return;
 			}
-			selectedButton = Integer.MAX_VALUE;//no button is selected
+			selectedButton = -1;//no button is selected
 		}
 	}
 
 	@Override
 	public void handleMouseReleased(MouseEvent e){
+		buttonPressed();
 
-		switch(selectedButton){
-			case 0: panel.setMenu(new GameScreen(panel));
-				return;
-			case 1: System.out.println("Multiplayer");
-				return;
-			case 2 : panel.setMenu(new OptionMenu(panel));
-				return;
-			case 3 : panel.setMenu(new HelpMenu(panel));
-				return;
-			case 4 : System.exit(0);
-				return;
-		}
 	}
 
 
 	@Override
 	public void keyPressed(String keyEvent) {
+		if(keyEvent.equals("enter")){
+			buttonPressed();
+		}
+		else if(keyEvent.equals("down") || keyEvent.equals("move down")){
+			moveSelectionDown();
+		}
+		else if(keyEvent.equals("up") || keyEvent.equals("move up")){
+			moveSelectionUp();
+		}
+	}
 
+	public void moveSelectionDown(){
+		if(selectedButton == -1 || selectedButton == 0 ){
+			selectedButton = buttons.length-1;
+		}
+		else{
+			selectedButton--;
+		}
+	}
+
+	public void moveSelectionUp(){
+		if(selectedButton == -1 || selectedButton == buttons.length-1 ){
+			selectedButton = 0;
+		}
+		else{
+			selectedButton++;
+		}
+	}
+
+	private void buttonPressed(){
+		switch(selectedButton){
+		case 0: panel.setMenu(new GameScreen(panel));
+			return;
+		case 1: System.out.println("Multiplayer");
+			return;
+		case 2 : panel.setMenu(new OptionMenu(panel));
+			return;
+		case 3 : panel.setMenu(new HelpMenu(panel));
+			return;
+		case 4 : System.exit(0);
+			return;
+	}
 	}
 
 	public void loadImages(){
