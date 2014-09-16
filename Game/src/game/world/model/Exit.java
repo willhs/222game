@@ -25,4 +25,9 @@ public abstract class Exit implements Drawable{
 		contectedPlaces = places;
 	}
 	
+	
+	public abstract String getName();
+	
+	public abstract String getImageName();
+	
 }

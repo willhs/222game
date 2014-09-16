@@ -8,7 +8,7 @@ import java.util.List;
  * @author Shane Brewer
  *
  */
-public interface Container {
+public interface Container extends Item{
 	
 	/**
 	 * Gets the list of items that are in the container.
