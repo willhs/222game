@@ -5,6 +5,11 @@ import java.util.Iterator;
 import game.world.dimensions.*;
 import game.world.model.*;
 
+/**
+ * Handles all player movement at the moment.
+ * @author Shane Brewer
+ *
+ */
 public class MovementHandler {
 
 	/**
@@ -76,6 +81,12 @@ public class MovementHandler {
 		return false;
 	}
 
+	/**
+	 * Checks if the player is going to collied with another player.
+	 * @param player - player that is moving.
+	 * @param players - players in the place.
+	 * @return - true if the player collides
+	 */
 	private static boolean checkPlayerCollision(Player player, Iterator<Player> players){
 		Rectangle3D playerBox = player.getBoundingBox();
 		Point3D playerPoint = player.getPosition();
