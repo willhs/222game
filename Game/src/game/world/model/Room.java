@@ -9,20 +9,19 @@ import java.awt.Polygon;
 import java.util.*;
 
 /**
- * Room Class
- * This class defines every thing to do with a room.
+ * Room Class This class defines every thing to do with a room.
+ *
  * @author Shane Brewer
  *
  */
-public class Room implements Place{
+public class Room implements Place {
 
 	private final List<Exit> exits;
 	private final List<Player> players;
 	private final List<Item> items;
 	private final Polygon floor;
 
-
-	public Room (List<Exit> exits, List<Item> items, Polygon floor){
+	public Room(List<Exit> exits, List<Item> items, Polygon floor) {
 		this.exits = exits;
 		this.players = new ArrayList<Player>();
 		this.items = items;
@@ -43,7 +42,7 @@ public class Room implements Place{
 	public Iterator<Player> getPlayers() {
 		return players.iterator();
 	}
-	
+
 	@Override
 	public Iterator<Drawable> getDrawable() {
 		List<Drawable> drawables = new ArrayList<Drawable>(exits);
@@ -67,10 +66,25 @@ public class Room implements Place{
 		int[] x = floor.xpoints;
 		int[] z = floor.ypoints;
 		Point3D[] points = new Point3D[x.length];
-		for (int i =0; i < x.length; i++){
+		for (int i = 0; i < x.length; i++) {
 			points[i] = new Point3D(x[i], 0, z[i]);
 		}
 		return new Floor(points);
 	}
-	
+
+	@Override
+	public boolean contains(Point3D point, Rectangle3D rectangle3d) {
+		Rectangle3D newRec = rectangle3d.apply3Dpoint(point);
+		if (contains(new Point3D(newRec.getX(), newRec.getY(), newRec.getZ()))
+				&& contains(new Point3D(newRec.getX() + newRec.getWidth(),
+						newRec.getY(), newRec.getZ()))
+				&& contains(new Point3D(newRec.getX() + newRec.getWidth(),
+						newRec.getY(), newRec.getZ() + newRec.getLength()))
+				&& contains(new Point3D(newRec.getX(), newRec.getY(),
+						newRec.getZ() + newRec.getLength()))) {
+			return true;
+		}
+		return false;
+	}
+
 }
