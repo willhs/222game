@@ -139,7 +139,7 @@ public class HelpMenu implements GraphicsPane {
 
 	@Override
 	public void keyPressed(String keyEvent) {
-		if(keyEvent.equals("escape")){
+		if(keyEvent.equals("escape") || keyEvent.equals("backspace")  ){
 			panel.setMenu(new MainMenu(panel));
 		}
 	}

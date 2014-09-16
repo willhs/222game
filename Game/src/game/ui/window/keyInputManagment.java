@@ -29,11 +29,30 @@ public class keyInputManagment  implements KeyEventDispatcher{
 
 		//if a key is pressed
 		if(e.getID() == KeyEvent.KEY_PRESSED){
-			if(e.getKeyCode() == escapeKey)panel.keyPressed("escape");
+			if(e.getKeyCode() == escapeKey){
+				panel.keyPressed("escape");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_UP){
+				panel.keyPressed("up");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_DOWN){
+				panel.keyPressed("down");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_ENTER){
+				panel.keyPressed("enter");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+				panel.keyPressed("backspace");
+				return false;
+			}
+
 
 			for(String key : keyMap.keySet() ){
 				if(keyMap.get(key) == e.getKeyCode()){
-					System.out.println(key);
 					panel.keyPressed(key);
 					return false;
 				}
