@@ -1,12 +1,10 @@
 package game.ui.window.menus;
 
-import java.awt.AWTKeyStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -14,6 +12,7 @@ import java.util.HashMap;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.keyInputManagment;
 /**
  * @author Nicky van Hulst
  * */
@@ -41,7 +40,7 @@ public class KeyOptionScreen implements GraphicsPane {
 
 
 	public KeyOptionScreen(BlankPanel panel){
-		keyMap = GameWindow.getKeyMap();//set  the key map
+		keyMap = keyInputManagment.getKeyMap();//set  the key map
 		this.numbOfButtons = 1;
 		this.selectedButton = Integer.MAX_VALUE;
 		this.buttons = new Rectangle[numbOfButtons];
@@ -102,7 +101,7 @@ public class KeyOptionScreen implements GraphicsPane {
 
 		if(selectedRow){
 			System.out.println("Selected Row");
-			KeyEvent e = GameWindow.getLastKeyEvent();//need to real key event
+			KeyEvent e = keyInputManagment.getLastKeyEvent();//need to real key event
 			keyMap.put(keySelected, e.getKeyCode());
 			selectedRow = false;
 		}
