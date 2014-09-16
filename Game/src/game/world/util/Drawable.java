@@ -1,5 +1,5 @@
-package game.world.util;
 
+package game.world.util;
 import game.world.dimensions.*;
 
 /**

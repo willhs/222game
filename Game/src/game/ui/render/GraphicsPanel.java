@@ -73,6 +73,8 @@ public class GraphicsPanel extends JPanel{
 		// define floor (for testing)
 		Point3D[] floorPoints = new Point3D[]{ new Point3D(0,0,0), new Point3D(500, 0, 0), new Point3D(500, 300, 0), new Point3D(0, 300, 0)};
 		floor = new Floor(floorPoints);
+		
+		System.out.println(isDoubleBuffered());
 	}
 
 

@@ -1,11 +1,13 @@
-package game.ui.render;
+package game.ui.render.util;
+
+import game.ui.render.ZComparable;
 
 import java.awt.Polygon;
 
 /**
  * @author hardwiwill
  * Wrapper class for a java.awt.Polygon so that i can assign z position (to determine order of drawing).
- * TODO
+ * 
  */
 public class GamePolygon extends Polygon implements ZComparable{
 
