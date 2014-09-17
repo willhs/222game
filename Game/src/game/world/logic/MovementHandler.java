@@ -40,6 +40,7 @@ public class MovementHandler {
 		if (checkPlayerCollision(player, place.getPlayers())){
 			return false;
 		}
+		player.move(to);
 		return true;
 	}
 
@@ -101,5 +102,5 @@ public class MovementHandler {
 		return false;
 	}
 
-
+	
 }
