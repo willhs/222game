@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class World {
 	
+	private Place startPlace;
 	// both of these once set should not change.
 	private final List<Player> players;
 	private final List<Place> places;
@@ -23,14 +24,25 @@ public class World {
 		places = new ArrayList<Place>();
 	}
 	
-	public World(List<Player> players){
-		this.players = players;
-		places = new ArrayList<Place>();
+	/**
+	 * Places list must not be empty.
+	 * @param places
+	 */
+	public World(List<Place> places){
+		this.players = new ArrayList<Player>();
+		this.places = places;
+		startPlace = places.get(0);
 	}
 	
+	/**
+	 * Makes the game world.
+	 * @param players - players list must not be empty.
+	 * @param places - places must not be empty.
+	 */
 	public World(List<Player> players, List<Place> places){
 		this.players = players;
 		this.places = places;
+		startPlace = places.get(0);
 	}
 	
 	//======================End========================//
@@ -71,5 +83,10 @@ public class World {
 	 */
 	public Iterator<Player> getPlayerOfPlace(Place place){
 		return place.getPlayers();
+	}
+	
+	public void addPlayerToGameWorld(Player player){
+		players.add(player);
+		startPlace.setStartPoint(player);
 	}
 }

@@ -1,6 +1,7 @@
 package game.world.model;
 
 import game.world.dimensions.*;
+import game.world.logic.MovementHandler;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
@@ -83,6 +84,18 @@ public class Room implements Place {
 				&& contains(new Point3D(newRec.getX(), newRec.getY(),
 						newRec.getZ() + newRec.getLength()))) {
 			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean setStartPoint(Player player) {
+		for (int x = 0; x < floor.getBounds().x; x++){
+			for (int z = 0; z < floor.getBounds().y; z++){
+				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), this)){
+					return true;
+				}
+			}
 		}
 		return false;
 	}

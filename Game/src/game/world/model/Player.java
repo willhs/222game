@@ -7,7 +7,7 @@ public class Player implements Character{
 	
 	public final String name;
 	private final Inventory inventory;
-	private final Point3D position;
+	private Point3D position;
 	private final Rectangle3D boundngBox;
 	
 	public Player(String name, Inventory inventory, Point3D position, Rectangle3D size){
@@ -38,6 +38,10 @@ public class Player implements Character{
 	@Override
 	public String getImageName() {
 		return "Player";
+	}
+	
+	public void move(Point3D newPosition){
+		position = newPosition;
 	}
 	
 }
