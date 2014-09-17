@@ -1,7 +1,5 @@
 package game.ui.render.util;
 
-import game.world.dimensions.Point3D;
-
 import java.awt.Color;
 
 /**
@@ -11,7 +9,7 @@ import java.awt.Color;
 public class Trixel {
 
 	/**
-	 * trixel width, height and depth
+	 * value for trixel width, height and depth
 	 */
 	public static final int SIZE = 10;
 	/**
@@ -27,11 +25,11 @@ public class Trixel {
 		this.trixition = trisition;
 		this.colour = c;
 	}
-	
+
 	public Color getColor(){
 		return colour;
 	}
-	
+
 	public Trixition getTrixition(){
 		return trixition;
 	}

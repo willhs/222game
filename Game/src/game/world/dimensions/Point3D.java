@@ -1,7 +1,8 @@
 package game.world.dimensions;
 
-import game.ui.render.Transformable;
 import game.ui.render.util.Transform;
+import game.ui.render.util.Transformable;
+import game.ui.render.util.Vector3D;
 
 /**
  * @author pondy & will
@@ -29,8 +30,8 @@ public class Point3D implements Transformable {
 
 
 	/** Returns the distance to another point. */
-	public Point3D distanceTo(Point3D other) {
-		return new Point3D(getX() - other.getX(), getY() - other.getY(), getZ()
+	public Vector3D distanceTo(Point3D other) {
+		return new Vector3D(getX() - other.getX(), getY() - other.getY(), getZ()
 				- other.getZ());
 	}
 
@@ -41,7 +42,7 @@ public class Point3D implements Transformable {
 		return ans.toString();
 	}
 
-	
+
 	@Override
 	public void transform(Transform transform) {
 		float[][] values = transform.getValues();
@@ -54,7 +55,7 @@ public class Point3D implements Transformable {
 		newX += values[0][0] * this.x + values[0][1] * this.y + values[0][2] * this.z;
 		newY += values[1][0] * this.x + values[1][1] * this.y + values[1][2] * this.z;
 		newZ += values[2][0] * this.x + values[2][1] * this.y + values[2][2] * this.z;
-		
+
 		x = newX;
 		y = newY;
 		z = newZ;
@@ -71,7 +72,7 @@ public class Point3D implements Transformable {
 	public float getZ() {
 		return z;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

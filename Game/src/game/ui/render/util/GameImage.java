@@ -1,6 +1,5 @@
 package game.ui.render.util;
 
-import game.ui.render.ZComparable;
 import game.world.dimensions.Point3D;
 
 import java.awt.Dimension;

@@ -1,6 +1,6 @@
 package game.ui.window;
 
-import game.ui.render.GraphicsPanel;
+import game.ui.render.temp.RotationTest;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Dimension;
@@ -21,7 +21,7 @@ public class GameWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	private BlankPanel blankPanel;
-	private GraphicsPanel graphicsPanel;
+	private RotationTest graphicsPanel;
 
 
 	private static final String title = "Game";
@@ -38,7 +38,7 @@ public class GameWindow extends JFrame{
 	public GameWindow(){
 		super(title);
 
-		this.graphicsPanel = new GraphicsPanel();
+		this.graphicsPanel = new RotationTest();
 		this.blankPanel = new BlankPanel();
 
 		//set up the globalKey listener

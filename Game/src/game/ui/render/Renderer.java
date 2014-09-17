@@ -1,10 +1,14 @@
 package game.ui.render;
 
 import game.ui.render.util.GameImage;
+import game.ui.render.util.GamePolygon;
 import game.ui.render.util.Trixel;
 import game.ui.render.util.TrixelFace;
 import game.ui.render.util.TrixelUtil;
 import game.ui.render.util.Trixition;
+import game.ui.render.util.Vector3D;
+import game.ui.render.util.ZComparable;
+import game.ui.render.util.ZComparator;
 import game.world.dimensions.Point3D;
 import game.world.model.Place;
 import game.world.util.Drawable;
@@ -39,13 +43,15 @@ public class Renderer {
 
 		for (Drawable drawable = drawables.next(); drawables.hasNext(); drawable = drawables.next()){
 			if (isImage(drawable)){
-				//Dimension dimension = new Dimension(drawable.getBoundingBox().; // TODO
-				//GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
-				//placeObjects.offer(image);
+				Dimension dimension = new Dimension((int)drawable.getBoundingBox().getWidth(),
+						(int)drawable.getBoundingBox().getHeight());
+				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
+				placeObjects.offer(image);
 			}
 		}
-		
+
 		// draw all objects in correct order
+		// all objects are either trixel faces or images.
 		while (!placeObjects.isEmpty()){
 			ZComparable gameObject = placeObjects.poll();
 			if (gameObject instanceof GameImage){
@@ -54,7 +60,11 @@ public class Renderer {
 				Dimension dimension = image.getDimension();
 				g.drawImage(image.getImage(), (int)position.getX(), (int)position.getY(), dimension.width, dimension.height, null);
 			}
-				
+			else if (gameObject instanceof GamePolygon){
+				GamePolygon poly = (GamePolygon) gameObject;
+				g.setColor(poly.getColour());
+				g.drawPolygon(poly);
+			}
 		}
 	}
 
@@ -67,20 +77,27 @@ public class Renderer {
 	}
 
 	/**
+	 * TODO
 	 * @param trixels
 	 * @return a list of trixel faces visible to current viewing direction
 	 */
-	private List<TrixelFace> getVisibleTrixelFaces(List<Trixel> trixels){
-		List<TrixelFace> faces = new ArrayList<TrixelFace>();
-		for (Trixel trixel : trixels){
+	private List<TrixelFace> getVisibleTrixelFaces(List<Trixel> trixels, Vector3D viewerDirection){
+		List<TrixelFace> visibleFaces = new ArrayList<TrixelFace>();
 
+		//Transform rotationTransform =
+
+		for (Trixel trixel : trixels){
+			TrixelFace[] faces = TrixelUtil.getTrixelFaces(trixel);
+			for (TrixelFace face : faces){
+				//if (face.shouldBeDrawn(viewerDirection))
+			}
 		}
-		return faces;
+		return visibleFaces;
 	}
 
 	/**
 	 * makes a list of trixels to represent a 2d polygon
-	 * PRE: polygon vertices must all have same z values (like a with a floor).
+	 * PRE: polygon vertices must all have same z value (like a with a floor).
 	 * @param poly
 	 * @return list of trixels which make up the polygon
 	 */

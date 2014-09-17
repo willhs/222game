@@ -1,6 +1,5 @@
 package game.ui.render.util;
 
-import game.ui.render.Transformable;
 
 /**
  * @author pondy & will. pondy wrote most of this class.

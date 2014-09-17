@@ -1,6 +1,5 @@
-package game.ui.render;
+package game.ui.render.util;
 
-import game.ui.render.util.Transform;
 
 /**
  * @author will
@@ -9,9 +8,9 @@ import game.ui.render.util.Transform;
 public interface Transformable {
 
 	/**
-	 * @param transform
 	 * Applies a 3d vector transformation
+	 * @param transform
 	 */
 	public abstract void transform(Transform transform);
-	
+
 }

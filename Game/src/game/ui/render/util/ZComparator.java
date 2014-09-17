@@ -1,4 +1,4 @@
-package game.ui.render;
+package game.ui.render.util;
 
 import java.util.Comparator;
 

@@ -25,10 +25,10 @@ public class Res {
 
 
 	/**
-	 * @param name
-	 * @return an image represented by name
 	 * if no image found, return 'unknown image' image
 	 * if unknown image isn't found, throw error
+	 * @param name
+	 * @return an image represented by name
 	 */
 	public static BufferedImage getImageFromName(String name){
 		String filePath = RES_PATH + name;

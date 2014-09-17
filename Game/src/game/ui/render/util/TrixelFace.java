@@ -1,6 +1,5 @@
 package game.ui.render.util;
 
-import game.ui.render.ZComparable;
 import game.world.dimensions.Point3D;
 
 import java.awt.Color;
@@ -14,21 +13,17 @@ public class TrixelFace implements ZComparable{
 
 	private final Point3D[] vertices;
 	private final Color colour;
-	
+
 	/**
+	 * PRE: must have 4 vertices
 	 * @param vertices
 	 * @param z
-	 * PRE: must have 4 vertices
 	 */
 	public TrixelFace(Point3D[] vertices, Color colour){
 		this.vertices = vertices;
 		this.colour = colour;
 	}
-	
-	public Polygon get2DFace(){
-		return new Polygon();
-	}
-	
+
 	/* Gets center z position
 	 * @see game.ui.render.ZComparable#getZ()
 	 */
@@ -39,9 +34,23 @@ public class TrixelFace implements ZComparable{
 		}
 		return z/vertices.length;
 	}
-	
+
 	public Color getColour(){
 		return colour;
 	}
-	
+
+	/**
+	 * Checks if the polygon is currently facing the viewer
+	 * @return whether the polygon shuold be drawn
+	 */
+	public boolean shouldBeDrawn(Transform viewerDirectionTransform){
+		Vector3D edge1 = vertices[1].distanceTo(vertices[0]);
+		Vector3D edge2 = vertices[1].distanceTo(vertices[2]);
+
+		Vector3D normal = edge1.crossProduct(edge2);
+		normal.transform(viewerDirectionTransform);
+
+		return normal.getZ() > 0;
+	}
+
 }
