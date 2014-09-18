@@ -75,7 +75,8 @@ public class HelpMenu implements GraphicsPane {
 	public void render(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 		g.drawImage(backgroundImage, 0, 0,panel);
-		drawButtons(g);
+
+		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 
 		g2d.draw(textBox);
 		g2d.setColor(new Color(0f,0f,0f,0.6f));
@@ -86,27 +87,8 @@ public class HelpMenu implements GraphicsPane {
 		g.setFont(helpTextFont);
 		drawString(g,helpText, (int)(textBox.getX() + 20),(int)( textBox.getY() + 20));//draws the string within the text box
 	}
-
-	private void drawButtons(Graphics g){
-		Graphics2D g2d = (Graphics2D)g;
-
-		Font myFont = new Font("arial",0,20);
-		g.setFont(myFont);
-
-		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.1f ));
-			g2d.fill(buttons[i]);
-			g2d.setColor(Color.black);
-			g2d.draw(buttons[i]);
-
-			if(selectedButton == i){
-				g.setColor( new Color(0f,0f,0f,0.5f));
-				g2d.fill(buttons[i]);
-			}
-			g.setColor(Color.white);
-			g.drawString(buttonNames[i], buttons[i].x + 20, buttons[i].y + 25);
-		}
-	}
+	
+	
 	/**
 	 * Draws the string on the graphics object splitting the string when a \n
 	 * pattern is reached

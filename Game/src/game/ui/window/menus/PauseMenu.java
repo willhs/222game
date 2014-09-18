@@ -38,7 +38,6 @@ public class PauseMenu implements GraphicsPane {
 		this.buttonNames = new String[numbOfButtons];
 		this.panel = panel;
 		setUpButtons();
-
 	}
 
 
@@ -91,36 +90,9 @@ public class PauseMenu implements GraphicsPane {
 		g.drawRect(x, y, width, height);
 
 		g2d.setStroke(oldStroke);
-		drawButtons(g);
+		//drawButtons(g);
+		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 
-
-	}
-
-
-	/**
-	 * Draws all of the buttons on the screen
-	 * */
-	public void drawButtons(Graphics g){
-		Graphics2D g2d = (Graphics2D)g;
-
-		//set the font
-		Font myFont = new Font("arial",0,20);
-		g.setFont(myFont);
-
-		//draw the buttons from the buttons array
-		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.5f ));
-			g2d.fill(buttons[i]);
-			g2d.setColor(Color.black);
-			g2d.draw(buttons[i]);
-
-			if(selectedButton == i){
-				g.setColor( new Color(0f,0f,0f,0.5f));
-				g2d.fill(buttons[i]);
-			}
-			g.setColor(Color.white);
-			g.drawString(buttonNames[i], buttons[i].x + 20, buttons[i].y + 25);
-		}
 	}
 
 

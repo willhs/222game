@@ -69,7 +69,7 @@ public class KeyOptionScreen implements GraphicsPane {
 	public void render(Graphics g) {
 		drawMesseges(g);
 		drawKeyTable(g);
-		drawButtons(g);
+		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 	}
 
 	@Override
@@ -195,34 +195,6 @@ public class KeyOptionScreen implements GraphicsPane {
 			y += colHeight;
 		}
 		return -1;//return this if not on a row in the table
-	}
-
-
-	/**
-	 * Draws all of the buttons on the screen
-	 * */
-	private void drawButtons(Graphics g){
-		Graphics2D g2d = (Graphics2D)g;
-
-		Font myFont = new Font("arial",0,20);
-		g.setFont(myFont);
-
-
-		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.1f ));
-			g2d.fill(buttons[i]);
-			g2d.setColor(Color.black);
-			g2d.draw(buttons[i]);
-
-			if(selectedButton == i){
-				g2d.setColor(new Color(0f,0f,0f,0.5f ));
-				g2d.fill(buttons[i]);
-			}
-
-			//draws the name of the buttons
-			g.setColor(Color.white);
-			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
-		}
 	}
 
 }

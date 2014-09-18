@@ -68,34 +68,8 @@ public class OptionMenu implements GraphicsPane {
 			return;
 		}
 
-		drawButtons(g);
+		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 		g.drawString("OPTIONS", GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2);
-
-	}
-
-	private void drawButtons(Graphics g){
-		Graphics2D g2d = (Graphics2D)g;
-
-		Font myFont = new Font("arial",0,20);
-		g.setFont(myFont);
-
-
-		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.1f ));
-			g2d.fill(buttons[i]);
-			g2d.setColor(Color.black);
-			g2d.draw(buttons[i]);
-
-			if(selectedButton == i){
-				g2d.setColor(new Color(0f,0f,0f,0.5f ));
-				g2d.fill(buttons[i]);
-			}
-
-			//draws the name of the buttons
-			g.setColor(Color.white);
-			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
-
-		}
 	}
 
 	@Override
@@ -114,7 +88,8 @@ public class OptionMenu implements GraphicsPane {
 			selectedButton = Integer.MAX_VALUE;//no button is selected
 		}
 	}
-
+	
+	
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(currentMenu != null){
