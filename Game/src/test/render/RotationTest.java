@@ -1,4 +1,4 @@
- package game.ui.render.temp;
+ package test.render;
 
 import game.ui.render.util.Transform;
 import game.ui.render.util.Vector3D;
@@ -41,6 +41,8 @@ public class RotationTest extends JPanel{
 
 	private int objSize = 50;
 	private int centreSize = 10;
+
+	private final int TRANSLATE = 200;
 
 	private final String LEFT = "LEFT", RIGHT = "RIGHT";
 
@@ -86,10 +88,12 @@ public class RotationTest extends JPanel{
 		g.fillPolygon(floorPoly);
 
 		g.setColor(Color.red);
-		g.fillRect((int)point.getX()-(objSize/2), (int)point.getY()-(objSize/2) ,objSize, objSize);
-		g.fillOval((int)centre.getX()-(centreSize/2), (int)centre.getY()-(centreSize/2), centreSize, centreSize);
+		g.fillRect((int)point.getX()+TRANSLATE-(objSize/2), (int)point.getY()+TRANSLATE-(objSize/2) ,objSize, objSize);
+		g.fillOval((int)centre.getX()+TRANSLATE-(centreSize/2), (int)centre.getY()+TRANSLATE-(centreSize/2), centreSize, centreSize);
+		g.fillOval(TRANSLATE-(centreSize/2), TRANSLATE-(centreSize/2), centreSize, centreSize);
 
-		//System.out.println("Screen\nx = " + point.x + "\ny = " + point.y +"\nz = " + point.z);
+
+		//System.out.println((int)point.getX()+TRANSLATE-(objSize/2));
 	}
 
 	public void rotate(int rotateX, int rotateY, int rotateZ){
@@ -99,12 +103,18 @@ public class RotationTest extends JPanel{
 		Transform rotation = Transform.newYRotation(rotateX/scalar).compose(Transform.newXRotation(rotateY/scalar)).compose(Transform.newZRotation(rotateZ/scalar));
 		Transform translateBack = Transform.newTranslation(centre.getX(), centre.getY(), centre.getZ());
 
-		point.transform(translateToOrigin);
-		point.transform(rotation);
+		Transform combined = translateToOrigin.compose(rotation);
+
+//		point.transform(translateToOrigin);
+//		point.transform(rotation);
+//		point.transform(translateBack);
+		point.transform(combined);
 		point.transform(translateBack);
 
-		floor.transform(translateToOrigin);
-		floor.transform(rotation);
+//		//floor.transform(translateToOrigin);
+//		floor.transform(rotation);
+	//	floor.transform(translateBack);
+		floor.transform(combined);
 		floor.transform(translateBack);
 
 		repaint();
@@ -132,7 +142,7 @@ public class RotationTest extends JPanel{
 	 */
 	public static void main(String[] args){
 		JFrame frame = new JFrame();
-		Dimension SCREEN_SIZE = new Dimension(400,400);
+		Dimension SCREEN_SIZE = new Dimension(700,700);
 		frame.setSize(SCREEN_SIZE );
 		frame.add(new RotationTest());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

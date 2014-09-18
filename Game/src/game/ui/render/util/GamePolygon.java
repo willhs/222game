@@ -5,7 +5,7 @@ import java.awt.Polygon;
 
 /**
  * @author hardwiwill
- * Wrapper class for a java.awt.Polygon so that i can assign z position (to determine order of drawing).
+ * Wrapper class for a java.awt.Polygon so that i can assign z position (to determine order of drawing) and hold a colour.
  *
  */
 public class GamePolygon extends Polygon implements ZComparable{

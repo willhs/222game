@@ -3,6 +3,7 @@ package game.ui.render;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -12,14 +13,20 @@ import javax.imageio.ImageIO;
  */
 public class Res {
 
-	public static String RES_PATH = "src" + File.separator + "game" + File.separator + "render" + File.separator + "res" + File.separator;
-	public static String UNKNOWN_IMAGE_PATH = RES_PATH + "unknown";
+	public static final char SEP = File.separatorChar;
+	public static final String RES_PATH = "src" + SEP + "game" + SEP + "ui" + SEP + "render" + SEP + "res" + SEP;
+	public static final String TEST_PATH = RES_PATH + "test" + SEP;
+	public static final String IMG_PATH = RES_PATH + "img" + SEP;
+	public static final String ROOM_PATH = IMG_PATH + "room" + SEP;
+
+	public static final String UNKNOWN_IMAGE_PATH = RES_PATH + "unknown";
+	//public static final String tableName = "table.png";
 
 	/**
-	 * @param drawableName
+	 * @param name
 	 * @return whether there is an image associated with this name
 	 */
-	public static boolean isImage(String drawableName){
+	public static boolean isImage(String name){
 		return true; // TODO: not this
 	}
 
@@ -31,7 +38,7 @@ public class Res {
 	 * @return an image represented by name
 	 */
 	public static BufferedImage getImageFromName(String name){
-		String filePath = RES_PATH + name;
+		String filePath = TEST_PATH + name + ".png";
 		try {
 			return ImageIO.read(new File(filePath));
 		} catch (IOException e) {
@@ -39,7 +46,7 @@ public class Res {
 			try {
 				return ImageIO.read(new File(UNKNOWN_IMAGE_PATH));
 			} catch (IOException e1) {
-				throw new Error("Can't find image '"+name+"'");
+				throw new Error("Can't find image '"+filePath+"'");
 			}
 		}
 	}

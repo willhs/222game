@@ -2,6 +2,7 @@ package game.ui.render;
 
 import game.ui.render.util.GameImage;
 import game.ui.render.util.GamePolygon;
+import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
 import game.ui.render.util.TrixelFace;
 import game.ui.render.util.TrixelUtil;
@@ -12,6 +13,7 @@ import game.ui.render.util.ZComparator;
 import game.world.dimensions.Point3D;
 import game.world.model.Place;
 import game.world.util.Drawable;
+import game.world.util.Floor;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -26,34 +28,53 @@ import java.util.Queue;
 
 public class Renderer {
 
+	// TEMPORARY
+	private static Point3D SCREEN_CENTER = new Point3D(300, 300, 300);
+
 	/**
-	 * Draws a place using Graphics parameter
+	 * Draws a place using Graphics parameter and viewer direction
 	 * @param g
 	 * @param place
 	 */
-	public static void renderPlace(Graphics g, Place place){
+	public static void renderPlace(Graphics g, Place place, Vector3D viewerDirection){
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<ZComparable> placeObjects = new PriorityQueue<ZComparable>(50, new ZComparator());
 
-		// convert floor into trixels
-		//List<Trixel> floor = polygon2DToTrixels(place.getFloor().get, 0);
+		Queue<ZComparable> toDraw = new PriorityQueue<ZComparable>(50, new ZComparator());
 
-		// deal with rest of drawables
-		Iterator<Drawable> drawables = place.getDrawable();
 
-		for (Drawable drawable = drawables.next(); drawables.hasNext(); drawable = drawables.next()){
+
+		for (Iterator<Drawable> iter = place.getDrawable(); iter.hasNext();){
+			Drawable drawable = iter.next();
+			System.out.println("next");
 			if (isImage(drawable)){
+				// drawable is an image
 				Dimension dimension = new Dimension((int)drawable.getBoundingBox().getWidth(),
 						(int)drawable.getBoundingBox().getHeight());
 				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
-				placeObjects.offer(image);
+				toDraw.offer(image);
+			}
+			else {
+				// drawable is trixel
+				Trixel trixel = (Trixel) drawable;
+				TrixelFace[] faces = TrixelUtil.getTrixelFaces(trixel);
+				toDraw.addAll(getVisibleTrixelFaces(faces, viewerDirection));
 			}
 		}
 
-		// draw all objects in correct order
-		// all objects are either trixel faces or images.
-		while (!placeObjects.isEmpty()){
-			ZComparable gameObject = placeObjects.poll();
+		// convert floor into trixels and add those to toDraw
+		// TODO: please rewrite/refactor this part when we can
+		List<Trixel> floorTrixels = polygon2DToTrixels(floorToPolygon(place.getFloor()), 0);
+		for (Trixel floorTrixel : floorTrixels){
+			TrixelFace[] faces = TrixelUtil.getTrixelFaces(floorTrixel);
+			toDraw.addAll(getVisibleTrixelFaces(faces, viewerDirection));
+		}
+
+		System.out.println("Drawing "+toDraw.size()+" shapes");
+
+		// draw all gameObjects in correct order
+		// all gameObjects are either trixel faces or images.
+		while (!toDraw.isEmpty()){
+			ZComparable gameObject = toDraw.poll();
 			if (gameObject instanceof GameImage){
 				GameImage image = (GameImage) gameObject;
 				Point3D position = image.getPoint();
@@ -77,22 +98,23 @@ public class Renderer {
 	}
 
 	/**
-	 * TODO
-	 * @param trixels
+	 * TODO: Optimise
+	 * @param face
 	 * @return a list of trixel faces visible to current viewing direction
 	 */
-	private List<TrixelFace> getVisibleTrixelFaces(List<Trixel> trixels, Vector3D viewerDirection){
-		List<TrixelFace> visibleFaces = new ArrayList<TrixelFace>();
+	private static List<TrixelFace> getVisibleTrixelFaces(TrixelFace[] faces, Vector3D viewingDirection){
+		List<TrixelFace> visible = new ArrayList<TrixelFace>();
 
-		//Transform rotationTransform =
+		Transform translateToOrigin = Transform.newTranslation(-SCREEN_CENTER.getX(), -SCREEN_CENTER.getY(), -SCREEN_CENTER.getZ());
+		Transform rotation = Transform.newYRotation(viewingDirection.getX()).compose(Transform.newXRotation(viewingDirection.getY())).compose(Transform.newZRotation(viewingDirection.getZ()));
+		Transform translateBack = Transform.newTranslation(SCREEN_CENTER.getX(), SCREEN_CENTER.getY(), SCREEN_CENTER.getZ());
 
-		for (Trixel trixel : trixels){
-			TrixelFace[] faces = TrixelUtil.getTrixelFaces(trixel);
-			for (TrixelFace face : faces){
-				//if (face.shouldBeDrawn(viewerDirection))
+		for (TrixelFace face : faces){
+			if (face.isFacingViewer(translateToOrigin, rotation, translateBack)){
+				visible.add(face);
 			}
 		}
-		return visibleFaces;
+		return visible;
 	}
 
 	/**
@@ -101,7 +123,7 @@ public class Renderer {
 	 * @param poly
 	 * @return list of trixels which make up the polygon
 	 */
-	private List<Trixel> polygon2DToTrixels(Polygon poly, float z){
+	private static List<Trixel> polygon2DToTrixels(Polygon poly, float z){
 		List<Trixel> trixels = new ArrayList<Trixel>();
 		Rectangle polyBounds = poly.getBounds();
 		for (int x = polyBounds.x; x < polyBounds.x + polyBounds.width; x += Trixel.SIZE){
@@ -116,12 +138,31 @@ public class Renderer {
 	/**
 	 * @return random colour
 	 */
-	public static Color getRandomColour(){
+	private static Color getRandomColour(){
 		int r = (int)(Math.random()*255);
 		int g = (int)(Math.random()*255);
 		int b = (int)(Math.random()*255);
 
 		return new Color(r, g, b);
+	}
+
+	/**
+	 * Temporary (hopefully)
+	 * makes a java.awt.Polygon from a Floor object.
+	 * @param floor
+	 * @return a polygon representing the floor
+	 */
+	private static Polygon floorToPolygon(Floor floor){
+		Point3D[] floorPoints = floor.getPoints();
+		int[] xpoints = new int[floorPoints.length];
+		int[] ypoints = new int[floorPoints.length];
+
+		for ( int i = 0; i < floorPoints.length; i++){
+			Point3D point = floorPoints[i];
+			xpoints[i] = (int)point.getX();
+			ypoints[i] = (int)point.getY();
+		}
+		return new Polygon(xpoints, ypoints, floorPoints.length);
 	}
 
 }

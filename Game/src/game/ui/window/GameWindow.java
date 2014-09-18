@@ -1,7 +1,5 @@
 package game.ui.window;
 
-import game.ui.render.temp.RotationTest;
-
 import java.awt.AWTKeyStroke;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
@@ -12,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
+
+import test.render.RotationTest;
 /**
  * @author Nicky van HUlst
  * */

@@ -41,14 +41,18 @@ public class TrixelFace implements ZComparable{
 
 	/**
 	 * Checks if the polygon is currently facing the viewer
+	 * *** NOT OPTIMISED ***
 	 * @return whether the polygon shuold be drawn
 	 */
-	public boolean shouldBeDrawn(Transform viewerDirectionTransform){
+	public boolean isFacingViewer(Transform t1, Transform t2, Transform t3) {
 		Vector3D edge1 = vertices[1].distanceTo(vertices[0]);
 		Vector3D edge2 = vertices[1].distanceTo(vertices[2]);
 
 		Vector3D normal = edge1.crossProduct(edge2);
-		normal.transform(viewerDirectionTransform);
+
+		normal.transform(t1);
+		normal.transform(t2);
+		normal.transform(t3);
 
 		return normal.getZ() > 0;
 	}
