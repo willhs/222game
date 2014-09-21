@@ -5,17 +5,12 @@ import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
+
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 
 
@@ -23,21 +18,21 @@ import javax.imageio.ImageIO;
 /**
  * @author Nicky van HUlst
  * */
-
-
 public class MainMenu implements GraphicsPane{
 	private final int numbOfButtons = 5;
 	private BlankPanel panel;
-	private GameWindow window;
-
-	private int selectedButton;
 	private BufferedImage backgroundImage;
+	
+	//the currently selected button
+	private int selectedButton;
 
-
+	//arrays for the button rectangles and names
 	private Rectangle[] buttons;
-	 private String[] buttonNames;
+	private String[] buttonNames;
 
-
+	/**
+	 * Constructor for the MainMenu
+	 * */
 	public MainMenu(BlankPanel panel){
 		this.panel = panel;
 		buttons = new Rectangle[numbOfButtons];
@@ -53,17 +48,13 @@ public class MainMenu implements GraphicsPane{
 	 * */
 	public void setUpButtons(){
 		int height = GameWindow.FRAME_HEIGHT;
-
-
 		int y = height/numbOfButtons;
-
 		int buttonGap = 20;
-
 		int recHeight = 50;
 		int recWidth = 200;
-
 		int x = (GameWindow.FRAME_WIDTH/2)- (recWidth/2);
-
+		
+		//create buttons
 		for(int i = 0; i < buttons.length; i++){
 			buttons[i] = new Rectangle(x,y,recWidth,recHeight);
 			y += recHeight + buttonGap;
@@ -78,19 +69,17 @@ public class MainMenu implements GraphicsPane{
 	}
 
 	/**
-	 *
+	 *Draws all of the elements of the menu on the screen 
 	 * */
 	public void render(Graphics g){
 		g.drawImage(backgroundImage, 0, 0,panel);
 		//drawBackGroundImage(g);
 		MenuUtil.drawButtons(g,selectedButton,buttons,buttonNames);
-		//drawButtons(g);
 	}
 
 	
 	@Override
 	public void handleMouseMoved(MouseEvent e){
-
 		//set selected button
 		for(int i = 0; i < buttons.length; i++){
 			if(buttons[i].contains(e.getX(), e.getY())){
@@ -119,7 +108,11 @@ public class MainMenu implements GraphicsPane{
 			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
 	}
-
+	
+	
+	/**
+	 *Decides what should happen when a button is pressed
+	 * */
 	private void buttonPressed(){
 		switch(selectedButton){
 		case 0: panel.setMenu(new GameScreen(panel));
@@ -149,6 +142,4 @@ public class MainMenu implements GraphicsPane{
 			e.printStackTrace();
 		}
 	}
-
-
 }

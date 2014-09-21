@@ -49,7 +49,7 @@ public class PauseMenu implements GraphicsPane {
 		int buttonGap = 20;
 		int recHeight = 50;
 		int recWidth = 200;
-		int x = (GameWindow.FRAME_WIDTH/2)- (recWidth/2);//centre the buttons
+		int x = (GameWindow.FRAME_WIDTH/2)- (recWidth/2);//Center the buttons
 
 		//create buttons represented by rectangles
 		for(int i = 0; i < buttons.length; i++){
@@ -67,6 +67,14 @@ public class PauseMenu implements GraphicsPane {
 
 	@Override
 	public void render(Graphics g) {
+		//draws the outside of the menu
+		drawFrame(g);
+		
+		//drawButtons(g);
+		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
+	}
+	
+	public void drawFrame(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
 		int borderGap = 20;
@@ -76,23 +84,16 @@ public class PauseMenu implements GraphicsPane {
 		int width = (int)( buttons[buttons.length-1].getWidth() + borderGap*2);
 		int height = (int)(buttons[buttons.length-1].getMaxY() - y + borderGap);
 
-		//TODO add this to setup instead to not require above calculations every time render is called
 		//draws the rectangle around the button
-		g.setColor(new Color(0f,0f,0f,0.7f));
+		g.setColor(new Color(0f,0f,0f,0.5f));
 		g.fillRect(x, y, width, height);
-
-
 
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
 
 		g.setColor(Color.black);
 		g.drawRect(x, y, width, height);
-
-		g2d.setStroke(oldStroke);
-		//drawButtons(g);
-		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
-
+		g2d.setStroke(oldStroke);//reset the border size
 	}
 
 
@@ -131,6 +132,15 @@ public class PauseMenu implements GraphicsPane {
 		if(keyEvent.equals("escape")){
 			System.out.println("Escape");
 			game.setMenu(null);
+		}
+		else if(keyEvent.equals("enter")){
+			handleMouseReleased(null);//TODO buttonPressed();
+		}
+		else if(keyEvent.equals("down") || keyEvent.equals("move down")){
+			selectedButton = MenuUtil.moveButtonSelectionDown(selectedButton, buttons.length);
+		}
+		else if(keyEvent.equals("up") || keyEvent.equals("move up")){
+			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
 	}
 }

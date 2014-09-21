@@ -21,26 +21,32 @@ import javax.imageio.ImageIO;
 public class OptionMenu implements GraphicsPane {
 	private BlankPanel panel;
 	private int numbOfButtons;
-
+	private BufferedImage backgroundImage;
+	
+	//arrays for buttons and button names
 	private Rectangle[] buttons;
 	private String[] buttonNames;
-
+	
+	//the currently selected button
 	private int selectedButton;
-	private BufferedImage backgroundImage;
-
+		
+	//the current menu the user is in
 	private GraphicsPane currentMenu;
-
-
+	
+	/**
+	 * Constructor for the optionMenu
+	 * */
 	public OptionMenu(BlankPanel panel){
 		this.panel = panel;
 		this.numbOfButtons = 2;
-		this.selectedButton = Integer.MAX_VALUE;
+		this.selectedButton = -1;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		loadImages();
 		setupButtons();
 	}
 
+	
 	/**
 	 * Sets up the buttons for the option menu
 	 * */
@@ -74,7 +80,7 @@ public class OptionMenu implements GraphicsPane {
 
 	@Override
 	public void handleMouseMoved(MouseEvent e){
-		if(currentMenu != null){
+		if(currentMenu != null){//this menu is not the menu in focus so pass the mouse movement on
 			currentMenu.handleMouseMoved(e);
 			return;
 		}
@@ -92,16 +98,14 @@ public class OptionMenu implements GraphicsPane {
 	
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
-		if(currentMenu != null){
+		if(currentMenu != null){//this menu is not the menu in focus so pass the mouse event on
 			currentMenu.handleMouseReleased(e);
 			return;
 		}
-
-		if(selectedButton == 0){
+		if(selectedButton == 0){//back button
 			panel.setMenu(new MainMenu(panel));
 		}
-		else if(selectedButton == 1){
-			System.out.println("Key Bindings");
+		else if(selectedButton == 1){//key binding menu button
 			currentMenu = new KeyOptionScreen(panel);
 		}
 	}
@@ -112,11 +116,18 @@ public class OptionMenu implements GraphicsPane {
 			currentMenu.keyPressed(keyEvent);
 			return;
 		}
-
 		if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
 			panel.setMenu(new MainMenu(panel));
 		}
-
+		else if(keyEvent.equals("enter")){
+			handleMouseReleased(null);//TODO change to a proper method button pressed like main menu
+		}
+		else if(keyEvent.equals("down") || keyEvent.equals("move down")){
+			selectedButton = MenuUtil.moveButtonSelectionDown(selectedButton, buttons.length);
+		}
+		else if(keyEvent.equals("up") || keyEvent.equals("move up")){
+			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
+		}
 	}
 
 	public void loadImages(){
@@ -132,5 +143,4 @@ public class OptionMenu implements GraphicsPane {
 			e.printStackTrace();
 		}
 	}
-
 }

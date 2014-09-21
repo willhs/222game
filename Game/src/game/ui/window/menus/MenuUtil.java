@@ -40,7 +40,7 @@ public class MenuUtil {
 	 * */
 	public static int moveButtonSelectionUp(int selectedButton, int numbOfButtons){
 		if(selectedButton == -1 || selectedButton == 0 ){
-			return numbOfButtons;
+			return numbOfButtons-1;
 		}
 		else{
 			return selectedButton-1;
