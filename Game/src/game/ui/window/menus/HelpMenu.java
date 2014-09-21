@@ -36,7 +36,7 @@ public class HelpMenu implements GraphicsPane {
 	public HelpMenu(BlankPanel panel){
 		this.panel = panel;
 		this.numbOfButtons = 1;
-		this.selectedButton = Integer.MAX_VALUE;
+		this.selectedButton = -1;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		this.helpTextFont = new Font("arial",Font.BOLD,15);
@@ -123,6 +123,15 @@ public class HelpMenu implements GraphicsPane {
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("escape") || keyEvent.equals("backspace")  ){
 			panel.setMenu(new MainMenu(panel));
+		}
+		else if(keyEvent.equals("enter")){
+			handleMouseReleased(null);//TODO create buttonPressed();
+		}
+		else if(keyEvent.equals("down") || keyEvent.equals("move down")){
+			selectedButton = MenuUtil.moveButtonSelectionDown(selectedButton, buttons.length);
+		}
+		else if(keyEvent.equals("up") || keyEvent.equals("move up")){
+			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
 	}
 

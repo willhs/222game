@@ -102,7 +102,6 @@ public class KeyOptionScreen implements GraphicsPane {
 
 	@Override
 	public void keyPressed(String keyEvent) {
-
 		//check if escape is pressed
 		if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
 			if(selectedRow){
