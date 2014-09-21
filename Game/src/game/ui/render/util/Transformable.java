@@ -8,7 +8,7 @@ package game.ui.render.util;
 public interface Transformable {
 
 	/**
-	 * Applies a 3d vector transformation
+	 * Transforms this object
 	 * @param transform
 	 */
 	public abstract void transform(Transform transform);

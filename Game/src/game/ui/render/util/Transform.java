@@ -1,5 +1,7 @@
 package game.ui.render.util;
 
+import game.world.dimensions.Point3D;
+
 
 /** 3x4 array representing an affine transformation
 (= a 4x4 matrix in which the bottom row is always {0 0 0 1} )
@@ -96,6 +98,36 @@ public class Transform{
             ans[row][3] +=this.values[row][3];
         }
         return new Transform(ans);
+    }
+    
+    /* apply this transform to a vector*/
+    public Vector3D multiply(Vector3D vect){
+        if (values==null || values[0]==null || values[1]==null || values[2]==null){
+	    throw new IllegalStateException("Ill-formed transform");}
+	if (vect==null){
+	    throw new IllegalArgumentException("multiply by null vector");}
+        float x = values[0][3];
+        float y = values[1][3];
+        float z = values[2][3];
+        x += values[0][0]*vect.x + values[0][1]*vect.y + values[0][2]*vect.z;
+        y += values[1][0]*vect.x + values[1][1]*vect.y + values[1][2]*vect.z;
+        z += values[2][0]*vect.x + values[2][1]*vect.y + values[2][2]*vect.z;
+        return new Vector3D(x, y, z);
+    }
+    
+    /* apply this transform to a vector*/
+    public Point3D multiply(Point3D point){
+        if (values==null || values[0]==null || values[1]==null || values[2]==null){
+	    throw new IllegalStateException("Ill-formed transform");}
+	if (point==null){
+	    throw new IllegalArgumentException("multiply by null vector");}
+        float x = values[0][3];
+        float y = values[1][3];
+        float z = values[2][3];
+        x += values[0][0]*point.x + values[0][1]*point.y + values[0][2]*point.z;
+        y += values[1][0]*point.x + values[1][1]*point.y + values[1][2]*point.z;
+        z += values[2][0]*point.x + values[2][1]*point.y + values[2][2]*point.z;
+        return new Point3D(x, y, z);
     }
 
     public float[][] getValues(){

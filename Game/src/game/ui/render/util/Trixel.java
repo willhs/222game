@@ -11,7 +11,7 @@ public class Trixel {
 	/**
 	 * value for trixel width, height and depth
 	 */
-	public static final int SIZE = 10;
+	public static final int SIZE = 50;
 	/**
 	 * The trixel's position in the trixel grid (trid)!
 	 */

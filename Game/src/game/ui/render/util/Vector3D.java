@@ -3,17 +3,17 @@ package game.ui.render.util;
 
 /**
  * @author pondy & will. pondy wrote most of this class.
- * Represents a vector with 3d
+ * Represents NOW IMMUTABLE a vector with 3d
  */
-public class Vector3D implements Transformable {
+public class Vector3D{
 	// I made a float version of this class so that vectors could be used in the
 	// transform class and so it could
 	// be faster for the 3d rendering
 
-	private float x;
-	private float y;
-	private float z;
-	private float mag;
+	public final float x;
+	public final float y;
+	public final float z;
+	public final float mag;
 
 	/**
 	 * Construct a new vector, with the specified x, y, z components computes
@@ -22,7 +22,7 @@ public class Vector3D implements Transformable {
 	public Vector3D(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
-		this.setZ(z);
+		this.z = z;
 		this.mag = (float) Math.sqrt(x * x + y * y + z * z);
 	}
 
@@ -30,7 +30,7 @@ public class Vector3D implements Transformable {
 	private Vector3D(float x, float y, float z, float mag) {
 		this.x = x;
 		this.y = y;
-		this.setZ(z);
+		this.z = z;
 		this.mag = mag;
 	}
 
@@ -88,33 +88,23 @@ public class Vector3D implements Transformable {
 				* other.getZ())
 				/ getMag() / other.getMag();
 	}
+	
+	public float xAngle(Vector3D other){
+		return (float)Math.acos((getY() * other.getY() + getZ()
+				* other.getZ())
+				/ getMag() / other.getMag());
+	}
+	public float yAngle(Vector3D other){
+		return (float)Math.acos((getX() * other.getX() + getZ()
+				* other.getZ())
+				/ getMag() / other.getMag());
+	}
 
 	public String toString() {
 		StringBuilder ans = new StringBuilder("Vect:");
-		ans.append('(').append(getX()).append(',').append(getY()).append(',')
-				.append(getZ()).append(')');
+		ans.append('(').append(String.format("%4.2f", getX())).append(',').append(String.format("%4.2f", getY())).append(',')
+				.append(String.format("%4.2f", getZ())).append(')');
 		return ans.toString();
-	}
-
-	@Override
-	public void transform(Transform transform) {
-		float[][] values = transform.getValues();
-		if (values == null || values[0] == null || values[1] == null
-				|| values[2] == null) {
-			throw new IllegalStateException("Ill-formed transform");
-		}
-
-		float newX = values[0][3];
-		float newY = values[1][3];
-		float newZ = values[2][3];
-
-		newX += values[0][0] * this.x + values[0][1] * this.y + values[0][2] * this.z;
-		newY += values[1][0] * this.x + values[1][1] * this.y + values[1][2] * this.z;
-		newZ += values[2][0] * this.x + values[2][1] * this.y + values[2][2] * this.z;
-
-		x = newX;
-		y = newY;
-		z = newZ;
 	}
 
 	public float getX() {
@@ -127,10 +117,6 @@ public class Vector3D implements Transformable {
 
 	public float getZ() {
 		return z;
-	}
-
-	public void setZ(float z) {
-		this.z = z;
 	}
 
 	public float getMag() {

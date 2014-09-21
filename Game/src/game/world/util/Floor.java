@@ -19,8 +19,8 @@ public class Floor implements Transformable{
 
 	@Override
 	public void transform(Transform transform){
-		for (Point3D p : points){
-			p.transform(transform);
+		for (int i = 0; i <points.length; i++){
+			points[i] = transform.multiply(points[i]);
 		}
 	}
 

@@ -1,44 +1,54 @@
+
 package test.render;
 
 import game.ui.render.Renderer;
 import game.ui.render.util.Transform;
+import game.ui.render.util.Trixel;
 import game.ui.render.util.Vector3D;
+import game.world.model.Exit;
+import game.world.model.Item;
 import game.world.model.Place;
+import game.world.model.Room;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import test.world.util.SingleRoomWorldTest;
-
-public class TestRenderer extends JPanel{
+public class TestRenderSingleTrixel extends JPanel{
 
 	private Place testPlace;
 	private Vector3D viewerDirection;
 
-	public TestRenderer(){
-		 testPlace = new SingleRoomWorldTest().world.getPlaces().next();
-		 viewerDirection = new Vector3D(0,0,1);
-		 WillMouseMotionListener listener = new WillMouseMotionListener();
-		 addMouseListener(listener);
-		 addMouseMotionListener(listener);
+	public TestRenderSingleTrixel(){
+		int top = 100;
+		int left = 100;
+		int[] xpoints = { left , left + Trixel.SIZE, left + Trixel.SIZE, left};
+		int[] ypoints = { top , top,  top + Trixel.SIZE, top + Trixel.SIZE};
+		testPlace = new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length)); 
+		viewerDirection = new Vector3D(0,0,1);
+		WillMouseMotionListener l = new WillMouseMotionListener();
+		addMouseListener(l);
+		addMouseMotionListener(l);
 	}
 
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		System.out.println("viewerDirection: "+viewerDirection);
 		Renderer.renderPlace(g, testPlace, viewerDirection);
 	}
 	
-	public void rotate(int dx, int dy) {
-		float scalar = 10;
-		Transform rotation = Transform.newYRotation(dx/scalar).compose(Transform.newXRotation(dy/scalar).compose(Transform.newZRotation(0)));
+	public void rotate(int dx, int dy, int i) {
+		float scalar = 100;
+		Transform rotation = Transform.newYRotation(dx/scalar).compose(Transform.newXRotation(dy/scalar));
 		viewerDirection = rotation.multiply(viewerDirection);
+		//System.out.println("viewing direction: "+viewerDirection);
 		repaint();
 	}
 
@@ -47,9 +57,9 @@ public class TestRenderer extends JPanel{
 	 */
 	public static void main(String[] args){
 		JFrame frame = new JFrame();
-		Dimension SCREEN_SIZE = new Dimension(600,600);
+		Dimension SCREEN_SIZE = new Dimension(800,800);
 		frame.setSize(SCREEN_SIZE );
-		frame.add(new TestRenderer());
+		frame.add(new TestRenderSingleTrixel());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
@@ -64,7 +74,7 @@ public class TestRenderer extends JPanel{
 			int dx = e.getX()-mouseX;
 			int dy = e.getY()-mouseY;
 
-			rotate(dx, dy);
+			rotate(dx, dy, 0);
 
 			mouseX = e.getX();
 			mouseY = e.getY();

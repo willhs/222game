@@ -1,5 +1,7 @@
  package test.render;
 
+import game.ui.render.Res;
+import game.ui.render.util.GameImage;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Vector3D;
 import game.world.dimensions.Point3D;
@@ -37,7 +39,7 @@ public class RotationTest extends JPanel{
 	 * viewer direction will always be 0,0,1 (environment will move, not viewer)
 	 * but may use a 'fake' viewer direction in future to make model closer to reality
 	 */
-	private Vector3D viewerDir = new Vector3D(0,0,1);
+	private Vector3D viewerDir = new Vector3D(0,0,(int)(-Math.PI*2));
 
 	private int objSize = 50;
 	private int centreSize = 10;
@@ -57,6 +59,7 @@ public class RotationTest extends JPanel{
     		rotate(0, 0, 1);
     	}
     };
+	private GameImage image;
 
 	public RotationTest(){
 		WillMouseMotionListener mouseListener = new WillMouseMotionListener();
@@ -75,10 +78,43 @@ public class RotationTest extends JPanel{
 		// define floor (for testing)
 		Point3D[] floorPoints = new Point3D[]{ new Point3D(0,0,0), new Point3D(500, 0, 0), new Point3D(500, 300, 0), new Point3D(0, 300, 0)};
 		floor = new Floor(floorPoints);
+		image = new GameImage(Res.getImageFromName("table"), new Point3D( 400, 200, 200), new Dimension(50, 100));
 
+	}
+	
+	public void rotate(int rotateX, int rotateY, int rotateZ){
+		float scalar = 10;
+		
+		Transform rotateDir = Transform.newXRotation(rotateY/scalar).compose(
+				Transform.newYRotation(rotateX/scalar)).compose(
+						Transform.newZRotation(rotateZ/scalar));
+		
+		viewerDir = rotateDir.multiply(viewerDir);
+		
+		Transform translateToOrigin = Transform.newTranslation(-centre.getX(), -centre.getY(), -centre.getZ());
+		Transform rotatePoint = Transform.newXRotation(viewerDir.y/scalar).compose(
+				Transform.newYRotation(-viewerDir.x/scalar)).compose(
+						Transform.newZRotation(0));
+		Transform translateBack = Transform.newTranslation(centre.getX(), centre.getY(), centre.getZ());
+
+		point = translateToOrigin.multiply(point);
+		point = rotateDir.multiply(point);
+		point = translateBack.multiply(point);
+
+		floor.transform(translateToOrigin);
+		floor.transform(rotateDir);
+		floor.transform(translateBack);
+		
+		image = new GameImage(Res.getImageFromName("table"), new Point3D( 400, 200, 200), new Dimension(50, 100));
+		image.transform(translateToOrigin);
+		image.transform(rotatePoint);
+		image.transform(translateBack);
+
+		repaint();
 	}
 
 
+	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		// z component used for size, not display
@@ -92,33 +128,17 @@ public class RotationTest extends JPanel{
 		g.fillOval((int)centre.getX()+TRANSLATE-(centreSize/2), (int)centre.getY()+TRANSLATE-(centreSize/2), centreSize, centreSize);
 		g.fillOval(TRANSLATE-(centreSize/2), TRANSLATE-(centreSize/2), centreSize, centreSize);
 
-
+		g.drawImage(image.getImage(), (int)image.getPosition().x-image.getDimension().width/2, (int)image.getPosition().y-image.getDimension().height, 
+				image.getDimension().width, image.getDimension().height, null);
 		//System.out.println((int)point.getX()+TRANSLATE-(objSize/2));
+		
+		// draw viewerDir
+		int offsetX = (int)image.getPosition().x;
+		int offsetY = (int)image.getPosition().y;
+		int scale = 30;
+		//g.drawLine(offsetX, offsetY, offsetX+(int)(viewerDir.x*scale), offsetY+(int)(viewerDir.y*scale));
 	}
 
-	public void rotate(int rotateX, int rotateY, int rotateZ){
-		float scalar = 10;
-
-		Transform translateToOrigin = Transform.newTranslation(-centre.getX(), -centre.getY(), -centre.getZ());
-		Transform rotation = Transform.newYRotation(rotateX/scalar).compose(Transform.newXRotation(rotateY/scalar)).compose(Transform.newZRotation(rotateZ/scalar));
-		Transform translateBack = Transform.newTranslation(centre.getX(), centre.getY(), centre.getZ());
-
-		Transform combined = translateToOrigin.compose(rotation);
-
-//		point.transform(translateToOrigin);
-//		point.transform(rotation);
-//		point.transform(translateBack);
-		point.transform(combined);
-		point.transform(translateBack);
-
-//		//floor.transform(translateToOrigin);
-//		floor.transform(rotation);
-	//	floor.transform(translateBack);
-		floor.transform(combined);
-		floor.transform(translateBack);
-
-		repaint();
-	}
 
 	/**
 	 * @param floor
