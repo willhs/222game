@@ -18,8 +18,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Polygon;
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -39,14 +39,16 @@ public class Renderer {
 	public static void renderPlace(Graphics g, Place place, Vector3D viewerDirection){
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 
-		float xAngle = DEFAULT_VIEW_ANGLE.xAngle(viewerDirection);
+		/*float xAngle = DEFAULT_VIEW_ANGLE.xAngle(viewerDirection);
 		float yAngle = DEFAULT_VIEW_ANGLE.yAngle(viewerDirection);
-		Vector3D viewAngleChange = new Vector3D(xAngle, yAngle, 0);
-		//Vector3D viewAngleChange = (viewerDirection);
-		
+		Vector3D viewAngleChange = new Vector3D(xAngle, yAngle, 0);*/
+		Transform angleScale = Transform.newScale((float)(Math.PI), (float)(Math.PI), (float)(Math.PI));
+		Vector3D viewAngleChange = angleScale.multiply(DEFAULT_VIEW_ANGLE).minus(
+				angleScale.multiply(viewerDirection));
+
 		//System.out.println("view angle Change: "+viewAngleChange);
-		
-		
+
+
 		Queue<ZComparable> toDraw = new PriorityQueue<ZComparable>(50, new ZComparator());
 
 		for (Iterator<Drawable> iter = place.getDrawable(); iter.hasNext();){
@@ -57,19 +59,19 @@ public class Renderer {
 						(int)drawable.getBoundingBox().getHeight());
 				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
 				//rotateImage(image, viewAngleChange);
-				
-						
+
+
 				Transform translateToOrigin = Transform.newTranslation(-CENTER.getX(), -CENTER.getY(), -CENTER.getZ());
-				Transform rotate = Transform.newXRotation(viewAngleChange.getX()).compose(
+				Transform rotate = Transform.newXRotation(viewAngleChange.getX());/*.compose(
 						Transform.newYRotation(viewAngleChange.getY())).compose(
-								Transform.newZRotation(viewAngleChange.getZ()));
+								Transform.newZRotation(viewAngleChange.getZ()));*/
 				Transform translateBack = Transform.newTranslation(CENTER.getX(), CENTER.getY(), CENTER.getZ());
 				//System.out.println(viewerDirection);
 				//System.out.println(point);
 				image.transform(translateToOrigin);
 				image.transform(rotate);
 				image.transform(translateBack);
-				
+
 				toDraw.offer(image);
 			}
 			else {
@@ -85,9 +87,9 @@ public class Renderer {
 			}
 		}
 
-		// convert floor into trixels and add those to toDraw
+		/*// convert floor into trixels and add those to toDraw
 		// TODO: please rewrite/refactor this part when we can
-		/*List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorToPolygon(place.getFloor()), 0);
+		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorToPolygon(place.getFloor()), 0);
 		for (Trixel floorTrixel : floorTrixels){
 			TrixelFace[] faces = TrixelUtil.getTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
@@ -96,8 +98,8 @@ public class Renderer {
 					toDraw.offer(getGamePolygonFromTrixelFace(face));
 				}
 			}
-		}
-*/
+		}*/
+
 		//System.out.println("Drawing "+toDraw.size()+" shapes");
 
 		// draw all gameObjects in correct order
@@ -108,7 +110,7 @@ public class Renderer {
 				GameImage image = (GameImage) gameObject;
 				Point3D position = image.getPosition();
 				Dimension dimension = image.getDimension();
-				g.drawImage(image.getImage(), (int)position.getX()-dimension.width/2, (int)position.getY()-dimension.height/2, 
+				g.drawImage(image.getImage(), (int)position.getX()-dimension.width/2, (int)position.getY()-dimension.height/2,
 						dimension.width, dimension.height, null);
 			}
 			else if (gameObject instanceof GamePolygon){
@@ -130,7 +132,7 @@ public class Renderer {
 		Point3D[] vertices = face.getVertices();
 		int[] xpoints = new int[vertices.length];
 		int[] ypoints = new int[vertices.length];
-				
+
 		float zTotal = 0;
 		for (int i=0; i < vertices.length; i++){
 			xpoints[i] = (int)vertices[i].getX();
@@ -146,9 +148,9 @@ public class Renderer {
 	 */
 	private static void rotateImage(GameImage image, Vector3D viewerDirection) {
 		Transform[] t = getRotateAroundPointTransforms(viewerDirection, CENTER);
-		
+
 	//	System.out.println("transform: "+Arrays.toString(t));
-		
+
 		image.transform(t[0]);
 		image.transform(t[1]);
 		image.transform(t[2]);
@@ -156,7 +158,7 @@ public class Renderer {
 
 	private static void rotateFace(TrixelFace face, Vector3D viewerDirection) {
 		Transform[] t = getRotateAroundPointTransforms(viewerDirection, CENTER);
-		
+
 		face.transform(t[0]);
 		face.transform(t[1]);
 		face.transform(t[2]);
@@ -169,7 +171,7 @@ public class Renderer {
 	private static boolean isImage(Drawable drawable) {
 		return Res.isImage(drawable.getImageName());
 	}
-	
+
 	/**
 	 * @param dir
 	 * @param point

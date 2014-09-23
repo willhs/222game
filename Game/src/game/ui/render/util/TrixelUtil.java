@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @author hardwiwill
- * For helper methods involving trixels, 
+ * For helper methods involving trixels,
  * especially for converting between trixitions and 3d points in the world.
  */
 public class TrixelUtil {
@@ -54,7 +54,7 @@ public class TrixelUtil {
 		// corner = corner of current face
 		Point3D corner = trixelOrigin;
 		faces[0] = getXFace(corner, 0, colour);
-		
+
 		// right face
 		corner = new Point3D(trixelOrigin.getX()+FACE_SIZE, trixelOrigin.getY(), trixelOrigin.getZ());
 		faces[1] = getXFace(corner, 1, colour);
@@ -62,11 +62,11 @@ public class TrixelUtil {
 		// bottom face
 		corner = trixelOrigin;
 		faces[2] = getYFace(corner, 0, colour);
-		
+
 		// top face
 		corner = new Point3D(trixelOrigin.getX(),trixelOrigin.getY()+FACE_SIZE,trixelOrigin.getZ());
 		faces[3] = getYFace(corner, 1, colour);
-		
+
 		// back face
 		corner = trixelOrigin;
 		faces[4] = getZFace(corner, 0, colour);
@@ -74,10 +74,10 @@ public class TrixelUtil {
 		// front face
 		corner = new Point3D(trixelOrigin.getX(),trixelOrigin.getY(),trixelOrigin.getZ()+FACE_SIZE);
 		faces[5] = getZFace(corner, 1, colour);
-		
+
 		return faces;
 	}
-	
+
 	// -------------- HELPER METHODS ----------------------
 	/**
 	 * @param c : far bottom corner of face
@@ -90,10 +90,10 @@ public class TrixelUtil {
 		vertices[1] = new Point3D(c.getX(), c.getY()+Trixel.SIZE*(1-clockwise), c.getZ()+Trixel.SIZE*clockwise);
 		vertices[2] = new Point3D(c.getX(), c.getY()+Trixel.SIZE, c.getZ()+Trixel.SIZE);
 		vertices[3] = new Point3D(c.getX(), c.getY()+Trixel.SIZE*clockwise, c.getZ()+Trixel.SIZE*(1-clockwise));
-		
+
 		return new TrixelFace(vertices, Renderer.getRandomColour());
 	}
-	
+
 	/**
 	 * @param c : far left corner of face
 	 * @param colour: colour of face
@@ -105,10 +105,10 @@ public class TrixelUtil {
 		vertices[1] = new Point3D(c.getX()+Trixel.SIZE+Trixel.SIZE*(1-clockwise), c.getY(), c.getZ()+Trixel.SIZE*(clockwise));
 		vertices[2] = new Point3D(c.getX()+Trixel.SIZE, c.getY(), c.getZ()+Trixel.SIZE);
 		vertices[3] = new Point3D(c.getX()+Trixel.SIZE*(clockwise), c.getY(), c.getZ()+Trixel.SIZE*(1-clockwise));
-		
+
 		return new TrixelFace(vertices, Renderer.getRandomColour());
 	}
-	
+
 	/**
 	 * @param c : bottom left corner of face
 	 * @param colour: colour of face
@@ -121,11 +121,11 @@ public class TrixelUtil {
 		vertices[1] = new Point3D(c.getX()+(Trixel.SIZE*(1-clockwise)), c.getY()+(Trixel.SIZE*clockwise), c.getZ());
 		vertices[2] = new Point3D(c.getX()+Trixel.SIZE, c.getY()+Trixel.SIZE, c.getZ());
 		vertices[3] = new Point3D(c.getX()+(Trixel.SIZE*clockwise), c.getY()+(Trixel.SIZE*(1-clockwise)), c.getZ());
-		
+
 		return new TrixelFace(vertices, Renderer.getRandomColour());
 	}
 	// -----------------------------------------------------------
-	
+
 	/**
 	 * makes a list of trixels to represent a flat 2d polygon
 	 * PRE: polygon vertices must all have same z value (like a with a floor).

@@ -21,7 +21,6 @@ public class GameWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	private BlankPanel blankPanel;
-	private RotationTest graphicsPanel;
 
 
 	private static final String title = "Game";
@@ -38,7 +37,6 @@ public class GameWindow extends JFrame{
 	public GameWindow(){
 		super(title);
 
-		this.graphicsPanel = new RotationTest();
 		this.blankPanel = new BlankPanel();
 
 		//set up the globalKey listener

@@ -42,7 +42,7 @@ public class Res {
 		try {
 			return ImageIO.read(new File(filePath));
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			try {
 				return ImageIO.read(new File(UNKNOWN_IMAGE_PATH));
 			} catch (IOException e1) {

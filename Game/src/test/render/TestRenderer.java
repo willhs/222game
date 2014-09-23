@@ -32,12 +32,13 @@ public class TestRenderer extends JPanel{
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		System.out.println("viewerDirection: "+viewerDirection);
+		
 		Renderer.renderPlace(g, testPlace, viewerDirection);
 	}
-	
+
 	public void rotate(int dx, int dy) {
-		float scalar = 10;
-		Transform rotation = Transform.newYRotation(dx/scalar).compose(Transform.newXRotation(dy/scalar).compose(Transform.newZRotation(0)));
+		float scalar = 50;
+		Transform rotation = Transform.newYRotation(dx/scalar);//.compose(Transform.newXRotation(dy/scalar).compose(Transform.newZRotation(0)));
 		viewerDirection = rotation.multiply(viewerDirection);
 		repaint();
 	}
@@ -53,7 +54,7 @@ public class TestRenderer extends JPanel{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
-	
+
 	public class WillMouseMotionListener extends MouseAdapter{
 
 		private int mouseX, mouseY;
