@@ -5,6 +5,11 @@ import java.util.Iterator;
 import game.world.dimensions.*;
 import game.world.model.*;
 
+/**
+ * 
+ * @author Shane Brewer
+ *
+ */
 public class PickupHandler {
 	/**
 	 * Used by the Game Event handler to have a Player pick up an item.
@@ -37,7 +42,7 @@ public class PickupHandler {
 	 * @return - true if they are close enough
 	 */
 	private static boolean checkProximity(Point3D pointOne, Point3D pointTwo){
-		if ((Math.abs(pointOne.x -pointTwo.x) <= 5) && (Math.abs(pointOne.y -pointTwo.y) <= 5)){
+		if ((Math.abs(pointOne.x -pointTwo.x) <= 5) && (Math.abs(pointOne.z -pointTwo.z) <= 5)){
 			return true;
 		}
 		return false;
