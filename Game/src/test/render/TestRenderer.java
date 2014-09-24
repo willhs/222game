@@ -31,14 +31,17 @@ public class TestRenderer extends JPanel{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		System.out.println("viewerDirection: "+viewerDirection);
-		
+		//System.out.println("viewerDirection: "+viewerDirection);
+
 		Renderer.renderPlace(g, testPlace, viewerDirection);
 	}
 
-	public void rotate(int dx, int dy) {
-		float scalar = 50;
-		Transform rotation = Transform.newYRotation(dx/scalar);//.compose(Transform.newXRotation(dy/scalar).compose(Transform.newZRotation(0)));
+	/**
+	 * @param rotateX : how much to rotate in x direction in radians
+	 * @param rotateY : how much to rotate in y direction in radians
+	 */
+	public void rotate(float rotateX, float rotateY) {
+		Transform rotation = Transform.newYRotation(rotateX);//.compose(Transform.newXRotation(dy).compose(Transform.newZRotation(0)));
 		viewerDirection = rotation.multiply(viewerDirection);
 		repaint();
 	}
@@ -65,7 +68,9 @@ public class TestRenderer extends JPanel{
 			int dx = e.getX()-mouseX;
 			int dy = e.getY()-mouseY;
 
-			rotate(dx, dy);
+			float rotateScalar = 50;
+
+			rotate(dx/rotateScalar, dy/rotateScalar);
 
 			mouseX = e.getX();
 			mouseY = e.getY();

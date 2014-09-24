@@ -14,8 +14,8 @@ public class SingleRoomWorldTest {
 	 * Makes a simple world that has nothing but a world in it for testing by others.
 	 */
 	public SingleRoomWorldTest(){
-		int[] xpoints = new int[]{0,200,200,0,0};
-		int[] ypoints = new int[]{0,0,200,200,0};
+		int[] xpoints = new int[]{0,400,400,0};
+		int[] ypoints = new int[]{0,0,400,400};
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> items = new ArrayList<Item>();
 		items.add(new Table("Table1", new Point3D(100, 100, 100), new Rectangle3D(50, 50, 50)));

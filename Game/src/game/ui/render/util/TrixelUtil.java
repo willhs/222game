@@ -102,9 +102,9 @@ public class TrixelUtil {
 	private static TrixelFace getYFace(Point3D c, int clockwise, Color colour){
 		Point3D[] vertices = new Point3D[4];
 		vertices[0] = c;
-		vertices[1] = new Point3D(c.getX()+Trixel.SIZE+Trixel.SIZE*(1-clockwise), c.getY(), c.getZ()+Trixel.SIZE*(clockwise));
+		vertices[1] = new Point3D(c.getX()+Trixel.SIZE*(clockwise), c.getY(), c.getZ()+Trixel.SIZE*(1-clockwise));
 		vertices[2] = new Point3D(c.getX()+Trixel.SIZE, c.getY(), c.getZ()+Trixel.SIZE);
-		vertices[3] = new Point3D(c.getX()+Trixel.SIZE*(clockwise), c.getY(), c.getZ()+Trixel.SIZE*(1-clockwise));
+		vertices[3] = new Point3D(c.getX()+Trixel.SIZE*(1-clockwise), c.getY(), c.getZ()+Trixel.SIZE*(clockwise));
 
 		return new TrixelFace(vertices, Renderer.getRandomColour());
 	}

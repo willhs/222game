@@ -8,7 +8,7 @@ import java.awt.Polygon;
  * Wrapper class for a java.awt.Polygon so that i can assign z position (to determine order of drawing) and hold a colour.
  *
  */
-public class GamePolygon extends Polygon implements ZComparable{
+public class GamePolygon extends Polygon implements Renderable{
 
 	private float z;
 	private Color colour;
@@ -26,6 +26,25 @@ public class GamePolygon extends Polygon implements ZComparable{
 
 	public Color getColour() {
 		return colour;
+	}
+
+	@Override
+	public String toString(){
+		StringBuilder builder = new StringBuilder("Poly:");
+		for (int i=0; i < npoints; i++){
+			builder.append("[ "+xpoints[i]);
+			builder.append(", ");
+			builder.append(ypoints[i]+" ] ");
+		}
+		return builder.toString();
+	}
+
+	@Override
+	public void flipY(int top) {
+		for (int i = 0; i < ypoints.length; i++){
+			ypoints[i] = top - ypoints[i];
+		}
+
 	}
 
 }
