@@ -1,8 +1,6 @@
 package test.world;
 
 import static org.junit.Assert.*;
-import game.world.dimensions.Dimension;
-import game.world.dimensions.Rectangle;
 import game.world.model.*;
 
 import java.awt.Polygon;
@@ -36,7 +34,7 @@ public class RoomTests {
 			fail("No player were added to the room");
 		}
 	}
-	
+
 	@Test
 	public void chcekGetterTests3() {
 		Room room = getARoom();

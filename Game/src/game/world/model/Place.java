@@ -74,10 +74,34 @@ public interface Place {
 	public boolean contains(Point3D point, Rectangle3D rectangle3D);
 
 	/**
-	 * Sets the player a point. 
+	 * Sets the player a point.
 	 * Should only be used if the player is not in any place.
 	 * @param player - to be placed.
 	 * @return - returns true if placed.
 	 */
 	public boolean setStartPoint(Player player);
+
+	/**
+	 * Removes the item from the room.
+	 * @param item - item to be removed.
+	 */
+	public void removeItem(Item item);
+
+	/**
+	 * Adds a item to the room
+	 * @param item - item to be added.
+	 */
+	public void addItem(Item item);
+
+	/**
+	 * Removes a player from the room.
+	 * @param player - player to be removed.
+	 */
+	public void removePlayer(Player player);
+
+	/**
+	 * Adds a player to the place.
+	 * @param player - player to be added.
+	 */
+	public void addPlayer(Player player);
 }
