@@ -100,4 +100,14 @@ public class Room implements Place {
 		return false;
 	}
 
+	@Override
+	public void removeItem(Item item) {
+		items.remove(item);
+	}
+
+	@Override
+	public void addItem(Item item) {
+		items.add(item);
+	}
+
 }
