@@ -110,4 +110,14 @@ public class Room implements Place {
 		items.add(item);
 	}
 
+	@Override
+	public void removePlayer(Player player) {
+		players.remove(player);
+	}
+
+	@Override
+	public void addPlayer(Player player) {
+		players.add(player);
+	}
+
 }

@@ -11,9 +11,9 @@ import java.util.List;
  *
  */
 public abstract class Exit implements Drawable{
-	
+
 	private final List<Place> contectedPlaces;
-	
+
 	/**
 	 * There should always be to places connected to a Exit.
 	 * @param places
@@ -24,10 +24,27 @@ public abstract class Exit implements Drawable{
 		}
 		contectedPlaces = places;
 	}
-	
-	
+
+
 	public abstract String getName();
-	
+
 	public abstract String getImageName();
-	
+
+	public abstract boolean isLocked();
+
+	public abstract boolean unlock(Inventory inventory);
+
+	/**
+	 * Should return the places counter part.
+	 * @param place - place that needs to be found.
+	 * @return - return the other place - null if the place is is not found..... imposable.
+	 */
+	public Place getOtherPlace(Place place) {
+		for (Place otherPlace: contectedPlaces){
+			if (!place.equals(otherPlace)){
+				return otherPlace;
+			}
+		}
+		return null;
+	}
 }

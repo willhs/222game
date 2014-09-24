@@ -92,4 +92,16 @@ public interface Place {
 	 * @param item - item to be added.
 	 */
 	public void addItem(Item item);
+
+	/**
+	 * Removes a player from the room.
+	 * @param player - player to be removed.
+	 */
+	public void removePlayer(Player player);
+
+	/**
+	 * Adds a player to the place.
+	 * @param player - player to be added.
+	 */
+	public void addPlayer(Player player);
 }
