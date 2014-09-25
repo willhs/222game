@@ -33,7 +33,7 @@ public class TestRenderer extends JPanel{
 		super.paintComponent(g);
 		//System.out.println("viewerDirection: "+viewerDirection);
 
-		Renderer.renderPlace(g, testPlace, viewerDirection);
+		Renderer.renderPlace(g, testPlace);
 	}
 
 	/**

@@ -29,7 +29,7 @@ import java.util.Queue;
 public class Renderer {
 
 	// TEMPORARY
-	private static Point3D CENTER = new Point3D(200, 200, -200);
+	private static Point3D CENTER = new Point3D(300, 300, 0);
 	private static Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
 	private static Transform AUTO = Transform.identity();
 	private static Vector3D DEFAULT_VIEW_ANGLE = new Vector3D(0,0,1);
@@ -41,7 +41,7 @@ public class Renderer {
 	 * @param g
 	 * @param place
 	 */
-	public static void renderPlace(Graphics g, Place place, Vector3D viewerDirection){
+	public static void renderPlace(Graphics g, Place place){
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -82,7 +82,7 @@ public class Renderer {
 		for (Trixel floorTrixel : floorTrixels){
 			TrixelFace[] faces = TrixelUtil.getTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
-				translate(face, new Vector3D(200, -100, 0));
+				//translate(face, new Vector3D(200, -100, 0));
 				// rotate the floor so that it's on the ground (rather than on the wall)
 				rotate(face, Transform.newXRotation((float)(Math.PI/2)));
 				rotate(face, ISOMETRIC_ROTATION);
@@ -123,14 +123,6 @@ public class Renderer {
 
 	/**
 	 * @param face
-	 * @param translation, a vector to translate by
-	 */
-	private static void translate(TrixelFace face, Vector3D translation) {
-		face.transform(Transform.newTranslation(translation));
-	}
-
-	/**
-	 * @param face
 	 * @return game polygon representing a trixel face
 	 */
 	private static GamePolygon getGamePolygonFromTrixelFace(TrixelFace face) {
@@ -148,17 +140,10 @@ public class Renderer {
 	}
 
 	/**
-	 * rotates a face around a point given a viewer direction
+	 * rotates a transformable object around a point given a viewer direction
 	 * @param object
 	 * @param viewerDirection
 	 */
-	private static void rotateTransformable(Transformable object, Vector3D viewerDirection) {
-		Transform[] t = getRotateAroundPointTransforms(viewerDirection, CENTER);
-
-		object.transform(t[0]);
-		object.transform(t[1]);
-		object.transform(t[2]);
-	}
 	private static void rotate(Transformable object, Transform rotate) {
 		Transform[] t = getTranslationAroundPointTransforms(CENTER);
 
