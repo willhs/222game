@@ -8,6 +8,7 @@ import game.world.util.Floor;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.*;
+import java.io.Serializable;
 
 /**
  * Room Class This class defines every thing to do with a room.
@@ -15,7 +16,7 @@ import java.util.*;
  * @author Shane Brewer
  *
  */
-public class Room implements Place {
+public class Room implements Place, Serializable {
 
 	private final List<Exit> exits;
 	private final List<Player> players;

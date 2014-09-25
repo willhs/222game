@@ -1,7 +1,9 @@
 package nw;
-
 import java.net.*;
 import java.io.*;
+import java.util.*;
+import game.ui.window.*;
+import game.world.model.*;
 
 public class Client{
 	public static void main(String[] args) throws IOException{
@@ -10,32 +12,56 @@ public class Client{
 			System.exit(1);
 		}
 
+		LinkedList<Integer> keyCodeQueue = new LinkedList<Integer>();
+		GameWindow gw = new GameWindow(keyCodeQueue);
+
 		Socket sock = new Socket(args[0], Integer.parseInt(args[1]));
 
-		PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
-		BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+		ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
 		out.flush();
 
-		String received = "";
+		BufferedInputStream bis = new BufferedInputStream(sock.getInputStream());
+		ObjectInputStream in = new ObjectInputStream(bis);
+
+		Object received;
 		String input = "";
 
+		BufferedReader cis = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print(">>> ");
+
 		try{
-		
-			while(!input.equals("quit")){
-				System.out.print(">>> ");
-				input = System.console().readLine();
-				out.println(input);
-		
-				received = in.readLine();
-		
-				System.out.println("Got: " + received);
+			while(true){
+				if(cis.ready()){
+					out.writeObject(cis.readLine());
+					System.out.println("sent");
+					System.out.println(">>> ");
+				}
+				if(bis.available() != 0){
+					received = in.readObject();
+					if(received instanceof String){
+						System.out.println("Got: " + (String)received);
+					}else if(received instanceof Room){
+						System.out.println("Got room!: " + received);
+					}
+				}
+				if(keyCodeQueue.size() != 0){
+					out.writeObject("bro could you send me that room thing?");
+					keyCodeQueue.poll();
+				}
+				Thread.sleep(500);
+				System.out.println("loop");
 			}
 	
-			out.close();
-			in.close();
 
+		}catch(ClassNotFoundException e){
+			System.err.println(e);
 		}catch(IOException e){
 			System.err.println(e);
+		}catch(InterruptedException e){
+			System.err.println(e);
+		}finally{
+			out.close();
+			in.close();
 		}
 	}
 }

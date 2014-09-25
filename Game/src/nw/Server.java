@@ -1,7 +1,10 @@
 package nw;
-
 import java.net.*;
 import java.io.*;
+import game.ui.window.*;
+import game.world.model.*;
+import java.util.ArrayList;
+import java.awt.Polygon;
 
 public class Server extends Thread{
 	private Socket clientSocket;
@@ -11,28 +14,41 @@ public class Server extends Thread{
 	}
 
 	public void run(){
-		BufferedReader in = null;
-		PrintWriter out = null;
+		ObjectInputStream in = null;
+		ObjectOutputStream out = null;
 
-		String received = "";
+		Object received;
+		String recStr = "";
 
-		try{	
+		try{
 
-			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			out = new PrintWriter(clientSocket.getOutputStream(), true);
+			in = new ObjectInputStream(clientSocket.getInputStream());
+			out = new ObjectOutputStream(clientSocket.getOutputStream());
 
-			while((received = in.readLine()) != null){
-				System.out.println("Got: " + received);
+			while((received = in.readObject()) != null){
 	
-				received = received.toUpperCase();
+				if(received instanceof String){
+					recStr = ((String)received);
+					System.out.println("Got: " + recStr);
+					if(recStr.equals("bro could you send me that room thing?")){
+						out.writeObject(new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon()));
+					}
+					else{
+						recStr = recStr.toUpperCase();
 	
-				System.out.println("Returning: " + received);
-				out.println(received);
+						System.out.println("Returning: " + recStr);
+						out.writeObject(recStr);
+					}
+				}else{
+					System.out.println("No idea what this is: " + received);
+				}
 			}
 	
 			in.close();
 			out.close();
 
+		}catch(ClassNotFoundException e){
+			System.err.println(e);
 		}catch(IOException e){
 			System.err.println(e);
 		}
