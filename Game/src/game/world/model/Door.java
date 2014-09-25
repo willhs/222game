@@ -12,7 +12,7 @@ import java.util.List;
  *
  */
 public class Door extends Exit{
-	
+
 	private final String name;
 	private final String imageName;
 	private final Point3D position;
@@ -44,5 +44,16 @@ public class Door extends Exit{
 	public String getImageName() {
 		return imageName;
 	}
+
+	@Override
+	public boolean isLocked() {
+		return false;
+	}
+
+	@Override
+	public boolean unlock(Inventory inventory) {
+		return false;
+	}
+
 
 }

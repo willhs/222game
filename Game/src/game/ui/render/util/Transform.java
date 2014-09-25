@@ -99,7 +99,7 @@ public class Transform{
         }
         return new Transform(ans);
     }
-    
+
     /* apply this transform to a vector*/
     public Vector3D multiply(Vector3D vect){
         if (values==null || values[0]==null || values[1]==null || values[2]==null){
@@ -114,7 +114,7 @@ public class Transform{
         z += values[2][0]*vect.x + values[2][1]*vect.y + values[2][2]*vect.z;
         return new Vector3D(x, y, z);
     }
-    
+
     /* apply this transform to a vector*/
     public Point3D multiply(Point3D point){
         if (values==null || values[0]==null || values[1]==null || values[2]==null){
@@ -138,7 +138,7 @@ public class Transform{
         StringBuilder ans = new StringBuilder();
         for (int row=0; row<3; row++){
             for (int col=0; col<4; col++){
-                ans.append(values[row][col]).append(' ');
+                ans.append(String.format("%4.2f",values[row][col])).append(' ');
             }
             ans.append('\n');
         }

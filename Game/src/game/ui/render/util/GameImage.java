@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
  * @author hardwiwill
  * Contains an (2d) image at a point
  */
-public class GameImage implements ZComparable, Transformable{
+public class GameImage implements Renderable, Transformable{
 
 	private BufferedImage image;
 	private Point3D position;
@@ -25,15 +25,15 @@ public class GameImage implements ZComparable, Transformable{
 	public float getZ() {
 		return position.getZ();
 	}
-	
+
 	public Dimension getDimension(){
 		return dimension;
 	}
-	
+
 	public Point3D getPosition(){
 		return position;
 	}
-	
+
 	public BufferedImage getImage(){
 		return image;
 	}
@@ -41,5 +41,10 @@ public class GameImage implements ZComparable, Transformable{
 	@Override
 	public void transform(Transform transform) {
 		position = transform.multiply(position);
+	}
+
+	@Override
+	public void flipY(int top) {
+		position = position.flipY(top);
 	}
 }

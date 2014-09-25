@@ -81,4 +81,13 @@ public class Point3D{
 		return true;
 	}
 
+
+	/**
+	 * @param top
+	 * @return a point that's flipped using top as the top
+	 */
+	public Point3D flipY(int top) {
+		return new Point3D(x, top-y, z);
+	}
+
 }

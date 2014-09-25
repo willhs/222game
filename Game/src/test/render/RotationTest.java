@@ -13,9 +13,8 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -32,6 +31,7 @@ public class RotationTest extends JPanel{
 
 	private Point3D point = new Point3D(100, 100, 20);
 	private Point3D centre = new Point3D(200, 200, -100);
+	private Point3D imagePosition = new Point3D(500, 400, 200);
 
 	private Floor floor;
 
@@ -39,7 +39,8 @@ public class RotationTest extends JPanel{
 	 * viewer direction will always be 0,0,1 (environment will move, not viewer)
 	 * but may use a 'fake' viewer direction in future to make model closer to reality
 	 */
-	private Vector3D viewerDir = new Vector3D(0,0,(int)(-Math.PI*2));
+	private Vector3D lookDownZ = new Vector3D(0, 0, (int)(Math.PI));
+	private Vector3D viewerDir = new Vector3D(0, 0, (int)(Math.PI));
 
 	private int objSize = 50;
 	private int centreSize = 10;
@@ -78,24 +79,29 @@ public class RotationTest extends JPanel{
 		// define floor (for testing)
 		Point3D[] floorPoints = new Point3D[]{ new Point3D(0,0,0), new Point3D(500, 0, 0), new Point3D(500, 300, 0), new Point3D(0, 300, 0)};
 		floor = new Floor(floorPoints);
-		image = new GameImage(Res.getImageFromName("table"), new Point3D( 400, 200, 200), new Dimension(50, 100));
+		image = new GameImage(Res.getImageFromName("Table"), imagePosition, new Dimension(100, 100));
 
 	}
-	
+
 	public void rotate(int rotateX, int rotateY, int rotateZ){
 		float scalar = 10;
-		
+
 		Transform rotateDir = Transform.newXRotation(rotateY/scalar).compose(
 				Transform.newYRotation(rotateX/scalar)).compose(
 						Transform.newZRotation(rotateZ/scalar));
-		
+
 		viewerDir = rotateDir.multiply(viewerDir);
-		
+
+		Vector3D diffDir = viewerDir;
+
 		Transform translateToOrigin = Transform.newTranslation(-centre.getX(), -centre.getY(), -centre.getZ());
-		Transform rotatePoint = Transform.newXRotation(viewerDir.y/scalar).compose(
-				Transform.newYRotation(-viewerDir.x/scalar)).compose(
-						Transform.newZRotation(0));
+		Transform rotatePoint = Transform.newXRotation(diffDir.y/scalar).compose(
+				Transform.newYRotation(-diffDir.x/scalar)).compose(
+						Transform.newZRotation(diffDir.z));
 		Transform translateBack = Transform.newTranslation(centre.getX(), centre.getY(), centre.getZ());
+
+		System.out.println("mouseRotations: "+rotateX/scalar+", "+ rotateY/scalar);
+		System.out.println("viewerDir: "+viewerDir);
 
 		point = translateToOrigin.multiply(point);
 		point = rotateDir.multiply(point);
@@ -124,14 +130,23 @@ public class RotationTest extends JPanel{
 		g.fillPolygon(floorPoly);
 
 		g.setColor(Color.red);
-		g.fillRect((int)point.getX()+TRANSLATE-(objSize/2), (int)point.getY()+TRANSLATE-(objSize/2) ,objSize, objSize);
-		g.fillOval((int)centre.getX()+TRANSLATE-(centreSize/2), (int)centre.getY()+TRANSLATE-(centreSize/2), centreSize, centreSize);
-		g.fillOval(TRANSLATE-(centreSize/2), TRANSLATE-(centreSize/2), centreSize, centreSize);
+		// box
+		g.fillRect((int)point.getX()-(objSize/2), (int)point.getY()-(objSize/2) ,objSize, objSize);
+		// center
+		//g.fillOval((int)centre.getX()+TRANSLATE-(centreSize/2), (int)centre.getY()+TRANSLATE-(centreSize/2), centreSize, centreSize);
+		g.fillOval((int)centre.getX()-(centreSize/2), (int)centre.getY()-(centreSize/2), centreSize, centreSize);
 
-		g.drawImage(image.getImage(), (int)image.getPosition().x-image.getDimension().width/2, (int)image.getPosition().y-image.getDimension().height, 
-				image.getDimension().width, image.getDimension().height, null);
-		//System.out.println((int)point.getX()+TRANSLATE-(objSize/2));
-		
+		// draw image
+		float imageWidth = image.getDimension().width;
+		float imageHeight = image.getDimension().height;
+		//g.drawImage(image.getImage(), (int)image.getPosition().x-(int)imageWidth/2, (int)image.getPosition().y-(int)imageHeight/2,
+		//		(int)imageWidth, (int)imageHeight, null);
+
+		// image point
+		int size = 50;
+		g.fillOval((int)image.getPosition().x-size/2, (int)image.getPosition().y-size/2,
+				size, size);
+
 		// draw viewerDir
 		int offsetX = (int)image.getPosition().x;
 		int offsetY = (int)image.getPosition().y;
@@ -169,7 +184,7 @@ public class RotationTest extends JPanel{
 		frame.setVisible(true);
 	}
 
-	public class WillMouseMotionListener implements MouseListener, MouseMotionListener {
+	public class WillMouseMotionListener extends MouseAdapter {
 
 		int mouseX, mouseY;
 
@@ -184,43 +199,11 @@ public class RotationTest extends JPanel{
 			mouseX = e.getX();
 			mouseY = e.getY();
 		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
 		@Override
 		public void mousePressed(MouseEvent e) {
 			mouseX = e.getX();
 			mouseY = e.getY();
 		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
 	}
 }
 

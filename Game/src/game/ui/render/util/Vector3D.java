@@ -68,6 +68,10 @@ public class Vector3D{
 				* other.getZ();
 	}
 
+	public Vector3D normalise(){
+		return new Vector3D(x/mag, y/mag, z/mag);
+	}
+
 	/**
 	 * Returns the vector that is the cross product of this vector and the other
 	 * vector. Note that the resulting vector is perpendicular to both this and
@@ -88,16 +92,14 @@ public class Vector3D{
 				* other.getZ())
 				/ getMag() / other.getMag();
 	}
-	
+
 	public float xAngle(Vector3D other){
-		return (float)Math.acos((getY() * other.getY() + getZ()
-				* other.getZ())
-				/ getMag() / other.getMag());
+		return (float)Math.acos((getY() * other.getY() + getZ()	* other.getZ())
+				/ (getMag() * other.getMag()));
 	}
 	public float yAngle(Vector3D other){
-		return (float)Math.acos((getX() * other.getX() + getZ()
-				* other.getZ())
-				/ getMag() / other.getMag());
+		return (float)Math.acos((getX() * other.getX() + getZ()	* other.getZ())
+				/ (getMag() * other.getMag()));
 	}
 
 	public String toString() {

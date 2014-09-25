@@ -102,5 +102,42 @@ public class MovementHandler {
 		return false;
 	}
 
-	
+	//==========================Exiting Room Logic=========================//
+	/**
+	 * Helps a player exit from one room to another.
+	 * @param player - player to be moved
+	 * @param place - place the player is moving from.
+	 * @param exit - the exit the player is going to use.
+	 * @return - returns true if the player exited correctly.
+	 */
+	public static boolean exitPlace(Player player, Place place, Exit exit){
+		if(!checkProximity(player.getPosition(), exit.getPosition())){
+			return false;
+		}
+		if(exit.isLocked()){
+			if(!exit.unlock(player.getInventory())){
+				return false;
+			}
+		}
+		Place otherPlace = exit.getOtherPlace(place);
+		place.removePlayer(player);
+		otherPlace.addPlayer(player);
+		return true;
+	}
+
+	/**
+	 * Makes sure that the item and player are within a certain proximity of each other
+	 * @param pointOne - point of the player.
+	 * @param pointTwo - point of the item.
+	 * @return - true if they are close enough
+	 */
+	private static boolean checkProximity(Point3D pointOne, Point3D pointTwo){
+		if ((Math.abs(pointOne.x -pointTwo.x) <= 5) && (Math.abs(pointOne.z -pointTwo.z) <= 5)){
+			return true;
+		}
+		return false;
+	}
+	//===============================END===================================//
+
+
 }

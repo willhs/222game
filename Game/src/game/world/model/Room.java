@@ -101,4 +101,24 @@ public class Room implements Place, Serializable {
 		return false;
 	}
 
+	@Override
+	public void removeItem(Item item) {
+		items.remove(item);
+	}
+
+	@Override
+	public void addItem(Item item) {
+		items.add(item);
+	}
+
+	@Override
+	public void removePlayer(Player player) {
+		players.remove(player);
+	}
+
+	@Override
+	public void addPlayer(Player player) {
+		players.add(player);
+	}
+
 }

@@ -23,7 +23,6 @@ public class GameWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	private BlankPanel blankPanel;
-	private RotationTest graphicsPanel;
 
 	private Queue<Integer> keyCodeQueue;
 
@@ -41,7 +40,6 @@ public class GameWindow extends JFrame{
 	public GameWindow(Queue<Integer> keyCodeQueue){
 		super(title);
 
-		this.graphicsPanel = new RotationTest();
 		this.blankPanel = new BlankPanel();
 
 		this.keyCodeQueue = keyCodeQueue;
