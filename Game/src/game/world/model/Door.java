@@ -17,6 +17,7 @@ public class Door extends Exit{
 	private final String imageName;
 	private final Point3D position;
 	private final Rectangle3D boundingBox;
+	
 	public Door(List<Place> places, String name, Point3D position, Rectangle3D size) {
 		super(places);
 		this.name = name;

@@ -11,12 +11,12 @@ public class Key implements Item {
 	private Point3D position;
 
 	//==================Constructor=================//
-	public Key(Rectangle3D boundingBox, String name, String imageName,
+	public Key(Rectangle3D boundingBox, String name,
 			Point3D position) {
 		super();
 		this.boundingBox = boundingBox;
 		this.name = name;
-		this.imageName = imageName;
+		this.imageName = "Key";
 		this.position = position;
 	}
 	//====================End=======================//
