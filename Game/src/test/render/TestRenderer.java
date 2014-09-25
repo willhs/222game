@@ -19,6 +19,7 @@ public class TestRenderer extends JPanel{
 
 	private Place testPlace;
 	private Vector3D viewerDirection;
+	private Vector3D rotateAmounts = new Vector3D(0,0,0);
 
 	public TestRenderer(){
 		 testPlace = new SingleRoomWorldTest().world.getPlaces().next();
@@ -33,7 +34,8 @@ public class TestRenderer extends JPanel{
 		super.paintComponent(g);
 		//System.out.println("viewerDirection: "+viewerDirection);
 
-		Renderer.renderPlace(g, testPlace, viewerDirection);
+		Renderer.rotateAmounts = rotateAmounts;
+		Renderer.renderPlace(g, testPlace);
 	}
 
 	/**
@@ -67,6 +69,11 @@ public class TestRenderer extends JPanel{
 
 			int dx = e.getX()-mouseX;
 			int dy = e.getY()-mouseY;
+
+			float rotateSpeed = 0.01f;
+			rotateAmounts = rotateAmounts.plus(
+					new Vector3D(rotateSpeed *dx, rotateSpeed *dy, 0)
+			);
 
 			float rotateScalar = 50;
 

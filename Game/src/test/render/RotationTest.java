@@ -152,6 +152,7 @@ public class RotationTest extends JPanel{
 		int offsetY = (int)image.getPosition().y;
 		int scale = 30;
 		//g.drawLine(offsetX, offsetY, offsetX+(int)(viewerDir.x*scale), offsetY+(int)(viewerDir.y*scale));
+
 	}
 
 

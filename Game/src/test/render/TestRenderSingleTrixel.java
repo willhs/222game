@@ -31,7 +31,7 @@ public class TestRenderSingleTrixel extends JPanel{
 		int left = 100;
 		int[] xpoints = { left , left + Trixel.SIZE, left + Trixel.SIZE, left};
 		int[] ypoints = { top , top,  top + Trixel.SIZE, top + Trixel.SIZE};
-		testPlace = new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length)); 
+		testPlace = new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length));
 		viewerDirection = new Vector3D(0,0,1);
 		WillMouseMotionListener l = new WillMouseMotionListener();
 		addMouseListener(l);
@@ -41,9 +41,9 @@ public class TestRenderSingleTrixel extends JPanel{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Renderer.renderPlace(g, testPlace, viewerDirection);
+		Renderer.renderPlace(g, testPlace);
 	}
-	
+
 	public void rotate(int dx, int dy, int i) {
 		float scalar = 100;
 		Transform rotation = Transform.newYRotation(dx/scalar).compose(Transform.newXRotation(dy/scalar));
@@ -63,7 +63,7 @@ public class TestRenderSingleTrixel extends JPanel{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
-	
+
 	public class WillMouseMotionListener extends MouseAdapter{
 
 		private int mouseX, mouseY;
