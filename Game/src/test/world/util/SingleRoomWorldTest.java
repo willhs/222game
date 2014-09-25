@@ -6,6 +6,11 @@ import java.util.*;
 import game.world.model.*;
 import game.world.dimensions.*;
 
+/**
+ * 
+ * @author Shane Brewer
+ *
+ */
 public class SingleRoomWorldTest {
 
 	public World world;

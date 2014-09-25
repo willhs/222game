@@ -91,9 +91,10 @@ public class Room implements Place, Serializable {
 
 	@Override
 	public boolean setStartPoint(Player player) {
-		for (int x = 0; x < floor.getBounds().x; x++){
-			for (int z = 0; z < floor.getBounds().y; z++){
+		for (int x = 0; x < floor.getBounds().width; x++){
+			for (int z = 0; z < floor.getBounds().height; z++){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), this)){
+					System.out.println("Player Point set");
 					return true;
 				}
 			}
