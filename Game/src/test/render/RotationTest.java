@@ -110,8 +110,8 @@ public class RotationTest extends JPanel{
 		floor.transform(translateToOrigin);
 		floor.transform(rotateDir);
 		floor.transform(translateBack);
-
-		image = new GameImage(Res.getImageFromName("Table"), imagePosition, new Dimension(100, 100));
+		
+		image = new GameImage(Res.getImageFromName("Table"), new Point3D( 400, 200, 200), new Dimension(50, 100));
 		image.transform(translateToOrigin);
 		image.transform(rotatePoint);
 		image.transform(translateBack);

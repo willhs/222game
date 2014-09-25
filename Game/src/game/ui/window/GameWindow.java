@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.security.acl.LastOwnerException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
@@ -22,6 +24,7 @@ public class GameWindow extends JFrame{
 
 	private BlankPanel blankPanel;
 
+	private Queue<Integer> keyCodeQueue;
 
 	private static final String title = "Game";
 
@@ -34,10 +37,12 @@ public class GameWindow extends JFrame{
 	/**
 	 * Constructor for the GameFrame
 	 * */
-	public GameWindow(){
+	public GameWindow(Queue<Integer> keyCodeQueue){
 		super(title);
 
 		this.blankPanel = new BlankPanel();
+
+		this.keyCodeQueue = keyCodeQueue;
 
 		//set up the globalKey listener
 		setUpKeyListner();
@@ -64,11 +69,11 @@ public class GameWindow extends JFrame{
 		KeyboardFocusManager manager  = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 
 		//add my own custom event dispatcher
-		manager.addKeyEventDispatcher( new keyInputManagment(blankPanel));
+		manager.addKeyEventDispatcher( new keyInputManagment(blankPanel, keyCodeQueue));
 	}
 
 
 	public static void main(String[] args){
-		new GameWindow();
+		new GameWindow(new LinkedList<Integer>());
 	}
 }

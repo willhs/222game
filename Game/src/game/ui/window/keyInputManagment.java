@@ -3,18 +3,21 @@ package game.ui.window;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.Queue;
 
 public class keyInputManagment  implements KeyEventDispatcher{
 	private BlankPanel panel;
 	private static HashMap<String , Integer> keyMap;
 
+	private Queue<Integer> keyCodeQueue;
 
 	private static KeyEvent lastKeyEvent;
 
 	private int escapeKey;
 
-	public keyInputManagment(BlankPanel panel){
+	public keyInputManagment(BlankPanel panel, Queue<Integer> keyCodeQueue){
 		this.panel = panel;
+		this.keyCodeQueue = keyCodeQueue;
 
 		//assign keys to the map
 		keyMap = setUpkeys();
@@ -49,7 +52,9 @@ public class keyInputManagment  implements KeyEventDispatcher{
 				panel.keyPressed("backspace");
 				return false;
 			}
-
+			if(e.getKeyCode() == KeyEvent.VK_R){
+				keyCodeQueue.add(1);
+			}
 
 			for(String key : keyMap.keySet() ){
 				if(keyMap.get(key) == e.getKeyCode()){
