@@ -29,12 +29,14 @@ import java.util.Queue;
 public class Renderer {
 
 	// TEMPORARY
-	private static Point3D CENTER = new Point3D(300, 300, 0);
+	private static Point3D CENTER = new Point3D(300, 300, 100);
 	private static Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
 	private static Transform AUTO = Transform.identity();
 	private static Vector3D DEFAULT_VIEW_ANGLE = new Vector3D(0,0,1);
 
 	private static final int FRAME_TOP = 600;
+
+	public static Vector3D rotateAmounts;
 
 	/**
 	 * Draws a place using Graphics parameter and viewer direction
@@ -42,6 +44,8 @@ public class Renderer {
 	 * @param place
 	 */
 	public static void renderPlace(Graphics g, Place place){
+
+
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -84,8 +88,44 @@ public class Renderer {
 			for (TrixelFace face : faces){
 				//translate(face, new Vector3D(200, -100, 0));
 				// rotate the floor so that it's on the ground (rather than on the wall)
-				rotate(face, Transform.newXRotation((float)(Math.PI/2)));
-				rotate(face, ISOMETRIC_ROTATION);
+//				rotate(face, Transform.newXRotation((float)(Math.PI/2)));
+
+//				rotate(face, Transform.newXRotation(rotateAmounts.y * (float)(Math.PI/2)));
+//				Transform rotateX = Transform.newXRotation(rotateAmounts.y * (float)(Math.PI/2));
+				Transform[] t = getTranslationAroundPointTransforms(CENTER);
+
+				Transform rotateX = Transform.newXRotation((float)Math.PI/2);
+				//Transform rotateX = Transform.newXRotation(0);
+
+//				Transform rotateY = Transform.newYRotation(rotateAmounts.x);
+				Transform rotateY = Transform.newYRotation((float)(rotateAmounts.x));
+
+				//Transform translation = Transform.newTranslation(new Vector3D(200, 200, 0));
+				Transform translation = Transform.newTranslation(new Vector3D(0, 0, 0));
+
+				Transform finalTransform = rotateX;
+//
+				finalTransform =
+						translation.compose(
+						ISOMETRIC_ROTATION.compose(
+						t[1].compose(
+						rotateY.compose(
+						rotateX.compose(
+						t[0]
+
+				)))));
+
+
+//				face.transform(finalTransform);
+
+/*				face.transform(rotateX);
+				face.transform(t[0]);
+				face.transform(rotateY);
+				face.transform(t[1]);
+				face.transform(ISOMETRIC_ROTATION);
+				face.transform(translation);*/
+
+				rotate(face, finalTransform);
 				if (face.isFacingViewer()){
 					toDraw.offer(getGamePolygonFromTrixelFace(face));
 				}
@@ -121,6 +161,10 @@ public class Renderer {
 		g2.fillOval((int)(CENTER.x-10), (int)(CENTER.y-10), 20, 20);
 	}
 
+	private static void translate(Transformable face, Vector3D translate) {
+		face.transform(Transform.newTranslation(translate));
+	}
+
 	/**
 	 * @param face
 	 * @return game polygon representing a trixel face
@@ -145,11 +189,13 @@ public class Renderer {
 	 * @param viewerDirection
 	 */
 	private static void rotate(Transformable object, Transform rotate) {
-		Transform[] t = getTranslationAroundPointTransforms(CENTER);
+//		Transform[] t = getTranslationAroundPointTransforms(CENTER);
+//
+//		object.transform(t[0]);
+//		object.transform(rotate);
+//		object.transform(t[1]);
 
-		object.transform(t[0]);
 		object.transform(rotate);
-		object.transform(t[1]);
 	}
 
 	/**

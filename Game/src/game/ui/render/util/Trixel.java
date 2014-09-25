@@ -11,14 +11,12 @@ public class Trixel {
 	/**
 	 * value for trixel width, height and depth
 	 */
-	public static final int SIZE = 50;
+	public static final int SIZE = 30;
 	/**
 	 * The trixel's position in the trixel grid (trid)!
 	 */
 	private Trixition trixition;
-	/**
-	 * TODO Will need to be one of these for each face of the
-	 */
+
 	private Color colour;
 
 	public Trixel (Trixition trisition, Color c){

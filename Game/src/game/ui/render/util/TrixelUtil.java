@@ -135,10 +135,13 @@ public class TrixelUtil {
 	public static List<Trixel> polygon2DToTrixels(Polygon poly, float z){
 		List<Trixel> trixels = new ArrayList<Trixel>();
 		Rectangle polyBounds = poly.getBounds();
+		System.out.println(polyBounds);
 		for (int x = polyBounds.x; x < polyBounds.x + polyBounds.width; x += Trixel.SIZE){
-			for (int y = polyBounds.y; poly.contains(x,y); y += Trixel.SIZE){
-				Trixition trixition = TrixelUtil.positionToTrixition(new Point3D(x, y, z));
-				trixels.add(new Trixel(trixition, Renderer.getRandomColour()));
+			for (int y = polyBounds.y; y < polyBounds.y + polyBounds.height; y+= Trixel.SIZE){
+				if (poly.contains(x,y)){
+					Trixition trixition = TrixelUtil.positionToTrixition(new Point3D(x, y, z));
+					trixels.add(new Trixel(trixition, Renderer.getRandomColour()));
+				}
 			}
 		}
 		return trixels;
