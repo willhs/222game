@@ -33,9 +33,19 @@ public class HelpMenu implements GraphicsPane {
 
 	private Rectangle textBox;
 
+	//animation fields
+	private boolean animating;
+	private boolean animatingIn;
+	private boolean setUp;
+	private int buttonStartX;
+	private int aniSpeed = 1;
+	private float speedMultiplyer = 1f;
+	//the menu to be drawn after the animation
+	private GraphicsPane nextMenu;
+
 	public HelpMenu(BlankPanel panel){
 		this.panel = panel;
-		this.numbOfButtons = 1;
+		this.numbOfButtons = 2;
 		this.selectedButton = -1;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
@@ -53,10 +63,13 @@ public class HelpMenu implements GraphicsPane {
 	 * */
 	private void setupButtons(){
 		buttons[0] = new Rectangle(50,50,200,50);
-
+		setUpTextBox();
+		buttons[1] = textBox;
 		buttonNames[0] = "Back";
+		buttonNames[1] = "";
 
 	}
+
 
 	private void setUpTextBox(){
 		int gap = 50;//the gap between button and text box
@@ -73,22 +86,24 @@ public class HelpMenu implements GraphicsPane {
 
 	@Override
 	public void render(Graphics g){
-		Graphics2D g2d = (Graphics2D)g;
+		//draws the background image
 		g.drawImage(backgroundImage, 0, 0,panel);
 
+		//if there is a menu to render in the animation render it
+		if(nextMenu!=null){
+			if(nextMenu.isAnimating()){
+				nextMenu.animate();
+				nextMenu.render(g);
+			}
+		}
+
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
-
-		g2d.draw(textBox);
-		g2d.setColor(new Color(0f,0f,0f,0.6f));
-		g2d.fill(textBox);
-
-
 		g.setColor(Color.white);
 		g.setFont(helpTextFont);
-		drawString(g,helpText, (int)(textBox.getX() + 20),(int)( textBox.getY() + 20));//draws the string within the text box
+		drawString(g,helpText, (int) (buttons[1].getX()+20),(int)( textBox.getY() + 20));//draws the string within the text box
 	}
-	
-	
+
+
 	/**
 	 * Draws the string on the graphics object splitting the string when a \n
 	 * pattern is reached
@@ -104,20 +119,25 @@ public class HelpMenu implements GraphicsPane {
 
 		//set selected button
 		for(int i = 0; i < buttons.length; i++){
-			if(buttons[i].contains(e.getX(), e.getY())){
+			if(buttons[0].contains(e.getX(), e.getY())){//TODO currently zero beuase there is only one button
 				selectedButton = i;//set selected button
 				return;
 			}
-			selectedButton = Integer.MAX_VALUE;//no button is selected
+			selectedButton = -1;//no button is selected
 		}
 	}
+
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(selectedButton == 0){
-			panel.setMenu(new MainMenu(panel));
+			System.out.println("Back");
+			animating = true;
+			nextMenu = new MainMenu(panel);
+			((MainMenu)nextMenu).setAnimating(true);
 		}
 	}
+
 
 	@Override
 	public void keyPressed(String keyEvent) {
@@ -135,19 +155,6 @@ public class HelpMenu implements GraphicsPane {
 		}
 	}
 
-	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
-
-
-		//load background image
-		try {
-			this.backgroundImage = ImageIO.read(imagefile);
-			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
-		} catch (IOException e) {
-			System.out.println("failed reading image");
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Reads in the help text for the menu from a file checks to make sure the text
@@ -190,7 +197,51 @@ public class HelpMenu implements GraphicsPane {
 			System.out.println("Failed at reading HelpText File");
 			e.printStackTrace();
 		}
+	}
 
 
+	@Override
+	public void animate() {
+		if(animatingIn){
+			if(!setUp){//if the starting x co-ordinate has not been saved
+				buttonStartX = (int) buttons[0].getX();
+				MenuUtil.setUpAnimation(buttons);//moved the buttons to the end of the screen
+				setUp = true;
+			}
+			if(MenuUtil.animateIn(buttonStartX,buttons, aniSpeed += speedMultiplyer)){
+				panel.setMenu(new HelpMenu(panel));//create the new help menu
+			}
+		}
+		else{
+			if(MenuUtil.animateOut(buttons, aniSpeed+= speedMultiplyer)){
+				((MainMenu) nextMenu).setAnimating(true);
+				nextMenu.animate();
+			}
+		}
+	}
+
+
+	@Override
+	public boolean isAnimating() {
+		return animating;
+	}
+
+
+	public void setAnimating(boolean in){
+		animatingIn = in;
+		animating = true;
+	}
+
+	public void loadImages(){
+		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
+
+		//load background image
+		try {
+			this.backgroundImage = ImageIO.read(imagefile);
+			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
+		} catch (IOException e) {
+			System.out.println("failed reading image");
+			e.printStackTrace();
+		}
 	}
 }

@@ -234,4 +234,18 @@ public class InventoryMenu implements GraphicsPane {
 			e.printStackTrace();
 		}
 	}
+
+
+	@Override
+	public void animate() {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public boolean isAnimating() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

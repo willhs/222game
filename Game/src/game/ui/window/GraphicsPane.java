@@ -27,4 +27,8 @@ public interface GraphicsPane{
 	 * Handles a key being pressed
 	 * */
 	public void keyPressed(String keyEvent);
+
+	public void animate();
+
+	public boolean isAnimating();
 }

@@ -1,5 +1,7 @@
 package game.ui.window.menus;
 
+import game.ui.window.GameWindow;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -7,9 +9,9 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class MenuUtil {
-	
+
 	/**
-	 * Draws the buttons on the graphics object on the screen vertically 
+	 * Draws the buttons on the graphics object on the screen vertically
 	 * */
 	public static void drawButtons(Graphics g, int selectedButton, Rectangle[] buttons, String[] buttonNames){
 		Graphics2D g2d = (Graphics2D)g;
@@ -24,7 +26,9 @@ public class MenuUtil {
 			g2d.draw(buttons[i]);
 
 			if(selectedButton == i){
-				g2d.setColor(new Color(0f,0f,0f,0.5f));
+				//g2d.setColor(new Color(0f,0f,0f,0.5f));
+				g.setColor(Color.blue);
+
 				g2d.fill(buttons[i]);
 			}
 			//draws the string in the center of the current button
@@ -32,11 +36,11 @@ public class MenuUtil {
 			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
 		}
 	}
-	
-	
+
+
 	/**
-	 *figure out which button should be selected return the int representation of 
-	 *the button 
+	 *figure out which button should be selected return the int representation of
+	 *the button
 	 * */
 	public static int moveButtonSelectionUp(int selectedButton, int numbOfButtons){
 		if(selectedButton == -1 || selectedButton == 0 ){
@@ -46,11 +50,11 @@ public class MenuUtil {
 			return selectedButton-1;
 		}
 	}
-	
-	
+
+
 	/**
-	 *figure out which button should be selected return the int representation of 
-	 *the button 
+	 *figure out which button should be selected return the int representation of
+	 *the button
 	 * */
 	public static int moveButtonSelectionDown(int selectedButton, int numbOfButtons){
 		if(selectedButton == -1 || selectedButton == numbOfButtons-1 ){
@@ -59,5 +63,55 @@ public class MenuUtil {
 		else{
 			return selectedButton+1;
 		}
+	}
+
+
+	/**
+	 * Places all of the rectangles of the buttons array just outside
+	 * of the screen
+	 * */
+	public static Rectangle[] setUpAnimation(Rectangle[] buttons){
+		for(int i = 0; i < buttons.length; i++){
+			buttons[i].x = (int) ((buttons[i].getX()) + (GameWindow.FRAME_WIDTH - buttons[i].getX()) + buttons[i].getX());//set the button to be outside the scrren
+		}
+		return buttons;
+	}
+
+
+	/**
+	 *Decreases the location of all the buttons in the array and returns whether or not
+	 *the buttons are now of the screen
+	 * */
+	public static boolean animateIn(int buttonStartX,Rectangle[] buttons, int speed){
+		boolean isDone = false;
+
+		for(int i = 0; i < buttons.length; i++){
+			buttons[i].x -=speed;//decrease the x value of all the buttons
+
+			//check if all buttons outside of the screen
+			if(buttons[0].x <=  buttonStartX){
+				isDone = true;
+			}
+		}
+		return isDone;
+	}
+
+
+	/**
+	 *Decreases the location of all the buttons in the array and returns whether or not
+	 *the buttons are now of the screen
+	 * */
+	public static boolean animateOut(Rectangle[] buttons, int speed){
+		boolean isDone = true;
+
+		for(int i = 0; i < buttons.length; i++){
+			buttons[i].x -=speed;//decrease the x value of all the buttons
+
+			//check if all buttons outside of the screen
+			if((buttons[i].x + buttons[i].getWidth()) >  0){
+				isDone = false;
+			}
+		}
+		return isDone;
 	}
 }

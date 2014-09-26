@@ -6,14 +6,14 @@ import game.world.dimensions.*;
 import game.world.model.*;
 
 /**
- * 
+ *
  * @author Shane Brewer
- * 
+ *
  */
 public class PickupHandler {
 	/**
 	 * Used by the Game Event handler to have a Player pick up an item.
-	 * 
+	 *
 	 * @param player
 	 *            - player that is to pick up the item
 	 * @param item
@@ -26,7 +26,8 @@ public class PickupHandler {
 		if (!checkPlayers(place, player) && !checkItems(place, item)) {
 			return false;
 		}
-		if (!checkProximity(player.getPosition(),player.getBoundingBox(), item.getPosition(), item.getBoundingBox())) {
+		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
+				item.getPosition(), item.getBoundingBox())) {
 			return false;
 		}
 		if (!item.canPickUp()) {
@@ -42,19 +43,23 @@ public class PickupHandler {
 	/**
 	 * Makes sure that the item and player are within a certain proximity of
 	 * each other
-	 * 
+	 *
 	 * @param pointOne
 	 *            - point of the player.
+	 * @param boundingOne
+	 *            - the bounding box around pointOne.
 	 * @param pointTwo
 	 *            - point of the item.
+	 * @param boundingTwo
+	 *            - the bounding box around pointTwo.
 	 * @return - true if they are close enough
 	 */
 	private static boolean checkProximity(Point3D pointOne,
-			Rectangle3D BoundingOne, Point3D pointTwo, Rectangle3D BoundingTwo) {
-		if ((Math.abs(pointOne.x - pointTwo.x) <= 5 + (BoundingOne.getWidth() + BoundingTwo
+			Rectangle3D boundingOne, Point3D pointTwo, Rectangle3D boundingTwo) {
+		if ((Math.abs(pointOne.x - pointTwo.x) <= 5 + (boundingOne.getWidth() + boundingTwo
 				.getWidth()) / 2)
-				&& (Math.abs(pointOne.z - pointTwo.z) <= 5 + (BoundingOne
-						.getLength() + BoundingTwo.getLength()) / 2)) {
+				&& (Math.abs(pointOne.z - pointTwo.z) <= 5 + (boundingOne
+						.getLength() + boundingTwo.getLength()) / 2)) {
 			return true;
 		}
 		return false;
@@ -62,7 +67,7 @@ public class PickupHandler {
 
 	/**
 	 * Checks that the player is in the room
-	 * 
+	 *
 	 * @param place
 	 *            - place player should be in.
 	 * @param player
@@ -81,7 +86,7 @@ public class PickupHandler {
 
 	/**
 	 * Checks that the item is in the room.
-	 * 
+	 *
 	 * @param place
 	 *            -place that the item should be.
 	 * @param item

@@ -69,11 +69,11 @@ public class PauseMenu implements GraphicsPane {
 	public void render(Graphics g) {
 		//draws the outside of the menu
 		drawFrame(g);
-		
+
 		//drawButtons(g);
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 	}
-	
+
 	public void drawFrame(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
@@ -142,5 +142,19 @@ public class PauseMenu implements GraphicsPane {
 		else if(keyEvent.equals("up") || keyEvent.equals("move up")){
 			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
+	}
+
+
+	@Override
+	public void animate() {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public boolean isAnimating() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

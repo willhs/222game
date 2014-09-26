@@ -1,6 +1,7 @@
 package game.ui.window.menus;
 
 import game.ui.window.BlankPanel;
+import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
@@ -22,17 +23,26 @@ public class OptionMenu implements GraphicsPane {
 	private BlankPanel panel;
 	private int numbOfButtons;
 	private BufferedImage backgroundImage;
-	
+
 	//arrays for buttons and button names
 	private Rectangle[] buttons;
 	private String[] buttonNames;
-	
+
 	//the currently selected button
 	private int selectedButton;
-		
+
 	//the current menu the user is in
 	private GraphicsPane currentMenu;
-	
+
+	//animation fields
+	private boolean animating;
+	private boolean animatingIn;
+	private GraphicsPane nextMenu;
+	private boolean setUp;
+	private int buttonStartX;
+	private int aniSpeed = 1;
+	private int speedIncrease = 1;
+
 	/**
 	 * Constructor for the optionMenu
 	 * */
@@ -46,7 +56,7 @@ public class OptionMenu implements GraphicsPane {
 		setupButtons();
 	}
 
-	
+
 	/**
 	 * Sets up the buttons for the option menu
 	 * */
@@ -74,6 +84,14 @@ public class OptionMenu implements GraphicsPane {
 			return;
 		}
 
+		if(nextMenu!=null){
+			if(nextMenu.isAnimating()){
+				System.out.println("Next Menu animating");
+				nextMenu.animate();
+				nextMenu.render(g);
+			}
+		}
+
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 		g.drawString("OPTIONS", GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2);
 	}
@@ -94,8 +112,8 @@ public class OptionMenu implements GraphicsPane {
 			selectedButton = Integer.MAX_VALUE;//no button is selected
 		}
 	}
-	
-	
+
+
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(currentMenu != null){//this menu is not the menu in focus so pass the mouse event on
@@ -103,7 +121,10 @@ public class OptionMenu implements GraphicsPane {
 			return;
 		}
 		if(selectedButton == 0){//back button
-			panel.setMenu(new MainMenu(panel));
+			animating = true;
+			animatingIn = false;
+			nextMenu = new MainMenu(panel);
+			//panel.setMenu(new MainMenu(panel));
 		}
 		else if(selectedButton == 1){//key binding menu button
 			currentMenu = new KeyOptionScreen(panel);
@@ -117,7 +138,9 @@ public class OptionMenu implements GraphicsPane {
 			return;
 		}
 		if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
-			panel.setMenu(new MainMenu(panel));
+			animating = true;
+			//panel.setMenu(new MainMenu(panel));
+
 		}
 		else if(keyEvent.equals("enter")){
 			handleMouseReleased(null);//TODO change to a proper method button pressed like main menu
@@ -143,4 +166,39 @@ public class OptionMenu implements GraphicsPane {
 			e.printStackTrace();
 		}
 	}
+
+
+	@Override
+	public void animate() {
+		if(animatingIn){
+			if(!setUp){
+				buttonStartX = (int) buttons[0].getX();
+				MenuUtil.setUpAnimation(buttons);//moved the buttons to the end of the screen
+				setUp = true;
+			}
+			if(MenuUtil.animateIn(buttonStartX,buttons, aniSpeed+=speedIncrease)){
+				panel.setMenu(new OptionMenu(panel));//create the new main menu
+			}
+		}else{
+			if(MenuUtil.animateOut(buttons,aniSpeed+=speedIncrease)){
+				((MainMenu) nextMenu).setAnimating(true);
+				nextMenu.animate();
+			}
+		}
+
+	}
+
+
+
+	@Override
+	public boolean isAnimating() {
+		return animating;
+	}
+
+
+	public void setAnimating(boolean in){
+		animatingIn = in;
+		animating = true;
+	}
+
 }
