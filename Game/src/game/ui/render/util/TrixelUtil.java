@@ -128,17 +128,16 @@ public class TrixelUtil {
 
 	/**
 	 * makes a list of trixels to represent a flat 2d polygon
-	 * PRE: polygon vertices must all have same z value (like a with a floor).
+	 * PRE: polygon vertices must all have same y (height component) (like a with a floor).
 	 * @param poly
 	 * @return list of trixels which make up the polygon
 	 */
-	public static List<Trixel> polygon2DToTrixels(Polygon poly, float z){
+	public static List<Trixel> polygon2DToTrixels(Polygon poly, float y){
 		List<Trixel> trixels = new ArrayList<Trixel>();
 		Rectangle polyBounds = poly.getBounds();
-		System.out.println(polyBounds);
 		for (int x = polyBounds.x; x < polyBounds.x + polyBounds.width; x += Trixel.SIZE){
-			for (int y = polyBounds.y; y < polyBounds.y + polyBounds.height; y+= Trixel.SIZE){
-				if (poly.contains(x,y)){
+			for (int z = polyBounds.y; z < polyBounds.y + polyBounds.height; z += Trixel.SIZE){
+				if (poly.contains(x,z)){
 					Trixition trixition = TrixelUtil.positionToTrixition(new Point3D(x, y, z));
 					trixels.add(new Trixel(trixition, Renderer.getRandomColour()));
 				}

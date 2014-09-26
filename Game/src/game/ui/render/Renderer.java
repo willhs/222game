@@ -29,7 +29,7 @@ import java.util.Queue;
 public class Renderer {
 
 	// TEMPORARY
-	private static Point3D CENTER = new Point3D(300, 300, 100);
+	private static Point3D SCREEN_CENTER = new Point3D(300, 300, 0);
 	private static Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
 	private static Transform AUTO = Transform.identity();
 	private static Vector3D DEFAULT_VIEW_ANGLE = new Vector3D(0,0,1);
@@ -45,14 +45,40 @@ public class Renderer {
 	 */
 	public static void renderPlace(Graphics g, Place place){
 
-
-
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 
 		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
+
+		// convert floor into trixels and add those to toDraw
+		// TODO: please rewrite/refactor this part when we can
+		Floor floor = place.getFloor();
+
+		Polygon floorPolygon = floorToPolygon(floor);
+
+		Point3D floorCentroid = getFloorCentroid(floor);
+
+		Vector3D viewTranslation = new Vector3D(0, 200, 0);
+
+		Transform transform = makeTransform(
+				new Vector3D(0, rotateAmounts.x, 0),
+				floorCentroid,
+				viewTranslation
+			);
+
+		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, 0);
+		for (Trixel floorTrixel : floorTrixels){
+			TrixelFace[] faces = TrixelUtil.getTrixelFaces(floorTrixel);
+			for (TrixelFace face : faces){
+				face.transform(transform);
+				if (face.isFacingViewer()){
+					toDraw.offer(getGamePolygonFromTrixelFace(face));
+				}
+			}
+		}
+
 
 		for (Iterator<Drawable> iter = place.getDrawable(); iter.hasNext();){
 			Drawable drawable = iter.next();
@@ -61,7 +87,8 @@ public class Renderer {
 				Dimension dimension = new Dimension((int)drawable.getBoundingBox().getWidth(),
 						(int)drawable.getBoundingBox().getHeight());
 				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
-				rotate(image, ISOMETRIC_ROTATION);
+
+				image.transform(transform);
 
 				toDraw.offer(image);
 			}
@@ -70,64 +97,10 @@ public class Renderer {
 				Trixel trixel = (Trixel) drawable;
 				TrixelFace[] faces = TrixelUtil.getTrixelFaces(trixel);
 				for (TrixelFace face : faces){
-					rotate(face, ISOMETRIC_ROTATION);
+					face.transform(transform);
 					if (face.isFacingViewer()){
 						toDraw.offer(getGamePolygonFromTrixelFace(face));
 					}
-				}
-			}
-		}
-
-		// convert floor into trixels and add those to toDraw
-		// TODO: please rewrite/refactor this part when we can
-		Polygon floorPolygon = floorToPolygon(place.getFloor());
-
-		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, 0);
-		for (Trixel floorTrixel : floorTrixels){
-			TrixelFace[] faces = TrixelUtil.getTrixelFaces(floorTrixel);
-			for (TrixelFace face : faces){
-				//translate(face, new Vector3D(200, -100, 0));
-				// rotate the floor so that it's on the ground (rather than on the wall)
-//				rotate(face, Transform.newXRotation((float)(Math.PI/2)));
-
-//				rotate(face, Transform.newXRotation(rotateAmounts.y * (float)(Math.PI/2)));
-//				Transform rotateX = Transform.newXRotation(rotateAmounts.y * (float)(Math.PI/2));
-				Transform[] t = getTranslationAroundPointTransforms(CENTER);
-
-				Transform rotateX = Transform.newXRotation((float)Math.PI/2);
-				//Transform rotateX = Transform.newXRotation(0);
-
-//				Transform rotateY = Transform.newYRotation(rotateAmounts.x);
-				Transform rotateY = Transform.newYRotation((float)(rotateAmounts.x));
-
-				//Transform translation = Transform.newTranslation(new Vector3D(200, 200, 0));
-				Transform translation = Transform.newTranslation(new Vector3D(0, 0, 0));
-
-				Transform finalTransform = rotateX;
-//
-				finalTransform =
-						translation.compose(
-						ISOMETRIC_ROTATION.compose(
-						t[1].compose(
-						rotateY.compose(
-						rotateX.compose(
-						t[0]
-
-				)))));
-
-
-//				face.transform(finalTransform);
-
-/*				face.transform(rotateX);
-				face.transform(t[0]);
-				face.transform(rotateY);
-				face.transform(t[1]);
-				face.transform(ISOMETRIC_ROTATION);
-				face.transform(translation);*/
-
-				rotate(face, finalTransform);
-				if (face.isFacingViewer()){
-					toDraw.offer(getGamePolygonFromTrixelFace(face));
 				}
 			}
 		}
@@ -137,10 +110,7 @@ public class Renderer {
 			shape.flipY(FRAME_TOP);
 		}
 
-		//System.out.println("Drawing "+toDraw.size()+" shapes");
-
-		//  ----- DRAW ALL THE THINGS
-		//  ...in correct order
+		//  ----- DRAW ALL THE THINGS  ...in correct order
 		// all gameObjects are either trixel faces or images.
 		while (!toDraw.isEmpty()){
 			Renderable renderObject = toDraw.poll();
@@ -148,7 +118,7 @@ public class Renderer {
 				GameImage image = (GameImage) renderObject;
 				Point3D position = image.getPosition();
 				Dimension dimension = image.getDimension();
-				g2.drawImage(image.getImage(), (int)position.getX()-dimension.width/2, (int)position.getY()-dimension.height/2,
+				g2.drawImage(image.getImage(), (int)position.getX()-dimension.width/2, (int)position.getY()-dimension.height,
 						dimension.width, dimension.height, null);
 			}
 			else if (renderObject instanceof GamePolygon){
@@ -158,7 +128,7 @@ public class Renderer {
 			}
 		}
 		// draw center oval
-		g2.fillOval((int)(CENTER.x-10), (int)(CENTER.y-10), 20, 20);
+		g2.fillOval((int)(floorCentroid.x-10), (int)(floorCentroid.y-10), 20, 20);
 	}
 
 	private static void translate(Transformable face, Vector3D translate) {
@@ -188,14 +158,30 @@ public class Renderer {
 	 * @param object
 	 * @param viewerDirection
 	 */
-	private static void rotate(Transformable object, Transform rotate) {
-//		Transform[] t = getTranslationAroundPointTransforms(CENTER);
-//
-//		object.transform(t[0]);
-//		object.transform(rotate);
-//		object.transform(t[1]);
+	private static Transform makeTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
 
-		object.transform(rotate);
+		Transform translateToOrigin = Transform.newTranslation(new Vector3D(pivotPoint.negate()));
+		Transform translateBack = Transform.newTranslation(new Vector3D(pivotPoint));
+
+		Transform rotate =
+				Transform.newZRotation(rotateAmount.z).compose(
+				Transform.newYRotation(rotateAmount.y).compose(
+				Transform.newXRotation(rotateAmount.x)
+		));
+
+		Transform viewSpaceTranslation =
+				Transform.newTranslation(viewSpaceTranslateDist);
+
+		Transform finalTransform =
+				viewSpaceTranslation.compose(
+				ISOMETRIC_ROTATION.compose(
+				translateBack.compose(
+				rotate.compose(
+				translateToOrigin
+
+		))));
+
+		return finalTransform;
 	}
 
 	/**
@@ -216,16 +202,6 @@ public class Renderer {
 		Transform rotate = Transform.newYRotation(dir.getY()).compose(Transform.newXRotation(dir.getX())).compose(Transform.newZRotation(dir.getZ()));
 		Transform translateBack = Transform.newTranslation(point.getX(), point.getY(), point.getZ());
 		return new Transform[]{ translateToOrigin, rotate, translateBack };
-	}
-
-	/**
-	 * @param point
-	 * @return two transforms, one to translate away from point, then one to translate back
-	 */
-	private static Transform[] getTranslationAroundPointTransforms(Point3D point){
-		Transform translateToOrigin = Transform.newTranslation(-point.getX(), -point.getY(), -point.getZ());
-		Transform translateBack = Transform.newTranslation(point.getX(), point.getY(), point.getZ());
-		return new Transform[]{ translateToOrigin, translateBack };
 	}
 
 	/**
@@ -254,9 +230,25 @@ public class Renderer {
 			Point3D point = floorPoints[i];
 			xpoints[i] = (int)point.getX();
 			ypoints[i] = (int)point.getZ();
-			System.out.println(point);
 		}
 		return new Polygon(xpoints, ypoints, floorPoints.length);
+	}
+
+	/**
+	 * @param floor
+	 * @return the center point or centroid of the floor
+	 */
+	private static Point3D getFloorCentroid(Floor floor){
+		float xSum = 0;
+		float ySum = 0;
+		float zSum = 0;
+		Point3D[] vertices = floor.getPoints();
+		for (Point3D vertex : vertices){
+			xSum += vertex.x;
+			ySum += vertex.y;
+			zSum += vertex.z;
+		}
+		return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
 	}
 
 }

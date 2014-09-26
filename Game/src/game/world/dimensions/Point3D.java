@@ -90,4 +90,9 @@ public class Point3D{
 		return new Point3D(x, top-y, z);
 	}
 
+
+	public Point3D negate() {
+		return new Point3D(-x, -y, -z);
+	}
+
 }

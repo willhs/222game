@@ -1,5 +1,7 @@
 package game.ui.render.util;
 
+import game.world.dimensions.Point3D;
+
 
 /**
  * @author pondy & will. pondy wrote most of this class.
@@ -32,6 +34,17 @@ public class Vector3D{
 		this.y = y;
 		this.z = z;
 		this.mag = mag;
+	}
+
+	/**
+	 * makes a vector using the components from a point
+	 * @param point
+	 */
+	public Vector3D(Point3D point){
+		this.x = point.x;
+		this.y = point.y;
+		this.z = point.z;
+		this.mag = (float) Math.sqrt(x * x + y * y + z * z);
 	}
 
 	/**
