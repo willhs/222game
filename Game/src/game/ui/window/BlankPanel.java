@@ -45,7 +45,9 @@ public class BlankPanel extends JPanel{
 	 *Repaints the graphics of the panel
 	 * */
 	public void paint(Graphics g){
-
+		if(currentMenu.isAnimating()){
+			currentMenu.animate();
+		}
 		//make the current menu draw itself on the graphics object
 		currentMenu.render(g);
 	}

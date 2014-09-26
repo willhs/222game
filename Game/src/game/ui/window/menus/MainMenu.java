@@ -5,12 +5,12 @@ import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 
-
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 
@@ -22,13 +22,24 @@ public class MainMenu implements GraphicsPane{
 	private final int numbOfButtons = 5;
 	private BlankPanel panel;
 	private BufferedImage backgroundImage;
-	
+
 	//the currently selected button
 	private int selectedButton;
 
 	//arrays for the button rectangles and names
 	private Rectangle[] buttons;
 	private String[] buttonNames;
+
+	//animation fields
+	private boolean animating;
+	private boolean animatingIn;
+	private boolean setUp;
+	private int buttonStartX;
+	private int  aniSpeed = 1;
+	private float speedIncrease = 1f;
+
+	//the menu to be drawn after the animation
+	private GraphicsPane nextMenu;
 
 	/**
 	 * Constructor for the MainMenu
@@ -53,7 +64,7 @@ public class MainMenu implements GraphicsPane{
 		int recHeight = 50;
 		int recWidth = 200;
 		int x = (GameWindow.FRAME_WIDTH/2)- (recWidth/2);
-		
+
 		//create buttons
 		for(int i = 0; i < buttons.length; i++){
 			buttons[i] = new Rectangle(x,y,recWidth,recHeight);
@@ -69,15 +80,23 @@ public class MainMenu implements GraphicsPane{
 	}
 
 	/**
-	 *Draws all of the elements of the menu on the screen 
+	 *Draws all of the elements of the menu on the screen
 	 * */
 	public void render(Graphics g){
 		g.drawImage(backgroundImage, 0, 0,panel);
 		//drawBackGroundImage(g);
 		MenuUtil.drawButtons(g,selectedButton,buttons,buttonNames);
+
+		if(nextMenu!=null){
+			if(nextMenu.isAnimating()){
+				System.out.println("Next Menu animating");
+				nextMenu.animate();
+				nextMenu.render(g);
+			}
+		}
 	}
 
-	
+
 	@Override
 	public void handleMouseMoved(MouseEvent e){
 		//set selected button
@@ -108,8 +127,8 @@ public class MainMenu implements GraphicsPane{
 			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
 	}
-	
-	
+
+
 	/**
 	 *Decides what should happen when a button is pressed
 	 * */
@@ -119,15 +138,57 @@ public class MainMenu implements GraphicsPane{
 			return;
 		case 1: System.out.println("Multiplayer");
 			return;
-		case 2 : panel.setMenu(new OptionMenu(panel));
+		case 2 :
+			nextMenu = new OptionMenu(panel);
+			animating = true;
 			return;
-		case 3 : panel.setMenu(new HelpMenu(panel));
+		case 3 :
+			nextMenu = new HelpMenu(panel);
+			animating = true;
 			return;
 		case 4 : System.exit(0);
 			return;
 		}
 	}
 
+
+	@Override
+	public void animate() {
+		if(animatingIn){
+			if(!setUp){
+				buttonStartX = (int) buttons[0].getX();
+				MenuUtil.setUpAnimation(buttons);//moved the buttons to the end of the screen
+				setUp = true;
+			}
+			if(MenuUtil.animateIn(buttonStartX,buttons, aniSpeed+=speedIncrease)){
+				panel.setMenu(new MainMenu(panel));//create the new main menu
+			}
+		}
+		else{
+			if(MenuUtil.animateOut(buttons, aniSpeed+=speedIncrease)){
+				if(nextMenu instanceof OptionMenu){
+					((OptionMenu) nextMenu).setAnimating(true);
+				}
+				else{
+					((HelpMenu)nextMenu).setAnimating(true);
+				}
+
+				nextMenu.animate();
+			}
+		}
+	}
+
+	/**
+	 * Sets whether the menu is animating in or out
+	 * */
+	public void setAnimating(boolean in){
+		animatingIn = in;
+		animating = true;
+	}
+
+	/**
+	 * Loads the images for the menu
+	 * */
 	public void loadImages(){
 		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
 
@@ -141,5 +202,13 @@ public class MainMenu implements GraphicsPane{
 			System.out.println("failed reading imagge");
 			e.printStackTrace();
 		}
+	}
+
+
+	/**
+	 * Returns whether or not the menu is currently animating
+	 * */
+	public boolean isAnimating(){
+		return animating;
 	}
 }
