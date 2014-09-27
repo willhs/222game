@@ -5,25 +5,45 @@ import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.PauseMenu;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Queue;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.ReverbType;
 
 public class GameScreen implements GraphicsPane  {
 
 	//the menu drawn ontop on the game screen
 	private GraphicsPane currentMenu;
 	private BlankPanel panel;
+	private Queue<String> keyQue;
+
+	private ArrayList<String> releventQueKeypress;
 
 	private BufferedImage testBackGroundImage;
 
 
 	public GameScreen(BlankPanel panel){
 		this.panel = panel;
+		this.keyQue = GameWindow.getKeyQueue();
 		loadImages();
+		releventQueKeypress = createKeylist();
 
+	}
+
+	private ArrayList<String> createKeylist(){
+		ArrayList<String> keyList = new ArrayList<String>();
+
+		keyList.add("move up");
+		keyList.add("move down");
+		keyList.add("move right");
+		keyList.add("move left");
+
+		return keyList;
 	}
 
 	public void render(Graphics g){
@@ -52,7 +72,7 @@ public class GameScreen implements GraphicsPane  {
 	public void keyPressed(String keyEvent) {
 		if(currentMenu != null){
 			currentMenu.keyPressed(keyEvent);
-			return;//no need to do anything with the game as the menu is the puase menu
+			return;//no need to do anything with the game as the current menu is the pause menu
 		}
 		else if(keyEvent.equals("inventory")){
 			currentMenu = new InventoryMenu(panel,this);
@@ -60,7 +80,9 @@ public class GameScreen implements GraphicsPane  {
 		else if(keyEvent.equals("escape")){
 			currentMenu = new PauseMenu(panel, this);
 		}
-		//TODO pass this information onto the client
+		else if(releventQueKeypress.contains(keyEvent)){
+			keyQue.offer(keyEvent);
+		}
 	}
 
 	public void setMenu(GraphicsPane menu){
@@ -90,7 +112,6 @@ public class GameScreen implements GraphicsPane  {
 	@Override
 	public void animate() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

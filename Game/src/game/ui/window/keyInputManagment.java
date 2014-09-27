@@ -7,12 +7,13 @@ import java.util.HashMap;
 public class keyInputManagment  implements KeyEventDispatcher{
 	private BlankPanel panel;
 	private static HashMap<String , Integer> keyMap;
-
-
 	private static KeyEvent lastKeyEvent;
-
 	private int escapeKey;
+	
 
+	/**
+	 * The constructor for the keyManagement class
+	 * */
 	public keyInputManagment(BlankPanel panel){
 		this.panel = panel;
 

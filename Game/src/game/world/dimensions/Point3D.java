@@ -1,6 +1,5 @@
 package game.world.dimensions;
 
-import game.ui.render.util.Vector3D;
 
 /**
  * @author pondy & will
@@ -93,6 +92,16 @@ public class Point3D{
 
 	public Point3D negate() {
 		return new Point3D(-x, -y, -z);
+	}
+
+	/**
+	 * Made by Shane Brewer
+	 * @param one - point to be minusd from.
+	 * @param two - point to be used to minus
+	 * @return - the point that is one minus two.
+	 */
+	public static Vector3D subtractPoint3D(Point3D one, Point3D two){
+		return new Vector3D(one.x - two.x, one.y - two.y, one.z - two.z);
 	}
 
 }

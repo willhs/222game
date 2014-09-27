@@ -7,6 +7,7 @@ import game.world.dimensions.Rectangle3D;
 import game.world.model.Exit;
 import game.world.model.Inventory;
 import game.world.model.Item;
+import game.world.model.Key;
 import game.world.model.Place;
 import game.world.model.Player;
 import game.world.model.Room;
@@ -34,6 +35,7 @@ public class SingleRoomWorldTest {
 		int[] ypoints = new int[]{200,200,400,400};
 		//int[] xpoints = new int[]{0, 400, 400, 0};
 		//int[] ypoints = new int[]{0, 0, 400, 400};
+
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> items = new ArrayList<Item>();
 		items.add(new Table("Table1", new Point3D(250, 0, 250), new Rectangle3D(50, 50, 50)));
@@ -46,7 +48,9 @@ public class SingleRoomWorldTest {
 		// first test of new method in the game world class that adds a player to the world.
 
 		world.addPlayerToGameWorld(player);
-//		System.out.println(player.getPosition());
+
+		player.getInventory().addItem(new Key(new Rectangle3D(0.5f, 0.5f, 0.5f), "Key1", new Point3D(0,0,0)));
+		System.out.println(player.getPosition());
 	}
 
 	public static void main(String[] args) {
