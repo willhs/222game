@@ -157,10 +157,11 @@ public class Renderer {
 	 * @return array of lines which draw the axis
 	 */
 	private static Line3D[] makeAxisLines() {
-		final int HIGH_NUMBER = 1000;
-		Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(HIGH_NUMBER,0,			0));
-		Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			HIGH_NUMBER,0));
-		Line3D zLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			0,			HIGH_NUMBER));
+		
+		final int LINE_LENGTH = 1000;
+		Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(LINE_LENGTH,0,			0));
+		Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			LINE_LENGTH,0));
+		Line3D zLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			0,			LINE_LENGTH));
 		return new Line3D[]{xLine, yLine, zLine};
 	}
 	/**
