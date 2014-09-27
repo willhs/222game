@@ -53,7 +53,7 @@ public class TrixelUtilTests {
 			int y = (int)(Math.random()*1000);
 			int z = (int)(Math.random()*1000);
 			Trixel t = new Trixel(new Trixition(x,y,z), Color.BLACK);
-			TrixelFace[] faces = TrixelUtil.getTrixelFaces(t);
+			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(t);
 			assertEquals(faces.length, 6);
 		}
 	}
@@ -67,7 +67,7 @@ public class TrixelUtilTests {
 			int bottom = (int)Math.random()*100;
 			int far = (int)Math.random()*100;
 			Trixel trixel = new Trixel(new Trixition(left,bottom,far), Color.green);
-			TrixelFace[] faces = TrixelUtil.getTrixelFaces(trixel);
+			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(trixel);
 			
 			// LEFT
 			TrixelFace leftFace = faces[0];

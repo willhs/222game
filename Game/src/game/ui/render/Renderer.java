@@ -2,13 +2,13 @@ package game.ui.render;
 
 import game.ui.render.util.GameImage;
 import game.ui.render.util.GamePolygon;
+import game.ui.render.util.LightSource;
 import game.ui.render.util.Line3D;
 import game.ui.render.util.Renderable;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
 import game.ui.render.util.TrixelFace;
 import game.ui.render.util.TrixelUtil;
-import game.ui.render.util.Renderable;
 import game.ui.render.util.ZComparator;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
@@ -18,11 +18,11 @@ import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -49,25 +49,25 @@ public class Renderer {
 	public static void renderPlace(Graphics g, Place place){
 
 		Graphics2D g2 = (Graphics2D) g;
+		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-
 		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
 
 		// convert floor into trixels and add those to toDraw
 		// TODO: please rewrite/refactor this part when we can
 		Floor floor = place.getFloor();
-
 		Polygon floorPolygon = floorToVerticalPolygon(floor);
-
 		Point3D floorCentroid = getFloorCentroid(floor);
 
 		Vector3D viewTranslation = new Vector3D(0, 200, 0);
+		Vector3D rotation = new Vector3D(0, rotateAmounts.x, 0);
+
 
 		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
-				new Vector3D(0, rotateAmounts.x, 0),
+				rotation,
 				floorCentroid,
 				viewTranslation
 			);
@@ -76,12 +76,12 @@ public class Renderer {
 		// temporary solution to having floor behind everything.
 		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
 		for (Trixel floorTrixel : floorTrixels){
-			TrixelFace[] faces = TrixelUtil.getTrixelFaces(floorTrixel);
+			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
 				face.transform(transform);
 				face.transform(floorBehindEverything);
 				if (face.isFacingViewer()){
-					toDraw.offer(getGamePolygonFromTrixelFace(face));
+					toDraw.offer(makeGamePolygonFromTrixelFace(face));
 				}
 			}
 		}
@@ -99,13 +99,13 @@ public class Renderer {
 				toDraw.offer(image);
 			}
 			else {
-				// drawable is made of trixels or is a trixel
+				// drawable is made of trixels
 				Trixel trixel = (Trixel) drawable;
-				TrixelFace[] faces = TrixelUtil.getTrixelFaces(trixel);
+				TrixelFace[] faces = TrixelUtil.makeTrixelFaces(trixel);
 				for (TrixelFace face : faces){
 					face.transform(transform);
 					if (face.isFacingViewer()){
-						toDraw.offer(getGamePolygonFromTrixelFace(face));
+						toDraw.offer(makeGamePolygonFromTrixelFace(face));
 					}
 				}
 			}
@@ -130,19 +130,20 @@ public class Renderer {
 				GameImage image = (GameImage) renderObject;
 				Point3D position = image.getPosition();
 				Rectangle3D boundingBox = image.getBoundingBox();
-				// the following drawimage subtracts y position based on length of gameimage., TODO: find better solution
-				g2.drawImage(image.getImage(), (int)(position.getX()-boundingBox.width/2),
-						(int)(position.y+(boundingBox.length/2)-boundingBox.height),
+				// the following drawimage changes y position based on length of gameimage. TODO: find better solution
+				g2.drawImage(image.getImage(),
+						(int)(position.x - boundingBox.width/2),
+						(int)(position.y + boundingBox.length/2 - boundingBox.height),
 						(int)boundingBox.width, (int)boundingBox.height, null);
+			/*	g2.setColor(Color.red);
+				g2.fillOval((int)(position.x - 5),
+						(int)(position.y - 5),
+						(int)10, 10);*/
 			}
 			else if (renderObject instanceof GamePolygon){
 				GamePolygon poly = (GamePolygon) renderObject;
 				g2.setColor(poly.getColour());
 				g2.fillPolygon(poly);
-				// draw centroid of polygon
-			//	Point3D centroid = poly.getCentroid();
-			//	g2.setColor(Color.black);
-			//	g2.fillOval((int)centroid.x-5, (int)centroid.y-5, 10, 10);
 			}
 			else if (renderObject instanceof Line3D){
 				Line3D line = (Line3D) renderObject;
@@ -153,9 +154,9 @@ public class Renderer {
 			}
 
 		}
-		// draw center oval
-		g2.fillOval((int)(FRAME_CENTER.x-10), (int)(FRAME_CENTER.y-10), 20, 20);
 	}
+	// -------------- HELPER METHODS -----------------------
+	//
 	/**
 	 * @return array of lines which draw the axis
 	 */
@@ -171,7 +172,7 @@ public class Renderer {
 	 * @param face
 	 * @return game polygon representing a trixel face
 	 */
-	private static GamePolygon getGamePolygonFromTrixelFace(TrixelFace face) {
+	private static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
 		Point3D[] vertices = face.getVertices();
 		int[] xpoints = new int[vertices.length];
 		int[] ypoints = new int[vertices.length];
@@ -182,9 +183,17 @@ public class Renderer {
 			ypoints[i] = (int)vertices[i].getY();
 			zTotal += (int)vertices[i].getZ();
 		}
-		return new GamePolygon(xpoints, ypoints, vertices.length, zTotal/vertices.length, face.getColour());
+		float zAverage = zTotal/vertices.length;
+		Color shadedColour = face.makeShadedColour(getTestLightSources(), new Color(20, 20, 20));
+		return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
 	}
 
+	private static Iterator<LightSource> getTestLightSources() {
+		List<LightSource> lights = new ArrayList<LightSource>();
+		Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
+		lights.add(new LightSource(0.8f, dir, Color.red));
+		return lights.iterator();
+	}
 	/**
 	 * rotates a transformable object around a point given a viewer direction
 	 * @param object
@@ -204,16 +213,12 @@ public class Renderer {
 		Transform viewSpaceTranslation =
 				Transform.newTranslation(viewSpaceTranslateDist);
 
-		Transform finalTransform =
-				viewSpaceTranslation.compose(
+		return 	viewSpaceTranslation.compose(
 				ISOMETRIC_ROTATION.compose(
 				translateBack.compose(
 				rotate.compose(
 				translateToOrigin
-
 		))));
-
-		return finalTransform;
 	}
 
 	/**
@@ -239,10 +244,10 @@ public class Renderer {
 	/**
 	 * @return random colour
 	 */
-	public static Color getSemiRandomColour(){
-		int r = 0;//(int)(Math.random()*255);
-		int g = 0;//(int)(Math.random()*255);
-		int b = 50 + (int)(Math.random()*200);
+	public static Color getTrixelColour(){
+		int r = 200;//0;//(int)(Math.random()*255);
+		int g = 200;//0;//(int)(Math.random()*255);
+		int b = 200;//50 + (int)(Math.random()*200);
 
 		return new Color(r, g, b);
 	}

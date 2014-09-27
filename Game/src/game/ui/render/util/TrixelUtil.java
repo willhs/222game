@@ -43,7 +43,7 @@ public class TrixelUtil {
 	 * POST: Faces ordered: left, right, bottom, top, back, front (currently only for testing purposes).
 	 * @return 6 faces of a trixel
 	 */
-	public static TrixelFace[] getTrixelFaces(Trixel trixel){
+	public static TrixelFace[] makeTrixelFaces(Trixel trixel){
 		TrixelFace[] faces = new TrixelFace[6];
 		Color colour = trixel.getColor();
 		final int FACE_SIZE = Trixel.SIZE;
@@ -139,7 +139,7 @@ public class TrixelUtil {
 			for (int z = polyBounds.y; z < polyBounds.y + polyBounds.height; z += Trixel.SIZE){
 				if (poly.contains(x,z)){
 					Trixition trixition = TrixelUtil.positionToTrixition(new Point3D(x, y, z));
-					trixels.add(new Trixel(trixition, Renderer.getSemiRandomColour()));
+					trixels.add(new Trixel(trixition, Renderer.getTrixelColour()));
 				}
 			}
 		}
