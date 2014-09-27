@@ -31,8 +31,8 @@ public class SingleRoomWorldTest {
 	public SingleRoomWorldTest(){
 		//int[] xpoints = new int[]{0,200, 200,400,400,0};
 		//int[] ypoints = new int[]{0,0,   200,200,400,400};
-		int[] xpoints = new int[]{200, 400, 400, 200};
-		int[] ypoints = new int[]{200, 200, 400, 400};
+		int[] xpoints = new int[]{0, 400, 400, 0};
+		int[] ypoints = new int[]{0, 0, 400, 400};
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> items = new ArrayList<Item>();
 		items.add(new Table("Table1", new Point3D(250, 0+Trixel.SIZE/2, 250), new Rectangle3D(50, 50, 50)));
@@ -44,5 +44,10 @@ public class SingleRoomWorldTest {
 		Player player = new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(10, 10, 10));
 		// first test of new method in the game world class that adds a player to the world.
 		world.addPlayerToGameWorld(player);
+		System.out.println(player.getPosition());
+	}
+
+	public static void main(String[] args) {
+		SingleRoomWorldTest n = new SingleRoomWorldTest();
 	}
 }
