@@ -196,18 +196,4 @@ public class KeyOptionScreen implements GraphicsPane {
 		return -1;//return this if not on a row in the table
 	}
 
-
-	@Override
-	public void animate() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	@Override
-	public boolean isAnimating() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

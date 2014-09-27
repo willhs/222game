@@ -144,17 +144,4 @@ public class PauseMenu implements GraphicsPane {
 		}
 	}
 
-
-	@Override
-	public void animate() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	@Override
-	public boolean isAnimating() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

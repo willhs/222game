@@ -19,7 +19,7 @@ import javax.imageio.ImageIO;
 /**
  * @author Nicky van Hulst
  * */
-public class OptionMenu implements GraphicsPane {
+public class OptionMenu implements GraphicsPane, Animated {
 	private BlankPanel panel;
 	private int numbOfButtons;
 	private BufferedImage backgroundImage;
@@ -84,10 +84,10 @@ public class OptionMenu implements GraphicsPane {
 			return;
 		}
 
-		if(nextMenu!=null){
-			if(nextMenu.isAnimating()){
+		if(nextMenu!=null && nextMenu instanceof Animated){
+			if(((Animated) nextMenu).isAnimating()){
 				System.out.println("Next Menu animating");
-				nextMenu.animate();
+				((Animated) nextMenu).animate();
 				nextMenu.render(g);
 			}
 		}
@@ -184,7 +184,7 @@ public class OptionMenu implements GraphicsPane {
 		}else{
 			if(MenuUtil.animateOut(buttons,aniSpeed+=speedIncrease)){
 				((MainMenu) nextMenu).setAnimating(true);
-				nextMenu.animate();
+				((Animated) nextMenu).animate();
 			}
 		}
 
@@ -197,7 +197,7 @@ public class OptionMenu implements GraphicsPane {
 		return animating;
 	}
 
-
+	@Override
 	public void setAnimating(boolean in){
 		animatingIn = in;
 		animating = true;

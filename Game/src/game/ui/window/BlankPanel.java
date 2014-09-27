@@ -1,5 +1,6 @@
 package game.ui.window;
 
+import game.ui.window.menus.Animated;
 import game.ui.window.menus.MainMenu;
 
 import java.awt.Color;
@@ -45,8 +46,8 @@ public class BlankPanel extends JPanel{
 	 *Repaints the graphics of the panel
 	 * */
 	public void paint(Graphics g){
-		if(currentMenu.isAnimating()){
-			currentMenu.animate();
+		if(currentMenu instanceof Animated){
+			if(((Animated) currentMenu).isAnimating())((Animated) currentMenu).animate();
 		}
 		//make the current menu draw itself on the graphics object
 		currentMenu.render(g);
