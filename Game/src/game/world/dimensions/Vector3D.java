@@ -1,6 +1,5 @@
-package game.ui.render.util;
+package game.world.dimensions;
 
-import game.world.dimensions.Point3D;
 
 
 /**

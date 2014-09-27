@@ -10,7 +10,7 @@ import game.world.model.*;
  * @author Shane Brewer
  *
  */
-public class PickupHandler {
+public class ItemInteractionHandler {
 	/**
 	 * Used by the Game Event handler to have a Player pick up an item.
 	 *
@@ -101,6 +101,17 @@ public class PickupHandler {
 			}
 		}
 		return false;
+	}
+
+	public static boolean dropItem(Player player, Item item, Place place){
+		if(!checkPlayers(place, player)){
+			return false;
+		}
+		if(!item.canDrop()){
+			return false;
+		}
+		
+		return true;
 	}
 
 }

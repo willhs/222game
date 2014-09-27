@@ -4,7 +4,7 @@ package test.render;
 import game.ui.render.Renderer;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
-import game.ui.render.util.Vector3D;
+import game.world.dimensions.Vector3D;
 import game.world.model.Exit;
 import game.world.model.Item;
 import game.world.model.Place;
