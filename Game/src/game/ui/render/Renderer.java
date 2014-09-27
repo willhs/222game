@@ -90,9 +90,9 @@ public class Renderer {
 			Drawable drawable = iter.next();
 			if (isImage(drawable)){ // TODO: not be always true
 				// drawable is an image
-				Dimension dimension = new Dimension((int)drawable.getBoundingBox().getWidth(),
-						(int)drawable.getBoundingBox().getHeight());
-				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
+				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
+						drawable.getPosition(),
+						drawable.getBoundingBox());
 
 				image.transform(transform);
 
@@ -130,8 +130,10 @@ public class Renderer {
 				GameImage image = (GameImage) renderObject;
 				Point3D position = image.getPosition();
 				Rectangle3D boundingBox = image.getBoundingBox();
-				g2.drawImage(image.getImage(), (int)position.getX()-boundingBox.width/2, (int)position.y-boundingBox.height,
-						boundingBox.width, boundingBox.height, null);
+				// the following drawimage subtracts y position based on length of gameimage., TODO: find better solution
+				g2.drawImage(image.getImage(), (int)(position.getX()-boundingBox.width/2),
+						(int)(position.y+(boundingBox.length/2)-boundingBox.height),
+						(int)boundingBox.width, (int)boundingBox.height, null);
 			}
 			else if (renderObject instanceof GamePolygon){
 				GamePolygon poly = (GamePolygon) renderObject;
