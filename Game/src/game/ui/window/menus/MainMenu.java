@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
 /**
  * @author Nicky van HUlst
  * */
-public class MainMenu implements GraphicsPane{
+public class MainMenu implements GraphicsPane, Animated{
 	private final int numbOfButtons = 5;
 	private BlankPanel panel;
 	private BufferedImage backgroundImage;
@@ -87,10 +87,10 @@ public class MainMenu implements GraphicsPane{
 		//drawBackGroundImage(g);
 		MenuUtil.drawButtons(g,selectedButton,buttons,buttonNames);
 
-		if(nextMenu!=null){
-			if(nextMenu.isAnimating()){
+		if(nextMenu!=null && nextMenu instanceof Animated){
+			if(((Animated) nextMenu).isAnimating()){
 				System.out.println("Next Menu animating");
-				nextMenu.animate();
+				((Animated) nextMenu).animate();
 				nextMenu.render(g);
 			}
 		}
@@ -173,7 +173,7 @@ public class MainMenu implements GraphicsPane{
 					((HelpMenu)nextMenu).setAnimating(true);
 				}
 
-				nextMenu.animate();
+				((Animated) nextMenu).animate();
 			}
 		}
 	}
@@ -208,6 +208,7 @@ public class MainMenu implements GraphicsPane{
 	/**
 	 * Returns whether or not the menu is currently animating
 	 * */
+	@Override
 	public boolean isAnimating(){
 		return animating;
 	}
