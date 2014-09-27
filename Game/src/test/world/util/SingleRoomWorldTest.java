@@ -6,6 +6,7 @@ import game.world.dimensions.Rectangle3D;
 import game.world.model.Exit;
 import game.world.model.Inventory;
 import game.world.model.Item;
+import game.world.model.Key;
 import game.world.model.Place;
 import game.world.model.Player;
 import game.world.model.Room;
@@ -44,6 +45,7 @@ public class SingleRoomWorldTest {
 		Player player = new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(10, 10, 10));
 		// first test of new method in the game world class that adds a player to the world.
 		world.addPlayerToGameWorld(player);
+		player.getInventory().addItem(new Key(new Rectangle3D(0.5f, 0.5f, 0.5f), "Key1", new Point3D(0,0,0)));
 		System.out.println(player.getPosition());
 	}
 
