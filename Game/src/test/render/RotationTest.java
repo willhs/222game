@@ -4,6 +4,7 @@ import game.ui.render.Res;
 import game.ui.render.util.GameImage;
 import game.ui.render.util.Transform;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.util.Floor;
 
@@ -79,7 +80,7 @@ public class RotationTest extends JPanel{
 		// define floor (for testing)
 		Point3D[] floorPoints = new Point3D[]{ new Point3D(0,0,0), new Point3D(500, 0, 0), new Point3D(500, 300, 0), new Point3D(0, 300, 0)};
 		floor = new Floor(floorPoints);
-		image = new GameImage(Res.getImageFromName("Table"), imagePosition, new Dimension(100, 100));
+		image = new GameImage(Res.getImageFromName("Table"), imagePosition, new Rectangle3D(100, 100, 100));
 
 	}
 
@@ -110,8 +111,8 @@ public class RotationTest extends JPanel{
 		floor.transform(translateToOrigin);
 		floor.transform(rotateDir);
 		floor.transform(translateBack);
-		
-		image = new GameImage(Res.getImageFromName("Table"), new Point3D( 400, 200, 200), new Dimension(50, 100));
+
+		image = new GameImage(Res.getImageFromName("Table"), new Point3D( 400, 200, 200), new Rectangle3D(100, 100, 50));
 		image.transform(translateToOrigin);
 		image.transform(rotatePoint);
 		image.transform(translateBack);
@@ -137,8 +138,8 @@ public class RotationTest extends JPanel{
 		g.fillOval((int)centre.getX()-(centreSize/2), (int)centre.getY()-(centreSize/2), centreSize, centreSize);
 
 		// draw image
-		float imageWidth = image.getDimension().width;
-		float imageHeight = image.getDimension().height;
+		float imageWidth = image.getBoundingBox().width;
+		float imageHeight = image.getBoundingBox().height;
 		//g.drawImage(image.getImage(), (int)image.getPosition().x-(int)imageWidth/2, (int)image.getPosition().y-(int)imageHeight/2,
 		//		(int)imageWidth, (int)imageHeight, null);
 

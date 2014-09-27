@@ -1,8 +1,8 @@
 package game.ui.render.util;
 
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
 /**
@@ -13,12 +13,12 @@ public class GameImage implements Renderable, Transformable{
 
 	private BufferedImage image;
 	private Point3D position;
-	private Dimension dimension;
+	private Rectangle3D boundingBox;
 
-	public GameImage(BufferedImage image, Point3D point, Dimension dimension) {
+	public GameImage(BufferedImage image, Point3D point, Rectangle3D boundingBox) {
 		this.image = image;
 		this.position = point;
-		this.dimension = dimension;
+		this.boundingBox= boundingBox;
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class GameImage implements Renderable, Transformable{
 		return position.getZ();
 	}
 
-	public Dimension getDimension(){
-		return dimension;
+	public Rectangle3D getBoundingBox(){
+		return boundingBox;
 	}
 
 	public Point3D getPosition(){

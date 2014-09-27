@@ -11,6 +11,7 @@ import game.ui.render.util.TrixelUtil;
 import game.ui.render.util.Renderable;
 import game.ui.render.util.ZComparator;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.Place;
 import game.world.util.Drawable;
@@ -89,9 +90,9 @@ public class Renderer {
 			Drawable drawable = iter.next();
 			if (isImage(drawable)){ // TODO: not be always true
 				// drawable is an image
-				Dimension dimension = new Dimension((int)drawable.getBoundingBox().getWidth(),
-						(int)drawable.getBoundingBox().getHeight());
-				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
+				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
+						drawable.getPosition(),
+						drawable.getBoundingBox());
 
 				image.transform(transform);
 
@@ -128,9 +129,11 @@ public class Renderer {
 			if (renderObject instanceof GameImage){
 				GameImage image = (GameImage) renderObject;
 				Point3D position = image.getPosition();
-				Dimension dimension = image.getDimension();
-				g2.drawImage(image.getImage(), (int)position.getX()-dimension.width/2, (int)position.getY()-dimension.height,
-						dimension.width, dimension.height, null);
+				Rectangle3D boundingBox = image.getBoundingBox();
+				// the following drawimage subtracts y position based on length of gameimage., TODO: find better solution
+				g2.drawImage(image.getImage(), (int)(position.getX()-boundingBox.width/2),
+						(int)(position.y+(boundingBox.length/2)-boundingBox.height),
+						(int)boundingBox.width, (int)boundingBox.height, null);
 			}
 			else if (renderObject instanceof GamePolygon){
 				GamePolygon poly = (GamePolygon) renderObject;
@@ -157,7 +160,7 @@ public class Renderer {
 	 * @return array of lines which draw the axis
 	 */
 	private static Line3D[] makeAxisLines() {
-		
+
 		final int LINE_LENGTH = 1000;
 		Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(LINE_LENGTH,0,			0));
 		Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			LINE_LENGTH,0));

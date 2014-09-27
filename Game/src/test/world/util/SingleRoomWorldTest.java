@@ -44,7 +44,7 @@ public class SingleRoomWorldTest {
 		rooms.add(room);
 
 		world = new World(new ArrayList<Player>(),rooms);
-		Player player = new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(20, 20, 20));
+		Player player = new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(20, 20, 5));
 		// first test of new method in the game world class that adds a player to the world.
 
 		world.addPlayerToGameWorld(player);

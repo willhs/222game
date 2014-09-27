@@ -103,15 +103,40 @@ public class ItemInteractionHandler {
 		return false;
 	}
 
-	public static boolean dropItem(Player player, Item item, Place place){
-		if(!checkPlayers(place, player)){
+	public static boolean dropItem(Player player, Item item, Place place) {
+		if (!checkPlayers(place, player)) {
 			return false;
 		}
-		if(!item.canDrop()){
+		if (!item.canDrop()) {
 			return false;
 		}
-		
+		Point3D point = getItemDropPoint(player, item);
+		if (!player.getInventory().removeItem(item)){
+			return false;
+		}
+		place.addItem(item);
+		item.setPosition(point);
 		return true;
+	}
+
+	/**
+	 * Used to to get the drop point for an item using the players direction.
+	 * @param player - player dropping things.
+	 * @param item - item the player is droping.
+	 * @return
+	 */
+	private static Point3D getItemDropPoint(Player player, Item item) {
+		Rectangle3D playerBox = player.getBoundingBox();
+		Rectangle3D itemBox = item.getBoundingBox();
+		Vector3D changeIn = new Vector3D(
+				(playerBox.getWidth() + itemBox.getWidth())
+						* player.getDirection().x,
+				(playerBox.getHeight() + itemBox.getHeight())
+						* player.getDirection().y,
+				(playerBox.getLength() + itemBox.getLength())
+						* player.getDirection().z);
+		Point3D itemsNewPoint = Point3D.addDirectiong(player.getPosition(), changeIn);
+		return itemsNewPoint;
 	}
 
 }

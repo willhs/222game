@@ -7,12 +7,12 @@ package game.world.dimensions;
  *
  */
 public class Rectangle3D {
-	private final float x;
-	private final float y;
-	private final float z;
-	private final float width;
-	private final float length;
-	private final float height;
+	public final float x;
+	public final float y;
+	public final float z;
+	public final float width;
+	public final float length;
+	public final float height;
 
 	/**
 	 * Constructer for the Rectangle3D class
