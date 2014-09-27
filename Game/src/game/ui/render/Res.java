@@ -19,7 +19,7 @@ public class Res {
 	public static final String IMG_PATH = RES_PATH + "img" + SEP;
 	public static final String ROOM_PATH = IMG_PATH + "room" + SEP;
 
-	public static final String UNKNOWN_IMAGE_PATH = RES_PATH + "unknown";
+	public static final String UNKNOWN_IMAGE_PATH = RES_PATH + "unknown_image.png";
 	//public static final String tableName = "table.png";
 
 	/**
@@ -39,6 +39,11 @@ public class Res {
 	 */
 	public static BufferedImage getImageFromName(String name){
 		String filePath = TEST_PATH + name + ".png";
+		File f = new File(filePath);
+		if (!f.exists()){
+			filePath = TEST_PATH + name + ".gif";
+
+		}
 		try {
 			return ImageIO.read(new File(filePath));
 		} catch (IOException e) {
