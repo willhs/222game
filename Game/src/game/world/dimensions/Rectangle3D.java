@@ -131,5 +131,13 @@ public class Rectangle3D {
 	public float getHeight() {
 		return height;
 	}
+
+	@Override
+	public String toString() {
+		return "width=" + width + ", length=" + length
+				+ ", height=" + height;
+	}
+
+
 	//====================Getters End================================//
 }

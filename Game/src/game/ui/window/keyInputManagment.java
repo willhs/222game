@@ -9,7 +9,7 @@ public class keyInputManagment  implements KeyEventDispatcher{
 	private static HashMap<String , Integer> keyMap;
 	private static KeyEvent lastKeyEvent;
 	private int escapeKey;
-	
+
 
 	/**
 	 * The constructor for the keyManagement class
@@ -78,6 +78,14 @@ public class keyInputManagment  implements KeyEventDispatcher{
 		tempKeyMap.put("move left", KeyEvent.VK_A);//a
 		tempKeyMap.put("inventory", KeyEvent.VK_I);//i
 		tempKeyMap.put("interact", KeyEvent.VK_F);//f
+		tempKeyMap.put("1", KeyEvent.VK_1);
+		tempKeyMap.put("2", KeyEvent.VK_2);
+		tempKeyMap.put("3", KeyEvent.VK_3);
+		tempKeyMap.put("4", KeyEvent.VK_4);
+		tempKeyMap.put("5", KeyEvent.VK_5);
+		tempKeyMap.put("6", KeyEvent.VK_6);
+
+
 
 		return tempKeyMap;
 	}

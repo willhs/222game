@@ -39,7 +39,7 @@ public class SingleRoomWorldTest {
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> items = new ArrayList<Item>();
 		items.add(new Table("Table1", new Point3D(250, 0, 250), new Rectangle3D(50, 50, 50)));
-		Room room = new Room(new ArrayList<Exit>(), items, p);
+		Room room = new Room(new ArrayList<Exit>(), items, p, "Room1");
 		List<Place> rooms = new ArrayList<Place>();
 		rooms.add(room);
 
