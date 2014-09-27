@@ -22,12 +22,14 @@ public class Room implements Place, Serializable {
 	private final List<Player> players;
 	private final List<Item> items;
 	private final Polygon floor;
+	private final String name;
 
-	public Room(List<Exit> exits, List<Item> items, Polygon floor) {
+	public Room(List<Exit> exits, List<Item> items, Polygon floor, String name) {
 		this.exits = exits;
 		this.players = new ArrayList<Player>();
 		this.items = items;
 		this.floor = floor;
+		this.name = name;
 	}
 
 	@Override
@@ -120,6 +122,11 @@ public class Room implements Place, Serializable {
 	@Override
 	public void addPlayer(Player player) {
 		players.add(player);
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 }

@@ -52,7 +52,7 @@ public class RoomTests {
 		int[] xpoints = new int[]{0,200,200,0,0};
 		int[] ypoints = new int[]{0,0,200,200,0};
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
-		return new Room(new ArrayList<Exit>(), new ArrayList<Item>(), p);
+		return new Room(new ArrayList<Exit>(), new ArrayList<Item>(), p, "Room1");
 	}
 
 }

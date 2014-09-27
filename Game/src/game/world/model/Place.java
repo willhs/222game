@@ -104,4 +104,6 @@ public interface Place {
 	 * @param player - player to be added.
 	 */
 	public void addPlayer(Player player);
+
+	public String getName();
 }

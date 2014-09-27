@@ -68,8 +68,8 @@ public class World extends ClientWorld{
 	}
 
 	@Override
-	public void addPlayerToGameWorld(Player player){
+	public boolean addPlayerToGameWorld(Player player){
 		players.add(player);
-		startPlace.setStartPoint(player);
+		return startPlace.setStartPoint(player);
 	}
 }
