@@ -1,5 +1,7 @@
 package game.ui.window;
 
+import game.world.model.Room;
+
 import java.awt.AWTKeyStroke;
 import java.awt.Dimension;
 import java.awt.KeyEventDispatcher;
@@ -33,6 +35,8 @@ public class GameWindow extends JFrame{
 	public static final int FRAME_WIDTH = WINDOW_SIZE*16;
 
 	public static HashMap<String , Integer> keyMap;
+
+	private Room currentRoom;
 
 	/**
 	 * Constructor for the GameFrame
@@ -73,6 +77,10 @@ public class GameWindow extends JFrame{
 
 	public static Queue<String> getKeyQueue(){
 		return keyCodeQueue;
+	}
+
+	public void setRoom(Room currentRoom){
+		this.currentRoom = currentRoom;
 	}
 
 	public static void main(String[] args){
