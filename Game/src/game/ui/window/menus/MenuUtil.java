@@ -10,6 +10,10 @@ import java.awt.Rectangle;
 
 public class MenuUtil {
 
+	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.1f);
+	public static final Color BLACK_TRAN = new Color(0f,0f,0f,0.5f);
+
+
 	/**
 	 * Draws the buttons on the graphics object on the screen vertically
 	 * */
