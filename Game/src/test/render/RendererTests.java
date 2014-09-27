@@ -3,8 +3,8 @@ package test.render;
 import static org.junit.Assert.*;
 import game.ui.render.Renderer;
 import game.ui.render.util.Transform;
-import game.ui.render.util.Vector3D;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Vector3D;
 
 import org.junit.Test;
 

@@ -1,6 +1,7 @@
 package game.ui.render.util;
 
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Vector3D;
 
 
 /** 3x4 array representing an affine transformation

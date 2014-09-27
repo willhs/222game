@@ -3,8 +3,8 @@
 import game.ui.render.Res;
 import game.ui.render.util.GameImage;
 import game.ui.render.util.Transform;
-import game.ui.render.util.Vector3D;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Vector3D;
 import game.world.util.Floor;
 
 import java.awt.Color;
