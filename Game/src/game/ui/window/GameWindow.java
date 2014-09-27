@@ -7,7 +7,9 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.security.acl.LastOwnerException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.swing.JFrame;
 
@@ -22,7 +24,7 @@ public class GameWindow extends JFrame{
 
 	private BlankPanel blankPanel;
 	private RotationTest graphicsPanel;
-
+	private static Queue<String> keyCodeQueue;
 
 	private static final String title = "Game";
 
@@ -40,7 +42,7 @@ public class GameWindow extends JFrame{
 
 		//this.graphicsPanel = new RotationTest();
 		this.blankPanel = new BlankPanel();
-
+		this.keyCodeQueue = new LinkedList<String>();
 		//set up the globalKey listener
 		setUpKeyListner();
 
@@ -69,6 +71,9 @@ public class GameWindow extends JFrame{
 		manager.addKeyEventDispatcher( new keyInputManagment(blankPanel));
 	}
 
+	public static Queue<String> getKeyQueue(){
+		return keyCodeQueue;
+	}
 
 	public static void main(String[] args){
 		GameWindow window = new GameWindow();

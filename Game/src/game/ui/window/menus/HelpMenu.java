@@ -131,7 +131,6 @@ public class HelpMenu implements GraphicsPane {
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(selectedButton == 0){
-			System.out.println("Back");
 			animating = true;
 			nextMenu = new MainMenu(panel);
 			((MainMenu)nextMenu).setAnimating(true);
@@ -142,7 +141,9 @@ public class HelpMenu implements GraphicsPane {
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("escape") || keyEvent.equals("backspace")  ){
-			panel.setMenu(new MainMenu(panel));
+			animating = true;
+			nextMenu = new MainMenu(panel);
+			((MainMenu)nextMenu).setAnimating(true);
 		}
 		else if(keyEvent.equals("enter")){
 			handleMouseReleased(null);//TODO create buttonPressed();

@@ -13,7 +13,7 @@ public class Client{
 		}
 
 		LinkedList<Integer> keyCodeQueue = new LinkedList<Integer>();
-		GameWindow gw = new GameWindow(keyCodeQueue);
+		//GameWindow gw = new GameWindow(keyCodeQueue);
 
 		Socket sock = new Socket(args[0], Integer.parseInt(args[1]));
 
@@ -51,7 +51,7 @@ public class Client{
 				Thread.sleep(500);
 				System.out.println("loop");
 			}
-	
+
 
 		}catch(ClassNotFoundException e){
 			System.err.println(e);

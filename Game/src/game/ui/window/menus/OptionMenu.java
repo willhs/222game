@@ -139,6 +139,8 @@ public class OptionMenu implements GraphicsPane {
 		}
 		if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
 			animating = true;
+			animatingIn = false;
+			nextMenu = new MainMenu(panel);
 			//panel.setMenu(new MainMenu(panel));
 
 		}
