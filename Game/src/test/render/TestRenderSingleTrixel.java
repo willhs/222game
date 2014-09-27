@@ -9,6 +9,7 @@ import game.world.model.Exit;
 import game.world.model.Item;
 import game.world.model.Place;
 import game.world.model.Room;
+import game.world.util.Floor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -16,7 +17,6 @@ import java.awt.Polygon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -31,7 +31,7 @@ public class TestRenderSingleTrixel extends JPanel{
 		int left = 100;
 		int[] xpoints = { left , left + Trixel.SIZE, left + Trixel.SIZE, left};
 		int[] ypoints = { top , top,  top + Trixel.SIZE, top + Trixel.SIZE};
-		testPlace = new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length));
+		testPlace = new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length), "testRoom");
 		viewerDirection = new Vector3D(0,0,1);
 		WillMouseMotionListener l = new WillMouseMotionListener();
 		addMouseListener(l);
