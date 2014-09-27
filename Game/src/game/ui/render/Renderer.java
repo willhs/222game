@@ -65,7 +65,7 @@ public class Renderer {
 
 		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
-				new Vector3D(-rotateAmounts.y, rotateAmounts.x, 0),
+				new Vector3D(0, rotateAmounts.x, 0),
 				floorCentroid,
 				viewTranslation
 			);
@@ -88,7 +88,6 @@ public class Renderer {
 			Drawable drawable = iter.next();
 			if (isImage(drawable)){ // TODO: not be always true
 				// drawable is an image
-				System.out.println(drawable.getName());
 				Dimension dimension = new Dimension((int)drawable.getBoundingBox().getWidth(),
 						(int)drawable.getBoundingBox().getHeight());
 				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()), drawable.getPosition(), dimension);
@@ -145,6 +144,7 @@ public class Renderer {
 				Line3D line = (Line3D) renderObject;
 				Point3D p1 = line.getP1();
 				Point3D p2 = line.getP2();
+				g2.setColor(Color.orange);
 				g2.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
 			}
 
@@ -234,10 +234,10 @@ public class Renderer {
 	/**
 	 * @return random colour
 	 */
-	public static Color getRandomColour(){
-		int r = (int)(Math.random()*255);
-		int g = (int)(Math.random()*255);
-		int b = (int)(Math.random()*255);
+	public static Color getSemiRandomColour(){
+		int r = 0;//(int)(Math.random()*255);
+		int g = 0;//(int)(Math.random()*255);
+		int b = 50 + (int)(Math.random()*200);
 
 		return new Color(r, g, b);
 	}

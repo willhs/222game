@@ -4,6 +4,7 @@ import game.world.dimensions.Point3D;
 
 import java.awt.Color;
 import java.awt.Polygon;
+import java.util.Iterator;
 
 /**
  * @author hardwiwill
@@ -49,6 +50,9 @@ public class GamePolygon extends Polygon implements Renderable{
 
 	}
 
+	/**
+	 * @return center point or centroid of polygon
+	 */
 	public Point3D getCentroid(){
 		int xSum = 0;
 		int ySum = 0;

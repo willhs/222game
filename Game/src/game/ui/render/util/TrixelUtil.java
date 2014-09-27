@@ -91,7 +91,7 @@ public class TrixelUtil {
 		vertices[2] = new Point3D(c.getX(), c.getY()+Trixel.SIZE, c.getZ()+Trixel.SIZE);
 		vertices[3] = new Point3D(c.getX(), c.getY()+Trixel.SIZE*clockwise, c.getZ()+Trixel.SIZE*(1-clockwise));
 
-		return new TrixelFace(vertices, Renderer.getRandomColour());
+		return new TrixelFace(vertices, colour);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class TrixelUtil {
 		vertices[2] = new Point3D(c.getX()+Trixel.SIZE, c.getY(), c.getZ()+Trixel.SIZE);
 		vertices[3] = new Point3D(c.getX()+Trixel.SIZE*(1-clockwise), c.getY(), c.getZ()+Trixel.SIZE*(clockwise));
 
-		return new TrixelFace(vertices, Renderer.getRandomColour());
+		return new TrixelFace(vertices, colour);
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class TrixelUtil {
 		vertices[2] = new Point3D(c.getX()+Trixel.SIZE, c.getY()+Trixel.SIZE, c.getZ());
 		vertices[3] = new Point3D(c.getX()+(Trixel.SIZE*clockwise), c.getY()+(Trixel.SIZE*(1-clockwise)), c.getZ());
 
-		return new TrixelFace(vertices, Renderer.getRandomColour());
+		return new TrixelFace(vertices, colour);
 	}
 	// -----------------------------------------------------------
 
@@ -139,7 +139,7 @@ public class TrixelUtil {
 			for (int z = polyBounds.y; z < polyBounds.y + polyBounds.height; z += Trixel.SIZE){
 				if (poly.contains(x,z)){
 					Trixition trixition = TrixelUtil.positionToTrixition(new Point3D(x, y, z));
-					trixels.add(new Trixel(trixition, Renderer.getRandomColour()));
+					trixels.add(new Trixel(trixition, Renderer.getSemiRandomColour()));
 				}
 			}
 		}

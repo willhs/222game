@@ -4,6 +4,7 @@ import game.world.dimensions.Point3D;
 
 import java.awt.Color;
 import java.awt.Polygon;
+import java.util.Iterator;
 
 /**
  * @author will
@@ -12,7 +13,14 @@ import java.awt.Polygon;
 public class TrixelFace implements ZComparable, Transformable{
 
 	private final Point3D[] vertices;
-	private final Color colour;
+	/**
+	 * colour assuming fully lighted
+	 */
+	private final Color baseColour;
+	/**
+	 * the normal vector of this face as a plane.
+	 */
+	private Vector3D normal;
 
 	/**
 	 * PRE: must have 4 vertices
@@ -23,7 +31,8 @@ public class TrixelFace implements ZComparable, Transformable{
 	 */
 	public TrixelFace(Point3D[] vertices, Color colour){
 		this.vertices = vertices;
-		this.colour = colour;
+		this.baseColour = colour;
+		normal = this.calculateNormal();
 	}
 
 	/* Gets center z position
@@ -38,28 +47,46 @@ public class TrixelFace implements ZComparable, Transformable{
 	}
 
 	public Color getColour(){
-		return colour;
+		return baseColour;
 	}
 
 	/**
 	 * Checks if the polygon is currently facing the viewer
-	 * *** COULD BE OPTIMISED MORE***
-	 * @return whether the polygon shuold be drawn
+	 * @return whether the polygon should be drawn
 	 */
 	public boolean isFacingViewer() {
+
+		return calculateNormal().getZ() > 0;
+	}
+
+	private Vector3D calculateNormal(){
 		Vector3D edge1 = vertices[1].distanceTo(vertices[0]);
 		Vector3D edge2 = vertices[1].distanceTo(vertices[2]);
 
-		Vector3D normal = edge1.crossProduct(edge2);
-
-		return normal.getZ() > 0;
+		return edge1.crossProduct(edge2);
 	}
+
+	/*public void getRealColour(Iterator<LightSource> lights){
+		double reflection = 0;
+		while(lights.hasNext()){
+			LightSource light = lights.next();
+			Vector3D lightDir = light.getDirection();
+			float cosTheta = normal.cosTheta(lightDir);
+			double angle = Math.acos(cosTheta);
+		//	System.out.println("angle: "+angle);
+			reflection += (angle / (Math.PI));
+		}
+		try{
+			this.shadedColour = new Color((int)(initColour.getRed()*reflection), (int)(initColour.getGreen()*reflection), (int)(initColour.getBlue()*reflection));
+		}catch(IllegalArgumentException e){ this.shadedColour = initColour; }
+	}*/
 
 	@Override
 	public void transform(Transform transform) {
-		for (int i = 0; i < vertices.length; i++){		
+		for (int i = 0; i < vertices.length; i++){
 			vertices[i] = transform.multiply(vertices[i]);
 		}
+		normal = transform.multiply(normal);
 	}
 
 	public Point3D[] getVertices() {

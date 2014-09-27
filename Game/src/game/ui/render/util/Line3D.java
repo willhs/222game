@@ -23,7 +23,7 @@ public class Line3D implements Renderable, Transformable{
 
 	@Override
 	public float getZ() {
-		return (p1.z - p2.z) / 2;
+		return 0;
 	}
 
 	@Override
