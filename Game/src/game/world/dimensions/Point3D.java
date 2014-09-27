@@ -1,11 +1,9 @@
 package game.world.dimensions;
 
-
 /**
- * @author pondy & will
- * A NOW IMMUTABLE representation of a 3d point
+ * @author pondy & will A NOW IMMUTABLE representation of a 3d point
  */
-public class Point3D{
+public class Point3D {
 	// ---- PONDY'S COMMENTS:
 	// I made a float version of this class so that vectors could be used in the
 	// transform class and so it could
@@ -25,11 +23,10 @@ public class Point3D{
 		this.z = z;
 	}
 
-
 	/** Returns the distance to another point. */
 	public Vector3D distanceTo(Point3D other) {
-		return new Vector3D(getX() - other.getX(), getY() - other.getY(), getZ()
-				- other.getZ());
+		return new Vector3D(getX() - other.getX(), getY() - other.getY(),
+				getZ() - other.getZ());
 	}
 
 	public String toString() {
@@ -61,7 +58,6 @@ public class Point3D{
 		return result;
 	}
 
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -80,15 +76,13 @@ public class Point3D{
 		return true;
 	}
 
-
 	/**
 	 * @param top
 	 * @return a point that's flipped using top as the top
 	 */
 	public Point3D flipY(int top) {
-		return new Point3D(x, top-y, z);
+		return new Point3D(x, top - y, z);
 	}
-
 
 	public Point3D negate() {
 		return new Point3D(-x, -y, -z);
@@ -96,12 +90,19 @@ public class Point3D{
 
 	/**
 	 * Made by Shane Brewer
-	 * @param one - point to be minusd from.
-	 * @param two - point to be used to minus
+	 *
+	 * @param one
+	 *            - point to be minusd from.
+	 * @param two
+	 *            - point to be used to minus
 	 * @return - the point that is one minus two.
 	 */
-	public static Vector3D subtractPoint3D(Point3D one, Point3D two){
+	public static Vector3D subtractPoint3D(Point3D one, Point3D two) {
 		return new Vector3D(one.x - two.x, one.y - two.y, one.z - two.z);
 	}
 
+	public static Point3D addDirectiong(Point3D currentPlace, Vector3D direction) {
+		return new Point3D(currentPlace.x + direction.x, currentPlace.y
+				+ direction.y, currentPlace.z + direction.z);
+	}
 }
