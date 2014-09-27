@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
-public class HelpMenu implements GraphicsPane {
+public class HelpMenu implements GraphicsPane, Animated{
 	private BlankPanel panel;
 	private int numbOfButtons;
 
@@ -91,8 +91,8 @@ public class HelpMenu implements GraphicsPane {
 
 		//if there is a menu to render in the animation render it
 		if(nextMenu!=null){
-			if(nextMenu.isAnimating()){
-				nextMenu.animate();
+			if(((Animated) nextMenu).isAnimating()){
+				((Animated) nextMenu).animate();
 				nextMenu.render(g);
 			}
 		}
@@ -216,7 +216,7 @@ public class HelpMenu implements GraphicsPane {
 		else{
 			if(MenuUtil.animateOut(buttons, aniSpeed+= speedMultiplyer)){
 				((MainMenu) nextMenu).setAnimating(true);
-				nextMenu.animate();
+				((MainMenu) nextMenu).animate();
 			}
 		}
 	}
@@ -227,7 +227,7 @@ public class HelpMenu implements GraphicsPane {
 		return animating;
 	}
 
-
+	@Override
 	public void setAnimating(boolean in){
 		animatingIn = in;
 		animating = true;
@@ -245,4 +245,7 @@ public class HelpMenu implements GraphicsPane {
 			e.printStackTrace();
 		}
 	}
+
+
+
 }
