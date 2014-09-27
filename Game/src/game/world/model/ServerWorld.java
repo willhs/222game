@@ -3,9 +3,10 @@ package game.world.model;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 
+import java.io.Serializable;
 import java.util.*;
 
-public abstract class ServerWorld {
+public abstract class ServerWorld implements Serializable {
 
 	public List<String> applyCommand(String command) {
 		List<String> commands = new ArrayList<String>();
@@ -15,9 +16,8 @@ public abstract class ServerWorld {
 			Player player = parsePlayer(scan);
 			if (addPlayerToGameWorld(player)) {
 				Place place = getPlaceOfPlayer(player);
-				String newCommand = "ClientPlayerPlacement Player ( Name ( "
-						+ player.name + " ) Position ( " + player.getPosition()
-						+ " ) ) Place ( Name ( " + place.getName() + " ) )";
+				String newCommand = "ClientPlayerPlacement  Position ( "
+						+ player.getPosition() + " )";
 				commands.add(newCommand);
 				return commands;
 			}
@@ -71,6 +71,8 @@ public abstract class ServerWorld {
 	 * @return TODO
 	 */
 	public abstract boolean addPlayerToGameWorld(Player player);
+
+	protected abstract Place getStartPlace();
 
 	protected Player parsePlayer(Scanner scan) {
 		String name = "Unknowen";
