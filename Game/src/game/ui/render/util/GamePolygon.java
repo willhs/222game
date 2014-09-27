@@ -1,7 +1,10 @@
 package game.ui.render.util;
 
+import game.world.dimensions.Point3D;
+
 import java.awt.Color;
 import java.awt.Polygon;
+import java.util.Iterator;
 
 /**
  * @author hardwiwill
@@ -45,6 +48,19 @@ public class GamePolygon extends Polygon implements Renderable{
 			ypoints[i] = top - ypoints[i];
 		}
 
+	}
+
+	/**
+	 * @return center point or centroid of polygon
+	 */
+	public Point3D getCentroid(){
+		int xSum = 0;
+		int ySum = 0;
+		for (int i = 0; i < npoints; i++){
+			xSum += xpoints[i];
+			ySum += ypoints[i];
+		}
+		return new Point3D(xSum/npoints, ySum/npoints, z);
 	}
 
 }

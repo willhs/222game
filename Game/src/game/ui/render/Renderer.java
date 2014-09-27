@@ -2,8 +2,9 @@ package game.ui.render;
 
 import game.ui.render.util.GameImage;
 import game.ui.render.util.GamePolygon;
+import game.ui.render.util.Line3D;
+import game.ui.render.util.Renderable;
 import game.ui.render.util.Transform;
-import game.ui.render.util.Transformable;
 import game.ui.render.util.Trixel;
 import game.ui.render.util.TrixelFace;
 import game.ui.render.util.TrixelUtil;
@@ -29,7 +30,8 @@ import java.util.Queue;
 public class Renderer {
 
 	// TEMPORARY
-	private static Point3D SCREEN_CENTER = new Point3D(300, 300, 0);
+
+	private static Point3D FRAME_CENTER = new Point3D(300, 300, 0);
 	private static Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
 	private static Transform AUTO = Transform.identity();
 	private static Vector3D DEFAULT_VIEW_ANGLE = new Vector3D(0,0,1);
@@ -56,29 +58,32 @@ public class Renderer {
 		// TODO: please rewrite/refactor this part when we can
 		Floor floor = place.getFloor();
 
-		Polygon floorPolygon = floorToPolygon(floor);
+		Polygon floorPolygon = floorToVerticalPolygon(floor);
 
 		Point3D floorCentroid = getFloorCentroid(floor);
 
 		Vector3D viewTranslation = new Vector3D(0, 200, 0);
 
+		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
 				new Vector3D(0, rotateAmounts.x, 0),
 				floorCentroid,
 				viewTranslation
 			);
 
-		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, 0);
+		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
+		// temporary solution to having floor behind everything.
+		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
 		for (Trixel floorTrixel : floorTrixels){
 			TrixelFace[] faces = TrixelUtil.getTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
 				face.transform(transform);
+				face.transform(floorBehindEverything);
 				if (face.isFacingViewer()){
 					toDraw.offer(getGamePolygonFromTrixelFace(face));
 				}
 			}
 		}
-
 
 		for (Iterator<Drawable> iter = place.getDrawable(); iter.hasNext();){
 			Drawable drawable = iter.next();
@@ -104,13 +109,19 @@ public class Renderer {
 				}
 			}
 		}
+		// testing
+		// axis lines
+		for (Line3D axisLine : makeAxisLines()){
+			axisLine.transform(transform);
+			toDraw.offer(axisLine);
+		}
 
 		// ------- FLIP Y VALUES OF ALL THINGS
 		for (Renderable shape : toDraw){
 			shape.flipY(FRAME_TOP);
 		}
 
-		//  ----- DRAW ALL THE THINGS  ...in correct order
+		// ------- DRAW ALL THE THINGS  ...in correct order
 		// all gameObjects are either trixel faces or images.
 		while (!toDraw.isEmpty()){
 			Renderable renderObject = toDraw.poll();
@@ -125,16 +136,34 @@ public class Renderer {
 				GamePolygon poly = (GamePolygon) renderObject;
 				g2.setColor(poly.getColour());
 				g2.fillPolygon(poly);
+				// draw centroid of polygon
+			//	Point3D centroid = poly.getCentroid();
+			//	g2.setColor(Color.black);
+			//	g2.fillOval((int)centroid.x-5, (int)centroid.y-5, 10, 10);
 			}
+			else if (renderObject instanceof Line3D){
+				Line3D line = (Line3D) renderObject;
+				Point3D p1 = line.getP1();
+				Point3D p2 = line.getP2();
+				g2.setColor(Color.orange);
+				g2.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
+			}
+
 		}
 		// draw center oval
-		g2.fillOval((int)(floorCentroid.x-10), (int)(floorCentroid.y-10), 20, 20);
+		g2.fillOval((int)(FRAME_CENTER.x-10), (int)(FRAME_CENTER.y-10), 20, 20);
 	}
-
-	private static void translate(Transformable face, Vector3D translate) {
-		face.transform(Transform.newTranslation(translate));
+	/**
+	 * @return array of lines which draw the axis
+	 */
+	private static Line3D[] makeAxisLines() {
+		
+		final int LINE_LENGTH = 1000;
+		Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(LINE_LENGTH,0,			0));
+		Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			LINE_LENGTH,0));
+		Line3D zLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			0,			LINE_LENGTH));
+		return new Line3D[]{xLine, yLine, zLine};
 	}
-
 	/**
 	 * @param face
 	 * @return game polygon representing a trixel face
@@ -207,10 +236,10 @@ public class Renderer {
 	/**
 	 * @return random colour
 	 */
-	public static Color getRandomColour(){
-		int r = (int)(Math.random()*255);
-		int g = (int)(Math.random()*255);
-		int b = (int)(Math.random()*255);
+	public static Color getSemiRandomColour(){
+		int r = 0;//(int)(Math.random()*255);
+		int g = 0;//(int)(Math.random()*255);
+		int b = 50 + (int)(Math.random()*200);
 
 		return new Color(r, g, b);
 	}
@@ -221,7 +250,7 @@ public class Renderer {
 	 * @param floor
 	 * @return a polygon representing the floor
 	 */
-	private static Polygon floorToPolygon(Floor floor){
+	private static Polygon floorToVerticalPolygon(Floor floor){
 		Point3D[] floorPoints = floor.getPoints();
 		int[] xpoints = new int[floorPoints.length];
 		int[] ypoints = new int[floorPoints.length];
