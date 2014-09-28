@@ -212,4 +212,11 @@ public class MainMenu implements GraphicsPane, Animated{
 	public boolean isAnimating(){
 		return animating;
 	}
+
+
+	@Override
+	public void handleMousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
 }

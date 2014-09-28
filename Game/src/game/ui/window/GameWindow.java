@@ -1,5 +1,6 @@
 package game.ui.window;
 
+import game.world.model.Player;
 import game.world.model.Room;
 
 import java.awt.AWTKeyStroke;
@@ -37,6 +38,7 @@ public class GameWindow extends JFrame{
 	public static HashMap<String , Integer> keyMap;
 
 	private Room currentRoom;
+	private Player player;//TODO make this work
 
 	/**
 	 * Constructor for the GameFrame
@@ -44,7 +46,6 @@ public class GameWindow extends JFrame{
 	public GameWindow(){
 		super(title);
 
-		//this.graphicsPanel = new RotationTest();
 		this.blankPanel = new BlankPanel();
 		this.keyCodeQueue = new LinkedList<String>();
 		//set up the globalKey listener
@@ -87,5 +88,9 @@ public class GameWindow extends JFrame{
 		GameWindow window = new GameWindow();
 		TestThread t = new TestThread(20, window);
 		t.start();
+	}
+
+	public Player getPlayer(){
+		return this.player;
 	}
 }

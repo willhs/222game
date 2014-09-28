@@ -4,7 +4,6 @@ import game.ui.window.menus.InventoryMenu;
 import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
-import game.world.util.Drawable;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,7 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Queue;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.ReverbType;
 
 public class GameScreen implements GraphicsPane  {
 
@@ -34,6 +31,9 @@ public class GameScreen implements GraphicsPane  {
 	private BufferedImage testBackGroundImage;
 
 
+	private int lastXPress;
+	private int lastYPress;
+
 	//inventory bar fields
 	private int numbofButtons = 6;
 	private Rectangle[] inventoryButtons;
@@ -42,9 +42,15 @@ public class GameScreen implements GraphicsPane  {
 
 	private int selectedButton = -1;
 
+
+	//inventory grid images
+	private BufferedImage[] inventoryImages;
+	//private BufferedImage selectedImage;
+
 	public GameScreen(BlankPanel panel){
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
+		this.inventoryImages = new BufferedImage[6];
 		setUpInventoryBarButtons();
 		this.panel = panel;
 		this.keyQue = GameWindow.getKeyQueue();
@@ -91,6 +97,7 @@ public class GameScreen implements GraphicsPane  {
 		}
 
 		drawInventorybar(g);
+		drawInventory(g);
 	}
 
 	@Override
@@ -167,6 +174,18 @@ public class GameScreen implements GraphicsPane  {
 		this.currentMenu = menu;
 	}
 
+	public void placeInInventory(int x, int y, BufferedImage image){
+		int selectedGrid = -1;
+
+		for(int i = 0; i < inventoryButtons.length; i++){
+			if(inventoryButtons[i].contains(x, y)){
+				selectedButton = i;//set selected button
+			}
+		}
+	}
+
+
+
 
 	/**
 	 *loads all of the images required for the game screen
@@ -183,6 +202,42 @@ public class GameScreen implements GraphicsPane  {
 		} catch (IOException e) {
 			System.out.println("failed reading imagge");
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void handleMousePressed(MouseEvent e) {
+		if(currentMenu != null ){
+			currentMenu.handleMousePressed(e);
+			return;
+		}
+
+		lastXPress = e.getX();
+		lastYPress = e.getY();
+	}
+
+	/**
+	 * Returns whether or not a point is on the inventory grid
+	 * returns -1 if not on the grid
+	 * */
+	public int isOnGrid(int x, int y){
+		for(int i = 0; i < inventoryButtons.length; i++){
+			if(inventoryButtons[i].contains(x,y))return i;
+		}
+		return -1;
+	}
+
+	public void placeItemOnGrid(int gridNumb, BufferedImage image){//TODO will most likely change to an item instead of an image but just to test for now
+		if(inventoryImages[gridNumb] == null){
+			inventoryImages[gridNumb] = image;
+		}
+	}
+
+	public void drawInventory(Graphics g){
+		for(int i = 0; i < inventoryImages.length; i++){
+			if(inventoryImages != null){
+				g.drawImage(inventoryImages[i], (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(), panel);
+			}
 		}
 	}
 

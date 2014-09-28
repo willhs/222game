@@ -134,8 +134,8 @@ public class Rectangle3D {
 
 	@Override
 	public String toString() {
-		return "width=" + width + ", length=" + length
-				+ ", height=" + height;
+		return "width= " + width + " , length= " + length
+				+ " , height= " + height;
 	}
 
 

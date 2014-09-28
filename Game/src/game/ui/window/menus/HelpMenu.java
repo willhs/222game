@@ -247,5 +247,12 @@ public class HelpMenu implements GraphicsPane, Animated{
 	}
 
 
+	@Override
+	public void handleMousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
 
 }

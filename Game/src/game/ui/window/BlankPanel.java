@@ -73,7 +73,6 @@ public class BlankPanel extends JPanel{
 			@Override
 			public void mouseMoved(MouseEvent e){
 				currentMenu.handleMouseMoved(e);
-				repaint();
 			}
 		});
 
@@ -81,7 +80,11 @@ public class BlankPanel extends JPanel{
 			@Override
 			public void mouseReleased(MouseEvent e){
 				currentMenu.handleMouseReleased(e);
-				repaint();
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e){
+				currentMenu.handleMousePressed(e);
 			}
 		});
 	}
