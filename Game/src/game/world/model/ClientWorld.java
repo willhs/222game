@@ -63,6 +63,7 @@ public abstract class ClientWorld extends ServerWorld {
 		}
 		Point3D position = parsePosition(scan);
 		Place place = getStartPlace();
+		this.addPlayer(clientsPlayer);
 		clientsPlayer.move(position);
 		place.addPlayer(clientsPlayer);
 		return true;

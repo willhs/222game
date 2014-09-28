@@ -77,4 +77,9 @@ public class World extends ClientWorld{
 	protected Place getStartPlace() {
 		return startPlace;
 	}
+
+	@Override
+	protected void addPlayer(Player player) {
+		players.add(player);
+	}
 }

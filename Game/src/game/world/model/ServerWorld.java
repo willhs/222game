@@ -13,12 +13,15 @@ public abstract class ServerWorld implements Serializable {
 		Scanner scan = new Scanner(command);
 		if (scan.hasNext("ServerPlayerPlacement")) {
 			scan.next();
+			System.out.println(command);
 			Player player = parsePlayer(scan);
 			if (addPlayerToGameWorld(player)) {
 				Place place = getPlaceOfPlayer(player);
+				System.out.println("Made it here.");
 				String newCommand = "ClientPlayerPlacement  Position ( "
-						+ player.getPosition() + " )";
+						+ player.getPosition().toString() + " )";
 				commands.add(newCommand);
+				System.out.println(commands.size());
 				return commands;
 			}
 		}
@@ -74,21 +77,27 @@ public abstract class ServerWorld implements Serializable {
 
 	protected abstract Place getStartPlace();
 
+	protected abstract void addPlayer(Player player);
+
 	protected Player parsePlayer(Scanner scan) {
 		String name = "Unknowen";
 		if (scan.hasNext("Name")) {
+			System.out.println("Scanning name");
 			name = parseName(scan);
 		}
 		Inventory inventory = new Inventory();
 		if (scan.hasNext("Inventory")) {
+			System.out.println("Scanning inventory");
 			inventory = parseInventory(scan);
 		}
 		Point3D point = new Point3D(0, 0, 0);
 		if (scan.hasNext("Position")) {
+			System.out.println("Scanning poiunt");
 			point = parsePosition(scan);
 		}
 		Rectangle3D boundingBox = new Rectangle3D(0, 0, 0);
 		if (scan.hasNext("BoundingBox")) {
+			System.out.println("scanning bounding box");
 			boundingBox = parseBoundingBox(scan);
 		}
 		return new Player(name, inventory, point, boundingBox);
@@ -97,28 +106,44 @@ public abstract class ServerWorld implements Serializable {
 	protected String parseName(Scanner scan) {
 		String name = "";
 		scan.next();
-		scan.next("(");
+		scan.next();
 		name = scan.next();
-		scan.next(")");
+		scan.next();
 		return name;
 	}
 
 	protected Rectangle3D parseBoundingBox(Scanner scan) {
-		scan.next("BoundingBox");
-		scan.next("(");
-		scan.next("width=");
-		float width = scan.nextFloat();
-		scan.next(",");
-		scan.next("length=");
-		float length = scan.nextFloat();
-		scan.next(",");
-		scan.next("height=");
-		float height = scan.nextFloat();
+		while(!scan.hasNextDouble() && scan.hasNext()){
+			System.out.println("removing strings");
+			scan.next();
+		}
+		float width = (float)scan.nextDouble();
+		System.out.println(width);
+		while(!scan.hasNextDouble() && scan.hasNext()){
+			scan.next();
+		}
+		float length = (float)scan.nextDouble();
+		while(!scan.hasNextDouble() && scan.hasNext()){
+			scan.next();
+		}
+		float height = (float)scan.nextDouble();
 		return new Rectangle3D(width, height, length);
 	}
 
 	protected Point3D parsePosition(Scanner scan) {
-		return null;
+		while (!scan.hasNextFloat()){
+			scan.next();
+		}
+		float x = scan.nextFloat();
+		while (!scan.hasNextFloat()){
+			scan.next();
+		}
+		float y = scan.nextFloat();
+		while (!scan.hasNextFloat()){
+			scan.next();
+		}
+		float z = scan.nextFloat();
+		return new Point3D(x, y, z);
 	}
 
 	protected Inventory parseInventory(Scanner scan) {
