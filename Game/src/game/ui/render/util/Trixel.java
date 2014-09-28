@@ -19,8 +19,8 @@ public class Trixel {
 
 	private Color colour;
 
-	public Trixel (Trixition trisition, Color c){
-		this.trixition = trisition;
+	public Trixel (Trixition trixition, Color c){
+		this.trixition = trixition;
 		this.colour = c;
 	}
 

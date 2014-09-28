@@ -14,10 +14,8 @@ import java.util.Iterator;
 public class TrixelFace implements ZComparable, Transformable{
 
 	private final Point3D[] vertices;
-	/**
-	 * colour assuming fully lighted
-	 */
-	private final Color baseColour;
+
+	private Trixel parent;
 	/**
 	 * PRE: must have 4 vertices
 	 * PRE: must be ordered so that lines from each point in order (i to i+1) form a square (eg (0,0,0), (1,0,0), (1,1,0), (0,1,0))
@@ -25,9 +23,8 @@ public class TrixelFace implements ZComparable, Transformable{
 	 * @param vertices
 	 * @param z
 	 */
-	public TrixelFace(Point3D[] vertices, Color colour){
+	public TrixelFace(Point3D[] vertices, Trixel trixel){
 		this.vertices = vertices;
-		this.baseColour = colour;
 	}
 
 	/* Gets center z position
@@ -42,7 +39,7 @@ public class TrixelFace implements ZComparable, Transformable{
 	}
 
 	public Color getBaseColour(){
-		return baseColour;
+		return parent.getColor();
 	}
 
 	/**
@@ -78,12 +75,13 @@ public class TrixelFace implements ZComparable, Transformable{
 			LightSource light = lights.next();
 			float cosTheta = normal.cosTheta(light.getDirection());
 			double angle = Math.acos(cosTheta);
-			Color lightColour = light.getColour();
-
-			float redScale = lightColour.getRed() / 255;
-			float greenScale = lightColour.getGreen() / 255;
-			float blueScale = lightColour.getBlue() / 255;
 			float reflectance = (float)(angle / (Math.PI)) * light.getIntensity();
+
+			Color lightColour = light.getColour();
+			float redScale = (float)lightColour.getRed() / 255;
+			float greenScale = (float)lightColour.getGreen() / 255;
+			float blueScale = (float)lightColour.getBlue() / 255;
+
 
 			reflectionR += reflectance * redScale;
 			reflectionG += reflectance * greenScale;
@@ -94,11 +92,11 @@ public class TrixelFace implements ZComparable, Transformable{
 		reflectionG += (float)ambientLight.getGreen() / 255;
 		reflectionB += (float)ambientLight.getBlue() / 255;
 
-		if(reflectionR > 1) reflectionR = 1;
-		if(reflectionG > 1) reflectionG = 1;
-		if(reflectionB > 1) reflectionB = 1;
+		reflectionR = Math.min(reflectionR, 1);
+		reflectionG = Math.min(reflectionG, 1);
+		reflectionB = Math.min(reflectionB, 1);
 
-		return new Color((int)(baseColour.getRed()*reflectionR), (int)(baseColour.getGreen()*reflectionG), (int)(baseColour.getBlue()*reflectionB));
+		return new Color((int)(getBaseColour().getRed()*reflectionR), (int)(getBaseColour().getGreen()*reflectionG), (int)(getBaseColour().getBlue()*reflectionB));
 	}
 
 	@Override

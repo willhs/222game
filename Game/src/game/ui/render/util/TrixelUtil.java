@@ -53,27 +53,27 @@ public class TrixelUtil {
 		// left face
 		// corner = corner of current face
 		Point3D corner = trixelOrigin;
-		faces[0] = getXFace(corner, 0, colour);
+		faces[0] = getXFace(corner, 0, trixel);
 
 		// right face
 		corner = new Point3D(trixelOrigin.getX()+FACE_SIZE, trixelOrigin.getY(), trixelOrigin.getZ());
-		faces[1] = getXFace(corner, 1, colour);
+		faces[1] = getXFace(corner, 1, trixel);
 
 		// bottom face
 		corner = trixelOrigin;
-		faces[2] = getYFace(corner, 0, colour);
+		faces[2] = getYFace(corner, 0, trixel);
 
 		// top face
 		corner = new Point3D(trixelOrigin.getX(),trixelOrigin.getY()+FACE_SIZE,trixelOrigin.getZ());
-		faces[3] = getYFace(corner, 1, colour);
+		faces[3] = getYFace(corner, 1, trixel);
 
 		// back face
 		corner = trixelOrigin;
-		faces[4] = getZFace(corner, 0, colour);
+		faces[4] = getZFace(corner, 0, trixel);
 
 		// front face
 		corner = new Point3D(trixelOrigin.getX(),trixelOrigin.getY(),trixelOrigin.getZ()+FACE_SIZE);
-		faces[5] = getZFace(corner, 1, colour);
+		faces[5] = getZFace(corner, 1, trixel);
 
 		return faces;
 	}
@@ -84,14 +84,14 @@ public class TrixelUtil {
 	 * @param colour: colour of face
 	 * @return a trixel face in which the x value of the vertices is constant
 	 */
-	private static TrixelFace getXFace(Point3D c, int clockwise, Color colour){
+	private static TrixelFace getXFace(Point3D c, int clockwise, Trixel trixel){
 		Point3D[] vertices = new Point3D[4];
 		vertices[0] = c;
 		vertices[1] = new Point3D(c.getX(), c.getY()+Trixel.SIZE*(1-clockwise), c.getZ()+Trixel.SIZE*clockwise);
 		vertices[2] = new Point3D(c.getX(), c.getY()+Trixel.SIZE, c.getZ()+Trixel.SIZE);
 		vertices[3] = new Point3D(c.getX(), c.getY()+Trixel.SIZE*clockwise, c.getZ()+Trixel.SIZE*(1-clockwise));
 
-		return new TrixelFace(vertices, colour);
+		return new TrixelFace(vertices, trixel);
 	}
 
 	/**
@@ -99,14 +99,14 @@ public class TrixelUtil {
 	 * @param colour: colour of face
 	 * @return a trixel face in which the y value of the vertices is constant
 	 */
-	private static TrixelFace getYFace(Point3D c, int clockwise, Color colour){
+	private static TrixelFace getYFace(Point3D c, int clockwise, Trixel trixel){
 		Point3D[] vertices = new Point3D[4];
 		vertices[0] = c;
 		vertices[1] = new Point3D(c.getX()+Trixel.SIZE*(clockwise), c.getY(), c.getZ()+Trixel.SIZE*(1-clockwise));
 		vertices[2] = new Point3D(c.getX()+Trixel.SIZE, c.getY(), c.getZ()+Trixel.SIZE);
 		vertices[3] = new Point3D(c.getX()+Trixel.SIZE*(1-clockwise), c.getY(), c.getZ()+Trixel.SIZE*(clockwise));
 
-		return new TrixelFace(vertices, colour);
+		return new TrixelFace(vertices, trixel);
 	}
 
 	/**
@@ -115,20 +115,20 @@ public class TrixelUtil {
 	 * @param clockwise: 1 = make points in clockwise, 0 = make points in anti-clockwise
 	 * @return a trixel face in which the z value of the vertices is constant
 	 */
-	private static TrixelFace getZFace(Point3D c, int clockwise, Color colour){
+	private static TrixelFace getZFace(Point3D c, int clockwise, Trixel trixel){
 		Point3D[] vertices = new Point3D[4];
 		vertices[0] = c;
 		vertices[1] = new Point3D(c.getX()+(Trixel.SIZE*(1-clockwise)), c.getY()+(Trixel.SIZE*clockwise), c.getZ());
 		vertices[2] = new Point3D(c.getX()+Trixel.SIZE, c.getY()+Trixel.SIZE, c.getZ());
 		vertices[3] = new Point3D(c.getX()+(Trixel.SIZE*clockwise), c.getY()+(Trixel.SIZE*(1-clockwise)), c.getZ());
 
-		return new TrixelFace(vertices, colour);
+		return new TrixelFace(vertices, trixel);
 	}
 	// -----------------------------------------------------------
 
 	/**
 	 * makes a list of trixels to represent a flat 2d polygon
-	 * PRE: polygon vertices must all have same y (height component) (like a with a floor).
+	 * POST: trixels which make up the polygon when it is vertically flipped 90deg.
 	 * @param poly
 	 * @return list of trixels which make up the polygon
 	 */

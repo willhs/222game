@@ -41,7 +41,8 @@ public class TestRenderSingleTrixel extends JPanel{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Renderer.renderPlace(g, testPlace);
+		g.drawString("Not currently set up properly", 100, 100);
+		//Renderer.renderPlace(g, testPlace);
 	}
 
 	public void rotate(int dx, int dy, int i) {

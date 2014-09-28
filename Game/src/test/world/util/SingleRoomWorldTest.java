@@ -44,13 +44,12 @@ public class SingleRoomWorldTest {
 		rooms.add(room);
 
 		world = new World(new ArrayList<Player>(),rooms);
-		Player player = new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(20, 20, 5));
+		Player player = new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(20, 20, 20));
 		// first test of new method in the game world class that adds a player to the world.
 
 		world.addPlayerToGameWorld(player);
 
 		player.getInventory().addItem(new Key(new Rectangle3D(0.5f, 0.5f, 0.5f), "Key1", new Point3D(0,0,0)));
-		System.out.println(player.getPosition());
 	}
 
 	public static void main(String[] args) {

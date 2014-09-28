@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 
 public class Renderer {
 
@@ -38,15 +39,14 @@ public class Renderer {
 	private static Vector3D DEFAULT_VIEW_ANGLE = new Vector3D(0,0,1);
 
 	private static final int FRAME_TOP = 600;
-
-	public static Vector3D rotateAmounts;
+	private static final long COLOUR_SEED = 109851827492L;
 
 	/**
 	 * Draws a place using Graphics parameter and viewer direction
 	 * @param g
 	 * @param place
 	 */
-	public static void renderPlace(Graphics g, Place place){
+	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
 
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
@@ -62,7 +62,7 @@ public class Renderer {
 		Point3D floorCentroid = getFloorCentroid(floor);
 
 		Vector3D viewTranslation = new Vector3D(0, 200, 0);
-		Vector3D rotation = new Vector3D(0, rotateAmounts.x, 0);
+		Vector3D rotation = new Vector3D(0, rotateAmount.x, 0);
 
 
 		// all rotations and translations composed into one affine transform
@@ -191,7 +191,7 @@ public class Renderer {
 	private static Iterator<LightSource> getTestLightSources() {
 		List<LightSource> lights = new ArrayList<LightSource>();
 		Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
-		lights.add(new LightSource(0.8f, dir, Color.red));
+		lights.add(new LightSource(0.8f, dir, new Color(150, 150, 250)));
 		return lights.iterator();
 	}
 	/**
@@ -199,7 +199,7 @@ public class Renderer {
 	 * @param object
 	 * @param viewerDirection
 	 */
-	private static Transform makeTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
+	public static Transform makeTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
 
 		Transform translateToOrigin = Transform.newTranslation(new Vector3D(pivotPoint.negate()));
 		Transform translateBack = Transform.newTranslation(new Vector3D(pivotPoint));
@@ -230,6 +230,16 @@ public class Renderer {
 	}
 
 	/**
+	 * Helper method for the level maker
+	 * Gets transform that the renderer applies to all shapes
+	 * @return a transform which the renderer would use to
+	 */
+	/*
+	public static Transform getRendererTransform(){
+
+	}*/
+
+	/**
 	 * @param dir
 	 * @param point
 	 * @return array of transforms necessary to perform rotation around the point
@@ -245,9 +255,10 @@ public class Renderer {
 	 * @return random colour
 	 */
 	public static Color getTrixelColour(){
-		int r = 200;//0;//(int)(Math.random()*255);
-		int g = 200;//0;//(int)(Math.random()*255);
-		int b = 200;//50 + (int)(Math.random()*200);
+		Random ran = new Random();
+		int r = 100 + ran.nextInt(100);
+		int g = 100 + ran.nextInt(100);
+		int b = 200;//
 
 		return new Color(r, g, b);
 	}
@@ -258,7 +269,7 @@ public class Renderer {
 	 * @param floor
 	 * @return a polygon representing the floor
 	 */
-	private static Polygon floorToVerticalPolygon(Floor floor){
+	public static Polygon floorToVerticalPolygon(Floor floor){
 		Point3D[] floorPoints = floor.getPoints();
 		int[] xpoints = new int[floorPoints.length];
 		int[] ypoints = new int[floorPoints.length];
@@ -275,7 +286,7 @@ public class Renderer {
 	 * @param floor
 	 * @return the center point or centroid of the floor
 	 */
-	private static Point3D getFloorCentroid(Floor floor){
+	public static Point3D getFloorCentroid(Floor floor){
 		float xSum = 0;
 		float ySum = 0;
 		float zSum = 0;
