@@ -131,6 +131,19 @@ public class Transform{
         return new Point3D(x, y, z);
     }
 
+    /**
+     * inverts the transform
+     */
+    public Transform negate(){
+    	Transform negated = new Transform(values);
+    	for (int r = 0; r < values.length; r++){
+    		for (int c = 0; c < values[0].length; c++){
+    			negated.values[r][c] = -values[r][c];
+    		}
+    	}
+    	return negated;
+    }
+    
     public float[][] getValues(){
     	return values;
     }

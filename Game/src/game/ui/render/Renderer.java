@@ -33,13 +33,10 @@ public class Renderer {
 
 	// TEMPORARY
 
-	private static Point3D FRAME_CENTER = new Point3D(300, 300, 0);
-	private static Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
-	private static Transform AUTO = Transform.identity();
-	private static Vector3D DEFAULT_VIEW_ANGLE = new Vector3D(0,0,1);
+	private static final Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
+	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,300,0);
 
 	private static final int FRAME_TOP = 600;
-	private static final long COLOUR_SEED = 109851827492L;
 
 	/**
 	 * Draws a place using Graphics parameter and viewer direction
@@ -61,7 +58,7 @@ public class Renderer {
 		Polygon floorPolygon = floorToVerticalPolygon(floor);
 		Point3D floorCentroid = getFloorCentroid(floor);
 
-		Vector3D viewTranslation = new Vector3D(0, 200, 0);
+		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;
 		Vector3D rotation = new Vector3D(0, rotateAmount.x, 0);
 
 
@@ -172,7 +169,7 @@ public class Renderer {
 	 * @param face
 	 * @return game polygon representing a trixel face
 	 */
-	private static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
+	public static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
 		Point3D[] vertices = face.getVertices();
 		int[] xpoints = new int[vertices.length];
 		int[] ypoints = new int[vertices.length];

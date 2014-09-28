@@ -23,8 +23,9 @@ public class TrixelFace implements ZComparable, Transformable{
 	 * @param vertices
 	 * @param z
 	 */
-	public TrixelFace(Point3D[] vertices, Trixel trixel){
+	public TrixelFace(Point3D[] vertices, Trixel parent){
 		this.vertices = vertices;
+		this.parent = parent;
 	}
 
 	/* Gets center z position
@@ -54,7 +55,7 @@ public class TrixelFace implements ZComparable, Transformable{
 	/**
 	 * @return the normal (perpendicular) vector of this face
 	 */
-	private Vector3D calculateNormal(){
+	public Vector3D calculateNormal(){
 		Vector3D edge1 = vertices[1].distanceTo(vertices[0]);
 		Vector3D edge2 = vertices[1].distanceTo(vertices[2]);
 

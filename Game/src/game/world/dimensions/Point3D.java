@@ -105,4 +105,13 @@ public class Point3D {
 		return new Point3D(currentPlace.x + direction.x, currentPlace.y
 				+ direction.y, currentPlace.z + direction.z);
 	}
+	
+	/**
+	 * Gets the point obtained by translated this point by the translation vector
+	 * @param translation -amount to be translated by in each dimension
+	 * @return a point translated from this point by translation
+	 */
+	public Point3D getTranslatedPoint(Vector3D translation){
+		return new Point3D(x + translation.x, y + translation.y, z + translation.z);
+	}
 }

@@ -50,6 +50,7 @@ public class TestRenderer extends JPanel{
 	 * @param args
 	 */
 	public static void main(String[] args){
+		System.err.println("Hello?");
 		JFrame frame = new JFrame();
 		Dimension SCREEN_SIZE = new Dimension(600,600);
 		frame.setSize(SCREEN_SIZE );
