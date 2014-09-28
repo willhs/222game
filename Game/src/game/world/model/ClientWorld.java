@@ -33,6 +33,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public List<String> applyCommand(String command) {
 		List<String> commandList = super.applyCommand(command);
+		System.out.println(command);
 		Scanner scan = new Scanner(command);
 		if (scan.hasNext("ClientPlayerPlacement")) {
 			setClientPlayer(scan);
@@ -44,7 +45,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 		// I will call this one by one on the list of commands returned by the
 		// server
-		return new ArrayList<String>();
+		return commandList;
 	}
 
 	public void replaceCurrentRoom(Room room) {
@@ -62,6 +63,7 @@ public abstract class ClientWorld extends ServerWorld {
 			scan.next();
 		}
 		Point3D position = parsePosition(scan);
+		System.out.println(position);
 		Place place = getStartPlace();
 		this.addPlayer(clientsPlayer);
 		clientsPlayer.move(position);

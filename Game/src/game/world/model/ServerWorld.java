@@ -22,6 +22,7 @@ public abstract class ServerWorld implements Serializable {
 						+ player.getPosition().toString() + " )";
 				commands.add(newCommand);
 				System.out.println(commands.size());
+				System.out.println(commands);
 				return commands;
 			}
 		}
@@ -131,18 +132,18 @@ public abstract class ServerWorld implements Serializable {
 	}
 
 	protected Point3D parsePosition(Scanner scan) {
-		while (!scan.hasNextFloat()){
+		while (!scan.hasNextDouble()&& scan.hasNext()){
 			scan.next();
 		}
-		float x = scan.nextFloat();
-		while (!scan.hasNextFloat()){
+		float x = (float)scan.nextDouble();
+		while (!scan.hasNextDouble()&& scan.hasNext()){
 			scan.next();
 		}
-		float y = scan.nextFloat();
-		while (!scan.hasNextFloat()){
+		float y = (float)scan.nextDouble();
+		while (!scan.hasNextDouble()&& scan.hasNext()){
 			scan.next();
 		}
-		float z = scan.nextFloat();
+		float z = (float)scan.nextDouble();
 		return new Point3D(x, y, z);
 	}
 
