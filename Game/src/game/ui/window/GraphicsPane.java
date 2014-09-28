@@ -29,4 +29,9 @@ public interface GraphicsPane{
 	public void keyPressed(String keyEvent);
 
 
+	/**
+	 * Handles the mouse being pressed
+	 * */
+	public void handleMousePressed(MouseEvent e);
+
 }

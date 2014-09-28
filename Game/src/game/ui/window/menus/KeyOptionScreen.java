@@ -196,4 +196,11 @@ public class KeyOptionScreen implements GraphicsPane {
 		return -1;//return this if not on a row in the table
 	}
 
+
+	@Override
+	public void handleMousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

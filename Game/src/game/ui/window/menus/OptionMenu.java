@@ -203,4 +203,11 @@ public class OptionMenu implements GraphicsPane, Animated {
 		animating = true;
 	}
 
+
+	@Override
+	public void handleMousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -50,6 +50,31 @@ public class keyInputManagment  implements KeyEventDispatcher{
 				panel.keyPressed("backspace");
 				return false;
 			}
+			if(e.getKeyCode() == KeyEvent.VK_1){
+				panel.keyPressed("1");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_2){
+				panel.keyPressed("2");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_3){
+				panel.keyPressed("3");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_4){
+				panel.keyPressed("4");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_5){
+				panel.keyPressed("5");
+				return false;
+			}
+			if(e.getKeyCode() == KeyEvent.VK_6){
+				panel.keyPressed("6");
+				return false;
+			}
+
 
 
 			for(String key : keyMap.keySet() ){
@@ -61,7 +86,6 @@ public class keyInputManagment  implements KeyEventDispatcher{
 			panel.keyPressed("unbound key");
 		}
 		return false;
-
 	}
 
 	/**
@@ -78,14 +102,6 @@ public class keyInputManagment  implements KeyEventDispatcher{
 		tempKeyMap.put("move left", KeyEvent.VK_A);//a
 		tempKeyMap.put("inventory", KeyEvent.VK_I);//i
 		tempKeyMap.put("interact", KeyEvent.VK_F);//f
-		tempKeyMap.put("1", KeyEvent.VK_1);
-		tempKeyMap.put("2", KeyEvent.VK_2);
-		tempKeyMap.put("3", KeyEvent.VK_3);
-		tempKeyMap.put("4", KeyEvent.VK_4);
-		tempKeyMap.put("5", KeyEvent.VK_5);
-		tempKeyMap.put("6", KeyEvent.VK_6);
-
-
 
 		return tempKeyMap;
 	}
