@@ -56,6 +56,8 @@ public class LevelMaker extends JPanel{
 
 	public LevelMaker(){
 
+		//System.out.println(System.getProperty("java.class.path"));
+
 		// initialise GUI stuff
 		WillMouseMotionListener listener = new WillMouseMotionListener();
 		addMouseListener(listener);
@@ -108,7 +110,7 @@ public class LevelMaker extends JPanel{
 	public Vector3D changeRotateAmount(int mouseDragX, int mouseDragY) {
 		float rotateSpeed = 0.01f;
 		return rotateAmounts.plus(
-				new Vector3D(mouseDragX*rotateSpeed , mouseDragY*rotateSpeed , 0)
+				new Vector3D(mouseDragX*rotateSpeed, mouseDragY*rotateSpeed, 0)
 		);
 	}
 
