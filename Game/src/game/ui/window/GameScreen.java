@@ -1,9 +1,11 @@
 package game.ui.window;
 
+import game.ui.render.Renderer;
 import game.ui.window.menus.InventoryMenu;
 import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
+import game.world.dimensions.Vector3D;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -90,8 +92,8 @@ public class GameScreen implements GraphicsPane  {
 	}
 
 	public void render(Graphics g){
-		//renderer.render(g); //TODO wait for will to implement this method
-		g.drawImage(testBackGroundImage, 0, 0, panel);
+		Renderer.render(g, new Vector3D(0,0,0)); //TODO wait for will to implement this method
+		//g.drawImage(testBackGroundImage, 0, 0, panel);
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}

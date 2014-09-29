@@ -79,9 +79,12 @@ public class Renderer {
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
 
-		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
+		
 		// temporary solution to having floor behind everything.
 		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
+		
+		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
+		
 		for (Trixel floorTrixel : floorTrixels){
 			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
@@ -268,15 +271,6 @@ public class Renderer {
 		return Res.isImage(drawable.getImageName());
 	}
 
-	/**
-	 * Helper method for the level maker
-	 * Gets transform that the renderer applies to all shapes
-	 * @return a transform which the renderer would use to
-	 */
-	/*
-	public static Transform getRendererTransform(){
-
-	}*/
 
 	/**
 	 * @param dir
