@@ -1,12 +1,20 @@
 package nw;
 
-import java.net.*;
-import java.io.*;
-import java.util.Queue;
+import game.ui.window.GameWindow;
+import game.world.model.ClientWorld;
+import game.world.model.Place;
+import game.world.model.Player;
+import game.world.model.Room;
+import game.world.model.World;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import game.ui.window.GameWindow;
-import game.world.model.*;
+import java.util.Queue;
 
 public class Client{
 	public static void main(String[] args) throws IOException{

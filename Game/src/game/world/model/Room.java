@@ -1,14 +1,17 @@
 package game.world.model;
 
-import game.world.dimensions.*;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 import game.world.logic.MovementHandler;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Point;
 import java.awt.Polygon;
-import java.util.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Room Class This class defines every thing to do with a room.

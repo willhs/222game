@@ -1,11 +1,12 @@
 package game.world.model;
 
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
 import game.world.util.Parser;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
 
 public abstract class ServerWorld implements Serializable {
 

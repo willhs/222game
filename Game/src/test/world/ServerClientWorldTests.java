@@ -1,11 +1,13 @@
 package test.world;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import game.world.model.ClientWorld;
+import game.world.model.Player;
+import game.world.model.ServerWorld;
 
-import java.util.*;
-
-import game.world.dimensions.*;
-import game.world.model.*;
+import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Test;
 

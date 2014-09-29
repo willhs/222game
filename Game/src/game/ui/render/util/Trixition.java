@@ -23,5 +23,15 @@ public class Trixition {
 
 		return x == t.x && y == t.y && z == t.z;
 	}
+	
+	@Override
+	public int hashCode(){
+		return x * y * z;
+	}
+	
+	@Override
+	public String toString(){
+		return String.format("(%d, %d, %d)", x, y, z);
+	}
 
 }

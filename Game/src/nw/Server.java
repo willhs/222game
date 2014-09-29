@@ -1,11 +1,21 @@
 package nw;
-import java.net.*;
-import java.io.*;
-import java.util.ArrayList;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
+import game.world.model.Item;
+import game.world.model.Place;
+import game.world.model.Room;
+import game.world.model.ServerWorld;
+import game.world.model.Table;
+import game.world.model.World;
+
 import java.awt.Polygon;
-import game.ui.window.*;
-import game.world.model.*;
-import game.world.dimensions.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Server extends Thread{

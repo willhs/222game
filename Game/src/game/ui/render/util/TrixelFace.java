@@ -4,7 +4,6 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
 import java.awt.Color;
-import java.awt.Polygon;
 import java.util.Iterator;
 
 /**

@@ -151,9 +151,7 @@ public class LevelMaker extends JPanel{
 	private Transform makeTransform(Vector3D rotateAmounts) {
 
 		trixelsCentroid  = TrixelUtil.findTrixelsCentroid(trixels.iterator());
-
 		Vector3D viewTranslation = Renderer.STANDARD_VIEW_TRANSLATION;
-
 		return Renderer.makeTransform(rotateAmounts, trixelsCentroid, viewTranslation);
 	}
 
@@ -167,6 +165,7 @@ public class LevelMaker extends JPanel{
 		for (TrixelFace face : rotatedFaces){
 			GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(face);
 			if (facePoly.contains(x, y)){
+				System.out.println("z: "+face.getZ());
 				trixels.add(makeTrixelNextToFace(face));
 				break; // add only one trixel
 			}
@@ -188,9 +187,13 @@ public class LevelMaker extends JPanel{
 		Point3D centroid = facePoly.getCentroid();
 		Vector3D normal = neighbourFace.calculateNormal().unitVector();
 		Point3D newTrixelPosition = centroid.getTranslatedPoint(normal);
-		System.out.println("new trixel position"+newTrixelPosition);
-		System.out.println("normal: "+normal);
 		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);
+		
+		/*System.out.println("new trixel position"+newTrixelPosition);
+		System.out.println("normal: "+normal);
+		System.out.println("trixition "+newTrixition);*/
+		System.out.println("center: "+centroid);
+		
 		return new Trixel(newTrixition, Renderer.getTrixelColour());
 	}
 

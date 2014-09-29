@@ -1,8 +1,8 @@
 package game.world.model;
 
-import java.util.Vector;
-
-import game.world.dimensions.*;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
+import game.world.dimensions.Vector3D;
 
 /**
  *

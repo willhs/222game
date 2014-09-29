@@ -1,6 +1,7 @@
 package game.world.model;
 
-import game.world.dimensions.*;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 
 public class Table implements Item{
 

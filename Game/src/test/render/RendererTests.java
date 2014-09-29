@@ -1,6 +1,6 @@
 package test.render;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import game.ui.render.Renderer;
 import game.ui.render.util.Transform;
 import game.world.dimensions.Point3D;

@@ -180,7 +180,7 @@ public class Transform{
 
     	return new Transform(affineInverseData);
 
-/*    	float[][] inverse = new float[values.length][values[0].length];
+    	/*float[][] inverse = new float[values.length][values[0].length];
     	for (int r = 0; r < values.length; r++){
     		for (int c = 0; c < values[0].length; c++){
     			inverse[r][c] = -values[r][c];
