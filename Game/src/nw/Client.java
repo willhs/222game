@@ -10,8 +10,8 @@ import game.world.model.*;
 
 public class Client{
 	public static void main(String[] args) throws IOException{
-		if(args.length != 2){
-			System.err.println("Usage: java Client host port");
+		if(args.length != 3){
+			System.err.println("Usage: java Client host port playername");
 			System.exit(1);
 		}
 
@@ -19,7 +19,7 @@ public class Client{
 		Queue<String> keyCodeQueue = gw.getKeyQueue();
 		ClientWorld world = null;
 
-		Player player = new Player("newguy");
+		Player player = new Player(args[2]);
 
 		Socket sock = new Socket(args[0], Integer.parseInt(args[1]));
 

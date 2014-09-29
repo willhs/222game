@@ -10,12 +10,13 @@ import java.util.List;
 
 public class Server extends Thread{
 	private Socket clientSocket;
+	private static ServerWorld world;
 
 	public Server(Socket clientSocket){
 		this.clientSocket = clientSocket;
 	}
 
-	public ServerWorld getDefaultWorld(){
+	public static void initialiseWorld(){
 		int[] xpoints = new int[]{200,400,400,200};
 		int[] ypoints = new int[]{200,200,400,400};
 
@@ -25,7 +26,7 @@ public class Server extends Thread{
 		Room room = new Room(items, p, "Room1");
 		List<Place> rooms = new ArrayList<Place>();
 		rooms.add(room);
-		return new World(rooms);
+		world = new World(rooms);
 	}
 
 	public void run(){
@@ -34,8 +35,6 @@ public class Server extends Thread{
 
 		Object received = null;
 		String recStr = "";
-
-		ServerWorld world = getDefaultWorld();
 
 		try{
 
@@ -75,6 +74,8 @@ public class Server extends Thread{
 			}
 		}catch(ClassNotFoundException e){
 			System.err.println(e);
+		}catch(SocketException e){
+			System.out.println("User disconnected");
 		}catch(IOException e){
 			System.err.println(e);
 		}catch(InterruptedException e){
@@ -97,6 +98,7 @@ public class Server extends Thread{
 
 		try{
 			ServerSocket serverSocket = new ServerSocket(portNumber);
+			Server.initialiseWorld();
 			while(true){
 				new Server(serverSocket.accept()).start();
 			}
