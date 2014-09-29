@@ -43,7 +43,7 @@ public class SingleRoomWorldTest {
 		List<Place> rooms = new ArrayList<Place>();
 		rooms.add(room);
 
-		world = new World(new ArrayList<Player>(),rooms);
+		world = new World(rooms);
 		Player player = new Player("Tim");
 		// first test of new method in the game world class that adds a player to the world.
 

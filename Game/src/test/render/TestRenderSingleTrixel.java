@@ -31,7 +31,7 @@ public class TestRenderSingleTrixel extends JPanel{
 		int left = 100;
 		int[] xpoints = { left , left + Trixel.SIZE, left + Trixel.SIZE, left};
 		int[] ypoints = { top , top,  top + Trixel.SIZE, top + Trixel.SIZE};
-		testPlace = new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length), "testRoom");
+		testPlace = new Room(new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length), "testRoom");
 		viewerDirection = new Vector3D(0,0,1);
 		WillMouseMotionListener l = new WillMouseMotionListener();
 		addMouseListener(l);
