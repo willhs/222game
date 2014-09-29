@@ -3,6 +3,9 @@ package game.ui.render.util;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+
 
 /** 3x4 array representing an affine transformation
 (= a 4x4 matrix in which the bottom row is always {0 0 0 1} )
@@ -28,6 +31,27 @@ public class Transform{
             throw new IllegalArgumentException("Transform: Wrong size array for argument: "+v);
         else
             values = v;
+    }
+
+    /**
+     * Create a Transform from a double 2d array.
+     * Converts all double values to float values.
+     * @param v
+     */
+    private Transform(double[][] v){
+    	if (v.length != 3 || v[0].length!=4)
+            throw new IllegalArgumentException("Transform: Wrong size array for argument: "+v);
+    	else{
+
+    		values = new float[3][4];
+
+    		for (int r = 0; r < values.length; r++){
+        		for (int c = 0; c < values[0].length; c++){
+        			values[r][c] = (float)v[r][c];
+        		}
+        	}
+    	}
+
     }
 
     /** Construct an identity Transformation */
@@ -134,16 +158,25 @@ public class Transform{
     /**
      * inverts the transform
      */
-    public Transform negate(){
-    	Transform negated = new Transform(values);
+    public Transform inverse(){
+    	/*double[][] doubleValues = new double[values.length][values[0].length];
     	for (int r = 0; r < values.length; r++){
     		for (int c = 0; c < values[0].length; c++){
-    			negated.values[r][c] = -values[r][c];
+    			doubleValues[r][c] = values[r][c];
     		}
     	}
-    	return negated;
+    	RealMatrix matrix = MatrixUtils.createRealMatrix(doubleValues);
+    	RealMatrix inverse = MatrixUtils.inverse(matrix);
+    	return new Transform(inverse.getData());*/
+    	float[][] inverse = new float[values.length][values[0].length];
+    	for (int r = 0; r < values.length; r++){
+    		for (int c = 0; c < values[0].length; c++){
+    			inverse[r][c] = -values[r][c];
+    		}
+    	}
+    	return new Transform(inverse);
     }
-    
+
     public float[][] getValues(){
     	return values;
     }

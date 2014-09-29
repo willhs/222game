@@ -7,99 +7,98 @@ import game.ui.render.util.Trixel;
 import game.ui.render.util.TrixelFace;
 import game.ui.render.util.TrixelUtil;
 import game.ui.render.util.Trixition;
+import game.ui.render.util.ZComparator;
 import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
-import game.world.model.Exit;
-import game.world.model.Inventory;
-import game.world.model.Item;
-import game.world.model.Key;
-import game.world.model.Place;
-import game.world.model.Player;
-import game.world.model.Room;
-import game.world.model.Table;
-import game.world.model.World;
 import game.world.util.Floor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * @author hardwiwill
+ * Used for designing levels for the 222game
+ * Provides a GUI for building a collection of trixels to define the physical layout of a level.
+ * TODO: Save the level in a file for use in the game.
+ */
 public class LevelMaker extends JPanel{
 
-	private Place place;
-	private Vector3D rotateAmounts = new Vector3D(0,0,0);;
+	/**
+	 * the amount in which to rotate all trixels (so that it can be updated)
+	 */
+	private Vector3D rotateAmounts = new Vector3D(0,0,0);
+	/**
+	 * all faces which have been rotated
+	 */
 	private List<TrixelFace> rotatedFaces;
-	
+
+	/**
+	 * The last transform used to transform trixels.
+	 * It can be inverted to find the true location of something which has already been transformed.
+	 */
 	private Transform lastTransform;
 	/**
-	 * these faces are used to 
+	 * all trixels in the level
 	 */
 	private List<Trixel> trixels;
+	/**
+	 * the center of all trixels
+	 */
+	private Point3D trixelsCentroid;
 
 	public LevelMaker(){
-		
+
+		// initialise GUI stuff
 		WillMouseMotionListener listener = new WillMouseMotionListener();
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
 
-		place = makeRoom();
-		
-		// initialise trixels to be only floor.
+		// initialise trixels to make up a floor.
 		trixels = new ArrayList<Trixel>();
-		Floor floor = place.getFloor();
 		
+		Floor floor = makeFloor();
+
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
 				Renderer.floorToVerticalPolygon(floor), -1)){
 			trixels.add(t);
 		}
 
-		// initialise lastTransform
-		lastTransform = makeTransform();
-		
+		// initialise lastTransform with no rotation
+		lastTransform = makeTransform(new Vector3D(0,0,0));
+
 		//intilise rotatedFaces
 		rotatedFaces = new ArrayList<TrixelFace>();
 		updateRotation(0, 0);
 	}
 
 	/**
-	 * makes a room given a floor
+	 * makes a room for use
 	 * @return
 	 */
-	private Room makeRoom() {
-		int[] xpoints = new int[]{100,600,600,100};
-		int[] ypoints = new int[]{100,100,600,600};
+	private Floor makeFloor() {
+		int[] x = new int[]{100,600,600,100};
+		int[] z = new int[]{100,100,600,600};
 
-		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
-		List<Item> items = new ArrayList<Item>();
-		items.add(new Table("Table1", new Point3D(250, 0, 250), new Rectangle3D(50, 50, 50)));
-		Room room = new Room(new ArrayList<Exit>(), items, p, "Room1");
-		
-		List<Place> rooms = new ArrayList<Place>();
-		rooms.add(room);
+		Point3D[] points = new Point3D[x.length];
+		for (int i = 0; i < x.length; i++) {
+			points[i] = new Point3D(x[i], 0, z[i]);
+		}
 
-		World world = new World(new ArrayList<Player>(),rooms);
-		Player player = new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(20, 20, 20));
-		// first test of new method in the game world class that adds a player to the world.
-
-		world.addPlayerToGameWorld(player);
-
-		player.getInventory().addItem(new Key(new Rectangle3D(0.5f, 0.5f, 0.5f), "Key1", new Point3D(0,0,0)));
-		
-		return room;
+		return new Floor(points);
 	}
 
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Renderer.renderPlace(g, place, rotateAmounts);
+		Renderer.renderTrixels(g, trixels.iterator(), lastTransform);
 	}
 
 	/**
@@ -121,29 +120,37 @@ public class LevelMaker extends JPanel{
 	private void updateRotation(int rotateX, int rotateY){
 
 		rotateAmounts = changeRotateAmount(rotateX, rotateY);
-		Transform trans = makeTransform();
+		Transform trans = makeTransform(rotateAmounts);
 
 		// reset rotated trixels
-		rotatedFaces.clear();
-		
+		rotatedFaces = new ArrayList<TrixelFace>();
+
 		for (Trixel trixel : trixels){
 			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
 				face.transform(trans);
 				rotatedFaces.add(face);
 			}
 		}
-		
+
+		// sort in order of closest trixels
+		Collections.sort(rotatedFaces, new ZComparator());
+
 		lastTransform = trans;
 		repaint();
 	}
-	
 
-	private Transform makeTransform() {
-		Floor floor = place.getFloor();
-		Point3D floorCentroid = Renderer.getFloorCentroid(floor);
+
+	/**
+	 * Makes a combined transform matrix involving several factors including
+	 * @return
+	 */
+	private Transform makeTransform(Vector3D rotateAmounts) {
+
+		trixelsCentroid  = TrixelUtil.findTrixelsCentroid(trixels.iterator());
 
 		Vector3D viewTranslation = Renderer.STANDARD_VIEW_TRANSLATION;
-		return Renderer.makeTransform(rotateAmounts, floorCentroid, viewTranslation);
+
+		return Renderer.makeTransform(rotateAmounts, trixelsCentroid, viewTranslation);
 	}
 
 	/**
@@ -161,18 +168,18 @@ public class LevelMaker extends JPanel{
 			}
 		}
 	}
-	
+
 	/**
 	 * The trixel will be made directly next to neighbourFace.
-	 * 
+	 *
 	 * @param neighbourFace - the TrixelFace directly next to the trixel to be made
 	 */
 	private Trixel makeTrixelNextToFace(TrixelFace neighbourFace) {
-	
+
 		GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(neighbourFace);
-		
+
 		// find the true (unrotated) normal vector of the face by reversing the transform that was applied
-		neighbourFace.transform(lastTransform.negate());
+		neighbourFace.transform(lastTransform.inverse());
 		Point3D centroid = facePoly.getCentroid();
 		Point3D newTrixelPosition = centroid.getTranslatedPoint(neighbourFace.calculateNormal());
 		System.out.println("new trixel position"+newTrixelPosition);
@@ -180,7 +187,8 @@ public class LevelMaker extends JPanel{
 		return new Trixel(newTrixition, Renderer.getTrixelColour());
 	}
 
- 	/** For testing as a module on it's own
+ 	/**
+ 	 * For testing as a module on it's own
 	 * @param args
 	 */
 	public static void main(String[] args){
@@ -206,7 +214,6 @@ public class LevelMaker extends JPanel{
 
 			mouseX = e.getX();
 			mouseY = e.getY();
-			
 		}
 
 		@Override
@@ -214,7 +221,7 @@ public class LevelMaker extends JPanel{
 			mouseX = e.getX();
 			mouseY = e.getY();
 		}
-		
+
 		@Override
 		public void mouseClicked(MouseEvent e){
 			attemptCreateTrixel(e.getX(), e.getY());

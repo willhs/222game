@@ -46,8 +46,6 @@ public class RotationTest extends JPanel{
 	private int objSize = 50;
 	private int centreSize = 10;
 
-	private final int TRANSLATE = 200;
-
 	private final String LEFT = "LEFT", RIGHT = "RIGHT";
 
 	private Action rotateLeft = new AbstractAction(LEFT){

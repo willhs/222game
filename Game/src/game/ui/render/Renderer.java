@@ -49,8 +49,7 @@ public class Renderer {
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
+
 
 		// convert floor into trixels and add those to toDraw
 		// TODO: please rewrite/refactor this part when we can
@@ -68,6 +67,9 @@ public class Renderer {
 				floorCentroid,
 				viewTranslation
 			);
+
+		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
 
 		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
 		// temporary solution to having floor behind everything.
@@ -149,9 +151,41 @@ public class Renderer {
 				g2.setColor(Color.orange);
 				g2.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
 			}
-
 		}
 	}
+
+
+	/**
+	 * Draws trixels using a graphics object
+	 * Currently used for the level maker
+	 *
+	 * @param g
+	 * @param trixels
+	 * @param transform
+	 */
+	public static void renderTrixels(Graphics g, Iterator<Trixel> trixels, Transform transform){
+		Graphics2D g2 = (Graphics2D) g;
+		// enable anti-aliasing
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<GamePolygon> toDraw = new PriorityQueue<GamePolygon>(50, new ZComparator());
+
+		while (trixels.hasNext()){
+			Trixel trixel = trixels.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				face.transform(transform);
+				toDraw.offer(Renderer.makeGamePolygonFromTrixelFace(face));
+			}
+		}
+
+		while (!toDraw.isEmpty()){
+			GamePolygon poly = toDraw.poll();
+			g2.setColor(poly.getColour());
+			g2.fillPolygon(poly);
+		}
+	}
+
 	// -------------- HELPER METHODS -----------------------
 	//
 	/**
