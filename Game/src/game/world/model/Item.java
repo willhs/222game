@@ -2,6 +2,7 @@ package game.world.model;
 
 import game.world.dimensions.Point3D;
 import game.world.util.Drawable;
+import java.io.Serializable;
 
 /**
  * Item.
@@ -11,7 +12,7 @@ import game.world.util.Drawable;
  * @author Shane Brewer
  *
  */
-public interface Item extends Drawable{
+public interface Item extends Drawable, Serializable{
 
 	/**
 	 * All items have names and you need to be able to get them.

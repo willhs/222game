@@ -1,12 +1,13 @@
 
 package game.world.dimensions;
+import java.io.Serializable;
 
 /**
  * Used for defining bounding boxes for items and characters.
  * @author Shane Brewer
  *
  */
-public class Rectangle3D {
+public class Rectangle3D implements Serializable{
 	public final float x;
 	public final float y;
 	public final float z;

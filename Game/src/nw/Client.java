@@ -1,8 +1,11 @@
 package nw;
+
 import java.net.*;
 import java.io.*;
-import java.util.*;
-import game.ui.window.*;
+import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
+import game.ui.window.GameWindow;
 import game.world.model.*;
 
 public class Client{
@@ -12,8 +15,11 @@ public class Client{
 			System.exit(1);
 		}
 
-		LinkedList<Integer> keyCodeQueue = new LinkedList<Integer>();
-		//GameWindow gw = new GameWindow(keyCodeQueue);
+		GameWindow gw = new GameWindow();
+		Queue<String> keyCodeQueue = gw.getKeyQueue();
+		ClientWorld world = null;
+
+		Player player = new Player("newguy");
 
 		Socket sock = new Socket(args[0], Integer.parseInt(args[1]));
 
@@ -23,35 +29,45 @@ public class Client{
 		BufferedInputStream bis = new BufferedInputStream(sock.getInputStream());
 		ObjectInputStream in = new ObjectInputStream(bis);
 
-		Object received;
-		String input = "";
-
-		BufferedReader cis = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print(">>> ");
+		Object received =  null;
+		Room currentRoom = null;
 
 		try{
+
 			while(true){
-				if(cis.ready()){
-					out.writeObject(cis.readLine());
-					System.out.println("sent");
-					System.out.println(">>> ");
-				}
 				if(bis.available() != 0){
 					received = in.readObject();
 					if(received instanceof String){
 						System.out.println("Got: " + (String)received);
-					}else if(received instanceof Room){
+						world.applyCommand((String)received);
+					}
+					else if(received instanceof Room){
 						System.out.println("Got room!: " + received);
+						currentRoom = (Room)received;
+						gw.setRoom(currentRoom);
+
+						if(world==null){
+							List<Place> placeList = new ArrayList<Place>();
+							placeList.add(currentRoom);
+							world = new World(placeList);
+							out.writeObject(world.getSetClientPlayer(player));
+						}else{
+							world.replaceCurrentRoom(currentRoom);
+						}
+					}
+					else{
+						System.out.println("No idea what this is: " + received);
 					}
 				}
-				if(keyCodeQueue.size() != 0){
-					out.writeObject("bro could you send me that room thing?");
-					keyCodeQueue.poll();
-				}
-				Thread.sleep(500);
-				System.out.println("loop");
-			}
 
+				if(keyCodeQueue.size() != 0){
+					out.writeObject(keyCodeQueue.poll());
+				}
+
+				gw.repaint();
+
+				Thread.sleep(50);
+			}
 
 		}catch(ClassNotFoundException e){
 			System.err.println(e);

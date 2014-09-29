@@ -1,9 +1,10 @@
 package game.world.dimensions;
+import java.io.Serializable;
 
 /**
  * @author pondy & will A NOW IMMUTABLE representation of a 3d point
  */
-public class Point3D {
+public class Point3D implements Serializable{
 	// ---- PONDY'S COMMENTS:
 	// I made a float version of this class so that vectors could be used in the
 	// transform class and so it could
