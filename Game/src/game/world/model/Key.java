@@ -5,16 +5,15 @@ import game.world.dimensions.Rectangle3D;
 
 public class Key implements Item {
 
-	private final Rectangle3D boundingBox;
+	private static final Rectangle3D boundingBox = new Rectangle3D(0.5f, 0.5f, 0.5f);
 	private final String name;
 	private final String imageName;
 	private Point3D position;
 
 	//==================Constructor=================//
-	public Key(Rectangle3D boundingBox, String name,
+	public Key(String name,
 			Point3D position) {
 		super();
-		this.boundingBox = boundingBox;
 		this.name = name;
 		this.imageName = "Key";
 		this.position = position;

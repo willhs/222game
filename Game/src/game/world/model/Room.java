@@ -24,8 +24,8 @@ public class Room implements Place, Serializable {
 	private final Polygon floor;
 	private final String name;
 
-	public Room(List<Exit> exits, List<Item> items, Polygon floor, String name) {
-		this.exits = exits;
+	public Room(List<Item> items, Polygon floor, String name) {
+		this.exits = new ArrayList<Exit>();
 		this.players = new ArrayList<Player>();
 		this.items = items;
 		this.floor = floor;
@@ -127,6 +127,11 @@ public class Room implements Place, Serializable {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public void addExit(Exit exit) {
+		exits.add(exit);
 	}
 
 }

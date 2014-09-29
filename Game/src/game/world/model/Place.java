@@ -106,4 +106,5 @@ public interface Place {
 	public void addPlayer(Player player);
 
 	public String getName();
+	public void addExit(Exit exit);
 }

@@ -19,8 +19,7 @@ public class ServerClientWorldTests {
 		ClientWorld clientWorld = new SingleRoomWorldTest().world;
 
 		String command = clientWorld.getSetClientPlayer(new Player(
-				"FattyBoomBoom", new Inventory(), new Point3D(0, 0, 0),
-				new Rectangle3D(20, 20, 20)));
+				"FattyBoomBoom"));
 
 		List<String> commands = serverWorld.applyCommand(command);
 		System.out.println("helpers");

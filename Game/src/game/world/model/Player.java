@@ -14,14 +14,13 @@ public class Player implements Character{
 	public final String name;
 	private final Inventory inventory;
 	private Point3D position;
-	private final Rectangle3D boundngBox;
+	private static final Rectangle3D boundngBox = new Rectangle3D(20, 20, 20);
 	private Vector3D direction = new Vector3D(1,0,1);
 
-	public Player(String name, Inventory inventory, Point3D position, Rectangle3D size){
+	public Player(String name){
 		this.name = name;
-		this.inventory = inventory;
-		this.position = position;
-		this.boundngBox = size;
+		this.inventory = new Inventory();
+		this.position = new Point3D(0, 0, 0);
 	}
 
 	public String getName(){
