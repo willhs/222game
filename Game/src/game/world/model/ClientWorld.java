@@ -11,8 +11,10 @@ public abstract class ClientWorld extends ServerWorld {
 	private float movmentScaler = 10.0f;
 	private HashMap<String, Transform> keyPressToDirection;
 	private Player clientsPlayer;
+	private Place currentPlace;
 
 	public ClientWorld() {
+		System.out.println("made it here.");
 		keyPressToDirection = new HashMap<String, Transform>();
 		keyPressToDirection.put("Right",
 				Transform.newYRotation((float) (Math.PI / 2.0f)));
@@ -25,10 +27,18 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public String getCommand(String action) {
 		// where action is like "up", "down", "right", etc
-		if (action.equals("Up") || action.equals("Left")
-				|| action.equals("Right") || action.equals("Left")){
-			Vector3D newDirection  = keyPressToDirection.get(action).multiply(clientsPlayer.getDirection()).unitVector();
+		if (action.equals("Up") || action.equals("Down")
+				|| action.equals("Right") || action.equals("Left")) {
+			System.out.println(keyPressToDirection.get(action));
 
+			Vector3D newDirection = keyPressToDirection.get(action)
+					.multiply(clientsPlayer.getDirection()).unitVector();
+			Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
+					newDirection.y * movmentScaler, newDirection.z
+							* movmentScaler);
+			Point3D newPosition = clientsPlayer.getPosition().getTranslatedPoint(newMove);
+			String command = "Move Name ( "+clientsPlayer.getName()+" ) Point "+newPosition.toString()+" Name ( "+getPlaceOfPlayer(clientsPlayer).getName()+" ) ";
+			System.out.println(command);
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
@@ -67,6 +77,7 @@ public abstract class ClientWorld extends ServerWorld {
 		}
 		Point3D position = Parser.parsePosition(scan);
 		Place place = getStartPlace();
+		currentPlace = place;
 		this.addPlayer(clientsPlayer);
 		clientsPlayer.move(position);
 		place.addPlayer(clientsPlayer);

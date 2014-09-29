@@ -17,12 +17,16 @@ public abstract class ServerWorld implements Serializable {
 		if (scan.hasNext("ServerPlayerPlacement")) {
 			commands = serverPlayerPlacement(scan, command);
 		}
+		if (scan.hasNext("Move")){
+			commands = handleMove(scan, command);
+		}
 		// applies command to the world
 		// returns a list of commands that resulted from running the given
 		// command
 		// returns an empty string array if the command was invalid or whatever
 		return commands;
 	}
+
 
 	/**
 	 * getPlaces method returns all the places in the form of a iterator
@@ -84,4 +88,8 @@ public abstract class ServerWorld implements Serializable {
 		return commands;
 	}
 
+	private List<String> handleMove(Scanner scan, String command) {
+
+		return null;
+	}
 }

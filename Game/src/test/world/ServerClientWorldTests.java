@@ -27,6 +27,14 @@ public class ServerClientWorldTests {
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
+		System.out.println("up");
+		clientWorld.getCommand("Up");
+		System.out.println("down");
+		clientWorld.getCommand("Down");
+		System.out.println("left");
+		clientWorld.getCommand("Left");
+		System.out.println("right");
+		clientWorld.getCommand("Right");
 		Iterator<Player> players = clientWorld.getPlayers();
 		System.out.println(players);
 		boolean um = false;

@@ -29,6 +29,7 @@ public class World extends ClientWorld{
 	 * @param places
 	 */
 	public World(List<Place> places){
+		super();
 		this.players = new ArrayList<Player>();
 		this.places = places;
 		startPlace = places.get(0);
@@ -55,6 +56,14 @@ public class World extends ClientWorld{
 
 	@Override
 	public Place getPlaceOfPlayer(Player player){
+		for(Place place: places){
+			Iterator<Player> iPlayers = place.getPlayers();
+			while(iPlayers.hasNext()){
+				if (iPlayers.next().getName().equals(player.getName())){
+					return place;
+				}
+			}
+		}
 		return null;
 	}
 
