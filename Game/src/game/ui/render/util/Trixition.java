@@ -14,4 +14,14 @@ public class Trixition {
 		this.z = z;
 	}
 
+	@Override
+	public boolean equals(Object o){
+		if (!(o instanceof Trixition))
+			return false;
+
+		Trixition t = (Trixition) o;
+
+		return x == t.x && y == t.y && z == t.z;
+	}
+
 }

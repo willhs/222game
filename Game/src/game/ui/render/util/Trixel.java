@@ -31,4 +31,13 @@ public class Trixel {
 	public Trixition getTrixition(){
 		return trixition;
 	}
+
+	public boolean equals(Object o){
+		if (!(o instanceof Trixel))
+			return false;
+
+		Trixel other = (Trixel)o;
+
+		return trixition.equals(other.getTrixition());
+	}
 }

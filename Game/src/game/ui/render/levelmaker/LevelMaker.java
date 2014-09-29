@@ -18,7 +18,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -48,7 +50,7 @@ public class LevelMaker extends JPanel{
 	/**
 	 * all trixels in the level
 	 */
-	private List<Trixel> trixels;
+	private Set<Trixel> trixels;
 	/**
 	 * the center of all trixels
 	 */
@@ -64,7 +66,7 @@ public class LevelMaker extends JPanel{
 		addMouseMotionListener(listener);
 
 		// initialise trixels to make up a floor.
-		trixels = new ArrayList<Trixel>();
+		trixels = new HashSet<Trixel>();
 
 		Floor floor = makeFloor();
 
@@ -110,7 +112,7 @@ public class LevelMaker extends JPanel{
 	public Vector3D changeRotateAmount(int mouseDragX, int mouseDragY) {
 		float rotateSpeed = 0.01f;
 		return rotateAmounts.plus(
-				new Vector3D(mouseDragX*rotateSpeed, mouseDragY*rotateSpeed, 0)
+				new Vector3D(mouseDragY*rotateSpeed, mouseDragX*rotateSpeed, 0)
 		);
 	}
 
@@ -169,6 +171,7 @@ public class LevelMaker extends JPanel{
 				break; // add only one trixel
 			}
 		}
+		repaint();
 	}
 
 	/**
@@ -183,8 +186,10 @@ public class LevelMaker extends JPanel{
 		// find the true (unrotated) normal vector of the face by reversing the transform that was applied
 		neighbourFace.transform(lastTransform.inverse());
 		Point3D centroid = facePoly.getCentroid();
-		Point3D newTrixelPosition = centroid.getTranslatedPoint(neighbourFace.calculateNormal());
+		Vector3D normal = neighbourFace.calculateNormal().unitVector();
+		Point3D newTrixelPosition = centroid.getTranslatedPoint(normal);
 		System.out.println("new trixel position"+newTrixelPosition);
+		System.out.println("normal: "+normal);
 		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);
 		return new Trixel(newTrixition, Renderer.getTrixelColour());
 	}

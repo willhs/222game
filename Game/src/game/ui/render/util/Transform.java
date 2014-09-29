@@ -3,6 +3,9 @@ package game.ui.render.util;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+
 
 /** 3x4 array representing an affine transformation
 (= a 4x4 matrix in which the bottom row is always {0 0 0 1} )
@@ -156,24 +159,34 @@ public class Transform{
      * inverts the transform
      */
     public Transform inverse(){
-    	/*double[][] doubleValues = new double[values.length][values[0].length-1];
+    	double[][] doubleValues = new double[values.length][values[0].length-1];
     	for (int r = 0; r < values.length; r++){
     		for (int c = 0; c < values[0].length-1; c++){
     			doubleValues[r][c] = values[r][c];
     		}
-    		doubleValues[r][values[0].length-1] = values[r][values[0].length-1];
     	}
     	RealMatrix matrix = MatrixUtils.createRealMatrix(doubleValues);
     	RealMatrix inverse = MatrixUtils.inverse(matrix);
-    	return new Transform(inverse.getData());*/
 
-    	float[][] inverse = new float[values.length][values[0].length];
+    	double[][] inverse3dMatrix = inverse.getData();
+    	float[][] affineInverseData = new float[values.length][values[0].length];
+
+    	for (int r = 0; r < inverse3dMatrix.length; r++){
+    		for (int c = 0; c < inverse3dMatrix[0].length; c++){
+    			affineInverseData[r][c] = (float)inverse3dMatrix[r][c];
+    		}
+    		affineInverseData[r][values[0].length-1] = (float)values[r][values[0].length-1];
+    	}
+
+    	return new Transform(affineInverseData);
+
+/*    	float[][] inverse = new float[values.length][values[0].length];
     	for (int r = 0; r < values.length; r++){
     		for (int c = 0; c < values[0].length; c++){
     			inverse[r][c] = -values[r][c];
     		}
     	}
-    	return new Transform(inverse);
+    	return new Transform(inverse);*/
     }
 
     public float[][] getValues(){

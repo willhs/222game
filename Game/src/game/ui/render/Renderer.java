@@ -67,12 +67,11 @@ public class Renderer {
 		Point3D floorCentroid = getFloorCentroid(floor);
 
 		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;
-		Vector3D rotation = new Vector3D(0, rotateAmount.x, 0);
-
+		//Vector3D rotation = new Vector3D(rotateAmount.y, rotateAmount.x, 0);
 
 		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
-				rotation,
+				rotateAmount,
 				floorCentroid,
 				viewTranslation
 			);
