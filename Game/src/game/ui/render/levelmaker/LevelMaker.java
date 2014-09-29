@@ -63,7 +63,7 @@ public class LevelMaker extends JPanel{
 
 		// initialise trixels to make up a floor.
 		trixels = new ArrayList<Trixel>();
-		
+
 		Floor floor = makeFloor();
 
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
