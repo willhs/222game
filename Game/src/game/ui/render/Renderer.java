@@ -29,6 +29,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+import test.world.util.SingleRoomWorldTest;
+
 public class Renderer {
 
 	// TEMPORARY
@@ -37,6 +39,15 @@ public class Renderer {
 	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,300,0);
 
 	private static final int FRAME_TOP = 600;
+
+	/**
+	 * Temp render method which uses the SingleRoomWorldtest
+	 * @param g
+	 * @param rotateAmount
+	 */
+	public static void render(Graphics g, Vector3D rotateAmount){
+		renderPlace(g, new SingleRoomWorldTest().world.getPlaces().next(), rotateAmount);
+	}
 
 	/**
 	 * Draws a place using Graphics parameter and viewer direction
@@ -48,8 +59,6 @@ public class Renderer {
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-
 
 		// convert floor into trixels and add those to toDraw
 		// TODO: please rewrite/refactor this part when we can
