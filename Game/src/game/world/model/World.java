@@ -18,12 +18,12 @@ public class World extends ClientWorld{
 	private final List<Player> players;
 	private final List<Place> places;
 
-	//==================Constructors===================//
-	public World (){
-		players = new ArrayList<Player>();
-		places = new ArrayList<Place>();
-	}
+	private final Map<String, Exit> allExits;
+	private final Map<String, Player> allPlayers;
+	private final Map<String, Place> allPlaces;
+	private final Map<String, Item> allItems;
 
+	//==================Constructor===================//
 	/**
 	 * Places list must not be empty.
 	 * @param places
@@ -32,17 +32,13 @@ public class World extends ClientWorld{
 		this.players = new ArrayList<Player>();
 		this.places = places;
 		startPlace = places.get(0);
-	}
-
-	/**
-	 * Makes the game world.
-	 * @param players - players list must not be empty.
-	 * @param places - places must not be empty.
-	 */
-	public World(List<Player> players, List<Place> places){
-		this.players = players;
-		this.places = places;
-		startPlace = places.get(0);
+		allExits = new HashMap<String, Exit>();
+		allPlayers = new HashMap<String, Player>();
+		allPlaces = new HashMap<String, Place>();
+		for (Place place: places){
+			allPlaces.put(place.getName(), place);
+		}
+		allItems = new HashMap<String, Item>();
 	}
 
 	//======================End========================//
