@@ -6,7 +6,7 @@ import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Point;
-import java.util.*;
+import java.util.Iterator;
 
 /**
  * Place

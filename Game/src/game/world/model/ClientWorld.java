@@ -1,10 +1,13 @@
 package game.world.model;
 
 import game.ui.render.util.Transform;
-import game.world.dimensions.*;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Vector3D;
 import game.world.util.Parser;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 public abstract class ClientWorld extends ServerWorld {
 

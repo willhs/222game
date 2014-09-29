@@ -1,8 +1,5 @@
 package game.ui.render.util;
 
-import game.ui.render.util.Renderable;
-import game.ui.render.util.Transform;
-import game.ui.render.util.Transformable;
 import game.world.dimensions.Point3D;
 
 public class Line3D implements Renderable, Transformable{

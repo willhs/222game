@@ -1,7 +1,10 @@
 package test.world;
 
-import static org.junit.Assert.*;
-import game.world.model.*;
+import static org.junit.Assert.fail;
+import game.world.model.Exit;
+import game.world.model.Item;
+import game.world.model.Player;
+import game.world.model.Room;
 
 import java.awt.Polygon;
 import java.util.ArrayList;

@@ -32,6 +32,7 @@ public class Trixel {
 		return trixition;
 	}
 
+	@Override
 	public boolean equals(Object o){
 		if (!(o instanceof Trixel))
 			return false;
@@ -39,5 +40,10 @@ public class Trixel {
 		Trixel other = (Trixel)o;
 
 		return trixition.equals(other.getTrixition());
+	}
+	
+	@Override
+	public int hashCode(){
+		return trixition.hashCode();
 	}
 }

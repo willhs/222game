@@ -1,15 +1,12 @@
 
 package test.render;
 
-import game.ui.render.Renderer;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
 import game.world.dimensions.Vector3D;
-import game.world.model.Exit;
 import game.world.model.Item;
 import game.world.model.Place;
 import game.world.model.Room;
-import game.world.util.Floor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

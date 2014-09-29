@@ -2,6 +2,7 @@ package game.world.model;
 
 import game.world.dimensions.Point3D;
 import game.world.util.Drawable;
+
 import java.io.Serializable;
 
 /**

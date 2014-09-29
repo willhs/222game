@@ -1,11 +1,8 @@
 
 package test.world.util;
 
-import game.ui.render.util.Trixel;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
-import game.world.model.Exit;
-import game.world.model.Inventory;
 import game.world.model.Item;
 import game.world.model.Key;
 import game.world.model.Place;
