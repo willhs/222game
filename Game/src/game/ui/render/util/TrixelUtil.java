@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -144,5 +145,27 @@ public class TrixelUtil {
 			}
 		}
 		return trixels;
+	}
+
+	/**
+	 * Finds the center point of all input trixels
+	 * @param trixels
+	 * @return
+	 */
+	public static Point3D findTrixelsCentroid(Iterator<Trixel> trixels){
+		int vertexCount = 0;
+		float xSum = 0, ySum = 0, zSum = 0;
+		while (trixels.hasNext()){
+			Trixel trixel = trixels.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				for (Point3D vertex : face.getVertices()){
+					xSum += vertex.x;
+					ySum += vertex.y;
+					zSum += vertex.z;
+					vertexCount ++;
+				}
+			}
+		}
+		return new Point3D (xSum/vertexCount, ySum/vertexCount, zSum/vertexCount);
 	}
 }
