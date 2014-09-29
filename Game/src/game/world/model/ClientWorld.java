@@ -1,7 +1,8 @@
 package game.world.model;
 
 import game.ui.render.util.Transform;
-import game.world.dimensions.Point3D;
+import game.world.dimensions.*;
+import game.world.util.Parser;
 
 import java.util.*;
 
@@ -24,7 +25,11 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public String getCommand(String action) {
 		// where action is like "up", "down", "right", etc
+		if (action.equals("Up") || action.equals("Left")
+				|| action.equals("Right") || action.equals("Left")){
+			Vector3D newDirection  = keyPressToDirection.get(action).multiply(clientsPlayer.getDirection()).unitVector();
 
+		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
 		// or move player 10 or whatever
@@ -33,7 +38,6 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public List<String> applyCommand(String command) {
 		List<String> commandList = super.applyCommand(command);
-		System.out.println(command);
 		Scanner scan = new Scanner(command);
 		if (scan.hasNext("ClientPlayerPlacement")) {
 			setClientPlayer(scan);
@@ -54,16 +58,14 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public String getSetClientPlayer(Player player) {
 		clientsPlayer = player;
-		return "ServerPlayerPlacement Name ( " + player.name
-				+ " ) BoundingBox ( " + player.getBoundingBox() + " )";
+		return "ServerPlayerPlacement Name ( " + player.name + " )";
 	}
 
 	private boolean setClientPlayer(Scanner scan) {
 		while (!scan.hasNext("Position")) {
 			scan.next();
 		}
-		Point3D position = parsePosition(scan);
-		System.out.println(position);
+		Point3D position = Parser.parsePosition(scan);
 		Place place = getStartPlace();
 		this.addPlayer(clientsPlayer);
 		clientsPlayer.move(position);

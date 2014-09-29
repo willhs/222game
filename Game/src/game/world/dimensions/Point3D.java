@@ -114,4 +114,8 @@ public class Point3D {
 	public Point3D getTranslatedPoint(Vector3D translation){
 		return new Point3D(x + translation.x, y + translation.y, z + translation.z);
 	}
+
+	public Vector3D getVector3DFromPoint(){
+		return new Vector3D(x, y, z);
+	}
 }

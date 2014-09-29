@@ -2,35 +2,26 @@ package game.world.model;
 
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
+import game.world.util.Parser;
 
 import java.io.Serializable;
 import java.util.*;
 
 public abstract class ServerWorld implements Serializable {
 
+
+
 	public List<String> applyCommand(String command) {
 		List<String> commands = new ArrayList<String>();
 		Scanner scan = new Scanner(command);
 		if (scan.hasNext("ServerPlayerPlacement")) {
-			scan.next();
-			System.out.println(command);
-			Player player = parsePlayer(scan);
-			if (addPlayerToGameWorld(player)) {
-				Place place = getPlaceOfPlayer(player);
-				System.out.println("Made it here.");
-				String newCommand = "ClientPlayerPlacement  Position ( "
-						+ player.getPosition().toString() + " )";
-				commands.add(newCommand);
-				System.out.println(commands.size());
-				System.out.println(commands);
-				return commands;
-			}
+			commands = serverPlayerPlacement(scan, command);
 		}
 		// applies command to the world
 		// returns a list of commands that resulted from running the given
 		// command
 		// returns an empty string array if the command was invalid or whatever
-		return null;
+		return commands;
 	}
 
 	/**
@@ -80,74 +71,17 @@ public abstract class ServerWorld implements Serializable {
 
 	protected abstract void addPlayer(Player player);
 
-	protected Player parsePlayer(Scanner scan) {
-		String name = "Unknowen";
-		if (scan.hasNext("Name")) {
-			System.out.println("Scanning name");
-			name = parseName(scan);
-		}
-		Inventory inventory = new Inventory();
-		if (scan.hasNext("Inventory")) {
-			System.out.println("Scanning inventory");
-			inventory = parseInventory(scan);
-		}
-		Point3D point = new Point3D(0, 0, 0);
-		if (scan.hasNext("Position")) {
-			System.out.println("Scanning poiunt");
-			point = parsePosition(scan);
-		}
-		Rectangle3D boundingBox = new Rectangle3D(0, 0, 0);
-		if (scan.hasNext("BoundingBox")) {
-			System.out.println("scanning bounding box");
-			boundingBox = parseBoundingBox(scan);
-		}
-		return new Player(name);
-	}
-
-	protected String parseName(Scanner scan) {
-		String name = "";
+	private List<String> serverPlayerPlacement(Scanner scan, String command){
+		List<String> commands = new ArrayList<String>();
 		scan.next();
-		scan.next();
-		name = scan.next();
-		scan.next();
-		return name;
+		Player player = Parser.parsePlayer(scan);
+		if (addPlayerToGameWorld(player)) {
+			Place place = getPlaceOfPlayer(player);
+			String newCommand = "ClientPlayerPlacement  Position ( "
+					+ player.getPosition().toString() + " )";
+			commands.add(newCommand);
+		}
+		return commands;
 	}
 
-	protected Rectangle3D parseBoundingBox(Scanner scan) {
-		while(!scan.hasNextDouble() && scan.hasNext()){
-			System.out.println("removing strings");
-			scan.next();
-		}
-		float width = (float)scan.nextDouble();
-		System.out.println(width);
-		while(!scan.hasNextDouble() && scan.hasNext()){
-			scan.next();
-		}
-		float length = (float)scan.nextDouble();
-		while(!scan.hasNextDouble() && scan.hasNext()){
-			scan.next();
-		}
-		float height = (float)scan.nextDouble();
-		return new Rectangle3D(width, height, length);
-	}
-
-	protected Point3D parsePosition(Scanner scan) {
-		while (!scan.hasNextDouble()&& scan.hasNext()){
-			scan.next();
-		}
-		float x = (float)scan.nextDouble();
-		while (!scan.hasNextDouble()&& scan.hasNext()){
-			scan.next();
-		}
-		float y = (float)scan.nextDouble();
-		while (!scan.hasNextDouble()&& scan.hasNext()){
-			scan.next();
-		}
-		float z = (float)scan.nextDouble();
-		return new Point3D(x, y, z);
-	}
-
-	protected Inventory parseInventory(Scanner scan) {
-		return null;
-	}
 }
