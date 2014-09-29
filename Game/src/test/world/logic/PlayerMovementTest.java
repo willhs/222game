@@ -14,29 +14,29 @@ import org.junit.Test;
 import test.world.util.SingleRoomWorldTest;
 
 public class PlayerMovementTest {
-	
+
 	@Test
 	public void test() {
 		World world = makeWorld();
-		world.addPlayerToGameWorld(new Player("Jim", new Inventory(), new Point3D(0, 0, 0), new Rectangle3D(20, 20, 20)));
-		
+		world.addPlayerToGameWorld(new Player("Jim"));
+
 		Player player =  world.getPlayers().next();
 		Place place = world.getPlaces().next();
 		Point3D point = player.getPosition();
-		
+
 		for (int i = 0; i < 1; i++){
 			MovementHandler.playerMove(player, new Point3D(point.x, point.y, point.z+30), place);
 		}
-		
+
 		if (point.z == player.getPosition().z){
 			fail("Player should have moved");
 		}
-		
-		
+
+
 	}
-	
+
 	private World makeWorld(){
 		return new SingleRoomWorldTest().world;
 	}
-	
+
 }

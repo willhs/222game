@@ -101,7 +101,7 @@ public abstract class ServerWorld implements Serializable {
 			System.out.println("scanning bounding box");
 			boundingBox = parseBoundingBox(scan);
 		}
-		return new Player(name, inventory, point, boundingBox);
+		return new Player(name);
 	}
 
 	protected String parseName(Scanner scan) {
