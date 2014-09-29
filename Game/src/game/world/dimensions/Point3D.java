@@ -31,8 +31,8 @@ public class Point3D {
 
 	public String toString() {
 		StringBuilder ans = new StringBuilder("Point:");
-		ans.append('(').append(getX()).append(',').append(getY()).append(',')
-				.append(getZ()).append(')');
+		ans.append(" ( ").append(getX()).append(" , ").append(getY()).append(" , ")
+				.append(getZ()).append(" ) ");
 		return ans.toString();
 	}
 
@@ -105,7 +105,7 @@ public class Point3D {
 		return new Point3D(currentPlace.x + direction.x, currentPlace.y
 				+ direction.y, currentPlace.z + direction.z);
 	}
-	
+
 	/**
 	 * Gets the point obtained by translated this point by the translation vector
 	 * @param translation -amount to be translated by in each dimension

@@ -23,17 +23,23 @@ public class ServerClientWorldTests {
 				new Rectangle3D(20, 20, 20)));
 
 		List<String> commands = serverWorld.applyCommand(command);
-
+		System.out.println("helpers");
+		System.out.println(commands);
 		for (String c: commands){
-			clientWorld.applyCommand(command);
+			clientWorld.applyCommand(c);
 		}
 		Iterator<Player> players = clientWorld.getPlayers();
+		System.out.println(players);
+		boolean um = false;
 		while(players.hasNext()){
 			if (players.next().getName().equals("FattyBoomBoom")){
 				assertTrue(true);
+				um = true;
 			}
 		}
-		fail("Not yet implemented");
+		if (!um){
+			fail("Not yet implemented");
+		}
 	}
 
 }
