@@ -3,6 +3,7 @@ package game.world.model;
 import game.ui.render.util.Transform;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
+import game.world.logic.MovementHandler;
 import game.world.util.Parser;
 
 import java.util.HashMap;
@@ -63,7 +64,7 @@ public abstract class ClientWorld extends ServerWorld {
 			}
 
 			if (scan.hasNext("Move")){
-
+				clientHandleMove(scan);
 			}
 		}
 		// applies command to the world
@@ -74,6 +75,21 @@ public abstract class ClientWorld extends ServerWorld {
 		// I will call this one by one on the list of commands returned by the
 		// server
 		return commandList;
+	}
+
+	private void clientHandleMove(Scanner scan) {
+		while(!scan.hasNext("Name")){
+			scan.next();
+		}
+		String playerName = Parser.parseName(scan);
+		while (!scan.hasNext("Position")) {
+			scan.next();
+		}
+		Point3D playerPosition = Parser.parsePosition(scan);
+		while(!scan.hasNext("Name")){
+			scan.next();
+		}
+		getPlayerByName(playerName).move(playerPosition);
 	}
 
 	public void replaceCurrentPlace(Place place) {

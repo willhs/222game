@@ -1,5 +1,7 @@
 package game.world.model;
 
+import game.world.dimensions.Point3D;
+import game.world.logic.MovementHandler;
 import game.world.util.Parser;
 
 import java.io.Serializable;
@@ -18,8 +20,8 @@ public abstract class ServerWorld implements Serializable {
 			if (scan.hasNext("PlayerPlacement")) {
 				commands = serverPlayerPlacement(scan, command);
 			}
-			if (scan.hasNext("Move")) {
-				commands = handleMove(scan, command);
+			else if (scan.hasNext("Move")) {
+				commands = serverHandleMove(scan, command);
 			}
 		}
 		// applies command to the world
@@ -76,6 +78,10 @@ public abstract class ServerWorld implements Serializable {
 
 	protected abstract void addPlayer(Player player);
 
+	protected abstract Player getPlayerByName(String playerName);
+
+	protected abstract Place getPlaceByName(String placeName);
+
 	private List<String> serverPlayerPlacement(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();
 		scan.next();
@@ -89,8 +95,26 @@ public abstract class ServerWorld implements Serializable {
 		return commands;
 	}
 
-	private List<String> handleMove(Scanner scan, String command) {
-
-		return null;
+	private List<String> serverHandleMove(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+		while(!scan.hasNext("Name")){
+			scan.next();
+		}
+		String playerName = Parser.parseName(scan);
+		while (!scan.hasNext("Position")) {
+			scan.next();
+		}
+		Point3D playerPosition = Parser.parsePosition(scan);
+		while(!scan.hasNext("Name")){
+			scan.next();
+		}
+		String placeName = Parser.parseName(scan);
+		if (MovementHandler.playerMove(getPlayerByName(playerName), playerPosition, getPlaceByName(placeName))){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			String newCommand = "Client "+sc.nextLine();
+			commands.add(newCommand);
+		}
+		return commands;
 	}
 }
