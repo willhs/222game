@@ -30,6 +30,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public String getCommand(String action) {
 		// where action is like "up", "down", "right", etc
+		String command = "";
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
 			System.out.println(keyPressToDirection.get(action));
@@ -39,21 +40,31 @@ public abstract class ClientWorld extends ServerWorld {
 			Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
 					newDirection.y * movmentScaler, newDirection.z
 							* movmentScaler);
-			Point3D newPosition = clientsPlayer.getPosition().getTranslatedPoint(newMove);
-			String command = "Move Name ( "+clientsPlayer.getName()+" ) Point "+newPosition.toString()+" Name ( "+getPlaceOfPlayer(clientsPlayer).getName()+" ) ";
+			Point3D newPosition = clientsPlayer.getPosition()
+					.getTranslatedPoint(newMove);
+			command = "Server Move Name ( " + clientsPlayer.getName() + " ) Point "
+					+ newPosition.toString() + " Name ( "
+					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
 			System.out.println(command);
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
 		// or move player 10 or whatever
-		return null;
+		return command;
 	}
 
 	public List<String> applyCommand(String command) {
 		List<String> commandList = super.applyCommand(command);
 		Scanner scan = new Scanner(command);
-		if (scan.hasNext("ClientPlayerPlacement")) {
-			setClientPlayer(scan);
+		if (scan.hasNext("Client")) {
+			scan.next();
+			if (scan.hasNext("PlayerPlacement")) {
+				setClientPlayer(scan);
+			}
+
+			if (scan.hasNext("Move")){
+
+			}
 		}
 		// applies command to the world
 		// returns a list of commands that resulted from running the given
@@ -65,13 +76,13 @@ public abstract class ClientWorld extends ServerWorld {
 		return commandList;
 	}
 
-	public void replaceCurrentRoom(Room room) {
-		// replaces the current room with the given room object
+	public void replaceCurrentPlace(Place place) {
+		currentPlace = place;
 	}
 
 	public String getSetClientPlayer(Player player) {
 		clientsPlayer = player;
-		return "ServerPlayerPlacement Name ( " + player.name + " )";
+		return "Server PlayerPlacement Name ( " + player.name + " )";
 	}
 
 	private boolean setClientPlayer(Scanner scan) {
