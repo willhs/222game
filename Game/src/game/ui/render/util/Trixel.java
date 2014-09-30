@@ -41,9 +41,13 @@ public class Trixel {
 
 		return trixition.equals(other.getTrixition());
 	}
-	
+
 	@Override
 	public int hashCode(){
 		return trixition.hashCode();
+	}
+
+	public void setColour(Color colour) {
+		this.colour = colour;
 	}
 }

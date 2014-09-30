@@ -18,7 +18,7 @@ matrices, and methods to multiply a translation by a vector or another matrix.
 
 
 /**
- * @author hardwiwill & pondy: pondy wrote most of this class.
+ * @author hardwiwill & pondy; pondy wrote most of this class.
  *
  */
 public class Transform{

@@ -110,4 +110,8 @@ public class TrixelFace implements ZComparable, Transformable{
 		return vertices;
 	}
 
+	public Trixel getParentTrixel() {
+		return parent;
+	}
+
 }
