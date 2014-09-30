@@ -6,7 +6,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
 
 public class MenuUtil {
 
@@ -117,5 +121,21 @@ public class MenuUtil {
 			}
 		}
 		return isDone;
+	}
+
+	/**
+	 * Takes a buffered Image and return a buffered Image with the size
+	 * width and height
+	 * */
+	public static BufferedImage scale(BufferedImage bufImage, int width, int height){
+		BufferedImage returnImage = bufImage;
+
+		//inventory test images
+		Image tempImage = bufImage.getScaledInstance(width, height, BufferedImage.SCALE_DEFAULT);
+		returnImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D bGr1 = returnImage.createGraphics();
+	    bGr1.drawImage(tempImage, 0, 0, null);
+	    bGr1.dispose();
+		return returnImage;
 	}
 }

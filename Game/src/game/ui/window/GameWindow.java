@@ -93,4 +93,8 @@ public class GameWindow extends JFrame{
 	public Player getPlayer(){
 		return this.player;
 	}
+	
+	public Room getRoom(){
+		
+	}
 }

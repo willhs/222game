@@ -1,9 +1,13 @@
 package game.ui.window;
 
+import game.ui.render.Renderer;
 import game.ui.window.menus.InventoryMenu;
 import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
+import game.world.dimensions.Vector3D;
+import game.world.model.Player;
+import game.world.model.Room;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -46,8 +50,17 @@ public class GameScreen implements GraphicsPane  {
 	//inventory grid images
 	private BufferedImage[] inventoryImages;
 	//private BufferedImage selectedImage;
+	
+	
+	//world fields 
+	private Room currentRoom;
+	private Player player;
+	
+	private Vector3D rotateVector;
 
 	public GameScreen(BlankPanel panel){
+		this.player = player;
+		//this.currentRoom = room;
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
 		this.inventoryImages = new BufferedImage[6];
@@ -56,6 +69,8 @@ public class GameScreen implements GraphicsPane  {
 		this.keyQue = GameWindow.getKeyQueue();
 		loadImages();
 		releventQueKeypress = createKeylist();
+
+		rotateVector = new Vector3D(0f, 0f, 0f);
 	}
 
 	public void setUpInventoryBarButtons(){
@@ -89,15 +104,21 @@ public class GameScreen implements GraphicsPane  {
 		return keyList;
 	}
 
+	@Override
 	public void render(Graphics g){
-		//renderer.render(g); //TODO wait for will to implement this method
-		g.drawImage(testBackGroundImage, 0, 0, panel);
+		//g.drawImage(testBackGroundImage, 0, 0, panel);
+		Renderer.render(g,rotateVector); //TODO wait for will to implement this method
+
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}
 
+
+		//at this point draw my own overlay over the game
+
 		drawInventorybar(g);
 		drawInventory(g);
+
 	}
 
 	@Override
@@ -148,8 +169,16 @@ public class GameScreen implements GraphicsPane  {
 		else if(keyEvent.equals("6")){
 			selectedButton = 5;
 		}
+		else if(keyEvent.equals("rotate right")){
+			rotateVector =  rotateVector.plus( new Vector3D(0.05f , 0f , 0f));
+		}
+		else if(keyEvent.equals("rotate left")){
+			rotateVector =  rotateVector.plus( new Vector3D(-0.05f , 0f , 0f));
+		}
 
 
+
+		
 	}
 
 	public void drawInventorybar(Graphics g){
@@ -241,4 +270,7 @@ public class GameScreen implements GraphicsPane  {
 		}
 	}
 
+	public int getGridSize(){
+		return this.boxSize;
+	}
 }
