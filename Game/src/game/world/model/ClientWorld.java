@@ -2,16 +2,22 @@ package game.world.model;
 
 import game.ui.render.util.Transform;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Vector3D;
+import game.world.util.Parser;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 public abstract class ClientWorld extends ServerWorld {
 
 	private float movmentScaler = 10.0f;
 	private HashMap<String, Transform> keyPressToDirection;
 	private Player clientsPlayer;
+	private Place currentPlace;
 
 	public ClientWorld() {
+		System.out.println("made it here.");
 		keyPressToDirection = new HashMap<String, Transform>();
 		keyPressToDirection.put("Right",
 				Transform.newYRotation((float) (Math.PI / 2.0f)));
@@ -24,7 +30,19 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public String getCommand(String action) {
 		// where action is like "up", "down", "right", etc
+		if (action.equals("Up") || action.equals("Down")
+				|| action.equals("Right") || action.equals("Left")) {
+			System.out.println(keyPressToDirection.get(action));
 
+			Vector3D newDirection = keyPressToDirection.get(action)
+					.multiply(clientsPlayer.getDirection()).unitVector();
+			Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
+					newDirection.y * movmentScaler, newDirection.z
+							* movmentScaler);
+			Point3D newPosition = clientsPlayer.getPosition().getTranslatedPoint(newMove);
+			String command = "Move Name ( "+clientsPlayer.getName()+" ) Point "+newPosition.toString()+" Name ( "+getPlaceOfPlayer(clientsPlayer).getName()+" ) ";
+			System.out.println(command);
+		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
 		// or move player 10 or whatever
@@ -44,7 +62,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 		// I will call this one by one on the list of commands returned by the
 		// server
-		return new ArrayList<String>();
+		return commandList;
 	}
 
 	public void replaceCurrentRoom(Room room) {
@@ -53,16 +71,16 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public String getSetClientPlayer(Player player) {
 		clientsPlayer = player;
-		return "ServerPlayerPlacement Name ( " + player.name
-				+ " ) BoundingBox ( " + player.getBoundingBox() + " )";
+		return "ServerPlayerPlacement Name ( " + player.name + " )";
 	}
 
 	private boolean setClientPlayer(Scanner scan) {
 		while (!scan.hasNext("Position")) {
 			scan.next();
 		}
-		Point3D position = parsePosition(scan);
+		Point3D position = Parser.parsePosition(scan);
 		Place place = getStartPlace();
+		currentPlace = place;
 		this.addPlayer(clientsPlayer);
 		clientsPlayer.move(position);
 		place.addPlayer(clientsPlayer);

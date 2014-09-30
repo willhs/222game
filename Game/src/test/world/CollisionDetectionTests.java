@@ -1,10 +1,8 @@
 package test.world;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
-
-import java.awt.Rectangle;
 
 import org.junit.Test;
 

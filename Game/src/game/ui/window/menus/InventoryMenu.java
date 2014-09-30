@@ -1,5 +1,10 @@
 package game.ui.window.menus;
 
+import game.ui.window.BlankPanel;
+import game.ui.window.GameScreen;
+import game.ui.window.GameWindow;
+import game.ui.window.GraphicsPane;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,14 +15,8 @@ import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-
-import game.ui.window.BlankPanel;
-import game.ui.window.GameScreen;
-import game.ui.window.GameWindow;
-import game.ui.window.GraphicsPane;
 
 public class InventoryMenu implements GraphicsPane {
 	private GameScreen game;

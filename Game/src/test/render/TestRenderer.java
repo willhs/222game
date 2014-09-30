@@ -1,7 +1,6 @@
 package test.render;
 
 import game.ui.render.Renderer;
-import game.ui.render.util.Transform;
 import game.world.dimensions.Vector3D;
 import game.world.model.Place;
 

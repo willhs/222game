@@ -16,14 +16,13 @@ public class Door extends Exit{
 	private final String name;
 	private final String imageName;
 	private final Point3D position;
-	private final Rectangle3D boundingBox;
-	
-	public Door(List<Place> places, String name, Point3D position, Rectangle3D size) {
+	private static final Rectangle3D boundingBox = new Rectangle3D(30, 30, 30);
+
+	public Door(List<Place> places, String name, Point3D position) {
 		super(places);
 		this.name = name;
 		this.imageName = "Door";
 		this.position = position;
-		this.boundingBox = size;
 	}
 
 	@Override

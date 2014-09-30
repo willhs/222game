@@ -8,6 +8,7 @@ import game.ui.window.menus.PauseMenu;
 import game.world.dimensions.Vector3D;
 import game.world.model.Player;
 import game.world.model.Room;
+import game.world.dimensions.Vector3D;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -108,6 +109,7 @@ public class GameScreen implements GraphicsPane  {
 	public void render(Graphics g){
 		//g.drawImage(testBackGroundImage, 0, 0, panel);
 		Renderer.render(g,rotateVector); //TODO wait for will to implement this method
+
 
 		if(currentMenu != null){
 			currentMenu.render(g);

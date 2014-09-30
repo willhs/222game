@@ -4,7 +4,6 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
 import java.awt.Color;
-import java.awt.Polygon;
 import java.util.Iterator;
 
 /**
@@ -23,8 +22,9 @@ public class TrixelFace implements ZComparable, Transformable{
 	 * @param vertices
 	 * @param z
 	 */
-	public TrixelFace(Point3D[] vertices, Trixel trixel){
+	public TrixelFace(Point3D[] vertices, Trixel parent){
 		this.vertices = vertices;
+		this.parent = parent;
 	}
 
 	/* Gets center z position
@@ -54,7 +54,7 @@ public class TrixelFace implements ZComparable, Transformable{
 	/**
 	 * @return the normal (perpendicular) vector of this face
 	 */
-	private Vector3D calculateNormal(){
+	public Vector3D calculateNormal(){
 		Vector3D edge1 = vertices[1].distanceTo(vertices[0]);
 		Vector3D edge2 = vertices[1].distanceTo(vertices[2]);
 
@@ -108,6 +108,10 @@ public class TrixelFace implements ZComparable, Transformable{
 
 	public Point3D[] getVertices() {
 		return vertices;
+	}
+
+	public Trixel getParentTrixel() {
+		return parent;
 	}
 
 }

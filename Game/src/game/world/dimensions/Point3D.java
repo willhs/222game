@@ -1,9 +1,10 @@
 package game.world.dimensions;
+import java.io.Serializable;
 
 /**
  * @author pondy & will A NOW IMMUTABLE representation of a 3d point
  */
-public class Point3D {
+public class Point3D implements Serializable{
 	// ---- PONDY'S COMMENTS:
 	// I made a float version of this class so that vectors could be used in the
 	// transform class and so it could
@@ -31,8 +32,8 @@ public class Point3D {
 
 	public String toString() {
 		StringBuilder ans = new StringBuilder("Point:");
-		ans.append('(').append(getX()).append(',').append(getY()).append(',')
-				.append(getZ()).append(')');
+		ans.append(" ( ").append(getX()).append(" , ").append(getY()).append(" , ")
+				.append(getZ()).append(" ) ");
 		return ans.toString();
 	}
 
@@ -104,5 +105,18 @@ public class Point3D {
 	public static Point3D addDirectiong(Point3D currentPlace, Vector3D direction) {
 		return new Point3D(currentPlace.x + direction.x, currentPlace.y
 				+ direction.y, currentPlace.z + direction.z);
+	}
+
+	/**
+	 * Gets the point obtained by translated this point by the translation vector
+	 * @param translation -amount to be translated by in each dimension
+	 * @return a point translated from this point by translation
+	 */
+	public Point3D getTranslatedPoint(Vector3D translation){
+		return new Point3D(x + translation.x, y + translation.y, z + translation.z);
+	}
+
+	public Vector3D getVector3DFromPoint(){
+		return new Vector3D(x, y, z);
 	}
 }

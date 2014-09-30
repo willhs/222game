@@ -3,6 +3,9 @@ package game.ui.render.util;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+
 
 /** 3x4 array representing an affine transformation
 (= a 4x4 matrix in which the bottom row is always {0 0 0 1} )
@@ -15,7 +18,7 @@ matrices, and methods to multiply a translation by a vector or another matrix.
 
 
 /**
- * @author hardwiwill & pondy: pondy wrote most of this class.
+ * @author hardwiwill & pondy; pondy wrote most of this class.
  *
  */
 public class Transform{
@@ -28,6 +31,27 @@ public class Transform{
             throw new IllegalArgumentException("Transform: Wrong size array for argument: "+v);
         else
             values = v;
+    }
+
+    /**
+     * Create a Transform from a double 2d array.
+     * Converts all double values to float values.
+     * @param v
+     */
+    private Transform(double[][] v){
+    	if (v.length != 3 || v[0].length!=4)
+            throw new IllegalArgumentException("Transform: Wrong size array for argument: "+v);
+    	else{
+
+    		values = new float[3][4];
+
+    		for (int r = 0; r < values.length; r++){
+        		for (int c = 0; c < values[0].length; c++){
+        			values[r][c] = (float)v[r][c];
+        		}
+        	}
+    	}
+
     }
 
     /** Construct an identity Transformation */
@@ -129,6 +153,40 @@ public class Transform{
         y += values[1][0]*point.x + values[1][1]*point.y + values[1][2]*point.z;
         z += values[2][0]*point.x + values[2][1]*point.y + values[2][2]*point.z;
         return new Point3D(x, y, z);
+    }
+
+    /**
+     * inverts the transform
+     */
+    public Transform inverse(){
+    	double[][] doubleValues = new double[values.length][values[0].length-1];
+    	for (int r = 0; r < values.length; r++){
+    		for (int c = 0; c < values[0].length-1; c++){
+    			doubleValues[r][c] = values[r][c];
+    		}
+    	}
+    	RealMatrix matrix = MatrixUtils.createRealMatrix(doubleValues);
+    	RealMatrix inverse = MatrixUtils.inverse(matrix);
+
+    	double[][] inverse3dMatrix = inverse.getData();
+    	float[][] affineInverseData = new float[values.length][values[0].length];
+
+    	for (int r = 0; r < inverse3dMatrix.length; r++){
+    		for (int c = 0; c < inverse3dMatrix[0].length; c++){
+    			affineInverseData[r][c] = (float)inverse3dMatrix[r][c];
+    		}
+    		affineInverseData[r][values[0].length-1] = (float)values[r][values[0].length-1];
+    	}
+
+    	return new Transform(affineInverseData);
+
+    	/*float[][] inverse = new float[values.length][values[0].length];
+    	for (int r = 0; r < values.length; r++){
+    		for (int c = 0; c < values[0].length; c++){
+    			inverse[r][c] = -values[r][c];
+    		}
+    	}
+    	return new Transform(inverse);*/
     }
 
     public float[][] getValues(){

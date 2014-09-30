@@ -1,15 +1,12 @@
 
 package test.render;
 
-import game.ui.render.Renderer;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
 import game.world.dimensions.Vector3D;
-import game.world.model.Exit;
 import game.world.model.Item;
 import game.world.model.Place;
 import game.world.model.Room;
-import game.world.util.Floor;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -31,7 +28,7 @@ public class TestRenderSingleTrixel extends JPanel{
 		int left = 100;
 		int[] xpoints = { left , left + Trixel.SIZE, left + Trixel.SIZE, left};
 		int[] ypoints = { top , top,  top + Trixel.SIZE, top + Trixel.SIZE};
-		testPlace = new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length), "testRoom");
+		testPlace = new Room(new ArrayList<Item>(), new Polygon(xpoints, ypoints, xpoints.length), "testRoom");
 		viewerDirection = new Vector3D(0,0,1);
 		WillMouseMotionListener l = new WillMouseMotionListener();
 		addMouseListener(l);

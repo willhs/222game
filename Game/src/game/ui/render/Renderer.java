@@ -29,17 +29,25 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+import test.world.util.SingleRoomWorldTest;
+
 public class Renderer {
 
 	// TEMPORARY
 
-	private static Point3D FRAME_CENTER = new Point3D(300, 300, 0);
-	private static Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
-	private static Transform AUTO = Transform.identity();
-	private static Vector3D DEFAULT_VIEW_ANGLE = new Vector3D(0,0,1);
+	private static final Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
+	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,300,0);
 
 	private static final int FRAME_TOP = 600;
-	private static final long COLOUR_SEED = 109851827492L;
+
+	/**
+	 * Temp render method which uses the SingleRoomWorldtest
+	 * @param g
+	 * @param rotateAmount
+	 */
+	public static void render(Graphics g, Vector3D rotateAmount){
+		renderPlace(g, new SingleRoomWorldTest().world.getPlaces().next(), rotateAmount);
+	}
 
 	/**
 	 * Draws a place using Graphics parameter and viewer direction
@@ -52,29 +60,31 @@ public class Renderer {
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
-
 		// convert floor into trixels and add those to toDraw
 		// TODO: please rewrite/refactor this part when we can
 		Floor floor = place.getFloor();
 		Polygon floorPolygon = floorToVerticalPolygon(floor);
 		Point3D floorCentroid = getFloorCentroid(floor);
 
-		Vector3D viewTranslation = new Vector3D(0, 200, 0);
-		Vector3D rotation = new Vector3D(0, rotateAmount.x, 0);
-
+		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;
+		//Vector3D rotation = new Vector3D(rotateAmount.y, rotateAmount.x, 0);
 
 		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
-				rotation,
+				rotateAmount,
 				floorCentroid,
 				viewTranslation
 			);
 
-		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
+		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
+
+		
 		// temporary solution to having floor behind everything.
 		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
+		
+		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
+		
 		for (Trixel floorTrixel : floorTrixels){
 			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
@@ -152,9 +162,102 @@ public class Renderer {
 				g2.setColor(Color.orange);
 				g2.drawLine((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
 			}
-
 		}
 	}
+
+
+	/**
+	 * Draws trixels using a graphics object
+	 * Currently used for the level maker
+	 *
+	 * @param g
+	 * @param trixels
+	 * @param transform
+	 */
+	public static void renderTrixels(Graphics g, Iterator<Trixel> trixels, Transform transform){
+		Graphics2D g2 = (Graphics2D) g;
+		// enable anti-aliasing
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
+
+		while (trixels.hasNext()){
+			Trixel trixel = trixels.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				face.transform(transform);
+				toDraw.offer(Renderer.makeGamePolygonFromTrixelFace(face));
+			}
+		}
+
+		// testing
+		// axis lines
+		for (Line3D axisLine : makeAxisLines()){
+			axisLine.transform(transform);
+			toDraw.offer(axisLine);
+		}
+
+		/*// ------- FLIP Y VALUES OF ALL THINGS
+		for (Renderable shape : toDraw){
+			shape.flipY(FRAME_TOP);
+		}*/
+		
+		while (!toDraw.isEmpty()){
+			Renderable renderable = toDraw.poll();
+			if (renderable instanceof GamePolygon){
+				GamePolygon poly = (GamePolygon) renderable;
+				g2.setColor(poly.getColour());
+				g2.fillPolygon(poly);
+			}
+			if (renderable instanceof Line3D){
+				Line3D line = (Line3D) renderable;
+				g2.drawLine((int)line.getP1().x, (int)line.getP1().y, (int)line.getP2().x, (int)line.getP2().y);
+			}
+		}
+	}
+	
+	public static void renderTransformedTrixels(Graphics g, Iterator<Trixel> trixels){
+		Graphics2D g2 = (Graphics2D) g;
+		// enable anti-aliasing
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
+
+		while (trixels.hasNext()){
+			Trixel trixel = trixels.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				toDraw.offer(Renderer.makeGamePolygonFromTrixelFace(face));
+			}
+		}
+
+/*		// testing
+		// axis lines
+		for (Line3D axisLine : makeAxisLines()){
+			axisLine.transform(transform);
+			toDraw.offer(axisLine);
+		}*/
+
+		/*// ------- FLIP Y VALUES OF ALL THINGS
+		for (Renderable shape : toDraw){
+			shape.flipY(FRAME_TOP);
+		}*/
+		
+		while (!toDraw.isEmpty()){
+			Renderable renderable = toDraw.poll();
+			if (renderable instanceof GamePolygon){
+				GamePolygon poly = (GamePolygon) renderable;
+				g2.setColor(poly.getColour());
+				g2.fillPolygon(poly);
+			}
+			if (renderable instanceof Line3D){
+				Line3D line = (Line3D) renderable;
+				g2.drawLine((int)line.getP1().x, (int)line.getP1().y, (int)line.getP2().x, (int)line.getP2().y);
+			}
+		}
+		
+	}
+
 	// -------------- HELPER METHODS -----------------------
 	//
 	/**
@@ -172,7 +275,7 @@ public class Renderer {
 	 * @param face
 	 * @return game polygon representing a trixel face
 	 */
-	private static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
+	public static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
 		Point3D[] vertices = face.getVertices();
 		int[] xpoints = new int[vertices.length];
 		int[] ypoints = new int[vertices.length];
@@ -229,15 +332,6 @@ public class Renderer {
 		return Res.isImage(drawable.getImageName());
 	}
 
-	/**
-	 * Helper method for the level maker
-	 * Gets transform that the renderer applies to all shapes
-	 * @return a transform which the renderer would use to
-	 */
-	/*
-	public static Transform getRendererTransform(){
-
-	}*/
 
 	/**
 	 * @param dir

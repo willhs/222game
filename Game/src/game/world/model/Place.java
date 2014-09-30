@@ -6,7 +6,7 @@ import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Point;
-import java.util.*;
+import java.util.Iterator;
 
 /**
  * Place
@@ -106,4 +106,5 @@ public interface Place {
 	public void addPlayer(Player player);
 
 	public String getName();
+	public void addExit(Exit exit);
 }

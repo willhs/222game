@@ -1,56 +1,88 @@
 package nw;
+import game.world.dimensions.*;
+import game.world.model.*;
+
+import java.awt.Polygon;
 import java.net.*;
 import java.io.*;
-import game.ui.window.*;
-import game.world.model.*;
 import java.util.ArrayList;
-import java.awt.Polygon;
+import java.util.List;
 
 public class Server extends Thread{
-	private Socket clientSocket;
+	private InputStream inStream;
+	private OutputStream outStream;
 
-	public Server(Socket clientSocket){
-		this.clientSocket = clientSocket;
+	private static ServerWorld world;
+
+	public Server(InputStream inStream, OutputStream outStream){
+		this.inStream = inStream;
+		this.outStream = outStream;
+	}
+
+	public static void initialiseWorld(){
+		int[] xpoints = new int[]{200,400,400,200};
+		int[] ypoints = new int[]{200,200,400,400};
+
+		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
+		List<Item> items = new ArrayList<Item>();
+		items.add(new Table("Table1", new Point3D(250, 0, 250), new Rectangle3D(50, 50, 50)));
+		Room room = new Room(items, p, "Room1");
+		List<Place> rooms = new ArrayList<Place>();
+		rooms.add(room);
+		world = new World(rooms);
 	}
 
 	public void run(){
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
 
-		Object received;
+		Object received = null;
 		String recStr = "";
 
 		try{
 
-			in = new ObjectInputStream(clientSocket.getInputStream());
-			out = new ObjectOutputStream(clientSocket.getOutputStream());
+			out = new ObjectOutputStream(outStream);
+			out.flush();
 
-			while((received = in.readObject()) != null){
+			BufferedInputStream bis = new BufferedInputStream(inStream);
+			in = new ObjectInputStream(bis);
+
+			long time = System.currentTimeMillis();
+
+			while(true){
 	
-				if(received instanceof String){
-					recStr = ((String)received);
-					System.out.println("Got: " + recStr);
-					if(recStr.equals("bro could you send me that room thing?")){
-						out.writeObject(new Room(new ArrayList<Exit>(), new ArrayList<Item>(), new Polygon()));
+				if(bis.available() != 0){
+					received = in.readObject();
+					if(received instanceof String){
+						recStr = ((String)received);
+						System.out.println("Got: " + recStr);
+						
+						for(String cmd : world.applyCommand((String)received)){
+							System.out.println("Returning: " + cmd);	
+							out.writeObject(cmd);
+						}
+					}else{
+						System.out.println("No idea what this is: " + received);
 					}
-					else{
-						recStr = recStr.toUpperCase();
-	
-						System.out.println("Returning: " + recStr);
-						out.writeObject(recStr);
-					}
-				}else{
-					System.out.println("No idea what this is: " + received);
 				}
-			}
-	
-			in.close();
-			out.close();
 
+				if((System.currentTimeMillis()-time)/1000 >= 2){
+					time = System.currentTimeMillis();
+					out.writeObject(world.getPlaces().next());
+				}
+				Thread.sleep(50);
+			}
 		}catch(ClassNotFoundException e){
 			System.err.println(e);
 		}catch(IOException e){
 			System.err.println(e);
+		}catch(InterruptedException e){
+			System.err.println(e);
+		}finally{
+			try{
+				in.close();
+				out.close();
+			}catch(Exception e){}
 		}
 	}
 
@@ -64,9 +96,13 @@ public class Server extends Thread{
 
 		try{
 			ServerSocket serverSocket = new ServerSocket(portNumber);
+			Server.initialiseWorld();
 			while(true){
-				new Server(serverSocket.accept()).start();
+				Socket clientSock = serverSocket.accept();
+				new Server(clientSock.getInputStream(), clientSock.getOutputStream()).start();
 			}
-		}catch(IOException e){}
+		}catch(IOException e){
+			System.err.println(e);
+		}
 	}
 }

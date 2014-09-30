@@ -3,15 +3,10 @@ package game.ui.window;
 import game.world.model.Player;
 import game.world.model.Room;
 
-import java.awt.AWTKeyStroke;
 import java.awt.Dimension;
-import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
-import java.security.acl.LastOwnerException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 
 import javax.swing.JFrame;
@@ -95,6 +90,6 @@ public class GameWindow extends JFrame{
 	}
 	
 	public Room getRoom(){
-		
+		return null;
 	}
 }

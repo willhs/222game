@@ -1,9 +1,13 @@
 package game.world.logic;
 
-import java.util.Iterator;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
+import game.world.dimensions.Vector3D;
+import game.world.model.Item;
+import game.world.model.Place;
+import game.world.model.Player;
 
-import game.world.dimensions.*;
-import game.world.model.*;
+import java.util.Iterator;
 
 /**
  *

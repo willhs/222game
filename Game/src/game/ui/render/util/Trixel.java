@@ -31,4 +31,23 @@ public class Trixel {
 	public Trixition getTrixition(){
 		return trixition;
 	}
+
+	@Override
+	public boolean equals(Object o){
+		if (!(o instanceof Trixel))
+			return false;
+
+		Trixel other = (Trixel)o;
+
+		return trixition.equals(other.getTrixition());
+	}
+
+	@Override
+	public int hashCode(){
+		return trixition.hashCode();
+	}
+
+	public void setColour(Color colour) {
+		this.colour = colour;
+	}
 }

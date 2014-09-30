@@ -1,6 +1,7 @@
 package test.render;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import game.ui.render.util.Trixel;
 import game.ui.render.util.TrixelFace;
 import game.ui.render.util.TrixelUtil;
