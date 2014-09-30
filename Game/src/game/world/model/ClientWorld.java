@@ -34,7 +34,6 @@ public abstract class ClientWorld extends ServerWorld {
 		String command = "";
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
-			System.out.println(keyPressToDirection.get(action));
 
 			Vector3D newDirection = keyPressToDirection.get(action)
 					.multiply(clientsPlayer.getDirection()).unitVector();
@@ -46,7 +45,6 @@ public abstract class ClientWorld extends ServerWorld {
 			command = "Server Move Name ( " + clientsPlayer.getName() + " ) Point "
 					+ newPosition.toString() + " Name ( "
 					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
-			System.out.println(command);
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
@@ -82,7 +80,7 @@ public abstract class ClientWorld extends ServerWorld {
 			scan.next();
 		}
 		String playerName = Parser.parseName(scan);
-		while (!scan.hasNext("Position")) {
+		while (!scan.hasNext("Point")) {
 			scan.next();
 		}
 		Point3D playerPosition = Parser.parsePosition(scan);

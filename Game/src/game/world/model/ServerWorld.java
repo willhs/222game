@@ -101,7 +101,7 @@ public abstract class ServerWorld implements Serializable {
 			scan.next();
 		}
 		String playerName = Parser.parseName(scan);
-		while (!scan.hasNext("Position")) {
+		while (!scan.hasNext("Point")) {
 			scan.next();
 		}
 		Point3D playerPosition = Parser.parsePosition(scan);
