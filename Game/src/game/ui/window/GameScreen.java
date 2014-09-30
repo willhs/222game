@@ -172,15 +172,11 @@ public class GameScreen implements GraphicsPane  {
 			selectedButton = 5;
 		}
 		else if(keyEvent.equals("rotate right")){
-			rotateVector =  rotateVector.plus( new Vector3D(0.05f , 0f , 0f));
+			rotateVector =  rotateVector.plus( new Vector3D(0f , 0.05f , 0f));
 		}
 		else if(keyEvent.equals("rotate left")){
-			rotateVector =  rotateVector.plus( new Vector3D(-0.05f , 0f , 0f));
+			rotateVector =  rotateVector.plus( new Vector3D(0f , -0.05f , 0f));
 		}
-
-
-
-		
 	}
 
 	public void drawInventorybar(Graphics g){
