@@ -1,16 +1,10 @@
 package nw;
 
 import game.ui.window.GameWindow;
-import game.world.model.ClientWorld;
-import game.world.model.Place;
-import game.world.model.Player;
-import game.world.model.Room;
-import game.world.model.World;
+import game.world.model.*;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.net.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +12,28 @@ import java.util.Queue;
 
 public class Client{
 	public static void main(String[] args) throws IOException{
-		if(args.length != 3){
-			System.err.println("Usage: java Client host port playername");
+		String playerName = "";
+		InputStream inStream = null;
+		OutputStream outStream = null;
+
+		if(args.length == 3){
+			playerName = args[2];
+			Socket sock = new Socket(args[0], Integer.parseInt(args[1]));
+			inStream = sock.getInputStream();
+			outStream = sock.getOutputStream();
+		}else if(args.length == 1){
+			playerName = args[0];
+
+			PipedInputStream sIn = new PipedInputStream();
+			PipedOutputStream sOut = new PipedOutputStream();
+			inStream = new PipedInputStream(sOut);
+			outStream = new PipedOutputStream(sIn);
+
+			Server server = new Server(sIn, sOut);
+			server.initialiseWorld();
+			server.start();
+		}else{
+			System.err.println("Usage: java Client [host] [port] playername");
 			System.exit(1);
 		}
 
@@ -27,14 +41,12 @@ public class Client{
 		Queue<String> keyCodeQueue = gw.getKeyQueue();
 		ClientWorld world = null;
 
-		Player player = new Player(args[2]);
+		Player player = new Player(playerName);
 
-		Socket sock = new Socket(args[0], Integer.parseInt(args[1]));
-
-		ObjectOutputStream out = new ObjectOutputStream(sock.getOutputStream());
+		ObjectOutputStream out = new ObjectOutputStream(outStream);
 		out.flush();
 
-		BufferedInputStream bis = new BufferedInputStream(sock.getInputStream());
+		BufferedInputStream bis = new BufferedInputStream(inStream);
 		ObjectInputStream in = new ObjectInputStream(bis);
 
 		Object received =  null;
