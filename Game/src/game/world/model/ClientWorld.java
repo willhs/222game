@@ -86,7 +86,7 @@ public abstract class ClientWorld extends ServerWorld {
 		while(!scan.hasNext("Name")){
 			scan.next();
 		}
-		getPlayerByName(playerName).move(playerPosition);
+		clientsPlayer.move(playerPosition);
 	}
 
 	public void replaceCurrentPlace(Place place) {
