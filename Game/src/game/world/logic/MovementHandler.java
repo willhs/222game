@@ -158,7 +158,7 @@ public class MovementHandler {
 	 *            - point of the item.
 	 * @return - true if they are close enough
 	 */
-	private static boolean checkProximity(Point3D pointOne,
+	public static boolean checkProximity(Point3D pointOne,
 			Rectangle3D boundingOne, Point3D pointTwo, Rectangle3D boundingTwo) {
 		if ((Math.abs(pointOne.x - pointTwo.x) <= 5 + (boundingOne.getWidth() + boundingTwo
 				.getWidth()) / 2)

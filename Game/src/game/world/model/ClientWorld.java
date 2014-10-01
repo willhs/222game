@@ -1,19 +1,17 @@
 package game.world.model;
 
 import game.ui.render.util.Transform;
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Vector3D;
+import game.world.dimensions.*;
 import game.world.logic.MovementHandler;
 import game.world.util.Parser;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Handles all the client side modeling and some interation.
+ * 
  * @author Shane Brewer.
- *
+ * 
  */
 public abstract class ClientWorld extends ServerWorld {
 
@@ -46,12 +44,12 @@ public abstract class ClientWorld extends ServerWorld {
 							* movmentScaler);
 			Point3D newPosition = clientsPlayer.getPosition()
 					.getTranslatedPoint(newMove);
-			command = "Server Move Name ( " + clientsPlayer.getName() + " ) Point "
-					+ newPosition.toString() + " Name ( "
+			command = "Server Move Name ( " + clientsPlayer.getName()
+					+ " ) Point " + newPosition.toString() + " Name ( "
 					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
 		}
-		if (action.equals("Interact")){
-			
+		if (action.equals("Interact")) {
+			command = getInteractionCommand();
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
@@ -68,7 +66,7 @@ public abstract class ClientWorld extends ServerWorld {
 				setClientPlayer(scan);
 			}
 
-			if (scan.hasNext("Move")){
+			if (scan.hasNext("Move")) {
 				clientHandleMove(scan);
 			}
 		}
@@ -83,7 +81,7 @@ public abstract class ClientWorld extends ServerWorld {
 	}
 
 	private void clientHandleMove(Scanner scan) {
-		while(!scan.hasNext("Name")){
+		while (!scan.hasNext("Name")) {
 			scan.next();
 		}
 		String playerName = Parser.parseName(scan);
@@ -91,7 +89,7 @@ public abstract class ClientWorld extends ServerWorld {
 			scan.next();
 		}
 		Point3D playerPosition = Parser.parsePosition(scan);
-		while(!scan.hasNext("Name")){
+		while (!scan.hasNext("Name")) {
 			scan.next();
 		}
 		clientsPlayer.move(playerPosition);
@@ -103,11 +101,25 @@ public abstract class ClientWorld extends ServerWorld {
 		currentPlace = place;
 	}
 
+	/**
+	 * Makes the first player.
+	 * 
+	 * @param player
+	 *            - player that is to be the player of this client.
+	 * @return - a string only ment to be parsed by the server.
+	 */
 	public String getSetClientPlayer(Player player) {
 		clientsPlayer = player;
 		return "Server PlayerPlacement Name ( " + player.name + " )";
 	}
 
+	/**
+	 * Sets the client player.
+	 * 
+	 * @param scan
+	 *            - used to scan the text to get the player out.
+	 * @return - return true if the player was moved.
+	 */
 	private boolean setClientPlayer(Scanner scan) {
 		while (!scan.hasNext("Position")) {
 			scan.next();
@@ -119,6 +131,24 @@ public abstract class ClientWorld extends ServerWorld {
 		clientsPlayer.move(position);
 		place.addPlayer(clientsPlayer);
 		return true;
+	}
+
+	private String getInteractionCommand() {
+		Place place = getPlaceOfPlayer(clientsPlayer);
+		Iterator<Exit> exits = place.getExits();
+		String command = "";
+		while (exits.hasNext()) {
+			Exit temp = exits.next();
+			if (MovementHandler.checkProximity(clientsPlayer.getPosition(),
+					clientsPlayer.getBoundingBox(), temp.getPosition(place),
+					temp.getBoundingBox()));
+
+			command = "Server Exit Name ( " + clientsPlayer.getName()
+					+ " ) Name ( " + temp.getName() + " ) Name ( "
+					+ place.getName() + " )";
+
+		}
+		return command;
 	}
 
 }
