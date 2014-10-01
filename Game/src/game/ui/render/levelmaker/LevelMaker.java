@@ -159,7 +159,7 @@ public class LevelMaker{
 			if (facePoly.contains(x, y)){
 				System.out.println("z: "+face.getZ());
 				trixels.add(makeTrixelNextToFace(face));
-				//highlightTrixel(face.getParentTrixel());
+				highlightTrixel(face.getParentTrixel());
 				break; // add only one trixel
 			}
 		}
