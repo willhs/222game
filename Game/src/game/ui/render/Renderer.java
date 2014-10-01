@@ -1,5 +1,6 @@
 package game.ui.render;
 
+import game.ui.render.Res;
 import game.ui.render.util.GameImage;
 import game.ui.render.util.GamePolygon;
 import game.ui.render.util.LightSource;
@@ -46,6 +47,7 @@ public class Renderer {
 	 * @param rotateAmount
 	 */
 	public static void render(Graphics g, Vector3D rotateAmount){
+		randomColor = new Random(SEED);
 		renderPlace(g, new SingleRoomWorldTest().world.getPlaces().next(), rotateAmount);
 	}
 
@@ -79,12 +81,12 @@ public class Renderer {
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
 
-		
+
 		// temporary solution to having floor behind everything.
 		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
-		
+
 		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
-		
+
 		for (Trixel floorTrixel : floorTrixels){
 			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
@@ -175,6 +177,7 @@ public class Renderer {
 	 * @param transform
 	 */
 	public static void renderTrixels(Graphics g, Iterator<Trixel> trixels, Transform transform){
+		randomColor = new Random(SEED);
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -201,7 +204,7 @@ public class Renderer {
 		for (Renderable shape : toDraw){
 			shape.flipY(FRAME_TOP);
 		}*/
-		
+
 		while (!toDraw.isEmpty()){
 			Renderable renderable = toDraw.poll();
 			if (renderable instanceof GamePolygon){
@@ -209,54 +212,13 @@ public class Renderer {
 				g2.setColor(poly.getColour());
 				g2.fillPolygon(poly);
 			}
-			if (renderable instanceof Line3D){
+	/*		if (renderable instanceof Line3D){
 				Line3D line = (Line3D) renderable;
 				g2.drawLine((int)line.getP1().x, (int)line.getP1().y, (int)line.getP2().x, (int)line.getP2().y);
-			}
+			}*/
 		}
 	}
-	
-	public static void renderTransformedTrixels(Graphics g, Iterator<Trixel> trixels){
-		Graphics2D g2 = (Graphics2D) g;
-		// enable anti-aliasing
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
-
-		while (trixels.hasNext()){
-			Trixel trixel = trixels.next();
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				toDraw.offer(Renderer.makeGamePolygonFromTrixelFace(face));
-			}
-		}
-
-/*		// testing
-		// axis lines
-		for (Line3D axisLine : makeAxisLines()){
-			axisLine.transform(transform);
-			toDraw.offer(axisLine);
-		}*/
-
-		/*// ------- FLIP Y VALUES OF ALL THINGS
-		for (Renderable shape : toDraw){
-			shape.flipY(FRAME_TOP);
-		}*/
-		
-		while (!toDraw.isEmpty()){
-			Renderable renderable = toDraw.poll();
-			if (renderable instanceof GamePolygon){
-				GamePolygon poly = (GamePolygon) renderable;
-				g2.setColor(poly.getColour());
-				g2.fillPolygon(poly);
-			}
-			if (renderable instanceof Line3D){
-				Line3D line = (Line3D) renderable;
-				g2.drawLine((int)line.getP1().x, (int)line.getP1().y, (int)line.getP2().x, (int)line.getP2().y);
-			}
-		}
-		
-	}
 
 	// -------------- HELPER METHODS -----------------------
 	//
@@ -345,13 +307,15 @@ public class Renderer {
 		return new Transform[]{ translateToOrigin, rotate, translateBack };
 	}
 
+	private static final long SEED = 15274910874912L;
+	private static Random randomColor;
+
 	/**
 	 * @return random colour
 	 */
 	public static Color getTrixelColour(){
-		Random ran = new Random();
-		int r = 100 + ran.nextInt(100);
-		int g = 100 + ran.nextInt(100);
+		int r = 100 + randomColor.nextInt(100);
+		int g = 100 + randomColor.nextInt(100);
 		int b = 200;//
 
 		return new Color(r, g, b);
