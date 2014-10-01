@@ -47,7 +47,6 @@ public class Renderer {
 	 * @param rotateAmount
 	 */
 	public static void render(Graphics g, Vector3D rotateAmount){
-		randomColor = new Random(SEED);
 		renderPlace(g, new SingleRoomWorldTest().world.getPlaces().next(), rotateAmount);
 	}
 
@@ -57,6 +56,7 @@ public class Renderer {
 	 * @param place
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
+		randomColor = new Random(SEED);
 
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
