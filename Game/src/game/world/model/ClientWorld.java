@@ -19,10 +19,10 @@ public abstract class ClientWorld extends ServerWorld {
 
 	public ClientWorld() {
 		keyPressToDirection = new HashMap<String, Transform>();
-		keyPressToDirection.put("Right",
+		keyPressToDirection.put("Left",
 				Transform.newYRotation((float) (Math.PI / 2.0f)));
 		keyPressToDirection.put("Up", Transform.newYRotation(0));
-		keyPressToDirection.put("Left",
+		keyPressToDirection.put("Right",
 				Transform.newYRotation((float) -(Math.PI / 2.0f)));
 		keyPressToDirection.put("Down",
 				Transform.newYRotation((float) (Math.PI)));
