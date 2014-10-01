@@ -11,39 +11,44 @@ import java.util.List;
 import java.util.Queue;
 import javax.swing.JFrame;
 
-public class Client{
+public class Client extends Thread{
 	private static Server server;
+	private static InputStream inStream;
+	private static OutputStream outStream;
+	private static GameWindow gw;
+	private static Player player;
 
-	public static void multiPlayer(Player player, String host, int port, GameWindow gw){	
+	public Client(Player player, String host, int port, GameWindow gw){
+		this.gw = gw;
+		this.player = player;
 		try{
 			Socket sock = new Socket(host, port);
 
-			InputStream inStream = sock.getInputStream();
-			OutputStream outStream = sock.getOutputStream();
-
-			client(inStream, outStream, gw, player);
+			inStream = sock.getInputStream();
+			outStream = sock.getOutputStream();
 		}catch(IOException e){
 			System.err.println(e);
 		}
 	}
-	public static void singlePlayer(Player player, GameWindow gw){ 
+
+	public Client(Player player, GameWindow gw){ 
+		this.gw = gw;
+		this.player = player;
 		try{
 			PipedInputStream sIn = new PipedInputStream();
 			PipedOutputStream sOut = new PipedOutputStream();
-			PipedInputStream inStream = new PipedInputStream(sOut);
-			PipedOutputStream outStream = new PipedOutputStream(sIn);
+			inStream = new PipedInputStream(sOut);
+			outStream = new PipedOutputStream(sIn);
 
 			server = new Server(sIn, sOut);
 			server.initialiseWorld();
 			server.start();
-
-			client(inStream, outStream, gw, player);
 		}catch(IOException e){
 			System.err.println(e);
 		}
 	}
-	private static void client(InputStream inStream, OutputStream outStream,
-									GameWindow gw, Player player) throws IOException{
+
+	public void run(){
 		ClientWorld world = null;
 		Queue<String> keyCodeQueue = gw.getKeyQueue();
 
@@ -101,19 +106,21 @@ public class Client{
 		}catch(InterruptedException e){
 			System.err.println(e);
 		}finally{
-			out.close();
-			in.close();
+			try{
+				out.close();
+				in.close();
+			}catch(IOException e){System.err.println(e);}
 		}
 	}
 	
 	public static void main(String[] args){
 		GameWindow gw = new GameWindow();
 		if(args.length == 3){
-			multiPlayer(new Player(args[2]), args[0], Integer.parseInt(args[1]), gw);
+			new Client(new Player(args[2]), args[0], Integer.parseInt(args[1]), gw).start();
 		}else if(args.length == 0){
-			singlePlayer(new Player("TestPlayer"), gw);
+			new Client(new Player("TestPlayer"), gw).start();
 		}else{
-			System.err.println("Usage: java Client [host] [port] playername    or nothing");
+			System.err.println("Usage: java Client [host] [port] playername    [or nothing for single player]");
 			System.exit(1);
 		}
 	}
