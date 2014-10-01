@@ -56,7 +56,7 @@ public class Renderer {
 	 * @param place
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
-		
+
 		randomColor = new Random(SEED);
 
 		Graphics2D g2 = (Graphics2D) g;
@@ -84,7 +84,7 @@ public class Renderer {
 
 
 		// temporary solution to having floor behind everything.
-		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
+		Transform floorBehindEverything = Transform.newTranslation(0,0,-Trixel.SIZE);//Transform.newTranslation(0, 0, -5);
 
 		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
 
@@ -125,10 +125,10 @@ public class Renderer {
 		}
 		// testing
 		// axis lines
-		for (Line3D axisLine : makeAxisLines()){
+		/*for (Line3D axisLine : makeAxisLines()){
 			axisLine.transform(transform);
 			toDraw.offer(axisLine);
-		}
+		}*/
 
 		// ------- FLIP Y VALUES OF ALL THINGS
 		for (Renderable shape : toDraw){
@@ -356,6 +356,10 @@ public class Renderer {
 			zSum += vertex.z;
 		}
 		return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
+	}
+
+	public static void drawBackground(Graphics g){
+
 	}
 
 }

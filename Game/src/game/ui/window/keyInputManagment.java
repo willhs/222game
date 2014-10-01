@@ -74,6 +74,10 @@ public class keyInputManagment  implements KeyEventDispatcher{
 				panel.keyPressed("6");
 				return false;
 			}
+			if(e.getKeyCode() == KeyEvent.VK_SPACE){
+				panel.keyPressed("space");
+				return false;
+			}
 
 
 

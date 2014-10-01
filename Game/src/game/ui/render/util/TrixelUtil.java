@@ -155,6 +155,8 @@ public class TrixelUtil {
 	public static Point3D findTrixelsCentroid(Iterator<Trixel> trixels){
 		int vertexCount = 0;
 		float xSum = 0, ySum = 0, zSum = 0;
+		// test
+		float zMin=Float.MAX_VALUE;
 		while (trixels.hasNext()){
 			Trixel trixel = trixels.next();
 			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
@@ -162,10 +164,14 @@ public class TrixelUtil {
 					xSum += vertex.x;
 					ySum += vertex.y;
 					zSum += vertex.z;
+
+					if (vertex.z < zMin){
+						zMin = vertex.z;
+					}
 					vertexCount ++;
 				}
 			}
 		}
-		return new Point3D (xSum/vertexCount, ySum/vertexCount, zSum/vertexCount);
+		return new Point3D (xSum/vertexCount, ySum/vertexCount, zMin);
 	}
 }

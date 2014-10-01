@@ -18,7 +18,6 @@ public abstract class ClientWorld extends ServerWorld {
 	private Place currentPlace;
 
 	public ClientWorld() {
-		System.out.println("made it here.");
 		keyPressToDirection = new HashMap<String, Transform>();
 		keyPressToDirection.put("Right",
 				Transform.newYRotation((float) (Math.PI / 2.0f)));

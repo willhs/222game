@@ -21,22 +21,18 @@ public class Parser {
 	public static Player parsePlayer(Scanner scan) {
 		String name = "Unknowen";
 		if (scan.hasNext("Name")) {
-			System.out.println("Scanning name");
 			name = Parser.parseName(scan);
 		}
 		Inventory inventory = new Inventory();
 		if (scan.hasNext("Inventory")) {
-			System.out.println("Scanning inventory");
 			inventory = Parser.parseInventory(scan);
 		}
 		Point3D point = new Point3D(0, 0, 0);
 		if (scan.hasNext("Position")) {
-			System.out.println("Scanning poiunt");
 			point = Parser.parsePosition(scan);
 		}
 		Rectangle3D boundingBox = new Rectangle3D(0, 0, 0);
 		if (scan.hasNext("BoundingBox")) {
-			System.out.println("scanning bounding box");
 			boundingBox = Parser.parseBoundingBox(scan);
 		}
 		return new Player(name);
@@ -44,11 +40,9 @@ public class Parser {
 
 	public static Rectangle3D parseBoundingBox(Scanner scan) {
 		while(!scan.hasNextDouble() && scan.hasNext()){
-			System.out.println("removing strings");
 			scan.next();
 		}
 		float width = (float)scan.nextDouble();
-		System.out.println(width);
 		while(!scan.hasNextDouble() && scan.hasNext()){
 			scan.next();
 		}
