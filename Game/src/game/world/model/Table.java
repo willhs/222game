@@ -50,5 +50,10 @@ public class Table implements Item{
 		position = point;
 	}
 
+	@Override
+	public Point3D getPosition(Place place) {
+		return getPosition();
+	}
+
 
 }

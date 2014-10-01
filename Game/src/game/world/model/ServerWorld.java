@@ -19,8 +19,7 @@ public abstract class ServerWorld implements Serializable {
 			scan.next();
 			if (scan.hasNext("PlayerPlacement")) {
 				commands = serverPlayerPlacement(scan, command);
-			}
-			else if (scan.hasNext("Move")) {
+			} else if (scan.hasNext("Move")) {
 				commands = serverHandleMove(scan, command);
 			}
 		}
@@ -33,7 +32,7 @@ public abstract class ServerWorld implements Serializable {
 
 	/**
 	 * getPlaces method returns all the places in the form of a iterator
-	 *
+	 * 
 	 * @return - iterator over the list of places.
 	 */
 	public abstract Iterator<Place> getPlaces();
@@ -41,14 +40,14 @@ public abstract class ServerWorld implements Serializable {
 	/**
 	 * getPlayers method returns all the players that are in the list in the
 	 * form of a iterator
-	 *
+	 * 
 	 * @return
 	 */
 	public abstract Iterator<Player> getPlayers();
 
 	/**
 	 * This method will return the place that the player is currently in.
-	 *
+	 * 
 	 * @param player
 	 *            - the player that will be used to find the room.
 	 * @return -returns the place the player is currently.
@@ -58,7 +57,7 @@ public abstract class ServerWorld implements Serializable {
 	/**
 	 * This method will return a iterator of players in a place. not really
 	 * needed if you have the place but added.
-	 *
+	 * 
 	 * @param place
 	 *            - place that the players are in.
 	 * @return - returns the list of players in that place.
@@ -67,7 +66,7 @@ public abstract class ServerWorld implements Serializable {
 
 	/**
 	 * Finds a place in the game world for the player.
-	 *
+	 * 
 	 * @param player
 	 *            - player that is to be added to the fame world.
 	 * @return TODO
@@ -81,6 +80,8 @@ public abstract class ServerWorld implements Serializable {
 	protected abstract Player getPlayerByName(String playerName);
 
 	protected abstract Place getPlaceByName(String placeName);
+
+	public abstract void addExit(Exit exit);
 
 	private List<String> serverPlayerPlacement(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();
@@ -97,7 +98,7 @@ public abstract class ServerWorld implements Serializable {
 
 	private List<String> serverHandleMove(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();
-		while(!scan.hasNext("Name")){
+		while (!scan.hasNext("Name")) {
 			scan.next();
 		}
 		String playerName = Parser.parseName(scan);
@@ -105,15 +106,17 @@ public abstract class ServerWorld implements Serializable {
 			scan.next();
 		}
 		Point3D playerPosition = Parser.parsePosition(scan);
-		while(!scan.hasNext("Name")){
+		while (!scan.hasNext("Name")) {
 			scan.next();
 		}
 		String placeName = Parser.parseName(scan);
-		if (MovementHandler.playerMove(getPlayerByName(playerName), playerPosition, getPlaceByName(placeName))){
+		if (MovementHandler.playerMove(getPlayerByName(playerName),
+				playerPosition, getPlaceByName(placeName))) {
 			Scanner sc = new Scanner(command);
 			sc.next();
-			String newCommand = "Client "+sc.nextLine();
+			String newCommand = "Client " + sc.nextLine();
 			commands.add(newCommand);
+			sc.close();
 		}
 		return commands;
 	}

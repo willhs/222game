@@ -49,26 +49,27 @@ public class Server extends Thread{
 
 			long time = System.currentTimeMillis();
 
+			out.writeObject(world.getPlaces().next());
 			while(true){
 	
 				if(bis.available() != 0){
 					received = in.readObject();
 					if(received instanceof String){
 						recStr = ((String)received);
-						System.out.println("Got: " + recStr);
+						System.out.println("[Server] Got: " + recStr);
 						
 						for(String cmd : world.applyCommand((String)received)){
-							System.out.println("Returning: " + cmd);	
+							System.out.println("[Server] Returning: " + cmd);	
 							out.writeObject(cmd);
 						}
 					}else{
-						System.out.println("No idea what this is: " + received);
+						System.out.println("[Server] No idea what this is: " + received);
 					}
 				}
 
 				if((System.currentTimeMillis()-time)/1000 >= 2){
 					time = System.currentTimeMillis();
-					out.writeObject(world.getPlaces().next());
+					//out.writeObject(world.getPlaces().next());
 				}
 				Thread.sleep(50);
 			}

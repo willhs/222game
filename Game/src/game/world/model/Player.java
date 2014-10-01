@@ -97,4 +97,9 @@ public class Player implements Character{
 		return true;
 	}
 
+	@Override
+	public Point3D getPosition(Place place) {
+		return getPosition();
+	}
+
 }

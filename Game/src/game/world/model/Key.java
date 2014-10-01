@@ -53,5 +53,9 @@ public class Key implements Item {
 	public void setPosition(Point3D point) {
 		position = point;
 	}
+	@Override
+	public Point3D getPosition(Place place) {
+		return getPosition();
+	}
 
 }

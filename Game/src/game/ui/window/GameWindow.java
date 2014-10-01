@@ -33,7 +33,7 @@ public class GameWindow extends JFrame{
 
 	public static HashMap<String , Integer> keyMap;
 
-	private Room currentRoom;
+	public static Room currentRoom;
 	private Player player;//TODO make this work
 
 	/**
@@ -78,8 +78,8 @@ public class GameWindow extends JFrame{
 		return keyCodeQueue;
 	}
 
-	public void setRoom(Room currentRoom){
-		this.currentRoom = currentRoom;
+	public static void setRoom(Room currentRoom){
+		GameWindow.currentRoom = currentRoom;
 	}
 
 	public static void main(String[] args){
