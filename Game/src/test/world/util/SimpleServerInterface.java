@@ -7,8 +7,8 @@ import game.world.model.Player;
 import game.world.model.ServerWorld;
 
 public class SimpleServerInterface {
-	ServerWorld serverW;
-	ClientWorld serverC;
+	public final ServerWorld serverW;
+	public final ClientWorld serverC;
 
 	public SimpleServerInterface(){
 		serverC = new SingleRoomWorldTest().world;
