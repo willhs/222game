@@ -81,6 +81,8 @@ public abstract class ServerWorld implements Serializable {
 	protected abstract Player getPlayerByName(String playerName);
 
 	protected abstract Place getPlaceByName(String placeName);
+	
+	public abstract void addExit(Exit exit);
 
 	private List<String> serverPlayerPlacement(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();

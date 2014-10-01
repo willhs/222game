@@ -109,4 +109,9 @@ public class World extends ClientWorld{
 	protected Place getPlaceByName(String placeName) {
 		return allPlaces.get(placeName);
 	}
+	
+	@Override
+	public void addExit(Exit exit){
+		allExits.put(exit.getName(), exit);
+	}
 }
