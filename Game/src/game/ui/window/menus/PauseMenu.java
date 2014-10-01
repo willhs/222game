@@ -36,6 +36,7 @@ public class PauseMenu implements GraphicsPane {
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		this.panel = panel;
+		this.selectedButton = -1;
 		setUpButtons();
 	}
 
@@ -105,7 +106,7 @@ public class PauseMenu implements GraphicsPane {
 				return;
 			}
 		}
-		selectedButton = Integer.MAX_VALUE;//no button is selected
+		selectedButton = -1;//no button is selected
 	}
 
 
