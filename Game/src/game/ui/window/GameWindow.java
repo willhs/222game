@@ -1,5 +1,6 @@
 package game.ui.window;
 
+import game.ui.render.Renderer;
 import game.world.model.Player;
 import game.world.model.Room;
 
@@ -80,6 +81,7 @@ public class GameWindow extends JFrame{
 	}
 
 	public static void main(String[] args){
+		Renderer r = new Renderer();
 		GameWindow window = new GameWindow();
 		TestThread t = new TestThread(20, window);
 		t.start();
@@ -87,5 +89,9 @@ public class GameWindow extends JFrame{
 
 	public Player getPlayer(){
 		return this.player;
+	}
+	
+	public Room getRoom(){
+		return null;
 	}
 }

@@ -40,10 +40,16 @@ public class World extends ClientWorld{
 		allExits = new HashMap<String, Exit>();
 		allPlayers = new HashMap<String, Player>();
 		allPlaces = new HashMap<String, Place>();
+		allItems = new HashMap<String, Item>();
 		for (Place place: places){
 			allPlaces.put(place.getName(), place);
+			Iterator<Item> it = place.getItems();
+			while (it.hasNext()){
+				Item i = it.next();
+				allItems.put(i.getName(), i);
+			}
 		}
-		allItems = new HashMap<String, Item>();
+
 	}
 
 	//======================End========================//
@@ -79,6 +85,7 @@ public class World extends ClientWorld{
 	@Override
 	public boolean addPlayerToGameWorld(Player player){
 		players.add(player);
+		allPlayers.put(player.getName(), player);
 		return startPlace.setStartPoint(player);
 	}
 
@@ -89,6 +96,17 @@ public class World extends ClientWorld{
 
 	@Override
 	protected void addPlayer(Player player) {
+		allPlayers.put(player.getName(), player);
 		players.add(player);
+	}
+
+	@Override
+	protected Player getPlayerByName(String playerName) {
+		return allPlayers.get(playerName);
+	}
+
+	@Override
+	protected Place getPlaceByName(String placeName) {
+		return allPlaces.get(placeName);
 	}
 }

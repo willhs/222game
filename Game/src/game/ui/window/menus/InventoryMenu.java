@@ -288,37 +288,43 @@ public class InventoryMenu implements GraphicsPane {
 		lastXPress = e.getX();
 		lastYPress = e.getY();
 
+		//TODO place all of this stuff into its own method some time dont be lazy
+
+		//first check if theres is a selected image
 		if(selectedImage != null){
-			if(selectedGrid != -1 ){//check we are not placing it on the same place we grabbed it from
+
+			//check the image is to be placed on a valid location
+			if(selectedGrid != -1 ){
+
+				//set the image array to the new image
 				inventoryImages[selectedGrid] = selectedImage;
+
+				//check the selected grid is not the same as the one the image came from
 				if(selectedGrid != selectImageGrid){
-					inventoryImages[selectImageGrid] = null;
+					inventoryImages[selectImageGrid] = null;//clear the image from the array
 				}
 
-				selectImageGrid = selectedGrid;
+				//reset the selected the image and return
 				selectedImage = null;
 				return;
 			}
-			if(game.isOnGrid((int)e.getX(),(int)e.getY()) != -1){
-				game.placeItemOnGrid(game.isOnGrid((int)e.getX(),(int)e.getY()), selectedImage);
-				selectedImage = null;
-				inventoryImages[selectImageGrid] = null;
-			}
 
+			//check if the mouse click is on the grid of the game screen inventory bar
+			if(game.isOnGrid((int)e.getX(),(int)e.getY()) != -1){
+
+				//place the item on the game screen at the appropriate grid location
+				game.placeItemOnGrid(game.isOnGrid((int)e.getX(),(int)e.getY()), MenuUtil.scale(selectedImage,game.getGridSize()-10,game.getGridSize()-10));
+				selectedImage = null;
+				//inventoryImages[selectImageGrid] = null;
+			}
 		}
 
+		//at this point if a valid grid is clicked it selected the image
 		if(selectedGrid != -1){
 			if(inventoryImages[selectedGrid] != null){
 				selectedImage = inventoryImages[selectedGrid];
 				selectImageGrid = selectedGrid;
-
 			}
 		}
-
-
-
-		//check if its on a grid in the inventory that has an item
-
-
 	}
 }

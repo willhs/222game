@@ -1,29 +1,22 @@
 package nw;
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
-import game.world.model.Item;
-import game.world.model.Place;
-import game.world.model.Room;
-import game.world.model.ServerWorld;
-import game.world.model.Table;
-import game.world.model.World;
+import game.world.dimensions.*;
+import game.world.model.*;
 
 import java.awt.Polygon;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Server extends Thread{
-	private Socket clientSocket;
+	private InputStream inStream;
+	private OutputStream outStream;
+
 	private static ServerWorld world;
 
-	public Server(Socket clientSocket){
-		this.clientSocket = clientSocket;
+	public Server(InputStream inStream, OutputStream outStream){
+		this.inStream = inStream;
+		this.outStream = outStream;
 	}
 
 	public static void initialiseWorld(){
@@ -48,14 +41,11 @@ public class Server extends Thread{
 
 		try{
 
-			out = new ObjectOutputStream(clientSocket.getOutputStream());
+			out = new ObjectOutputStream(outStream);
 			out.flush();
 
-			BufferedInputStream bis = new BufferedInputStream(clientSocket.getInputStream());
+			BufferedInputStream bis = new BufferedInputStream(inStream);
 			in = new ObjectInputStream(bis);
-
-			//Player player = world.getPlayers().get(world.getPlayers().size-1);
-			//System.out.println("Got player: " + player.getName());
 
 			long time = System.currentTimeMillis();
 
@@ -77,15 +67,13 @@ public class Server extends Thread{
 				}
 
 				if((System.currentTimeMillis()-time)/1000 >= 2){
-					out.writeObject(world.getPlaces().next());
 					time = System.currentTimeMillis();
+					out.writeObject(world.getPlaces().next());
 				}
 				Thread.sleep(50);
 			}
 		}catch(ClassNotFoundException e){
 			System.err.println(e);
-		}catch(SocketException e){
-			System.out.println("User disconnected");
 		}catch(IOException e){
 			System.err.println(e);
 		}catch(InterruptedException e){
@@ -110,8 +98,11 @@ public class Server extends Thread{
 			ServerSocket serverSocket = new ServerSocket(portNumber);
 			Server.initialiseWorld();
 			while(true){
-				new Server(serverSocket.accept()).start();
+				Socket clientSock = serverSocket.accept();
+				new Server(clientSock.getInputStream(), clientSock.getOutputStream()).start();
 			}
-		}catch(IOException e){}
+		}catch(IOException e){
+			System.err.println(e);
+		}
 	}
 }

@@ -45,7 +45,6 @@ public class LevelMakerGUI extends JPanel{
 
 			dealWithMouseDragged(dx, dy);
 
-
 			mouseX = e.getX();
 			mouseY = e.getY();
 		}
@@ -59,6 +58,7 @@ public class LevelMakerGUI extends JPanel{
 		@Override
 		public void mouseClicked(MouseEvent e){
 			levelMaker.attemptCreateTrixel(e.getX(), e.getY());
+			repaint();
 		}
 	}
 

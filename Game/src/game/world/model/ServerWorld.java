@@ -1,5 +1,7 @@
 package game.world.model;
 
+import game.world.dimensions.Point3D;
+import game.world.logic.MovementHandler;
 import game.world.util.Parser;
 
 import java.io.Serializable;
@@ -10,16 +12,17 @@ import java.util.Scanner;
 
 public abstract class ServerWorld implements Serializable {
 
-
-
 	public List<String> applyCommand(String command) {
 		List<String> commands = new ArrayList<String>();
 		Scanner scan = new Scanner(command);
-		if (scan.hasNext("ServerPlayerPlacement")) {
-			commands = serverPlayerPlacement(scan, command);
-		}
-		if (scan.hasNext("Move")){
-			commands = handleMove(scan, command);
+		if (scan.hasNext("Server")) {
+			scan.next();
+			if (scan.hasNext("PlayerPlacement")) {
+				commands = serverPlayerPlacement(scan, command);
+			}
+			else if (scan.hasNext("Move")) {
+				commands = serverHandleMove(scan, command);
+			}
 		}
 		// applies command to the world
 		// returns a list of commands that resulted from running the given
@@ -27,7 +30,6 @@ public abstract class ServerWorld implements Serializable {
 		// returns an empty string array if the command was invalid or whatever
 		return commands;
 	}
-
 
 	/**
 	 * getPlaces method returns all the places in the form of a iterator
@@ -76,21 +78,43 @@ public abstract class ServerWorld implements Serializable {
 
 	protected abstract void addPlayer(Player player);
 
-	private List<String> serverPlayerPlacement(Scanner scan, String command){
+	protected abstract Player getPlayerByName(String playerName);
+
+	protected abstract Place getPlaceByName(String placeName);
+
+	private List<String> serverPlayerPlacement(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();
 		scan.next();
 		Player player = Parser.parsePlayer(scan);
 		if (addPlayerToGameWorld(player)) {
 			Place place = getPlaceOfPlayer(player);
-			String newCommand = "ClientPlayerPlacement  Position ( "
+			String newCommand = "Client PlayerPlacement  Position ( "
 					+ player.getPosition().toString() + " )";
 			commands.add(newCommand);
 		}
 		return commands;
 	}
 
-	private List<String> handleMove(Scanner scan, String command) {
-
-		return null;
+	private List<String> serverHandleMove(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+		while(!scan.hasNext("Name")){
+			scan.next();
+		}
+		String playerName = Parser.parseName(scan);
+		while (!scan.hasNext("Point")) {
+			scan.next();
+		}
+		Point3D playerPosition = Parser.parsePosition(scan);
+		while(!scan.hasNext("Name")){
+			scan.next();
+		}
+		String placeName = Parser.parseName(scan);
+		if (MovementHandler.playerMove(getPlayerByName(playerName), playerPosition, getPlaceByName(placeName))){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			String newCommand = "Client "+sc.nextLine();
+			commands.add(newCommand);
+		}
+		return commands;
 	}
 }
