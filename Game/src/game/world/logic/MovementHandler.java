@@ -39,7 +39,7 @@ public class MovementHandler {
 		if (!place.contains(to, player.getBoundingBox())) {
 			return false;
 		}
-		if (checkItemCollision(player, place.getItems(), toIgnore)) {
+		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
 			return false;
 		}
 		if (checkPlayerCollision(player, to, place.getPlayers())) {
@@ -60,10 +60,9 @@ public class MovementHandler {
 	 *            - items to ignore.
 	 * @return - returns true only if the player collieds with a item.
 	 */
-	private static boolean checkItemCollision(Player player,
+	private static boolean checkItemCollision(Player player, Point3D playerPoint,
 			Iterator<Item> items, Item... toIgnore) {
 		Rectangle3D playerBox = player.getBoundingBox();
-		Point3D playerPoint = player.getPosition();
 		while (items.hasNext()) {
 			Item item = items.next();
 			if (playerBox.collisionDetection(playerPoint,
