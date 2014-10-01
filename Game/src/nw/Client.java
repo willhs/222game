@@ -9,50 +9,56 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import javax.swing.JFrame;
 
 public class Client{
-	public static void main(String[] args) throws IOException{
-		String playerName = "";
-		InputStream inStream = null;
-		OutputStream outStream = null;
+	private static Server server;
 
-		if(args.length == 3){
-			playerName = args[2];
-			Socket sock = new Socket(args[0], Integer.parseInt(args[1]));
-			inStream = sock.getInputStream();
-			outStream = sock.getOutputStream();
-		}else if(args.length == 1){
-			playerName = args[0];
+	public static void multiPlayer(Player player, String host, int port, GameWindow gw){	
+		try{
+			Socket sock = new Socket(host, port);
 
+			InputStream inStream = sock.getInputStream();
+			OutputStream outStream = sock.getOutputStream();
+
+			client(inStream, outStream, gw, player);
+		}catch(IOException e){
+			System.err.println(e);
+		}
+	}
+	public static void singlePlayer(Player player, GameWindow gw){ 
+		try{
 			PipedInputStream sIn = new PipedInputStream();
 			PipedOutputStream sOut = new PipedOutputStream();
-			inStream = new PipedInputStream(sOut);
-			outStream = new PipedOutputStream(sIn);
+			PipedInputStream inStream = new PipedInputStream(sOut);
+			PipedOutputStream outStream = new PipedOutputStream(sIn);
 
-			Server server = new Server(sIn, sOut);
+			server = new Server(sIn, sOut);
 			server.initialiseWorld();
 			server.start();
-		}else{
-			System.err.println("Usage: java Client [host] [port] playername");
-			System.exit(1);
+
+			client(inStream, outStream, gw, player);
+		}catch(IOException e){
+			System.err.println(e);
 		}
-
-		GameWindow gw = new GameWindow();
-		Queue<String> keyCodeQueue = gw.getKeyQueue();
+	}
+	private static void client(InputStream inStream, OutputStream outStream,
+									GameWindow gw, Player player) throws IOException{
 		ClientWorld world = null;
+		Queue<String> keyCodeQueue = gw.getKeyQueue();
 
-		Player player = new Player(playerName);
-
-		ObjectOutputStream out = new ObjectOutputStream(outStream);
-		out.flush();
-
-		BufferedInputStream bis = new BufferedInputStream(inStream);
-		ObjectInputStream in = new ObjectInputStream(bis);
-
-		Object received =  null;
-		Room currentRoom = null;
+		ObjectOutputStream out = null;
+		ObjectInputStream in = null;
 
 		try{
+			out = new ObjectOutputStream(outStream);
+			out.flush();
+
+			BufferedInputStream bis = new BufferedInputStream(inStream);
+			in = new ObjectInputStream(bis);
+
+			Object received =  null;
+			Room currentRoom = null;
 
 			while(true){
 				if(bis.available() != 0){
@@ -85,7 +91,6 @@ public class Client{
 				}
 
 				gw.repaint();
-
 				Thread.sleep(50);
 			}
 
@@ -98,6 +103,18 @@ public class Client{
 		}finally{
 			out.close();
 			in.close();
+		}
+	}
+	
+	public static void main(String[] args){
+		GameWindow gw = new GameWindow();
+		if(args.length == 3){
+			multiPlayer(new Player(args[2]), args[0], Integer.parseInt(args[1]), gw);
+		}else if(args.length == 0){
+			singlePlayer(new Player("TestPlayer"), gw);
+		}else{
+			System.err.println("Usage: java Client [host] [port] playername    or nothing");
+			System.exit(1);
 		}
 	}
 }
