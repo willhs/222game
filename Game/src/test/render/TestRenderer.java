@@ -39,7 +39,7 @@ public class TestRenderer extends JPanel{
 	public void rotateWithMouse(float mouseDragX, float mouseDragY) {
 		float rotateSpeed = 0.01f;
 		rotateAmounts = rotateAmounts.plus(
-				new Vector3D(mouseDragX*rotateSpeed , mouseDragY*rotateSpeed , 0)
+				new Vector3D(mouseDragX*rotateSpeed, mouseDragY*rotateSpeed, 0)
 		);
 
 		repaint();
