@@ -72,7 +72,7 @@ public class Client{
 							world = new World(placeList);
 							out.writeObject(world.getSetClientPlayer(player));
 						}else{
-							world.replaceCurrentRoom(currentRoom);
+							//world.replaceCurrentRoom(currentRoom);
 						}
 					}
 					else{
