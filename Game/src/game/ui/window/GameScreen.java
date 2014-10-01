@@ -24,6 +24,8 @@ import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
+import test.world.util.SimpleServerInterface;
+
 public class GameScreen implements GraphicsPane  {
 
 	//the menu drawn ontop on the game screen
@@ -51,13 +53,16 @@ public class GameScreen implements GraphicsPane  {
 	//inventory grid images
 	private BufferedImage[] inventoryImages;
 	//private BufferedImage selectedImage;
-	
-	
-	//world fields 
+
+
+	//world fields
 	private Room currentRoom;
 	private Player player;
-	
+
 	private Vector3D rotateVector;
+
+	//testing
+	private SimpleServerInterface server = new SimpleServerInterface();
 
 	public GameScreen(BlankPanel panel){
 		this.player = player;
@@ -108,8 +113,8 @@ public class GameScreen implements GraphicsPane  {
 	@Override
 	public void render(Graphics g){
 		//g.drawImage(testBackGroundImage, 0, 0, panel);
-		Renderer.render(g,rotateVector); //TODO wait for will to implement this method
-
+		//Renderer.render(g,rotateVector); //TODO wait for will to implement this method
+		Renderer.renderPlace(g,server.serverC.getPlaces().next(),rotateVector); //TODO wait for will to implement this method
 
 		if(currentMenu != null){
 			currentMenu.render(g);
@@ -144,6 +149,20 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu.keyPressed(keyEvent);
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
+		//temp remove
+		else if(keyEvent.equals("move up")){//temp
+			server.MakeMove("Up");
+		}
+		else if(keyEvent.equals("move down")){//temp
+			server.MakeMove("Down");
+		}
+		else if(keyEvent.equals("move left")){//temp
+			server.MakeMove("Left");
+		}
+		else if(keyEvent.equals("move right")){//temp
+			server.MakeMove("Right");
+		}
+		//end temp remove
 		else if(keyEvent.equals("inventory")){
 			currentMenu = new InventoryMenu(panel,this);
 		}

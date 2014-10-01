@@ -53,6 +53,8 @@ public class GameWindow extends JFrame{
 		setLocationRelativeTo(null);
 		setVisible(true);
 
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		//adds the main panel where everythin will be drawn on
 		add(blankPanel);
 
@@ -90,7 +92,7 @@ public class GameWindow extends JFrame{
 	public Player getPlayer(){
 		return this.player;
 	}
-	
+
 	public Room getRoom(){
 		return null;
 	}
