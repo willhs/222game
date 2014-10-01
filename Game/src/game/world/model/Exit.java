@@ -30,19 +30,35 @@ public abstract class Exit implements Drawable{
 		contectedPlaces.add(temp);
 	}
 
-
+	/**
+	 * Gets the name f the exit should be unique.
+	 */
 	public abstract String getName();
 
+	/**
+	 * Get the image name .... class unique.
+	 */
 	public abstract String getImageName();
 
+	/**
+	 * Checks if the room is locked.
+	 * @return
+	 */
 	public abstract boolean isLocked();
 
+	/**
+	 * unlocks the door if there are enought keys in the inventory.
+	 * @param inventory - the inventory of the player.
+	 * @return - if the door is able to be unlocked.
+	 */
 	public abstract boolean unlock(Inventory inventory);
 	
+	@Override
 	public Point3D getPosition(){
 		return contectedPlaces.get(0).position;
 	}
 	
+	@Override
 	public Point3D getPosition(Place place){
 		for(PlaceAndPosition other: contectedPlaces){
 			if (other.place.getName().equals(place.getName())){
@@ -66,6 +82,11 @@ public abstract class Exit implements Drawable{
 		return null;
 	}
 	
+	/**
+	 * 	Storage cless.
+	 *  @author Shane Brewer
+	 *
+	 */
 	private class PlaceAndPosition{
 		public final Place place;
 		public final Point3D position;

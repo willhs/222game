@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Handles all the client side modeling and some interation.
+ * @author Shane Brewer.
+ *
+ */
 public abstract class ClientWorld extends ServerWorld {
 
 	private float movmentScaler = 10.0f;
@@ -44,6 +49,9 @@ public abstract class ClientWorld extends ServerWorld {
 			command = "Server Move Name ( " + clientsPlayer.getName() + " ) Point "
 					+ newPosition.toString() + " Name ( "
 					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
+		}
+		if (action.equals("Interact")){
+			
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
@@ -90,6 +98,8 @@ public abstract class ClientWorld extends ServerWorld {
 	}
 
 	public void replaceCurrentPlace(Place place) {
+		place.removePlayer(clientsPlayer);
+		place.addPlayer(clientsPlayer);
 		currentPlace = place;
 	}
 
