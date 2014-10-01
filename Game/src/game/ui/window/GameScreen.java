@@ -25,6 +25,7 @@ import java.util.Queue;
 import javax.imageio.ImageIO;
 
 import test.world.util.SimpleServerInterface;
+import nw.Client;
 
 public class GameScreen implements GraphicsPane  {
 
@@ -56,16 +57,16 @@ public class GameScreen implements GraphicsPane  {
 
 
 	//world fields
-	private Room currentRoom;
 	private Player player;
 
 	private Vector3D rotateVector;
 
-	//testing
-	private SimpleServerInterface server = new SimpleServerInterface();
+	private Client client;
 
 	public GameScreen(BlankPanel panel){
 		this.player = player;
+		client = new Client(new Player("nicky"), panel);
+		client.start();
 		//this.currentRoom = room;
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
@@ -114,7 +115,9 @@ public class GameScreen implements GraphicsPane  {
 	public void render(Graphics g){
 		//g.drawImage(testBackGroundImage, 0, 0, panel);
 		//Renderer.render(g,rotateVector); //TODO wait for will to implement this method
-		Renderer.renderPlace(g,server.serverC.getPlaces().next(),rotateVector); //TODO wait for will to implement this method
+		if(GameWindow.currentRoom != null){
+			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector); //TODO wait for will to implement this method
+		}
 
 		if(currentMenu != null){
 			currentMenu.render(g);
@@ -151,16 +154,16 @@ public class GameScreen implements GraphicsPane  {
 		}
 		//temp remove
 		else if(keyEvent.equals("move up")){//temp
-			server.MakeMove("Up");
+			client.makeMove("Up");
 		}
 		else if(keyEvent.equals("move down")){//temp
-			server.MakeMove("Down");
+			client.makeMove("Down");
 		}
 		else if(keyEvent.equals("move left")){//temp
-			server.MakeMove("Left");
+			client.makeMove("Left");
 		}
 		else if(keyEvent.equals("move right")){//temp
-			server.MakeMove("Right");
+			client.makeMove("Right");
 		}
 		//end temp remove
 		else if(keyEvent.equals("inventory")){

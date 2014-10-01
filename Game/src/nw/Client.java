@@ -8,44 +8,54 @@ import java.net.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Queue;
-import javax.swing.JFrame;
+import java.awt.Component;
 
-public class Client{
+public class Client extends Thread{
 	private static Server server;
+	private static InputStream inStream;
+	private static OutputStream outStream;
+	private static Component frame;
+	private static Player player;
+	private static Queue<String> keyCodeQueue = new LinkedList<String>();
 
-	public static void multiPlayer(Player player, String host, int port, GameWindow gw){	
+	public Client(Player player, String host, int port, Component frame){
+		this.frame = frame;
+		this.player = player;
 		try{
 			Socket sock = new Socket(host, port);
 
-			InputStream inStream = sock.getInputStream();
-			OutputStream outStream = sock.getOutputStream();
-
-			client(inStream, outStream, gw, player);
+			inStream = sock.getInputStream();
+			outStream = sock.getOutputStream();
 		}catch(IOException e){
 			System.err.println(e);
 		}
 	}
-	public static void singlePlayer(Player player, GameWindow gw){ 
+
+	public Client(Player player, Component frame){ 
+		this.frame = frame;
+		this.player = player;
 		try{
 			PipedInputStream sIn = new PipedInputStream();
 			PipedOutputStream sOut = new PipedOutputStream();
-			PipedInputStream inStream = new PipedInputStream(sOut);
-			PipedOutputStream outStream = new PipedOutputStream(sIn);
+			inStream = new PipedInputStream(sOut);
+			outStream = new PipedOutputStream(sIn);
 
 			server = new Server(sIn, sOut);
 			server.initialiseWorld();
 			server.start();
-
-			client(inStream, outStream, gw, player);
 		}catch(IOException e){
 			System.err.println(e);
 		}
 	}
-	private static void client(InputStream inStream, OutputStream outStream,
-									GameWindow gw, Player player) throws IOException{
+
+	public static void makeMove(String move){
+		keyCodeQueue.add(move);
+	}
+
+	public void run(){
 		ClientWorld world = null;
-		Queue<String> keyCodeQueue = gw.getKeyQueue();
 
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
@@ -64,13 +74,13 @@ public class Client{
 				if(bis.available() != 0){
 					received = in.readObject();
 					if(received instanceof String){
-						System.out.println("Got: " + (String)received);
+						System.out.println("[Client] Got: " + (String)received);
 						world.applyCommand((String)received);
 					}
 					else if(received instanceof Room){
-						System.out.println("Got room!: " + received);
+						System.out.println("[Client] Got room!: " + received);
 						currentRoom = (Room)received;
-						gw.setRoom(currentRoom);
+						GameWindow.setRoom(currentRoom);
 
 						if(world==null){
 							List<Place> placeList = new ArrayList<Place>();
@@ -82,15 +92,18 @@ public class Client{
 						}
 					}
 					else{
-						System.out.println("No idea what this is: " + received);
+						System.out.println("[Client] No idea what this is: " + received);
 					}
 				}
 
-				if(keyCodeQueue.size() != 0){
-					out.writeObject(keyCodeQueue.poll());
+				if(keyCodeQueue.size() != 0 && world != null){
+					String action  = keyCodeQueue.poll();
+					String cmd = world.getCommand(action);
+					System.out.println("Got action " + action + " and cmd " + cmd);
+					out.writeObject(cmd);
 				}
 
-				gw.repaint();
+				frame.repaint();
 				Thread.sleep(50);
 			}
 
@@ -101,19 +114,21 @@ public class Client{
 		}catch(InterruptedException e){
 			System.err.println(e);
 		}finally{
-			out.close();
-			in.close();
+			try{
+				out.close();
+				in.close();
+			}catch(IOException e){System.err.println(e);}
 		}
 	}
 	
 	public static void main(String[] args){
 		GameWindow gw = new GameWindow();
 		if(args.length == 3){
-			multiPlayer(new Player(args[2]), args[0], Integer.parseInt(args[1]), gw);
+			new Client(new Player(args[2]), args[0], Integer.parseInt(args[1]), gw).start();
 		}else if(args.length == 0){
-			singlePlayer(new Player("TestPlayer"), gw);
+			new Client(new Player("TestPlayer"), gw).start();
 		}else{
-			System.err.println("Usage: java Client [host] [port] playername    or nothing");
+			System.err.println("Usage: java Client [host] [port] playername    [or nothing for single player]");
 			System.exit(1);
 		}
 	}
