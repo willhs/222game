@@ -59,6 +59,7 @@ public class LevelMaker{
 		// initialise trixels to make up a floor.
 		trixels = new HashSet<Trixel>();
 
+		Renderer.resetColour();
 		Floor floor = makeFloor();
 
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
@@ -79,8 +80,8 @@ public class LevelMaker{
 	 * @return
 	 */
 	private Floor makeFloor() {
-		int[] x = new int[]{100,600,600,100};
-		int[] z = new int[]{100,100,600,600};
+		int[] x = new int[]{100,1200,1200,100};
+		int[] z = new int[]{100,100,1200,1200};
 
 		Point3D[] points = new Point3D[x.length];
 		for (int i = 0; i < x.length; i++) {

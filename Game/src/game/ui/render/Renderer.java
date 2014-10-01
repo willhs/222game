@@ -41,6 +41,9 @@ public class Renderer {
 
 	private static final int FRAME_TOP = 600;
 
+	private static final long RANDOM_SEED = 15274910874912L;
+	public static Random randomColor;
+
 	/**
 	 * Temp render method which uses the SingleRoomWorldtest
 	 * @param g
@@ -56,7 +59,7 @@ public class Renderer {
 	 * @param place
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
-		randomColor = new Random(SEED);
+		resetColour();
 
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
@@ -185,7 +188,6 @@ public class Renderer {
 	 * @param transform
 	 */
 	public static void renderTrixels(Graphics g, Iterator<Trixel> trixels, Transform transform){
-		randomColor = new Random(SEED);
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -315,9 +317,6 @@ public class Renderer {
 		return new Transform[]{ translateToOrigin, rotate, translateBack };
 	}
 
-	private static final long SEED = 15274910874912L;
-	private static Random randomColor;
-
 	/**
 	 * @return random colour
 	 */
@@ -386,5 +385,9 @@ public class Renderer {
 			stars.add(new GameImage(Res.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
 		}
 		return stars;
+	}
+
+	public static void resetColour(){
+		randomColor = new Random(RANDOM_SEED);
 	}
 }

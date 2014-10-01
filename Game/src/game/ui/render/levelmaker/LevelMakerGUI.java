@@ -30,7 +30,10 @@ public class LevelMakerGUI extends JPanel{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		long start = System.currentTimeMillis();
 		Renderer.renderTrixels(g, levelMaker.getTrixels(), levelMaker.getLastTransform());
+		System.out.printf("time taken to transform and draw trixels: %d\n",
+				System.currentTimeMillis()-start);
 	}
 
 	public class WillMouseMotionListener extends MouseAdapter{
