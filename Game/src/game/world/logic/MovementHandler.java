@@ -42,7 +42,7 @@ public class MovementHandler {
 		if (checkItemCollision(player, place.getItems(), toIgnore)) {
 			return false;
 		}
-		if (checkPlayerCollision(player, place.getPlayers())) {
+		if (checkPlayerCollision(player, to, place.getPlayers())) {
 			return false;
 		}
 		player.move(to);
@@ -104,17 +104,17 @@ public class MovementHandler {
 	 *            - players in the place.
 	 * @return - true if the player collides
 	 */
-	private static boolean checkPlayerCollision(Player player,
+	private static boolean checkPlayerCollision(Player player, Point3D playerPoint,
 			Iterator<Player> players) {
 		Rectangle3D playerBox = player.getBoundingBox();
-		Point3D playerPoint = player.getPosition();
 		while (players.hasNext()) {
 			Player otherPlayer = players.next();
 			Rectangle3D otherPlayerBox = otherPlayer.getBoundingBox();
 			Point3D otherPlayerPoint = otherPlayer.getPosition();
 			if (!player.equals(otherPlayer)
-					&& playerBox.collisionDetection(playerPoint,
-							otherPlayerBox, otherPlayerPoint)) {
+					&& (playerBox.collisionDetection(playerPoint,
+							otherPlayerBox, otherPlayerPoint) || playerPoint
+							.equals(otherPlayerPoint))) {
 				return true;
 			}
 		}

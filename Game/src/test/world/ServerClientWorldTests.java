@@ -49,8 +49,7 @@ public class ServerClientWorldTests {
 	public void movePlayerTest() {
 		ServerWorld serverWorld = new SingleRoomWorldTest().world;
 		ClientWorld clientWorld = new SingleRoomWorldTest().world;
-		Player p = new Player(
-				"FattyBoomBoom");
+		Player p = new Player("FattyBoomBoom");
 		String command = clientWorld.getSetClientPlayer(p);
 
 		List<String> commands = serverWorld.applyCommand(command);
@@ -59,21 +58,16 @@ public class ServerClientWorldTests {
 		}
 		String cmd = clientWorld.getCommand("Up");
 		System.out.println(p.getPosition());
-		System.out.println(cmd);
-
 		commands = serverWorld.applyCommand(cmd);
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
 		System.out.println(p.getPosition());
 		Iterator<Player> players = clientWorld.getPlayers();
-		System.out.println(players);
 		boolean um = false;
 		while(players.hasNext()){
 			Player pp = players.next();
 			if (pp.getName().equals("FattyBoomBoom")){
-				assertTrue(true);
-				System.out.println(pp.getPosition());
 				um = true;
 			}
 		}
