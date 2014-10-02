@@ -96,7 +96,6 @@ public class InventoryMenu implements GraphicsPane {
 	 *grid
 	 * */
 	public void setUpInventoryFromPlayer(){
-
 		int i = 0;
 		for(Item item : player.getInventory()){
 			if(i >=  inventoryImages.length)return;//TODO check with someone
@@ -242,9 +241,7 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void render(Graphics g) {
-		System.out.println(prevTime - System.currentTimeMillis());
 		if(prevTime - System.currentTimeMillis() < -500 || displayingInfo){
-			System.out.println("LESS");
 			displayMenu(g);
 			displayingInfo = true;
 		}
@@ -263,7 +260,6 @@ public class InventoryMenu implements GraphicsPane {
 				displayMenu(g);
 				displayingInfo = true;
 			}
-
 		}
 
 	}

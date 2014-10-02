@@ -170,6 +170,12 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 	@Override
 	public void keyPressed(String keyEvent) {
+		KeyEvent e = keyInputManagment.getLastKeyEvent();
+
+		if(e.getKeyCode() == KeyEvent.VK_TAB){
+			System.out.println("Tab");
+			handleTabPress();
+		}
 		if(super.nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);
 		}
@@ -189,6 +195,8 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	 *Handles the text being entered from a user into a text box
 	 * */
 	public void handleTextBoxKeyPress(String keyEvent, textBoxWrapper text){
+		KeyEvent e = keyInputManagment.getLastKeyEvent();
+
 		String textBox = text.s;
 		if(keyEvent.equals("backspace")){
 			if(textBox.length() == 0)return;//make sure we dont try and shortan an empty string
@@ -198,7 +206,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			return;
 		}
 		if(textBox.length() >  maxTextLenght)return;//max size of name
-		KeyEvent e = keyInputManagment.getLastKeyEvent();
 		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());//TODO may need to fix
 
 		//should make it a number or letter i think
@@ -216,6 +223,21 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			}
 			textBox = textBox.concat(key).toLowerCase();//add to the end of the string
 			text.s = textBox;
+		}
+	}
+
+	public void handleTabPress(){
+		if(nameBoxSelected){
+			hostSelected = true;
+			nameBoxSelected = false;
+		}
+		else if(hostSelected){
+			portSelected = true;
+			hostSelected = false;
+		}
+		else if(portSelected){
+			nameBoxSelected = true;
+			portSelected = false;
 		}
 	}
 
