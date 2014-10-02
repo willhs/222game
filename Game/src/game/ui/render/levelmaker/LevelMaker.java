@@ -1,7 +1,6 @@
 package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
-import game.ui.render.Res;
 import game.ui.render.util.GamePolygon;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
@@ -14,7 +13,9 @@ import game.world.dimensions.Vector3D;
 import game.world.util.Floor;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JFrame;
+import javax.swing.JFileChooser;
 
 /**
  * @author hardwiwill
@@ -120,19 +121,7 @@ public class LevelMaker{
 		rotateAmounts = changeRotateAmount(rotateX, rotateY);
 		Transform trans = makeTransform(rotateAmounts);
 
-		// reset rotated trixels
-		rotatedFaces = new ArrayList<TrixelFace>();
-
-		for (Trixel trixel : trixels){
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				face.transform(trans);
-				rotatedFaces.add(face);
-			}
-		}
-
-		// sort in order of closest trixels
-		Collections.sort(rotatedFaces, new ZComparator());
-		Collections.reverse(rotatedFaces);
+		updateTrixelFaces();
 
 		lastTransform = trans;
 	}
@@ -161,9 +150,26 @@ public class LevelMaker{
 		if (face != null){
 			System.out.println("z: "+face.getZ());
 			trixels.add(makeTrixelNextToFace(face));
-			highlightTrixel(face.getParentTrixel());
+		//	highlightTrixel(face.getParentTrixel());
+			updateTrixelFaces();
 		}
 
+	}
+
+	private void updateTrixelFaces() {
+		// reset rotated trixels
+		rotatedFaces = new ArrayList<TrixelFace>();
+
+		for (Trixel trixel : trixels){
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				face.transform(lastTransform);
+				rotatedFaces.add(face);
+			}
+		}
+
+		// sort in order of closest trixels
+		Collections.sort(rotatedFaces, new ZComparator());
+		Collections.reverse(rotatedFaces);
 	}
 
 	TrixelFace getTrixelFaceAtViewPoint(int x, int y){
@@ -207,6 +213,33 @@ public class LevelMaker{
 
 	Transform getLastTransform() {
 		return lastTransform;
+	}
+
+	/**
+	 * writes all trixels to a file
+	 */
+	void writeTrixelsToFile(){
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		final int USER_SELECTION = chooser.showSaveDialog(null);
+
+		File fileToSave;
+
+		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
+			fileToSave =  chooser.getSelectedFile();
+		} else return;
+
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(fileToSave, "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		for (Trixel trixel : trixels){
+			writer.println(trixel);
+		}
+
+		writer.close();
 	}
 
 }

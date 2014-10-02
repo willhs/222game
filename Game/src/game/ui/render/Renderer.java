@@ -42,7 +42,7 @@ public class Renderer {
 
 	private static final int FRAME_TOP = 600;
 
-	private static final long RANDOM_SEED = 15274910874912L;
+	public static final long RANDOM_SEED = 15274910874912L;
 	public static Random randomColor;
 
 	/**
@@ -239,169 +239,169 @@ public class Renderer {
 		}
 	}
 
-
 	// -------------- HELPER METHODS -----------------------
-	//
-	/**
-	 * @return array of lines which draw the axis
-	 */
-	private static Line3D[] makeAxisLines() {
+		//
+		/**
+		 * @return array of lines which draw the axis
+		 */
+		private static Line3D[] makeAxisLines() {
 
-		final int LINE_LENGTH = 1000;
-		Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(LINE_LENGTH,0,			0));
-		Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			LINE_LENGTH,0));
-		Line3D zLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			0,			LINE_LENGTH));
-		return new Line3D[]{xLine, yLine, zLine};
-	}
-	/**
-	 * @param face
-	 * @return game polygon representing a trixel face
-	 */
-	public static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
-		Point3D[] vertices = face.getVertices();
-		int[] xpoints = new int[vertices.length];
-		int[] ypoints = new int[vertices.length];
-
-		float zTotal = 0;
-		for (int i=0; i < vertices.length; i++){
-			xpoints[i] = (int)vertices[i].getX();
-			ypoints[i] = (int)vertices[i].getY();
-			zTotal += (int)vertices[i].getZ();
+			final int LINE_LENGTH = 1000;
+			Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(LINE_LENGTH,0,			0));
+			Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			LINE_LENGTH,0));
+			Line3D zLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			0,			LINE_LENGTH));
+			return new Line3D[]{xLine, yLine, zLine};
 		}
-		float zAverage = zTotal/vertices.length;
-		Color shadedColour = face.makeShadedColour(getTestLightSources(), new Color(20, 20, 20));
-		return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
-	}
+		/**
+		 * @param face
+		 * @return game polygon representing a trixel face
+		 */
+		public static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
+			Point3D[] vertices = face.getVertices();
+			int[] xpoints = new int[vertices.length];
+			int[] ypoints = new int[vertices.length];
 
-	private static Iterator<LightSource> getTestLightSources() {
-		List<LightSource> lights = new ArrayList<LightSource>();
-		Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
-		lights.add(new LightSource(0.8f, dir, new Color(150, 150, 250)));
-		return lights.iterator();
-	}
-	/**
-	 * rotates a transformable object around a point given a viewer direction
-	 * @param object
-	 * @param viewerDirection
-	 */
-	public static Transform makeTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
-
-		Transform translateToOrigin = Transform.newTranslation(new Vector3D(pivotPoint.negate()));
-		Transform translateBack = Transform.newTranslation(new Vector3D(pivotPoint));
-
-		Transform rotate =
-				Transform.newZRotation(rotateAmount.z).compose(
-				Transform.newYRotation(rotateAmount.y).compose(
-				Transform.newXRotation(rotateAmount.x)
-		));
-
-		Transform viewSpaceTranslation =
-				Transform.newTranslation(viewSpaceTranslateDist);
-
-		return 	viewSpaceTranslation.compose(
-				ISOMETRIC_ROTATION.compose(
-				translateBack.compose(
-				rotate.compose(
-				translateToOrigin
-		))));
-	}
-
-	/**
-	 * @param drawable
-	 * @return whether a Drawable object should be represented as an image.
-	 */
-	private static boolean isImage(Drawable drawable) {
-		return Res.isImage(drawable.getImageName());
-	}
-
-
-	/**
-	 * @param dir
-	 * @param point
-	 * @return array of transforms necessary to perform rotation around the point
-	 */
-	public static Transform[] getRotateAroundPointTransforms(Vector3D dir, Point3D point){
-		Transform translateToOrigin = Transform.newTranslation(-point.getX(), -point.getY(), -point.getZ());
-		Transform rotate = Transform.newYRotation(dir.getY()).compose(Transform.newXRotation(dir.getX())).compose(Transform.newZRotation(dir.getZ()));
-		Transform translateBack = Transform.newTranslation(point.getX(), point.getY(), point.getZ());
-		return new Transform[]{ translateToOrigin, rotate, translateBack };
-	}
-
-	/**
-	 * @return random colour
-	 */
-	public static Color getTrixelColour(){
-		int r = 100 + randomColor.nextInt(100);
-		int g = 100 + randomColor.nextInt(100);
-		int b = 200;//
-
-		return new Color(r, g, b);
-	}
-
-	/**
-	 * Temporary (hopefully)
-	 * makes a java.awt.Polygon from a Floor object.
-	 * @param floor
-	 * @return a polygon representing the floor
-	 */
-	public static Polygon floorToVerticalPolygon(Floor floor){
-		Point3D[] floorPoints = floor.getPoints();
-		int[] xpoints = new int[floorPoints.length];
-		int[] ypoints = new int[floorPoints.length];
-
-		for ( int i = 0; i < floorPoints.length; i++){
-			Point3D point = floorPoints[i];
-			xpoints[i] = (int)point.getX();
-			ypoints[i] = (int)point.getZ();
+			float zTotal = 0;
+			for (int i=0; i < vertices.length; i++){
+				xpoints[i] = (int)vertices[i].getX();
+				ypoints[i] = (int)vertices[i].getY();
+				zTotal += (int)vertices[i].getZ();
+			}
+			float zAverage = zTotal/vertices.length;
+			Color shadedColour = face.makeShadedColour(getTestLightSources(), new Color(20, 20, 20));
+			return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
 		}
-		return new Polygon(xpoints, ypoints, floorPoints.length);
-	}
 
-	/**
-	 * @param floor
-	 * @return the center point or centroid of the floor
-	 */
-	public static Point3D getFloorCentroid(Floor floor){
-		float xSum = 0;
-		float ySum = 0;
-		float zSum = 0;
-		Point3D[] vertices = floor.getPoints();
-		for (Point3D vertex : vertices){
-			xSum += vertex.x;
-			ySum += vertex.y;
-			zSum += vertex.z;
+		private static Iterator<LightSource> getTestLightSources() {
+			List<LightSource> lights = new ArrayList<LightSource>();
+			Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
+			lights.add(new LightSource(0.8f, dir, new Color(150, 150, 250)));
+			return lights.iterator();
 		}
-		return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
-	}
+		/**
+		 * rotates a transformable object around a point given a viewer direction
+		 * @param object
+		 * @param viewerDirection
+		 */
+		public static Transform makeTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
 
-	/**
-	 * Testing making many stars
-	 * @return
-	 */
-	private static List<GameImage> makeStars(){
-		List<GameImage> stars = new ArrayList<GameImage>();
+			Transform translateToOrigin = Transform.newTranslation(new Vector3D(pivotPoint.negate()));
+			Transform translateBack = Transform.newTranslation(new Vector3D(pivotPoint));
 
-		int maxX = 500;
-		int maxY = 500;
-		int maxZ = 500;
+			Transform rotate =
+					Transform.newZRotation(rotateAmount.z).compose(
+					Transform.newYRotation(rotateAmount.y).compose(
+					Transform.newXRotation(rotateAmount.x)
+			));
 
-		int minSize = 1;
-		int maxSize = 20;
+			Transform viewSpaceTranslation =
+					Transform.newTranslation(viewSpaceTranslateDist);
 
-		int starCount = 1000;
-		for (int starNum = 0; starNum < starCount; starNum++){
-			float x = randomColor.nextInt(maxX*2)-maxZ;
-			float y = randomColor.nextInt(maxY*2)-maxZ;
-			float z = randomColor.nextInt(maxZ*2)-maxZ;
-
-			int size = randomColor.nextInt(maxSize-minSize)+minSize;
-
-			stars.add(new GameImage(Res.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
+			return 	viewSpaceTranslation.compose(
+					ISOMETRIC_ROTATION.compose(
+					translateBack.compose(
+					rotate.compose(
+					translateToOrigin
+			))));
 		}
-		return stars;
-	}
 
-	public static void resetColour(){
-		randomColor = new Random(RANDOM_SEED);
-	}
+		/**
+		 * @param drawable
+		 * @return whether a Drawable object should be represented as an image.
+		 */
+		private static boolean isImage(Drawable drawable) {
+			return Res.isImage(drawable.getImageName());
+		}
+
+
+		/**
+		 * @param dir
+		 * @param point
+		 * @return array of transforms necessary to perform rotation around the point
+		 */
+		public static Transform[] getRotateAroundPointTransforms(Vector3D dir, Point3D point){
+			Transform translateToOrigin = Transform.newTranslation(-point.getX(), -point.getY(), -point.getZ());
+			Transform rotate = Transform.newYRotation(dir.getY()).compose(Transform.newXRotation(dir.getX())).compose(Transform.newZRotation(dir.getZ()));
+			Transform translateBack = Transform.newTranslation(point.getX(), point.getY(), point.getZ());
+			return new Transform[]{ translateToOrigin, rotate, translateBack };
+		}
+
+		/**
+		 * @return random colour
+		 */
+		public static Color getTrixelColour(){
+			int r = 100 + randomColor.nextInt(100);
+			int g = 100 + randomColor.nextInt(100);
+			int b = 200;//
+
+			return new Color(r, g, b);
+		}
+
+		/**
+		 * Temporary (hopefully)
+		 * makes a java.awt.Polygon from a Floor object.
+		 * @param floor
+		 * @return a polygon representing the floor
+		 */
+		public static Polygon floorToVerticalPolygon(Floor floor){
+			Point3D[] floorPoints = floor.getPoints();
+			int[] xpoints = new int[floorPoints.length];
+			int[] ypoints = new int[floorPoints.length];
+
+			for ( int i = 0; i < floorPoints.length; i++){
+				Point3D point = floorPoints[i];
+				xpoints[i] = (int)point.getX();
+				ypoints[i] = (int)point.getZ();
+			}
+			return new Polygon(xpoints, ypoints, floorPoints.length);
+		}
+
+		/**
+		 * @param floor
+		 * @return the center point or centroid of the floor
+		 */
+		public static Point3D getFloorCentroid(Floor floor){
+			float xSum = 0;
+			float ySum = 0;
+			float zSum = 0;
+			Point3D[] vertices = floor.getPoints();
+			for (Point3D vertex : vertices){
+				xSum += vertex.x;
+				ySum += vertex.y;
+				zSum += vertex.z;
+			}
+			return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
+		}
+
+		/**
+		 * Testing making many stars
+		 * @return
+		 */
+		private static List<GameImage> makeStars(){
+			List<GameImage> stars = new ArrayList<GameImage>();
+
+			int maxX = 500;
+			int maxY = 500;
+			int maxZ = 500;
+
+			int minSize = 1;
+			int maxSize = 20;
+
+			int starCount = 1000;
+			for (int starNum = 0; starNum < starCount; starNum++){
+				float x = randomColor.nextInt(maxX*2)-maxZ;
+				float y = randomColor.nextInt(maxY*2)-maxZ;
+				float z = randomColor.nextInt(maxZ*2)-maxZ;
+
+				int size = randomColor.nextInt(maxSize-minSize)+minSize;
+
+				stars.add(new GameImage(Res.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
+			}
+			return stars;
+		}
+
+		public static void resetColour(){
+			randomColor = new Random(RANDOM_SEED);
+		}
+
 }

@@ -36,6 +36,10 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	private int startY = 70;
 	private int maxTextLenght = 30;
 
+
+
+
+
 	public MultiCharacterSelectionMenu(BlankPanel panel) {
 		super(panel);
 
@@ -169,15 +173,14 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		if(super.nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);
 		}
-		if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
-
-			panel.setMenu(new MainMenu(panel));
-		}
 		else if(hostSelected){
 			handleTextBoxKeyPress(keyEvent, hostString);
 		}
 		else if(portSelected){
 			handleTextBoxKeyPress(keyEvent, portString);
+		}
+		else if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
+			panel.setMenu(new MainMenu(panel));
 		}
 	}
 
