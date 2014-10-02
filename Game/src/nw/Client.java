@@ -122,7 +122,7 @@ public class Client extends Thread{
 						world = (World)received;//Save it
 						GameWindow.setRoom((Room)world.getPlaces().next());//Set the gamewindow's room for rendering
 						out.writeObject(world.getSetClientPlayer(player));//Add our player to the server world
-					else{
+					}else{
 						System.out.println("[Client] No idea what this is: " + received);
 					}
 				}
