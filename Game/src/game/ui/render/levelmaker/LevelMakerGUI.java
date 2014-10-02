@@ -2,11 +2,15 @@ package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class LevelMakerGUI extends JPanel{
@@ -21,7 +25,17 @@ public class LevelMakerGUI extends JPanel{
 		addMouseMotionListener(listener);
 
 		levelMaker = new LevelMaker();
+
 		setBackground(Color.BLACK);
+		setLayout(new BorderLayout());
+
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				levelMaker.writeTrixelsToFile();
+			}
+		});
+		add(saveButton, BorderLayout.NORTH);
 	}
 
 	private void dealWithMouseDragged(int dx, int dy) {
