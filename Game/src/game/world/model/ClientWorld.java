@@ -96,7 +96,8 @@ public abstract class ClientWorld extends ServerWorld {
 		Player player = getPlayerByName(playerName);
 		player.move(playerPosition);
 	}
-	public Place getCurrentPlace(){
+
+	public Place getCurrentPlace() {
 		return currentPlace;
 	}
 
@@ -141,8 +142,7 @@ public abstract class ClientWorld extends ServerWorld {
 			this.addPlayer(clientsPlayer);
 			clientsPlayer.move(position);
 			place.addPlayer(clientsPlayer);
-		}
-		else {
+		} else {
 			Player player = new Player(name);
 			this.addPlayer(player);
 			getPlayerByName(name).move(position);
@@ -159,12 +159,12 @@ public abstract class ClientWorld extends ServerWorld {
 			Exit temp = exits.next();
 			if (MovementHandler.checkProximity(clientsPlayer.getPosition(),
 					clientsPlayer.getBoundingBox(), temp.getPosition(place),
-					temp.getBoundingBox()))
-				;
+					temp.getBoundingBox())) {
 
-			command = "Server Exit Name ( " + clientsPlayer.getName()
-					+ " ) Name ( " + temp.getName() + " ) Name ( "
-					+ place.getName() + " )";
+				command = "Server Exit Name ( " + clientsPlayer.getName()
+						+ " ) Name ( " + temp.getName() + " ) Name ( "
+						+ place.getName() + " )";
+			}
 
 		}
 		return command;

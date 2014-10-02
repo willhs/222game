@@ -162,6 +162,7 @@ public class MovementHandler {
 		Place otherPlace = exit.getOtherPlace(place);
 		place.removePlayer(player);
 		otherPlace.addPlayer(player);
+		player.move(findExitPosition(player, exit, otherPlace));
 		return true;
 	}
 
@@ -185,6 +186,11 @@ public class MovementHandler {
 			return true;
 		}
 		return false;
+	}
+
+	private static Point3D findExitPosition(Player player, Exit exit, Place place){
+
+		return null;
 	}
 	// ===============================END===================================//
 
