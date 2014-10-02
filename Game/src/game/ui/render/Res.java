@@ -119,7 +119,7 @@ public class Res {
 	 * @return whether there is an image associated with this name
 	 */
 	public static boolean isImage(String name){
-		return true; // TODO: not this
+		return images.containsKey(name);
 	}
 
 
