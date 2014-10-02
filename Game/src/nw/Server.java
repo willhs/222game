@@ -83,7 +83,7 @@ public class Server extends Thread{
 			long time = System.currentTimeMillis();//Save the time for interval broadcasts
 
 			synchronized(world){
-				out.writeObject(world.getPlaces().next());//Send the whole world to the client
+				out.writeObject(world);//Send the whole world to the client
 			}
 			while(true){//Forever:
 	
