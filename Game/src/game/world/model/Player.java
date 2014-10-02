@@ -50,7 +50,7 @@ public class Player implements Character{
 	 * @param newPosition - new position that the player should now be in.
 	 */
 	public void move(Point3D newPosition){
-		direction = Point3D.subtractPoint3D(newPosition, position).unitVector();
+		//direction = Point3D.subtractPoint3D(newPosition, position).unitVector();
 		position = newPosition;
 	}
 
