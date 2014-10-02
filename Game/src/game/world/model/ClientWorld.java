@@ -121,15 +121,27 @@ public abstract class ClientWorld extends ServerWorld {
 	 * @return - return true if the player was moved.
 	 */
 	private boolean setClientPlayer(Scanner scan) {
+		while (!scan.hasNext("Name")) {
+			scan.next();
+		}
+		String name = Parser.parseName(scan);
 		while (!scan.hasNext("Position")) {
 			scan.next();
 		}
 		Point3D position = Parser.parsePosition(scan);
 		Place place = getStartPlace();
-		currentPlace = place;
-		this.addPlayer(clientsPlayer);
-		clientsPlayer.move(position);
-		place.addPlayer(clientsPlayer);
+		if (name.equals(clientsPlayer.name)) {
+			currentPlace = place;
+			this.addPlayer(clientsPlayer);
+			clientsPlayer.move(position);
+			place.addPlayer(clientsPlayer);
+		}
+		else {
+			Player player = new Player(name);
+			this.addPlayer(player);
+			getPlayerByName(name).move(position);
+			place.addPlayer(player);
+		}
 		return true;
 	}
 
@@ -141,7 +153,8 @@ public abstract class ClientWorld extends ServerWorld {
 			Exit temp = exits.next();
 			if (MovementHandler.checkProximity(clientsPlayer.getPosition(),
 					clientsPlayer.getBoundingBox(), temp.getPosition(place),
-					temp.getBoundingBox()));
+					temp.getBoundingBox()))
+				;
 
 			command = "Server Exit Name ( " + clientsPlayer.getName()
 					+ " ) Name ( " + temp.getName() + " ) Name ( "
