@@ -135,10 +135,10 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			handleTextBoxKeyPress(keyEvent, portString);
 		}
 	}
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * */
 	public void handleTextBoxKeyPress(String keyEvent, textBoxWrapper text){
 		String textBox = text.s;
@@ -154,15 +154,23 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());//TODO may need to fix
 
 		//should make it a number or letter i think
-		if(key.length() == 1 || keyEvent.equals("space")){
+		if(key.length() == 1 || keyEvent.equals("space") || e.getKeyCode() == KeyEvent.VK_MINUS){
 			if(keyEvent.equals("space")){
 				textBox = textBox.concat(" ").toLowerCase();
+				text.s = textBox;
+				return;
+			}
+			else if(e.getKeyCode() == KeyEvent.VK_MINUS){
+				System.out.println("MINUS");
+				textBox = textBox.concat("-");
 				text.s = textBox;
 				return;
 			}
 			textBox = textBox.concat(key).toLowerCase();//add to the end of the string
 			text.s = textBox;
 		}
+
+
 	}
 
 	class textBoxWrapper{
