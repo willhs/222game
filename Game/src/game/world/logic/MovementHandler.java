@@ -45,8 +45,24 @@ public class MovementHandler {
 		if (checkPlayerCollision(player, to, place.getPlayers())) {
 			return false;
 		}
+		if (checkExitCollision(player, to, place,  place.getExits())){
+
+		}
 		player.move(to);
 		return true;
+	}
+
+	private static boolean checkExitCollision(Player player, Point3D playerPoint, Place place,
+			Iterator<Exit> exits) {
+		Rectangle3D playerBox = player.getBoundingBox();
+		while (exits.hasNext()) {
+			Exit exit = exits.next();
+			if (playerBox.collisionDetection(playerPoint,
+					exit.getBoundingBox(), exit.getPosition(place))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -139,6 +155,7 @@ public class MovementHandler {
 		}
 		if (exit.isLocked()) {
 			if (!exit.unlock(player.getInventory())) {
+				System.out.println();
 				return false;
 			}
 		}
@@ -164,6 +181,7 @@ public class MovementHandler {
 				.getWidth()) / 2)
 				&& (Math.abs(pointOne.z - pointTwo.z) <= 5 + (boundingOne
 						.getLength() + boundingTwo.getLength()) / 2)) {
+			System.out.println("Make it here");
 			return true;
 		}
 		return false;

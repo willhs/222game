@@ -7,9 +7,9 @@ import java.util.List;
 
 /**
  * Door. Is a way to exit a place should always have two exits.
- * 
+ *
  * @author Shane Brewer
- * 
+ *
  */
 public class Door extends Exit {
 
@@ -18,7 +18,7 @@ public class Door extends Exit {
 	private static final Rectangle3D boundingBox = new Rectangle3D(30, 30, 30);
 
 	public Door(String name, Place placeOne, Point3D positionOne, Place placeTwo, Point3D positionTwo) {
-		super(placeOne, positionOne, placeTwo, positionOne);
+		super(placeOne, positionOne, placeTwo, positionTwo);
 		this.name = name;
 		this.imageName = "Door";
 	}

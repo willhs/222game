@@ -52,12 +52,12 @@ public abstract class Exit implements Drawable{
 	 * @return - if the door is able to be unlocked.
 	 */
 	public abstract boolean unlock(Inventory inventory);
-	
+
 	@Override
 	public Point3D getPosition(){
 		return contectedPlaces.get(0).position;
 	}
-	
+
 	@Override
 	public Point3D getPosition(Place place){
 		for(PlaceAndPosition other: contectedPlaces){
@@ -81,7 +81,7 @@ public abstract class Exit implements Drawable{
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 	Storage cless.
 	 *  @author Shane Brewer
