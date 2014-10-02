@@ -1,12 +1,13 @@
 package game.world.dimensions;
 
+import java.io.Serializable;
 
 
 /**
  * @author pondy & will. pondy wrote most of this class.
  * Represents NOW IMMUTABLE a vector with 3d
  */
-public class Vector3D{
+public class Vector3D implements Serializable{
 	// I made a float version of this class so that vectors could be used in the
 	// transform class and so it could
 	// be faster for the 3d rendering

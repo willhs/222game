@@ -4,12 +4,14 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Shane Brewer
  *
  */
-public class Player implements Character{
+public class Player implements Character, Serializable{
 
 	public final String name;
 	private final Inventory inventory;

@@ -1,6 +1,7 @@
 package game.world.dimensions;
 import java.io.Serializable;
 
+import java.io.Serializable;
 /**
  * @author pondy & will A NOW IMMUTABLE representation of a 3d point
  */
