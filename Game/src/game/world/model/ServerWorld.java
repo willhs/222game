@@ -32,7 +32,7 @@ public abstract class ServerWorld implements Serializable {
 
 	/**
 	 * getPlaces method returns all the places in the form of a iterator
-	 * 
+	 *
 	 * @return - iterator over the list of places.
 	 */
 	public abstract Iterator<Place> getPlaces();
@@ -40,14 +40,14 @@ public abstract class ServerWorld implements Serializable {
 	/**
 	 * getPlayers method returns all the players that are in the list in the
 	 * form of a iterator
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract Iterator<Player> getPlayers();
 
 	/**
 	 * This method will return the place that the player is currently in.
-	 * 
+	 *
 	 * @param player
 	 *            - the player that will be used to find the room.
 	 * @return -returns the place the player is currently.
@@ -57,7 +57,7 @@ public abstract class ServerWorld implements Serializable {
 	/**
 	 * This method will return a iterator of players in a place. not really
 	 * needed if you have the place but added.
-	 * 
+	 *
 	 * @param place
 	 *            - place that the players are in.
 	 * @return - returns the list of players in that place.
@@ -66,7 +66,7 @@ public abstract class ServerWorld implements Serializable {
 
 	/**
 	 * Finds a place in the game world for the player.
-	 * 
+	 *
 	 * @param player
 	 *            - player that is to be added to the fame world.
 	 * @return TODO
@@ -89,7 +89,7 @@ public abstract class ServerWorld implements Serializable {
 		Player player = Parser.parsePlayer(scan);
 		if (addPlayerToGameWorld(player)) {
 			Place place = getPlaceOfPlayer(player);
-			String newCommand = "Client PlayerPlacement  Position ( "
+			String newCommand = "Client PlayerPlacement Name ( "+player.name+" ) Position ( "
 					+ player.getPosition().toString() + " )";
 			commands.add(newCommand);
 		}
