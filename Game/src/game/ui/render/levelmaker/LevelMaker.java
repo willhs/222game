@@ -1,6 +1,7 @@
 package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
+import game.ui.render.Res;
 import game.ui.render.util.GamePolygon;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
@@ -55,6 +56,8 @@ public class LevelMaker{
 	private Point3D trixelsCentroid;
 
 	public LevelMaker(){
+
+		Res.readInAllCommonImages();
 
 		// initialise trixels to make up a floor.
 		trixels = new HashSet<Trixel>();

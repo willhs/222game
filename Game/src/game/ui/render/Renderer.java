@@ -364,6 +364,10 @@ public class Renderer {
 		return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
 	}
 
+	/**
+	 * Testing making many stars
+	 * @return
+	 */
 	private static List<GameImage> makeStars(){
 		List<GameImage> stars = new ArrayList<GameImage>();
 
