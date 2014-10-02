@@ -18,6 +18,8 @@ import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 import game.ui.window.keyInputManagment;
+import game.world.dimensions.Point3D;
+import game.world.model.Key;
 import game.world.model.Player;
 
 public class CharacterSelectionMenu implements GraphicsPane{
@@ -27,7 +29,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	//button fields
 	private int selectedButton;
 
-	private Rectangle[] buttons;
+	protected Rectangle[] buttons;
 	private String[] buttonNames;
 	private int numbOfButtons = 2;
 
@@ -179,10 +181,12 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 	@Override
 	public void keyPressed(String keyEvent) {
+		if(keyEvent.equals("enter")){
+			buttonPressed();
+		}
 		if(nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);
 		}
-
 	}
 
 	public void handleNameBoxKeyPress(String keyEvent){
@@ -249,10 +253,11 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 		Player player = new Player("name");
 		//player.setImage("char1");
+		player.addItem(new Key("Epic key of Awesome", new Point3D(0, 0, 0)));
+		player.addItem(new Key("Epic key of Awesome 2", new Point3D(0, 0, 0)));
+
 		Client client = new Client(player,panel);
 		panel.setMenu(new GameScreen(panel, client,player));
-
-
 	}
 
 	/**

@@ -1,9 +1,12 @@
 package game.ui.window.menus;
 
+import game.ui.render.Res;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.world.model.Item;
+import game.world.model.Player;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,9 +18,13 @@ import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public class InventoryMenu implements GraphicsPane {
 	private GameScreen game;
 	private BlankPanel panel;
@@ -55,16 +62,17 @@ public class InventoryMenu implements GraphicsPane {
 	private int currMouseX;
 
 
-
+	private Player player;
 
 
 	/**
 	 *The constructor for the InventoryMenu
 	 * */
-	public InventoryMenu(BlankPanel panel, GameScreen game){
+	public InventoryMenu(BlankPanel panel, GameScreen game, Player player){
 		this.panel = panel;
 		this.game = game;
-		this.backColor = new Color(0f,0f,0f,0.5f);
+		this.player = player;
+		this.backColor = MenuUtil.BLACK_TRAN;
 
 		this.startX = (GameWindow.FRAME_WIDTH/2) - (width/2);//places the frame in the middle of the screen
 		this.frame = new Rectangle(startX, startY, width, GameWindow.FRAME_HEIGHT - (startY*2));//creates the frame as a rectangle
@@ -76,6 +84,24 @@ public class InventoryMenu implements GraphicsPane {
 
 		setCharacterInventory();
 		loadImages();
+		setUpInventoryFromPlayer();
+
+	}
+
+	/**
+	 *Gets the inventory from the player and places it in the inventory
+	 *grid
+	 * */
+	public void setUpInventoryFromPlayer(){
+
+		int i = 0;
+		for(Item item : player.getInventory()){
+			if(i >=  inventoryImages.length)return;//TODO check with someone
+			System.out.println("inventory");
+			inventoryImages[i] = Res.getImageFromName(item.getImageName());
+			inventoryImages[i] = MenuUtil.scale(inventoryImages[i], gridSize, gridSize);
+			i++;
+		}
 	}
 
 
@@ -111,8 +137,9 @@ public class InventoryMenu implements GraphicsPane {
 				g.drawRect(x, y, gridSize, gridSize);
 
 				//draw the image for the inventory
-				if(inventoryImages[curGrid] != null && selectedImage == null){
-					g.drawImage(inventoryImages[curGrid], x, y, panel);
+				if(inventoryImages[curGrid] != null ){
+					if(selectImageGrid != curGrid)g.drawImage(inventoryImages[curGrid], x, y, panel);
+
 				}
 
 

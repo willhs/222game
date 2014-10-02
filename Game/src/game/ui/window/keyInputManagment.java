@@ -4,6 +4,9 @@ import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public class keyInputManagment  implements KeyEventDispatcher{
 	private BlankPanel panel;
 	private static HashMap<String , Integer> keyMap;

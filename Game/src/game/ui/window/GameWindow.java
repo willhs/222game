@@ -1,6 +1,7 @@
 package game.ui.window;
 
 import game.ui.render.Renderer;
+import game.ui.render.Res;
 import game.world.model.Player;
 import game.world.model.Room;
 
@@ -16,7 +17,6 @@ import test.render.RotationTest;
 /**
  * @author Nicky van HUlst
  * */
-
 public class GameWindow extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -83,7 +83,7 @@ public class GameWindow extends JFrame{
 	}
 
 	public static void main(String[] args){
-		Renderer r = new Renderer();
+		Res.readInAllCommonImages();
 		GameWindow window = new GameWindow();
 		TestThread t = new TestThread(20, window);
 		t.start();

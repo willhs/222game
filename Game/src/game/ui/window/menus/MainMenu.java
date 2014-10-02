@@ -107,7 +107,7 @@ public class MainMenu implements GraphicsPane, Animated{
 			}
 			selectedButton = -1;//no button is selected
 		}
-	}
+}
 
 	@Override
 	public void handleMouseReleased(MouseEvent e){

@@ -13,6 +13,9 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public class PauseMenu implements GraphicsPane {
 	private GameScreen game;
 	private Rectangle[] buttons;

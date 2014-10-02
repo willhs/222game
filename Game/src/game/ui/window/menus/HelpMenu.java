@@ -17,6 +17,9 @@ import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public class HelpMenu implements GraphicsPane, Animated{
 	private BlankPanel panel;
 	private int numbOfButtons;

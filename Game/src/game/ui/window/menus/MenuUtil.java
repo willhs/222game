@@ -12,10 +12,13 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public class MenuUtil {
 
-	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.1f);
-	public static final Color BLACK_TRAN = new Color(0f,0f,0f,0.5f);
+	public static final Color WHITE_TRAN = new Color(0.9f,0.1f,0f,0.5f);
+	public static final Color BLACK_TRAN = new Color(0.5f,0.5f,0.5f,0.5f);
 
 
 	/**
@@ -28,7 +31,7 @@ public class MenuUtil {
 		g.setFont(myFont);
 
 		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.1f));
+			g2d.setColor(WHITE_TRAN);
 			g2d.fill(buttons[i]);
 			g2d.setColor(Color.black);
 			g2d.draw(buttons[i]);

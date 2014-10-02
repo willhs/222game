@@ -24,12 +24,14 @@ import javax.imageio.ImageIO;
 import test.world.util.SimpleServerInterface;
 import nw.Client;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public class GameScreen implements GraphicsPane  {
 
 	//the menu drawn ontop on the game screen
 	private GraphicsPane currentMenu;
 	private BlankPanel panel;
-	private Queue<String> keyQue;
 
 	private ArrayList<String> releventQueKeypress;
 
@@ -64,18 +66,14 @@ public class GameScreen implements GraphicsPane  {
 		this.client = client;
 		client.start();
 		this.player = player;
-		//client = new Client(new Player("nicky"), panel);
-		//client.start();
-		//this.currentRoom = room;
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
 		this.inventoryImages = new BufferedImage[6];
 		setUpInventoryBarButtons();
 		this.panel = panel;
-		this.keyQue = GameWindow.getKeyQueue();
+
 		loadImages();
 		releventQueKeypress = createKeylist();
-
 		rotateVector = new Vector3D(0f, 0f, 0f);
 	}
 
@@ -152,7 +150,7 @@ public class GameScreen implements GraphicsPane  {
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
 		else if(keyEvent.equals("inventory")){
-			currentMenu = new InventoryMenu(panel,this);
+			currentMenu = new InventoryMenu(panel,this,player);
 		}
 		else if(keyEvent.equals("escape")){
 			currentMenu = new PauseMenu(panel, this);
