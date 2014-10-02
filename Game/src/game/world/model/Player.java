@@ -1,5 +1,7 @@
 package game.world.model;
 
+import java.io.Serializable;
+
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
@@ -9,7 +11,12 @@ import game.world.dimensions.Vector3D;
  * @author Shane Brewer
  *
  */
-public class Player implements Character{
+public class Player implements Character, Serializable{
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public final String name;
 	private final Inventory inventory;
@@ -50,7 +57,7 @@ public class Player implements Character{
 	 * @param newPosition - new position that the player should now be in.
 	 */
 	public void move(Point3D newPosition){
-		direction = Point3D.subtractPoint3D(newPosition, position).unitVector();
+		//direction = Point3D.subtractPoint3D(newPosition, position).unitVector();
 		position = newPosition;
 	}
 

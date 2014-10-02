@@ -134,9 +134,9 @@ public class MainMenu implements GraphicsPane, Animated{
 	 * */
 	private void buttonPressed(){
 		switch(selectedButton){
-		case 0: panel.setMenu(new GameScreen(panel));
+		case 0: panel.setMenu(new CharacterSelectionMenu(panel));
 			return;
-		case 1: panel.setMenu(new CharacterSelectionMenu(panel));
+		case 1: panel.setMenu(new MultiCharacterSelectionMenu(panel));
 			return;
 		case 2 :
 			nextMenu = new OptionMenu(panel);

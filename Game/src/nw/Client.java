@@ -33,7 +33,7 @@ public class Client extends Thread{
 		}
 	}
 
-	public Client(Player player, Component frame){ 
+	public Client(Player player, Component frame){
 		this.frame = frame;
 		this.player = player;
 		try{
@@ -120,7 +120,7 @@ public class Client extends Thread{
 			}catch(IOException e){System.err.println(e);}
 		}
 	}
-	
+
 	public static void main(String[] args){
 		GameWindow gw = new GameWindow();
 		if(args.length == 3){

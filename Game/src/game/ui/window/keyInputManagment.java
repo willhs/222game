@@ -100,10 +100,10 @@ public class keyInputManagment  implements KeyEventDispatcher{
 
 
 		//place the keys into the map
-		tempKeyMap.put("move up", KeyEvent.VK_W);//w
-		tempKeyMap.put("move down", KeyEvent.VK_S);//s
-		tempKeyMap.put("move right", KeyEvent.VK_D);//d
-		tempKeyMap.put("move left", KeyEvent.VK_A);//a
+		tempKeyMap.put("Up", KeyEvent.VK_W);//w
+		tempKeyMap.put("Down", KeyEvent.VK_S);//s
+		tempKeyMap.put("Right", KeyEvent.VK_D);//d
+		tempKeyMap.put("Left", KeyEvent.VK_A);//a
 		tempKeyMap.put("inventory", KeyEvent.VK_I);//i
 		tempKeyMap.put("interact", KeyEvent.VK_F);//f
 		tempKeyMap.put("rotate right", KeyEvent.VK_RIGHT);//f
