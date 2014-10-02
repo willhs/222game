@@ -64,6 +64,9 @@ public class InventoryMenu implements GraphicsPane {
 
 	private Player player;
 
+	private long prevTime;
+	private boolean displayingInfo;
+
 
 	/**
 	 *The constructor for the InventoryMenu
@@ -239,6 +242,13 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void render(Graphics g) {
+		System.out.println(prevTime - System.currentTimeMillis());
+		if(prevTime - System.currentTimeMillis() < -500 || displayingInfo){
+			System.out.println("LESS");
+			displayMenu(g);
+			displayingInfo = true;
+		}
+
 		drawFrame(g);//draws the outside of the inventory
 		drawCharactrInventory(g);//draws the character part of the inventory
 		g.drawImage(characterImage, (int)characterFrame.getX(),(int)characterFrame.getY(),panel);
@@ -246,12 +256,32 @@ public class InventoryMenu implements GraphicsPane {
 		g.setColor(Color.black);
 		drawInventoryGrid(g);//draws the grid on the screen
 
+
+		//black square over inventory check
+		if( selectedGrid != -1 && prevTime - System.currentTimeMillis() < -2000 || displayingInfo &&  selectedGrid != -1 ){
+			if(inventoryImages[selectedGrid] != null){
+				displayMenu(g);
+				displayingInfo = true;
+			}
+
+		}
+
+	}
+
+	public void displayMenu(Graphics g){
+		if(selectedGrid != -1){
+			g.setColor(Color.black);
+			g.fillRect(currMouseX, currMouseY, 100, 100);
+			g.setColor(Color.white);
+		}
+
 	}
 
 
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
-
+		prevTime = System.currentTimeMillis();
+		displayingInfo  = false;
 		//sets the selected grid square -1 if none selected
 		selectedGrid = getGridClicked(e.getX(), e.getY());
 		currMouseX = e.getX();

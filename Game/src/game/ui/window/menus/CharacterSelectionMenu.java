@@ -187,6 +187,9 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		if(nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);
 		}
+		else if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
+			panel.setMenu(new MainMenu(panel));
+		}
 	}
 
 	public void handleNameBoxKeyPress(String keyEvent){
