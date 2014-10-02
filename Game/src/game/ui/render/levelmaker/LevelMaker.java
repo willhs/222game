@@ -57,8 +57,6 @@ public class LevelMaker{
 
 	public LevelMaker(){
 
-		Res.readInAllCommonImages();
-
 		// initialise trixels to make up a floor.
 		trixels = new HashSet<Trixel>();
 
@@ -83,8 +81,8 @@ public class LevelMaker{
 	 * @return
 	 */
 	private Floor makeFloor() {
-		int[] x = new int[]{100,1200,1200,100};
-		int[] z = new int[]{100,100,1200,1200};
+		int[] x = new int[]{100,600,600,100};
+		int[] z = new int[]{100,100,600,600};
 
 		Point3D[] points = new Point3D[x.length];
 		for (int i = 0; i < x.length; i++) {
@@ -95,13 +93,13 @@ public class LevelMaker{
 	}
 
 	/**
-	 * @param mouseDragX : how much to rotate in x direction in radians
-	 * @param mouseDragY : ^ y direction...
+	 * @param rotateX : how much to rotate in x direction in radians
+	 * @param rotateY : ^ y direction...
 	 */
-	Vector3D changeRotateAmount(int mouseDragX, int mouseDragY) {
+	Vector3D changeRotateAmount(int rotateX, int rotateY) {
 		float rotateSpeed = 0.01f;
 		return rotateAmounts.plus(
-				new Vector3D(mouseDragY*rotateSpeed, mouseDragX*rotateSpeed, 0)
+				new Vector3D(rotateX*rotateSpeed, rotateY*rotateSpeed, 0)
 		);
 	}
 
@@ -158,15 +156,24 @@ public class LevelMaker{
 	 * @param y
 	 */
 	void attemptCreateTrixel(int x, int y) {
+
+		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
+		if (face != null){
+			System.out.println("z: "+face.getZ());
+			trixels.add(makeTrixelNextToFace(face));
+			highlightTrixel(face.getParentTrixel());
+		}
+
+	}
+
+	TrixelFace getTrixelFaceAtViewPoint(int x, int y){
 		for (TrixelFace face : rotatedFaces){
 			GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(face);
 			if (facePoly.contains(x, y)){
-				System.out.println("z: "+face.getZ());
-				trixels.add(makeTrixelNextToFace(face));
-				highlightTrixel(face.getParentTrixel());
-				break; // add only one trixel
+				return face;
 			}
 		}
+		return null;
 	}
 
 	void highlightTrixel(Trixel trixel){
@@ -180,19 +187,20 @@ public class LevelMaker{
 	 */
 	Trixel makeTrixelNextToFace(TrixelFace neighbourFace) {
 
-		GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(neighbourFace);
-
 		// find the true (unrotated) normal vector of the face by reversing the transform that was applied
 		neighbourFace.transform(lastTransform.inverse());
-		Point3D centroid = facePoly.getCentroid();
-		Vector3D normal = neighbourFace.calculateNormal().unitVector();
-		Point3D newTrixelPosition = centroid.getTranslatedPoint(normal);
+		//Vector3D normal = neighbourFace.calculateNormal().unitVector();
+		Vector3D normal = new Vector3D(0,1,0);
+		Trixition faceTrixition = neighbourFace.getParentTrixel().getTrixition();
+		Point3D faceRealPosition = TrixelUtil.trixitionToPosition(faceTrixition);
+		// shift position by normal direction * trixel size, this will be at the position of a new trixel
+		Point3D newTrixelPosition = faceRealPosition.getTranslatedPoint(normal.makeScaled(Trixel.SIZE));
 		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);
 
 		/*System.out.println("new trixel position"+newTrixelPosition);
 		System.out.println("normal: "+normal);
 		System.out.println("trixition "+newTrixition);*/
-		System.out.println("center: "+centroid);
+		//System.out.println("center: "+centroid);
 
 		return new Trixel(newTrixition, Renderer.getTrixelColour());
 	}

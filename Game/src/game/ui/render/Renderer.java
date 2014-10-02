@@ -3,6 +3,7 @@ package game.ui.render;
 import game.ui.render.Res;
 import game.ui.render.util.GameImage;
 import game.ui.render.util.GamePolygon;
+import game.ui.render.util.GameText;
 import game.ui.render.util.LightSource;
 import game.ui.render.util.Line3D;
 import game.ui.render.util.Renderable;
@@ -111,7 +112,12 @@ public class Renderer {
 
 				image.transform(transform);
 
+				GameText text = new GameText(drawable.getImageName(),
+						image.getPosition().getTranslatedPoint(
+								new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
+
 				toDraw.offer(image);
+				toDraw.offer(text);
 			}
 			else {
 				// drawable is made of trixels
@@ -157,11 +163,12 @@ public class Renderer {
 						(int)(position.x - boundingBox.width/2),
 						(int)(position.y + boundingBox.length/2 - boundingBox.height),
 						(int)boundingBox.width, (int)boundingBox.height, null);
-			/*	test image point
-			 * g2.setColor(Color.red);
-				g2.fillOval((int)(position.x - 5),
-						(int)(position.y - 5),
-						(int)10, 10);*/
+			}
+			else if (renderObject instanceof GameText){
+				GameText text = (GameText) renderObject;
+				Point3D position = text.getPosition();
+				g2.setColor(Color.RED);
+				g2.drawString(text.getText(), position.x, position.y);
 			}
 			else if (renderObject instanceof GamePolygon){
 				GamePolygon poly = (GamePolygon) renderObject;
@@ -203,11 +210,9 @@ public class Renderer {
 			}
 		}
 
-		// testing
-		// axis lines
-		for (Line3D axisLine : makeAxisLines()){
-			axisLine.transform(transform);
-			toDraw.offer(axisLine);
+		for (GameImage star : makeStars()){
+			star.transform(transform);
+			toDraw.offer(star);
 		}
 
 		/*// ------- FLIP Y VALUES OF ALL THINGS
@@ -222,10 +227,11 @@ public class Renderer {
 				g2.setColor(poly.getColour());
 				g2.fillPolygon(poly);
 			}
-	/*		if (renderable instanceof Line3D){
-				Line3D line = (Line3D) renderable;
-				g2.drawLine((int)line.getP1().x, (int)line.getP1().y, (int)line.getP2().x, (int)line.getP2().y);
-			}*/
+			if (renderable instanceof GameImage){
+				GameImage image = (GameImage) renderable;
+				Point3D position = image.getPosition();
+				g2.drawImage(image.getImage(), (int)position.x, (int)position.y, (int)image.getBoundingBox().width, (int)image.getBoundingBox().height, null);
+			}
 		}
 	}
 
@@ -371,14 +377,14 @@ public class Renderer {
 	private static List<GameImage> makeStars(){
 		List<GameImage> stars = new ArrayList<GameImage>();
 
-		int maxX = 1000;
-		int maxY = 1000;
-		int maxZ = 1000;
+		int maxX = 500;
+		int maxY = 500;
+		int maxZ = 500;
 
 		int minSize = 1;
 		int maxSize = 20;
 
-		int starCount = 1;
+		int starCount = 1000;
 		for (int starNum = 0; starNum < starCount; starNum++){
 			float x = randomColor.nextInt(maxX*2)-maxZ;
 			float y = randomColor.nextInt(maxY*2)-maxZ;

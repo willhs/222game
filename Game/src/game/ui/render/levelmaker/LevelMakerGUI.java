@@ -2,6 +2,7 @@ package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,10 +21,11 @@ public class LevelMakerGUI extends JPanel{
 		addMouseMotionListener(listener);
 
 		levelMaker = new LevelMaker();
+		setBackground(Color.BLACK);
 	}
 
 	private void dealWithMouseDragged(int dx, int dy) {
-		levelMaker.updateRotation(dx, dy);
+		levelMaker.updateRotation(dy, dx);
 		repaint();
 	}
 

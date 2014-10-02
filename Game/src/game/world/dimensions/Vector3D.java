@@ -111,6 +111,15 @@ public class Vector3D implements Serializable{
 				/ (getMag() * other.getMag()));
 	}
 
+	/**
+	 * Make a scaled version of this vector
+	 * @param scale
+	 * @return a new vector which is a scaled version of this vector
+	 */
+	public Vector3D makeScaled(float scale){
+		return new Vector3D(x*scale, y*scale, z*scale);
+	}
+
 	public String toString() {
 		StringBuilder ans = new StringBuilder("Vect:");
 		ans.append('(').append(String.format("%4.2f", getX())).append(',').append(String.format("%4.2f", getY())).append(',')

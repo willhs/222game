@@ -46,7 +46,6 @@ public class TrixelUtil {
 	 */
 	public static TrixelFace[] makeTrixelFaces(Trixel trixel){
 		TrixelFace[] faces = new TrixelFace[6];
-		Color colour = trixel.getColor();
 		final int FACE_SIZE = Trixel.SIZE;
 
 		Point3D trixelOrigin = TrixelUtil.trixitionToPosition(trixel.getTrixition());
