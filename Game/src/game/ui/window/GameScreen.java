@@ -7,9 +7,6 @@ import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
 import game.world.dimensions.Vector3D;
 import game.world.model.Player;
-import game.world.model.Room;
-import game.world.dimensions.Vector3D;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -63,7 +60,7 @@ public class GameScreen implements GraphicsPane  {
 
 	private Client client;
 
-	public GameScreen(BlankPanel panel){
+	public GameScreen(BlankPanel panel, Client client ,Player player){
 		this.player = player;
 		client = new Client(new Player("nicky"), panel);
 		client.start();
@@ -103,10 +100,10 @@ public class GameScreen implements GraphicsPane  {
 	private ArrayList<String> createKeylist(){
 		ArrayList<String> keyList = new ArrayList<String>();
 
-		keyList.add("move up");
-		keyList.add("move down");
-		keyList.add("move right");
-		keyList.add("move left");
+		keyList.add("Up");
+		keyList.add("Down");
+		keyList.add("Right");
+		keyList.add("Left");
 
 		return keyList;
 	}
@@ -152,20 +149,6 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu.keyPressed(keyEvent);
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
-		//temp remove
-		else if(keyEvent.equals("move up")){//temp
-			client.makeMove("Up");
-		}
-		else if(keyEvent.equals("move down")){//temp
-			client.makeMove("Down");
-		}
-		else if(keyEvent.equals("move left")){//temp
-			client.makeMove("Left");
-		}
-		else if(keyEvent.equals("move right")){//temp
-			client.makeMove("Right");
-		}
-		//end temp remove
 		else if(keyEvent.equals("inventory")){
 			currentMenu = new InventoryMenu(panel,this);
 		}
@@ -173,7 +156,7 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu = new PauseMenu(panel, this);
 		}
 		else if(releventQueKeypress.contains(keyEvent)){
-			keyQue.offer(keyEvent);
+			client.makeMove(keyEvent);
 		}
 		else if(keyEvent.equals("1")){
 			selectedButton = 0;

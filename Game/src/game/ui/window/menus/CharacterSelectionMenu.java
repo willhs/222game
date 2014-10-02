@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import nw.Client;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
@@ -47,14 +48,15 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	private int height = 150;
 
 	private String label = "Enter Name : ";
-	private boolean nameBoxSelected;
-	private String name = "";
+	protected boolean nameBoxSelected;
+	protected String name = "";
 	private boolean nextCap;
 	private int maxNameLength = 30;
 
-	private String error = " ";
+	protected String error = " ";
 
-	private BlankPanel panel;
+	protected BlankPanel panel;
+
 	/**
 	 * Constructor for the character selection menu
 	 * */
@@ -228,7 +230,10 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		}
 	}
 
-
+	/**
+	 * The ok button is pressed check if user has entered required fields
+	 * and create player and client
+	 * */
 	public void okPressed(){
 		//check with the server that the name is ok
 
@@ -244,6 +249,8 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 		Player player = new Player("name");
 		//player.setImage("char1");
+		Client client = new Client(player,panel);
+		panel.setMenu(new GameScreen(panel, client,player));
 
 
 	}
