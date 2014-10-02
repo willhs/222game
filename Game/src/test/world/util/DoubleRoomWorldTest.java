@@ -43,11 +43,17 @@ public class DoubleRoomWorldTest {
 		System.out.println(player.getPosition());
 		System.out.println();
 
+		System.out.println(world.getPlaceOfPlayer(player).getName());
+		System.out.println();
+
 		System.out.println(MovementHandler.playerMove(player, new Point3D(226, 0,
 				426), world.getPlaceOfPlayer(player)));
 
 		System.out.println();
 		System.out.println(MovementHandler.exitPlace(player, firstRoom, exit));
+
+		System.out.println();
+		System.out.println(world.getPlaceOfPlayer(player).getName());
 
 
 
