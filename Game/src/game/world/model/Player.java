@@ -6,16 +6,14 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Shane Brewer
  *
  */
 public class Player implements Character, Serializable{
-
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public final String name;

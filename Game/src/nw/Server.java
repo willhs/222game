@@ -12,6 +12,7 @@ public class Server extends Thread{
 	private InputStream inStream;
 	private OutputStream outStream;
 
+	private static List<ObjectOutputStream> outStreams = new ArrayList<ObjectOutputStream>();
 	private static ServerWorld world;
 
 	public Server(InputStream inStream, OutputStream outStream){
@@ -32,6 +33,12 @@ public class Server extends Thread{
 		world = new World(rooms);
 	}
 
+	public static void send(Object o) throws IOException{
+		for(ObjectOutputStream os : outStreams){
+			os.writeObject(o);
+		}
+	}
+
 	public void run(){
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
@@ -43,13 +50,16 @@ public class Server extends Thread{
 
 			out = new ObjectOutputStream(outStream);
 			out.flush();
+			outStreams.add(out);
 
 			BufferedInputStream bis = new BufferedInputStream(inStream);
 			in = new ObjectInputStream(bis);
 
 			long time = System.currentTimeMillis();
 
-			out.writeObject(world.getPlaces().next());
+			synchronized(world){
+				out.writeObject(world.getPlaces().next());
+			}
 			while(true){
 	
 				if(bis.available() != 0){
@@ -60,7 +70,7 @@ public class Server extends Thread{
 						
 						for(String cmd : world.applyCommand((String)received)){
 							System.out.println("[Server] Returning: " + cmd);	
-							out.writeObject(cmd);
+							Server.send(cmd);
 						}
 					}else{
 						System.out.println("[Server] No idea what this is: " + received);
