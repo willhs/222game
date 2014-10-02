@@ -173,6 +173,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 	}
 
+	//class the wrap a string to send by reference
 	class textBoxWrapper{
 		public String s;
 		public textBoxWrapper(String s ){
