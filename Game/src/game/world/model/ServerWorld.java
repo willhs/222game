@@ -89,7 +89,7 @@ public abstract class ServerWorld implements Serializable {
 		Player player = Parser.parsePlayer(scan);
 		if (addPlayerToGameWorld(player)) {
 			Place place = getPlaceOfPlayer(player);
-			String newCommand = "Client PlayerPlacement Name ( "+player.name+" ) Position ( "
+			String newCommand = "Client PlayerPlacement Name ( "+player.getName()+" ) Position ( "
 					+ player.getPosition().toString() + " )";
 			commands.add(newCommand);
 		}

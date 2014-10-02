@@ -85,6 +85,7 @@ public abstract class ClientWorld extends ServerWorld {
 			scan.next();
 		}
 		String playerName = Parser.parseName(scan);
+
 		while (!scan.hasNext("Point")) {
 			scan.next();
 		}
@@ -93,6 +94,9 @@ public abstract class ClientWorld extends ServerWorld {
 			scan.next();
 		}
 		clientsPlayer.move(playerPosition);
+	}
+	public Place getCurrentPlace(){
+		return currentPlace;
 	}
 
 	public void replaceCurrentPlace(Place place) {
@@ -131,6 +135,7 @@ public abstract class ClientWorld extends ServerWorld {
 		Point3D position = Parser.parsePosition(scan);
 		Place place = getStartPlace();
 		if (name.equals(clientsPlayer.name)) {
+			System.out.println("Made it here");
 			currentPlace = place;
 			this.addPlayer(clientsPlayer);
 			clientsPlayer.move(position);
