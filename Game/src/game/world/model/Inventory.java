@@ -3,6 +3,7 @@ package game.world.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * Inventory of a player 
@@ -10,7 +11,7 @@ import java.util.List;
  * @author Shane Brewer
  *
  */
-public class Inventory implements Iterable<Item>{
+public class Inventory implements Iterable<Item>, Serializable{
 
 	private final List<Item> items;
 	
