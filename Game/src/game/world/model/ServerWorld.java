@@ -10,6 +10,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ *
+ * @author Shane Brewer
+ *
+ */
 public abstract class ServerWorld implements Serializable {
 
 	public List<String> applyCommand(String command) {
@@ -21,6 +26,8 @@ public abstract class ServerWorld implements Serializable {
 				commands = serverPlayerPlacement(scan, command);
 			} else if (scan.hasNext("Move")) {
 				commands = serverHandleMove(scan, command);
+			} else if (scan.hasNext("Exit")){
+				commands = serverExitInteraction(scan, command);
 			}
 		}
 		// applies command to the world
@@ -81,6 +88,8 @@ public abstract class ServerWorld implements Serializable {
 
 	protected abstract Place getPlaceByName(String placeName);
 
+	protected abstract Exit getExitByName(String exitName);
+
 	public abstract void addExit(Exit exit);
 
 	private List<String> serverPlayerPlacement(Scanner scan, String command) {
@@ -123,4 +132,30 @@ public abstract class ServerWorld implements Serializable {
 		}
 		return commands;
 	}
+
+
+	private List<String> serverExitInteraction(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+		while (!scan.hasNext("Name")) {
+			scan.next();
+		}
+		String playerName = Parser.parseName(scan);
+		while (!scan.hasNext("Name")) {
+			scan.next();
+		}
+		String exitName = Parser.parseName(scan);
+		while (!scan.hasNext("Name")) {
+			scan.next();
+		}
+		String placeName = Parser.parseName(scan);
+		if (MovementHandler.exitPlace(getPlayerByName(playerName), getPlaceByName(placeName), getExitByName(exitName))){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Client "+sc.nextLine());
+			sc.close();
+		}
+		return commands;
+	}
+
+
 }

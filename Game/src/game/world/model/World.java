@@ -127,4 +127,9 @@ public class World extends ClientWorld implements Serializable{
 		places.add(place);
 		allPlaces.put(place.getName(), place);
 	}
+
+	@Override
+	protected Exit getExitByName(String exitName) {
+		return allExits.get(exitName);
+	}
 }
