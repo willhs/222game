@@ -1,6 +1,7 @@
 package test.render;
 
 import game.ui.render.Renderer;
+import game.ui.render.Res;
 import game.world.dimensions.Vector3D;
 import game.world.model.Place;
 
@@ -49,6 +50,7 @@ public class TestRenderer extends JPanel{
 	 * @param args
 	 */
 	public static void main(String[] args){
+		Res.readInAllCommonImages();
 		JFrame frame = new JFrame();
 		Dimension SCREEN_SIZE = new Dimension(600,600);
 		frame.setSize(SCREEN_SIZE );
