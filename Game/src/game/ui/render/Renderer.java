@@ -1,6 +1,5 @@
 package game.ui.render;
 
-import game.ui.render.Res;
 import game.ui.render.util.GameImage;
 import game.ui.render.util.GamePolygon;
 import game.ui.render.util.GameText;
@@ -16,6 +15,7 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.Place;
+import game.world.model.Player;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
@@ -112,12 +112,16 @@ public class Renderer {
 
 				image.transform(transform);
 
-				GameText text = new GameText(drawable.getImageName(),
-						image.getPosition().getTranslatedPoint(
-								new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
-
 				toDraw.offer(image);
-				toDraw.offer(text);
+
+				// if it's player, put name above head
+				if (drawable instanceof Player){
+					GameText text = new GameText(drawable.getName(),
+							image.getPosition().getTranslatedPoint(
+									new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
+
+					toDraw.offer(text);
+				}
 			}
 			else {
 				// drawable is made of trixels
