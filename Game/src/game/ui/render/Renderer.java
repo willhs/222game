@@ -41,6 +41,9 @@ public class Renderer {
 
 	private static final int FRAME_TOP = 600;
 
+	private static final long RANDOM_SEED = 15274910874912L;
+	public static Random randomColor;
+
 	/**
 	 * Temp render method which uses the SingleRoomWorldtest
 	 * @param g
@@ -56,7 +59,7 @@ public class Renderer {
 	 * @param place
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
-		randomColor = new Random(SEED);
+		resetColour();
 
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
@@ -83,7 +86,7 @@ public class Renderer {
 
 
 		// temporary solution to having floor behind everything.
-		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
+		Transform floorBehindEverything = Transform.newTranslation(0,0,-Trixel.SIZE);//Transform.newTranslation(0, 0, -5);
 
 		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
 
@@ -122,12 +125,17 @@ public class Renderer {
 				}
 			}
 		}
+		// STARS
+		/*for (GameImage star : makeStars()){
+			star.transform(transform);
+			toDraw.add(star);
+		}*/
 		// testing
 		// axis lines
-		for (Line3D axisLine : makeAxisLines()){
+		/*for (Line3D axisLine : makeAxisLines()){
 			axisLine.transform(transform);
 			toDraw.offer(axisLine);
-		}
+		}*/
 
 		// ------- FLIP Y VALUES OF ALL THINGS
 		for (Renderable shape : toDraw){
@@ -135,6 +143,8 @@ public class Renderer {
 		}
 
 		// ------- DRAW ALL THE THINGS  ...in correct order
+		g.setColor(Color.black);
+		g.fillRect(0,0,2000, 2000);
 		// all gameObjects are either trixel faces or images.
 		while (!toDraw.isEmpty()){
 			Renderable renderObject = toDraw.poll();
@@ -147,7 +157,8 @@ public class Renderer {
 						(int)(position.x - boundingBox.width/2),
 						(int)(position.y + boundingBox.length/2 - boundingBox.height),
 						(int)boundingBox.width, (int)boundingBox.height, null);
-			/*	g2.setColor(Color.red);
+			/*	test image point
+			 * g2.setColor(Color.red);
 				g2.fillOval((int)(position.x - 5),
 						(int)(position.y - 5),
 						(int)10, 10);*/
@@ -177,7 +188,6 @@ public class Renderer {
 	 * @param transform
 	 */
 	public static void renderTrixels(Graphics g, Iterator<Trixel> trixels, Transform transform){
-		randomColor = new Random(SEED);
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -307,9 +317,6 @@ public class Renderer {
 		return new Transform[]{ translateToOrigin, rotate, translateBack };
 	}
 
-	private static final long SEED = 15274910874912L;
-	private static Random randomColor;
-
 	/**
 	 * @return random colour
 	 */
@@ -357,4 +364,30 @@ public class Renderer {
 		return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
 	}
 
+	private static List<GameImage> makeStars(){
+		List<GameImage> stars = new ArrayList<GameImage>();
+
+		int maxX = 1000;
+		int maxY = 1000;
+		int maxZ = 1000;
+
+		int minSize = 1;
+		int maxSize = 20;
+
+		int starCount = 1;
+		for (int starNum = 0; starNum < starCount; starNum++){
+			float x = randomColor.nextInt(maxX*2)-maxZ;
+			float y = randomColor.nextInt(maxY*2)-maxZ;
+			float z = randomColor.nextInt(maxZ*2)-maxZ;
+
+			int size = randomColor.nextInt(maxSize-minSize)+minSize;
+
+			stars.add(new GameImage(Res.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
+		}
+		return stars;
+	}
+
+	public static void resetColour(){
+		randomColor = new Random(RANDOM_SEED);
+	}
 }

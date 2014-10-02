@@ -4,7 +4,6 @@ package test.world.util;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.model.Item;
-import game.world.model.Key;
 import game.world.model.Place;
 import game.world.model.Player;
 import game.world.model.Room;
