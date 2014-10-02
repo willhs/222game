@@ -77,19 +77,19 @@ public class Client extends Thread{
 						System.out.println("[Client] Got: " + (String)received);
 						world.applyCommand((String)received);
 					}
-					else if(received instanceof Room){
+					else if(received instanceof World){
 						System.out.println("[Client] Got room!: " + received);
-						currentRoom = (Room)received;
-						GameWindow.setRoom(currentRoom);
-
-						if(world==null){
-							List<Place> placeList = new ArrayList<Place>();
-							placeList.add(currentRoom);
-							world = new World(placeList);
-							out.writeObject(world.getSetClientPlayer(player));
-						}else{
-							world.replaceCurrentPlace(currentRoom);
-						}
+						world = (World)received;
+						GameWindow.setRoom((Room)world.getPlaces().next());
+						out.writeObject(world.getSetClientPlayer(player));
+//						if(world==null){
+//							List<Place> placeList = new ArrayList<Place>();
+//							placeList.add(currentRoom);
+//							world = new World(placeList);
+//
+//						}else{
+//							world.replaceCurrentPlace(currentRoom);
+//						}
 					}
 					else{
 						System.out.println("[Client] No idea what this is: " + received);

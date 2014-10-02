@@ -110,8 +110,11 @@ public abstract class ServerWorld implements Serializable {
 			scan.next();
 		}
 		String placeName = Parser.parseName(scan);
-		if (MovementHandler.playerMove(getPlayerByName(playerName),
-				playerPosition, getPlaceByName(placeName))) {
+		boolean pn  = MovementHandler.playerMove(getPlayerByName(playerName),
+				playerPosition, getPlaceByName(placeName));
+		System.out.println(pn);
+		System.out.println(playerName);
+		if (pn) {
 			Scanner sc = new Scanner(command);
 			sc.next();
 			String newCommand = "Client " + sc.nextLine();

@@ -33,9 +33,9 @@ public class MovementHandler {
 	 */
 	public static boolean playerMove(Player player, Point3D to, Place place,
 			Item... toIgnore) {
-		if (!place.contains(to)) {
-			return false;
-		}
+//		if (!place.contains(to)) {
+//			return false;
+//		}
 		if (!place.contains(to, player.getBoundingBox())) {
 			return false;
 		}

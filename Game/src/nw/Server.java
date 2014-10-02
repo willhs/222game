@@ -58,18 +58,18 @@ public class Server extends Thread{
 			long time = System.currentTimeMillis();
 
 			synchronized(world){
-				out.writeObject(world.getPlaces().next());
+				out.writeObject(world);
 			}
 			while(true){
-	
+
 				if(bis.available() != 0){
 					received = in.readObject();
 					if(received instanceof String){
 						recStr = ((String)received);
 						System.out.println("[Server] Got: " + recStr);
-						
+
 						for(String cmd : world.applyCommand((String)received)){
-							System.out.println("[Server] Returning: " + cmd);	
+							System.out.println("[Server] Returning: " + cmd);
 							Server.send(cmd);
 						}
 					}else{

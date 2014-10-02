@@ -1,5 +1,6 @@
 package game.world.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,8 +16,12 @@ import java.util.Map;
  * @author Shane Brewer
  *
  */
-public class World extends ClientWorld{
+public class World extends ClientWorld implements Serializable{
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private Place startPlace;
 	// both of these once set should not change.
 	private final List<Player> players;
@@ -109,12 +114,12 @@ public class World extends ClientWorld{
 	protected Place getPlaceByName(String placeName) {
 		return allPlaces.get(placeName);
 	}
-	
+
 	@Override
 	public void addExit(Exit exit){
 		allExits.put(exit.getName(), exit);
 	}
-	
+
 	@Override
 	public void replaceCurrentPlace(Place place) {
 		super.replaceCurrentPlace(place);
