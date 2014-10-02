@@ -9,9 +9,9 @@ import java.util.*;
 
 /**
  * Handles all the client side modeling and some interation.
- * 
+ *
  * @author Shane Brewer.
- * 
+ *
  */
 public abstract class ClientWorld extends ServerWorld {
 
@@ -103,7 +103,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Makes the first player.
-	 * 
+	 *
 	 * @param player
 	 *            - player that is to be the player of this client.
 	 * @return - a string only ment to be parsed by the server.
@@ -115,7 +115,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Sets the client player.
-	 * 
+	 *
 	 * @param scan
 	 *            - used to scan the text to get the player out.
 	 * @return - return true if the player was moved.
