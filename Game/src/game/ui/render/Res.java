@@ -130,6 +130,9 @@ public class Res {
 	 * @return an image represented by name
 	 */
 	public static BufferedImage getImageFromName(String name){
+		if (images == null){
+			images = new HashMap<String, BufferedImage>();
+		}
 		return images.get(name);
 	}
 
