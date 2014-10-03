@@ -75,7 +75,7 @@ public class InventoryMenu implements GraphicsPane {
 		this.panel = panel;
 		this.game = game;
 		this.player = player;
-		this.backColor = MenuUtil.BLACK_TRAN;
+		this.backColor = MenuUtil.WHITE_TRAN;
 
 		this.startX = (GameWindow.FRAME_WIDTH/2) - (width/2);//places the frame in the middle of the screen
 		this.frame = new Rectangle(startX, startY, width, GameWindow.FRAME_HEIGHT - (startY*2));//creates the frame as a rectangle
@@ -116,7 +116,7 @@ public class InventoryMenu implements GraphicsPane {
 
 		//modify the stroke size to 4
 		Stroke oldStroke = g2d.getStroke();
-		g2d.setStroke(new BasicStroke(4));
+		g2d.setStroke(new BasicStroke(2));
 
 		int x = gridX;
 		int y = gridY;
@@ -131,7 +131,7 @@ public class InventoryMenu implements GraphicsPane {
 					g.setColor(Color.BLUE);
 				}
 				else{
-					g.setColor(MenuUtil.BLACK_TRAN);
+					g.setColor(backColor);
 				}
 				//draw the current grid square
 				g.fillRect(x, y, gridSize, gridSize);
@@ -143,8 +143,6 @@ public class InventoryMenu implements GraphicsPane {
 					if(selectImageGrid != curGrid)g.drawImage(inventoryImages[curGrid], x, y, panel);
 
 				}
-
-
 				x +=gridSize;
 				curGrid++;
 			}
@@ -172,7 +170,7 @@ public class InventoryMenu implements GraphicsPane {
 		g2d.setStroke(new BasicStroke(4));
 
 		g2d.draw(characterFrame);
-		g.setColor(new Color(1f,1f,1f,0.5f));
+		g.setColor(backColor);
 		g2d.fill(characterFrame);
 
 
