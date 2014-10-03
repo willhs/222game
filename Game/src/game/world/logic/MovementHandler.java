@@ -37,17 +37,22 @@ public class MovementHandler {
 //			return false;
 //		}
 		if (!place.contains(to, player.getBoundingBox())) {
+
 			return false;
 		}
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
+
 			return false;
 		}
 		if (checkPlayerCollision(player, to, place.getPlayers())) {
+
 			return false;
 		}
 		if (checkExitCollision(player, to, place,  place.getExits())){
 
+			return false;
 		}
+		System.out.println("um");
 		player.move(to);
 		return true;
 	}
@@ -150,7 +155,8 @@ public class MovementHandler {
 	 */
 	public static boolean exitPlace(Player player, Place place, Exit exit) {
 		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
-				exit.getPosition(), exit.getBoundingBox())) {
+				exit.getPosition(place), exit.getBoundingBox())) {
+			System.out.println("shuld not be getting ehre.");
 			return false;
 		}
 		if (exit.isLocked()) {
@@ -181,9 +187,9 @@ public class MovementHandler {
 	 */
 	public static boolean checkProximity(Point3D pointOne,
 			Rectangle3D boundingOne, Point3D pointTwo, Rectangle3D boundingTwo) {
-		if ((Math.abs(pointOne.x - pointTwo.x) <= 5 + (boundingOne.getWidth() + boundingTwo
+		if ((Math.abs(pointOne.x - pointTwo.x) <= 10 + (boundingOne.getWidth() + boundingTwo
 				.getWidth()) / 2)
-				&& (Math.abs(pointOne.z - pointTwo.z) <= 5 + (boundingOne
+				&& (Math.abs(pointOne.z - pointTwo.z) <= 10 + (boundingOne
 						.getLength() + boundingTwo.getLength()) / 2)) {
 			System.out.println("Make it here");
 			return true;
@@ -197,6 +203,7 @@ public class MovementHandler {
 		int z = (int)rect.z-20;
 		int maxX = (int)(rect.x+rect.width+20);
 		int maxZ = (int)(rect.z+rect.length+20);
+		System.out.println("Exiting");
 		for (;x < maxX; x++){
 			for (;z < maxZ; z++){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){

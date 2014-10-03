@@ -24,7 +24,7 @@ public class DoubleRoomWorldTest {
 		places.add(firstRoom);
 		places.add(secondRoom);
 
-		Exit exit = new Door("Door1", firstRoom, new Point3D(200, 0, 400),
+		Exit exit = new Door("Door1", firstRoom, new Point3D(400, 0, 400),
 				secondRoom, new Point3D(400, 0, 500));
 		World world = new World(places);
 		world.addExit(exit);
@@ -46,8 +46,9 @@ public class DoubleRoomWorldTest {
 		System.out.println(world.getPlaceOfPlayer(player).getName());
 		System.out.println();
 
-		System.out.println(MovementHandler.playerMove(player, new Point3D(226, 0,
+		System.out.println(MovementHandler.playerMove(player, new Point3D(426, 0,
 				426), world.getPlaceOfPlayer(player)));
+		System.out.println(player.getPosition());
 
 		System.out.println();
 		System.out.println(MovementHandler.exitPlace(player, firstRoom, exit));

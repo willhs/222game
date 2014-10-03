@@ -49,6 +49,7 @@ public abstract class ClientWorld extends ServerWorld {
 					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
 		}
 		if (action.equals("Interact")) {
+			System.out.println("made it here");
 			command = getInteractionCommand();
 		}
 		// get the viewing direction from will's static stuff
@@ -197,9 +198,11 @@ public abstract class ClientWorld extends ServerWorld {
 		String command = "";
 		while (exits.hasNext()) {
 			Exit temp = exits.next();
-			if (MovementHandler.checkProximity(clientsPlayer.getPosition(),
+			boolean b = MovementHandler.checkProximity(clientsPlayer.getPosition(),
 					clientsPlayer.getBoundingBox(), temp.getPosition(place),
-					temp.getBoundingBox())) {
+					temp.getBoundingBox());
+			System.out.println(b);
+			if (b) {
 
 				command = "Server Exit Name ( " + clientsPlayer.getName()
 						+ " ) Name ( " + temp.getName() + " ) Name ( "
