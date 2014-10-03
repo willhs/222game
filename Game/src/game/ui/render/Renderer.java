@@ -123,17 +123,7 @@ public class Renderer {
 					toDraw.offer(text);
 				}
 			}
-			else {
-				// drawable is made of trixels
-				Trixel trixel = (Trixel) drawable;
-				TrixelFace[] faces = TrixelUtil.makeTrixelFaces(trixel);
-				for (TrixelFace face : faces){
-					face.transform(transform);
-					if (face.isFacingViewer()){
-						toDraw.offer(makeGamePolygonFromTrixelFace(face));
-					}
-				}
-			}
+
 		}
 		// STARS
 		/*for (GameImage star : makeStars()){
