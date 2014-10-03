@@ -69,6 +69,9 @@ public abstract class ClientWorld extends ServerWorld {
 			if (scan.hasNext("Move")) {
 				clientHandleMove(scan);
 			}
+			if (scan.hasNext("Exit")){
+				clientHandleExiting(scan);
+			}
 		}
 		// applies command to the world
 		// returns a list of commands that resulted from running the given
@@ -78,6 +81,40 @@ public abstract class ClientWorld extends ServerWorld {
 		// I will call this one by one on the list of commands returned by the
 		// server
 		return commandList;
+	}
+
+	private void clientHandleExiting(Scanner scan) {
+		while (!scan.hasNext("Name")) {
+			scan.next();
+		}
+		String playerName = Parser.parseName(scan);
+		while (!scan.hasNext("Name")) {
+			scan.next();
+		}
+		String exitName = Parser.parseName(scan);
+		while (!scan.hasNext("Name")) {
+			scan.next();
+		}
+		String placeName = Parser.parseName(scan);
+		while (!scan.hasNext("Position")){
+			scan.next();
+		}
+		Point3D playerPosition = Parser.parsePosition(scan);
+
+		Player player = getPlayerByName(playerName);
+		Place place = getPlaceByName(placeName);
+		Exit exit = getExitByName(exitName);
+
+		place.removePlayer(player);
+
+		Place otherPlace = exit.getOtherPlace(place);
+		otherPlace.addPlayer(player);
+
+		player.move(playerPosition);
+
+		if (player.name.equals(clientsPlayer.name)){
+			currentPlace = otherPlace;
+		}
 	}
 
 	private void clientHandleMove(Scanner scan) {
@@ -116,6 +153,9 @@ public abstract class ClientWorld extends ServerWorld {
 	 */
 	public String getSetClientPlayer(Player player) {
 		clientsPlayer = player;
+		if (getPlayerByName(player.getName()) != null){
+			return "";
+		}
 		return "Server PlayerPlacement Name ( " + player.name + " )";
 	}
 
