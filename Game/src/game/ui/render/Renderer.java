@@ -46,15 +46,6 @@ public class Renderer {
 	public static Random randomColor;
 
 	/**
-	 * Temp render method which uses the SingleRoomWorldtest
-	 * @param g
-	 * @param rotateAmount
-	 */
-	public static void render(Graphics g, Vector3D rotateAmount){
-		renderPlace(g, new SingleRoomWorldTest().world.getPlaces().next(), rotateAmount);
-	}
-
-	/**
 	 * Draws a place using Graphics parameter and viewer direction
 	 * @param g
 	 * @param place

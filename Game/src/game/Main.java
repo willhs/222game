@@ -1,10 +1,11 @@
 package game;
 
+import game.ui.window.GameWindow;
+
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		// WILL CHANGE
+		GameWindow.main(args);
 	}
 
 }

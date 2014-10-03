@@ -152,21 +152,36 @@ public class TrixelUtil {
 	 * @return
 	 */
 	public static Point3D findTrixelsCentroid(Iterator<Trixel> trixels){
+		
 		int vertexCount = 0;
 		float xSum = 0, ySum = 0, zSum = 0;
-		// test
+		
 		while (trixels.hasNext()){
 			Trixel trixel = trixels.next();
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				for (Point3D vertex : face.getVertices()){
-					xSum += vertex.x;
-					ySum += vertex.y;
-					zSum += vertex.z;
+			Point3D trixelCentroid = getTrixelCentroid(trixel);
+			xSum += trixelCentroid.x;
+			ySum += trixelCentroid.y;
+			zSum += trixelCentroid.z;
+		}
+		
+		return new Point3D (xSum/vertexCount, ySum/vertexCount, zSum/vertexCount);
+	}
+	
+	public static Point3D getTrixelCentroid(Trixel trixel){
+		
+		int vertexCount = 0;
+		float xSum = 0, ySum = 0, zSum = 0;
+		
+		for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+			for (Point3D vertex : face.getVertices()){
+				xSum += vertex.x;
+				ySum += vertex.y;
+				zSum += vertex.z;
 
-					vertexCount ++;
-				}
+				vertexCount ++;
 			}
 		}
+		
 		return new Point3D (xSum/vertexCount, ySum/vertexCount, zSum/vertexCount);
 	}
 }

@@ -3,6 +3,7 @@ package game.world.model;
 import game.world.dimensions.Point3D;
 import game.world.util.Drawable;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -11,8 +12,14 @@ import java.util.*;
  * @author Shane Brewer
  *
  */
-public abstract class Exit implements Drawable{
+public abstract class Exit implements Drawable, Serializable{
 
+
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private final List<PlaceAndPosition> contectedPlaces;
 
 	/**
@@ -87,7 +94,10 @@ public abstract class Exit implements Drawable{
 	 *  @author Shane Brewer
 	 *
 	 */
-	private class PlaceAndPosition{
+	private class PlaceAndPosition implements Serializable{
+
+
+		private static final long serialVersionUID = -553310728828326027L;
 		public final Place place;
 		public final Point3D position;
 		public PlaceAndPosition(Place place, Point3D position){

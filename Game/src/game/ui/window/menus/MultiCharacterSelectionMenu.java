@@ -37,9 +37,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	private int maxTextLenght = 30;
 
 
-
-
-
 	public MultiCharacterSelectionMenu(BlankPanel panel) {
 		super(panel);
 
@@ -168,12 +165,12 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		}
 	}
 
+	
 	@Override
 	public void keyPressed(String keyEvent) {
 		KeyEvent e = keyInputManagment.getLastKeyEvent();
 
 		if(e.getKeyCode() == KeyEvent.VK_TAB){
-			System.out.println("Tab");
 			handleTabPress();
 		}
 		if(super.nameBoxSelected){
@@ -196,36 +193,25 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	 * */
 	public void handleTextBoxKeyPress(String keyEvent, textBoxWrapper text){
 		KeyEvent e = keyInputManagment.getLastKeyEvent();
-
 		String textBox = text.s;
-		if(keyEvent.equals("backspace")){
-			if(textBox.length() == 0)return;//make sure we dont try and shortan an empty string
 
-			textBox = textBox.substring(0, textBox.length()-1);//take one char of the string
-			text.s = textBox;
-			return;
-		}
-		if(textBox.length() >  maxTextLenght)return;//max size of name
+		//grabs the last key event that occoured
 		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());//TODO may need to fix
-
+		
 		//should make it a number or letter i think
-		if(key.length() == 1 || keyEvent.equals("space") || e.getKeyCode() == KeyEvent.VK_MINUS){
-			if(keyEvent.equals("space")){
-				textBox = textBox.concat(" ").toLowerCase();
-				text.s = textBox;
-				return;
-			}
-			else if(e.getKeyCode() == KeyEvent.VK_MINUS){
-				System.out.println("MINUS");
-				textBox = textBox.concat("-");
-				text.s = textBox;
-				return;
-			}
+		if(key.length() == 1 ){
 			textBox = textBox.concat(key).toLowerCase();//add to the end of the string
 			text.s = textBox;
 		}
+		else{
+			handleSpecialKeyPress(e,text);//the key pressed is not a character
+		}
 	}
 
+
+	/**
+	 * Switches which text box is selected depending on which one is currently selected
+	 * */
 	public void handleTabPress(){
 		if(nameBoxSelected){
 			hostSelected = true;
@@ -238,6 +224,48 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		else if(portSelected){
 			nameBoxSelected = true;
 			portSelected = false;
+		}
+	}
+
+
+	/**
+	 * checks which special key is pressed an performs the appropriate action
+	 * */
+	public void handleSpecialKeyPress(KeyEvent e, textBoxWrapper text){
+		String textBox = text.s;
+
+		if(e.getKeyCode() == KeyEvent.VK_SPACE){
+			if(textBox.length() == 0)return;//make sure we dont try and shorten an empty string
+			textBox = textBox.substring(0, textBox.length()-1);//take one char of the string
+			text.s = textBox;
+			return;
+		}
+
+		if(e.getKeyCode() == KeyEvent.VK_SPACE){
+			textBox = textBox.concat(" ").toLowerCase();
+			text.s = textBox;
+			return;
+		}
+
+		 if(e.getKeyCode() == KeyEvent.VK_MINUS){
+			System.out.println("MINUS");
+			textBox = textBox.concat("-");
+			text.s = textBox;
+			return;
+		}
+
+		 if(e.getKeyCode() == KeyEvent.VK_PERIOD){
+			System.out.println("PERIOD");
+			textBox = textBox.concat(".");
+			text.s = textBox;
+			return;
+		}
+
+		 if(e.getKeyCode() == KeyEvent.VK_SLASH){
+			System.out.println("Slash");
+			textBox = textBox.concat("/");
+			text.s = textBox;
+			return;
 		}
 	}
 
