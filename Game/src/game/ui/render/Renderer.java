@@ -98,7 +98,7 @@ public class Renderer {
 			if (isImage(drawable)){ // TODO: not be always true
 				// drawable is an image
 				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
-						drawable.getPosition(),
+						drawable.getPosition(place),
 						drawable.getBoundingBox());
 
 				image.transform(transform);
