@@ -1,8 +1,10 @@
-package game.world.model;
+package game.world.logic;
 
 import game.ui.render.util.Transform;
 import game.world.dimensions.*;
-import game.world.logic.MovementHandler;
+import game.world.model.Exit;
+import game.world.model.Place;
+import game.world.model.Player;
 import game.world.util.Parser;
 
 import java.util.*;

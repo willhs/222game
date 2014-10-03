@@ -1,5 +1,7 @@
 package game.world.model;
 
+import game.world.logic.ClientWorld;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;

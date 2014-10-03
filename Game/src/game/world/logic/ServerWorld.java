@@ -1,7 +1,9 @@
-package game.world.model;
+package game.world.logic;
 
 import game.world.dimensions.Point3D;
-import game.world.logic.MovementHandler;
+import game.world.model.Exit;
+import game.world.model.Place;
+import game.world.model.Player;
 import game.world.util.Parser;
 
 import java.io.Serializable;

@@ -2,9 +2,9 @@ package test.world;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import game.world.model.ClientWorld;
+import game.world.logic.ClientWorld;
+import game.world.logic.ServerWorld;
 import game.world.model.Player;
-import game.world.model.ServerWorld;
 
 import java.util.Iterator;
 import java.util.List;
