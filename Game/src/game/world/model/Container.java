@@ -1,6 +1,8 @@
 package game.world.model;
 
-import java.util.List;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
+
 
 /**
  * Container
@@ -8,11 +10,41 @@ import java.util.List;
  * @author Shane Brewer
  *
  */
-public interface Container extends Item{
+public abstract class Container implements Item{
 	
-	/**
-	 * Gets the list of items that are in the container.
-	 * @return - returns a list of items from the container.
-	 */
-	public List<Item> getItems();
+	private final Inventory contents;
+	private final String name;
+	private final Rectangle3D boundingBox;
+	private Point3D position;
+	
+	public Container (String name, Inventory contents, Rectangle3D boundingBox, Point3D position){
+		this.contents = contents;
+		this.name = name;
+		this.position = position;
+		this.boundingBox = boundingBox;
+	}
+	
+	public Inventory getContents(){
+		return contents;
+	}
+	
+	public abstract boolean isLocaked();
+	
+	public abstract boolean unlock(Inventory playersInventory);
+	
+	public Point3D getPosition() {
+		return position;
+	}
+	
+	public void  setPosition(Point3D point) {
+		position = point;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public Rectangle3D getBoundingBox(){
+		return boundingBox;
+	}
 }
