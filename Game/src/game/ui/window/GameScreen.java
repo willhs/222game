@@ -104,6 +104,7 @@ public class GameScreen implements GraphicsPane  {
 		keyList.add("Down");
 		keyList.add("Right");
 		keyList.add("Left");
+		keyList.add("Interact");
 
 		return keyList;
 	}

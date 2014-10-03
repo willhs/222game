@@ -36,6 +36,9 @@ public class Res {
 	public static void readInAllCommonImages(){
 		images = new HashMap<String, BufferedImage>();
 
+		addImage("Char3");
+		addImage("Char2");
+		addImage("Char1");
 		addImage("Player");
 		addImage("Tree");
 		addImage("Table");

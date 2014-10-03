@@ -8,11 +8,13 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import nw.Client;
+import game.ui.render.Res;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
@@ -42,7 +44,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 	int characterSelected = -1;
 
-	//
+
 	private int startX = 20;
 	private int startY = 20;
 	private int boxWidth = GameWindow.FRAME_WIDTH-startX*2;
@@ -131,12 +133,16 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 		if(characterSelected == 1)g2d.setColor(Color.blue);
 		g2d.draw(character1);
+		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char1"),(int)character1.getHeight()-20,(int)character1.getHeight()-20),(int)character1.getX()+20,(int)character1.getY()+5, panel);
 		g2d.setColor(Color.white);
 		if(characterSelected == 2)g2d.setColor(Color.blue);
 		g2d.draw(character2);
+		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char2"),(int)character2.getHeight()-20,(int)character2.getHeight()-20),(int)character2.getX()+20,(int)character2.getY()+5, panel);
 		g2d.setColor(Color.white);
 		if(characterSelected == 3)g2d.setColor(Color.blue);
 		g2d.draw(character3);
+		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char3"),(int)character3.getHeight()-20,(int)character3.getHeight()-20),(int)character3.getX()+20,(int)character3.getY()+5, panel);
+
 		g2d.setColor(Color.white);
 
 

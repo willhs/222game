@@ -214,15 +214,15 @@ public class Renderer {
 			}
 		}
 
-		for (GameImage star : makeStars()){
+		/*for (GameImage star : makeStars()){
 			star.transform(transform);
 			toDraw.offer(star);
-		}
+		}*/
 
-		/*// ------- FLIP Y VALUES OF ALL THINGS
+		// ------- FLIP Y VALUES OF ALL THINGS
 		for (Renderable shape : toDraw){
 			shape.flipY(FRAME_TOP);
-		}*/
+		}
 
 		while (!toDraw.isEmpty()){
 			Renderable renderable = toDraw.poll();
@@ -380,6 +380,8 @@ public class Renderer {
 		private static List<GameImage> makeStars(){
 			List<GameImage> stars = new ArrayList<GameImage>();
 
+			Random ran = new Random(RANDOM_SEED);
+
 			int maxX = 500;
 			int maxY = 500;
 			int maxZ = 500;
@@ -389,9 +391,9 @@ public class Renderer {
 
 			int starCount = 1000;
 			for (int starNum = 0; starNum < starCount; starNum++){
-				float x = randomColor.nextInt(maxX*2)-maxZ;
-				float y = randomColor.nextInt(maxY*2)-maxZ;
-				float z = randomColor.nextInt(maxZ*2)-maxZ;
+				float x = ran.nextInt(maxX*2)-maxZ;
+				float y = ran.nextInt(maxY*2)-maxZ;
+				float z = ran.nextInt(maxZ*2)-maxZ;
 
 				int size = randomColor.nextInt(maxSize-minSize)+minSize;
 

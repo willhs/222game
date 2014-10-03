@@ -55,6 +55,16 @@ public class LevelMaker{
 	 * the center of all trixels
 	 */
 	private Point3D trixelsCentroid;
+	/**
+	 * the colour that new trixels will be made in
+	 */
+	private Color colour;
+	/**
+	 * is eraser mode on or off
+	 */
+	private boolean eraser;
+
+	private int flipY = 600;
 
 	public LevelMaker(){
 
@@ -69,6 +79,9 @@ public class LevelMaker{
 			trixels.add(t);
 		}
 
+		// initialise colour
+		colour = Color.WHITE;
+
 		// initialise lastTransform with no rotation
 		lastTransform = makeTransform(new Vector3D(0,0,0));
 
@@ -82,8 +95,8 @@ public class LevelMaker{
 	 * @return
 	 */
 	private Floor makeFloor() {
-		int[] x = new int[]{100,600,600,100};
-		int[] z = new int[]{100,100,600,600};
+		int[] x = new int[]{100,300,300,100};
+		int[] z = new int[]{100,100,800,800};
 
 		Point3D[] points = new Point3D[x.length];
 		for (int i = 0; i < x.length; i++) {
@@ -144,16 +157,22 @@ public class LevelMaker{
 	 * @param x
 	 * @param y
 	 */
-	void attemptCreateTrixel(int x, int y) {
+	void dealWithMouseClick(int x, int y) {
+
+		y = flipY - y; // flip y value
 
 		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
-		if (face != null){
-			System.out.println("z: "+face.getZ());
-			trixels.add(makeTrixelNextToFace(face));
-		//	highlightTrixel(face.getParentTrixel());
-			updateTrixelFaces();
-		}
 
+		if (face == null)	return;
+
+		Trixel trixel = face.getParentTrixel();
+		if (eraser){ // erase the trixel
+			trixels.remove(trixel);
+		}
+		else { // make a new trixel next to this trixel
+			trixels.add(makeTrixelNextToFace(face, colour));
+		}
+		updateTrixelFaces();
 	}
 
 	private void updateTrixelFaces() {
@@ -182,16 +201,12 @@ public class LevelMaker{
 		return null;
 	}
 
-	void highlightTrixel(Trixel trixel){
-		trixel.setColour(Color.red);
-	}
-
 	/**
 	 * The trixel will be made directly next to neighbourFace.
 	 *
 	 * @param neighbourFace - the TrixelFace directly next to the trixel to be made
 	 */
-	Trixel makeTrixelNextToFace(TrixelFace neighbourFace) {
+	Trixel makeTrixelNextToFace(TrixelFace neighbourFace, Color colour) {
 
 		// find the true (unrotated) normal vector of the face by reversing the transform that was applied
 		neighbourFace.transform(lastTransform.inverse());
@@ -208,7 +223,7 @@ public class LevelMaker{
 		System.out.println("trixition "+newTrixition);*/
 		//System.out.println("center: "+centroid);
 
-		return new Trixel(newTrixition, Renderer.getTrixelColour());
+		return new Trixel(newTrixition, colour);
 	}
 
 	Transform getLastTransform() {
@@ -240,6 +255,25 @@ public class LevelMaker{
 		}
 
 		writer.close();
+	}
+
+	/**
+	 * sets the colour of the next trixel
+	 * @param colour
+	 */
+	public void setColour(Color colour){
+		this.colour = colour;
+	}
+
+	/**
+	 * toggles eraser mode on or off
+	 */
+	public void toggleEraser() {
+		eraser = !eraser;
+	}
+
+	public boolean getIsEraserModeOn(){
+		return eraser;
 	}
 
 }
