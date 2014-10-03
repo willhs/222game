@@ -16,6 +16,7 @@ public abstract class Container implements Item{
 	private final String name;
 	private final Rectangle3D boundingBox;
 	private Point3D position;
+	protected boolean isLocked;
 	
 	public Container (String name, Inventory contents, Rectangle3D boundingBox, Point3D position){
 		this.contents = contents;

@@ -37,8 +37,7 @@ public class Chest extends Container{
 
 	@Override
 	public boolean unlock(Inventory playersInventory) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
