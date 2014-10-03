@@ -139,7 +139,7 @@ public class TrixelUtilTests {
 	}
 	
 	/**
-	 * should make one polygon with at the correct position
+	 * should make one trixel at the correct position
 	 */
 	@Test public void polygon2DToTrixelstest1(){ 
 		int top = 100;
@@ -158,6 +158,23 @@ public class TrixelUtilTests {
 		assertEquals(trix.x, (int)(top/Trixel.SIZE));
 		assertEquals(trix.y, (int)(left/Trixel.SIZE));
 		assertEquals(trix.z, (int)(z/Trixel.SIZE));
+	}
+	
+	@Test public void testTrixelCentroid(){
+		
+		int numTrials = 50;
+		
+		for (int trial = 0; trial < numTrials; trial++){
+			int x = 3;
+			int y = 3;
+			int z = 3;
+			
+			Trixition trix = new Trixition(x,y,z);
+			Trixel t = new Trixel(trix, Color.WHITE);
+			Point3D centroid = TrixelUtil.getTrixelCentroid(t);
+			
+			assertEquals(TrixelUtil.trixitionToPosition(trix), centroid);
+		}
 	}
 	
 }

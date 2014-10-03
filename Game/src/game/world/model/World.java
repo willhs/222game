@@ -1,5 +1,6 @@
 package game.world.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,8 +16,12 @@ import java.util.Map;
  * @author Shane Brewer
  *
  */
-public class World extends ClientWorld{
+public class World extends ClientWorld implements Serializable{
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private Place startPlace;
 	// both of these once set should not change.
 	private final List<Player> players;
@@ -40,10 +45,16 @@ public class World extends ClientWorld{
 		allExits = new HashMap<String, Exit>();
 		allPlayers = new HashMap<String, Player>();
 		allPlaces = new HashMap<String, Place>();
+		allItems = new HashMap<String, Item>();
 		for (Place place: places){
 			allPlaces.put(place.getName(), place);
+			Iterator<Item> it = place.getItems();
+			while (it.hasNext()){
+				Item i = it.next();
+				allItems.put(i.getName(), i);
+			}
 		}
-		allItems = new HashMap<String, Item>();
+
 	}
 
 	//======================End========================//
@@ -79,6 +90,7 @@ public class World extends ClientWorld{
 	@Override
 	public boolean addPlayerToGameWorld(Player player){
 		players.add(player);
+		allPlayers.put(player.getName(), player);
 		return startPlace.setStartPoint(player);
 	}
 
@@ -89,6 +101,35 @@ public class World extends ClientWorld{
 
 	@Override
 	protected void addPlayer(Player player) {
+		allPlayers.put(player.getName(), player);
 		players.add(player);
+	}
+
+	@Override
+	protected Player getPlayerByName(String playerName) {
+		return allPlayers.get(playerName);
+	}
+
+	@Override
+	protected Place getPlaceByName(String placeName) {
+		return allPlaces.get(placeName);
+	}
+
+	@Override
+	public void addExit(Exit exit){
+		allExits.put(exit.getName(), exit);
+	}
+
+	@Override
+	public void replaceCurrentPlace(Place place) {
+		super.replaceCurrentPlace(place);
+		places.remove(place);
+		places.add(place);
+		allPlaces.put(place.getName(), place);
+	}
+
+	@Override
+	protected Exit getExitByName(String exitName) {
+		return allExits.get(exitName);
 	}
 }

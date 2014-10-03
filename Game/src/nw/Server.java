@@ -1,43 +1,67 @@
 package nw;
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
-import game.world.model.Item;
-import game.world.model.Place;
-import game.world.model.Room;
-import game.world.model.ServerWorld;
-import game.world.model.Table;
-import game.world.model.World;
+import game.world.dimensions.*;
+import game.world.model.*;
 
 import java.awt.Polygon;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Server extends Thread{
-	private Socket clientSocket;
+	//This server is instantiated once for each connection, so static fields are shared across connections,
+	//while non-static fields are duplicated for each connection.
 
-	public Server(Socket clientSocket){
-		this.clientSocket = clientSocket;
+	//One set of IO streams for each connection
+	private InputStream inStream;
+	private OutputStream outStream;
+
+	//One list of output streams shared by all connections.  Every time something needs to be sent out
+	//to all clients (almost everything), it is sent out on each stream in this list.
+	private static List<ObjectOutputStream> outStreams = new ArrayList<ObjectOutputStream>();
+
+	//The single server world.  Should probably synchronize this, lest wrath we face.
+	private static ServerWorld world;
+
+	public Server(InputStream inStream, OutputStream outStream){
+		this.inStream = inStream;
+		this.outStream = outStream;
 	}
 
-	public ServerWorld getDefaultWorld(){
+	/*
+	 * On the first day, God called this function.
+	 */
+	public static void initialiseWorld(){
+		//The points making up the floor
 		int[] xpoints = new int[]{200,400,400,200};
 		int[] ypoints = new int[]{200,200,400,400};
 
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> items = new ArrayList<Item>();
-		items.add(new Table("Table1", new Point3D(250, 0, 250), new Rectangle3D(50, 50, 50)));
+		//items.add(new Table("Table1", new Point3D(250, 0, 250), new Rectangle3D(50, 50, 50)));
 		Room room = new Room(items, p, "Room1");
 		List<Place> rooms = new ArrayList<Place>();
 		rooms.add(room);
-		return new World(rooms);
+		world = new World(rooms);
 	}
 
+	/*
+	 * Broadcast an object to all clients.
+	 * @param o Object to send to all clients.
+	 */
+	public static void send(Object o) throws IOException{
+		for(ObjectOutputStream os : outStreams){
+			os.writeObject(o);
+		}
+	}
+
+	/*
+	 * The main loop.  This function is running once for each player in the game concurrently.
+	 * It:
+	 *   1. Wraps the streams to add buffering and object serialization
+	 *   2. Sends the world to the current client
+	 *   3. Loops forever, processing any objects in the incoming queue when one is ready
+	 */
 	public void run(){
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
@@ -45,41 +69,43 @@ public class Server extends Thread{
 		Object received = null;
 		String recStr = "";
 
-		ServerWorld world = getDefaultWorld();
-
 		try{
 
-			out = new ObjectOutputStream(clientSocket.getOutputStream());
+			//Wrap the output stream in an ObjectOutputStream, for sending whole objects
+			out = new ObjectOutputStream(outStream);
 			out.flush();
+			outStreams.add(out);//Add the output stream to the list of broadcast streams
 
-			BufferedInputStream bis = new BufferedInputStream(clientSocket.getInputStream());
-			in = new ObjectInputStream(bis);
+			//Wrap the input stream in a buffer, so we don't block waiting for the client to send
+			BufferedInputStream bis = new BufferedInputStream(inStream);
+			in = new ObjectInputStream(bis);//And also in an ObjectInputStream as above
 
-			//Player player = world.getPlayers().get(world.getPlayers().size-1);
-			//System.out.println("Got player: " + player.getName());
+			long time = System.currentTimeMillis();//Save the time for interval broadcasts
 
-			long time = System.currentTimeMillis();
-
-			while(true){
+			synchronized(world){
+				out.writeObject(world);//Send the whole world to the client
+			}
+			while(true){//Forever:
 	
-				if(bis.available() != 0){
-					received = in.readObject();
-					if(received instanceof String){
+				if(bis.available() != 0){//If there are any objects incoming
+					received = in.readObject();//Get one
+					if(received instanceof String){//If it's a string, it's a command, let's process it
 						recStr = ((String)received);
-						System.out.println("Got: " + recStr);
+						System.out.println("[Server] Got: " + recStr);
 						
-						for(String cmd : world.applyCommand((String)received)){
-							System.out.println("Returning: " + cmd);	
-							out.writeObject(cmd);
+						for(String cmd : world.applyCommand((String)received)){//Apply the command and
+							System.out.println("[Server] Returning: " + cmd);	
+							Server.send(cmd);//Send each resulting command to all clients.
 						}
 					}else{
-						System.out.println("No idea what this is: " + received);
+						System.out.println("[Server] No idea what this is: " + received);
 					}
 				}
 
+				//We might choose to intermittently send the current room to deal with losses, but not at the moment.
 				if((System.currentTimeMillis()-time)/1000 >= 2){
-					out.writeObject(world.getPlaces().next());
 					time = System.currentTimeMillis();
+					//out.writeObject(world.getPlaces().next());
 				}
 				Thread.sleep(50);
 			}
@@ -107,9 +133,13 @@ public class Server extends Thread{
 
 		try{
 			ServerSocket serverSocket = new ServerSocket(portNumber);
+			Server.initialiseWorld();
 			while(true){
-				new Server(serverSocket.accept()).start();
+				Socket clientSock = serverSocket.accept();
+				new Server(clientSock.getInputStream(), clientSock.getOutputStream()).start();
 			}
-		}catch(IOException e){}
+		}catch(IOException e){
+			System.err.println(e);
+		}
 	}
 }

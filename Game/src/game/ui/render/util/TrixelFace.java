@@ -47,7 +47,6 @@ public class TrixelFace implements ZComparable, Transformable{
 	 * @return whether the polygon should be drawn
 	 */
 	public boolean isFacingViewer() {
-
 		return calculateNormal().getZ() > 0;
 	}
 
@@ -108,6 +107,10 @@ public class TrixelFace implements ZComparable, Transformable{
 
 	public Point3D[] getVertices() {
 		return vertices;
+	}
+
+	public Trixel getParentTrixel() {
+		return parent;
 	}
 
 }

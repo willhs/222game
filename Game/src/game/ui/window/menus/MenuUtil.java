@@ -6,12 +6,19 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
+
+/**
+ * @author Nicky van Hulst
+ * */
 public class MenuUtil {
 
-	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.1f);
-	public static final Color BLACK_TRAN = new Color(0f,0f,0f,0.5f);
+	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.5f);
+	public static final Color BLACK_TRAN = new Color(0f,0.5f,0.5f,0.5f);
 
 
 	/**
@@ -24,7 +31,7 @@ public class MenuUtil {
 		g.setFont(myFont);
 
 		for(int i = 0; i < buttons.length; i++){
-			g2d.setColor(new Color(1f,1f,1f,0.1f));
+			g2d.setColor(WHITE_TRAN);
 			g2d.fill(buttons[i]);
 			g2d.setColor(Color.black);
 			g2d.draw(buttons[i]);
@@ -117,5 +124,21 @@ public class MenuUtil {
 			}
 		}
 		return isDone;
+	}
+
+	/**
+	 * Takes a buffered Image and return a buffered Image with the size
+	 * width and height
+	 * */
+	public static BufferedImage scale(BufferedImage bufImage, int width, int height){
+		BufferedImage returnImage = bufImage;
+
+		//inventory test images
+		Image tempImage = bufImage.getScaledInstance(width, height, BufferedImage.SCALE_DEFAULT);
+		returnImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D bGr1 = returnImage.createGraphics();
+	    bGr1.drawImage(tempImage, 0, 0, null);
+	    bGr1.dispose();
+		return returnImage;
 	}
 }

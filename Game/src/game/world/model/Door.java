@@ -6,28 +6,21 @@ import game.world.dimensions.Rectangle3D;
 import java.util.List;
 
 /**
- * Door.
- * Is a way to exit a place should always have two exits.
+ * Door. Is a way to exit a place should always have two exits.
+ *
  * @author Shane Brewer
  *
  */
-public class Door extends Exit{
+public class Door extends Exit {
 
 	private final String name;
 	private final String imageName;
-	private final Point3D position;
 	private static final Rectangle3D boundingBox = new Rectangle3D(30, 30, 30);
 
-	public Door(List<Place> places, String name, Point3D position) {
-		super(places);
+	public Door(String name, Place placeOne, Point3D positionOne, Place placeTwo, Point3D positionTwo) {
+		super(placeOne, positionOne, placeTwo, positionTwo);
 		this.name = name;
 		this.imageName = "Door";
-		this.position = position;
-	}
-
-	@Override
-	public Point3D getPosition() {
-		return position;
 	}
 
 	@Override
@@ -54,6 +47,5 @@ public class Door extends Exit{
 	public boolean unlock(Inventory inventory) {
 		return false;
 	}
-
 
 }

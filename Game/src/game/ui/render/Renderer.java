@@ -2,6 +2,7 @@ package game.ui.render;
 
 import game.ui.render.util.GameImage;
 import game.ui.render.util.GamePolygon;
+import game.ui.render.util.GameText;
 import game.ui.render.util.LightSource;
 import game.ui.render.util.Line3D;
 import game.ui.render.util.Renderable;
@@ -14,6 +15,7 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.Place;
+import game.world.model.Player;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
@@ -40,14 +42,8 @@ public class Renderer {
 
 	private static final int FRAME_TOP = 600;
 
-	/**
-	 * Temp render method which uses the SingleRoomWorldtest
-	 * @param g
-	 * @param rotateAmount
-	 */
-	public static void render(Graphics g, Vector3D rotateAmount){
-		renderPlace(g, new SingleRoomWorldTest().world.getPlaces().next(), rotateAmount);
-	}
+	public static final long RANDOM_SEED = 15274910874912L;
+	public static Random randomColor;
 
 	/**
 	 * Draws a place using Graphics parameter and viewer direction
@@ -55,6 +51,7 @@ public class Renderer {
 	 * @param place
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
+		resetColour();
 
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
@@ -79,12 +76,12 @@ public class Renderer {
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
 
-		
+
 		// temporary solution to having floor behind everything.
-		Transform floorBehindEverything = Transform.newTranslation(0, 0, -200);
-		
+		Transform floorBehindEverything = Transform.newTranslation(0,0,-Trixel.SIZE);//Transform.newTranslation(0, 0, -5);
+
 		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
-		
+
 		for (Trixel floorTrixel : floorTrixels){
 			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(floorTrixel);
 			for (TrixelFace face : faces){
@@ -107,6 +104,15 @@ public class Renderer {
 				image.transform(transform);
 
 				toDraw.offer(image);
+
+				// if it's player, put name above head
+				if (drawable instanceof Player){
+					GameText text = new GameText(drawable.getName(),
+							image.getPosition().getTranslatedPoint(
+									new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
+
+					toDraw.offer(text);
+				}
 			}
 			else {
 				// drawable is made of trixels
@@ -120,12 +126,17 @@ public class Renderer {
 				}
 			}
 		}
+		// STARS
+		/*for (GameImage star : makeStars()){
+			star.transform(transform);
+			toDraw.add(star);
+		}*/
 		// testing
 		// axis lines
-		for (Line3D axisLine : makeAxisLines()){
+		/*for (Line3D axisLine : makeAxisLines()){
 			axisLine.transform(transform);
 			toDraw.offer(axisLine);
-		}
+		}*/
 
 		// ------- FLIP Y VALUES OF ALL THINGS
 		for (Renderable shape : toDraw){
@@ -133,6 +144,8 @@ public class Renderer {
 		}
 
 		// ------- DRAW ALL THE THINGS  ...in correct order
+		g.setColor(Color.black);
+		g.fillRect(0,0,2000, 2000);
 		// all gameObjects are either trixel faces or images.
 		while (!toDraw.isEmpty()){
 			Renderable renderObject = toDraw.poll();
@@ -145,10 +158,12 @@ public class Renderer {
 						(int)(position.x - boundingBox.width/2),
 						(int)(position.y + boundingBox.length/2 - boundingBox.height),
 						(int)boundingBox.width, (int)boundingBox.height, null);
-			/*	g2.setColor(Color.red);
-				g2.fillOval((int)(position.x - 5),
-						(int)(position.y - 5),
-						(int)10, 10);*/
+			}
+			else if (renderObject instanceof GameText){
+				GameText text = (GameText) renderObject;
+				Point3D position = text.getPosition();
+				g2.setColor(Color.RED);
+				g2.drawString(text.getText(), position.x, position.y);
 			}
 			else if (renderObject instanceof GamePolygon){
 				GamePolygon poly = (GamePolygon) renderObject;
@@ -190,18 +205,16 @@ public class Renderer {
 			}
 		}
 
-		// testing
-		// axis lines
-		for (Line3D axisLine : makeAxisLines()){
-			axisLine.transform(transform);
-			toDraw.offer(axisLine);
-		}
+		/*for (GameImage star : makeStars()){
+			star.transform(transform);
+			toDraw.offer(star);
+		}*/
 
-		/*// ------- FLIP Y VALUES OF ALL THINGS
+		// ------- FLIP Y VALUES OF ALL THINGS
 		for (Renderable shape : toDraw){
 			shape.flipY(FRAME_TOP);
-		}*/
-		
+		}
+
 		while (!toDraw.isEmpty()){
 			Renderable renderable = toDraw.poll();
 			if (renderable instanceof GamePolygon){
@@ -209,188 +222,179 @@ public class Renderer {
 				g2.setColor(poly.getColour());
 				g2.fillPolygon(poly);
 			}
-			if (renderable instanceof Line3D){
-				Line3D line = (Line3D) renderable;
-				g2.drawLine((int)line.getP1().x, (int)line.getP1().y, (int)line.getP2().x, (int)line.getP2().y);
+			if (renderable instanceof GameImage){
+				GameImage image = (GameImage) renderable;
+				Point3D position = image.getPosition();
+				g2.drawImage(image.getImage(), (int)position.x, (int)position.y, (int)image.getBoundingBox().width, (int)image.getBoundingBox().height, null);
 			}
 		}
-	}
-	
-	public static void renderTransformedTrixels(Graphics g, Iterator<Trixel> trixels){
-		Graphics2D g2 = (Graphics2D) g;
-		// enable anti-aliasing
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
-
-		while (trixels.hasNext()){
-			Trixel trixel = trixels.next();
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				toDraw.offer(Renderer.makeGamePolygonFromTrixelFace(face));
-			}
-		}
-
-/*		// testing
-		// axis lines
-		for (Line3D axisLine : makeAxisLines()){
-			axisLine.transform(transform);
-			toDraw.offer(axisLine);
-		}*/
-
-		/*// ------- FLIP Y VALUES OF ALL THINGS
-		for (Renderable shape : toDraw){
-			shape.flipY(FRAME_TOP);
-		}*/
-		
-		while (!toDraw.isEmpty()){
-			Renderable renderable = toDraw.poll();
-			if (renderable instanceof GamePolygon){
-				GamePolygon poly = (GamePolygon) renderable;
-				g2.setColor(poly.getColour());
-				g2.fillPolygon(poly);
-			}
-			if (renderable instanceof Line3D){
-				Line3D line = (Line3D) renderable;
-				g2.drawLine((int)line.getP1().x, (int)line.getP1().y, (int)line.getP2().x, (int)line.getP2().y);
-			}
-		}
-		
 	}
 
 	// -------------- HELPER METHODS -----------------------
-	//
-	/**
-	 * @return array of lines which draw the axis
-	 */
-	private static Line3D[] makeAxisLines() {
+		//
+		/**
+		 * @return array of lines which draw the axis
+		 */
+		private static Line3D[] makeAxisLines() {
 
-		final int LINE_LENGTH = 1000;
-		Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(LINE_LENGTH,0,			0));
-		Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			LINE_LENGTH,0));
-		Line3D zLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			0,			LINE_LENGTH));
-		return new Line3D[]{xLine, yLine, zLine};
-	}
-	/**
-	 * @param face
-	 * @return game polygon representing a trixel face
-	 */
-	public static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
-		Point3D[] vertices = face.getVertices();
-		int[] xpoints = new int[vertices.length];
-		int[] ypoints = new int[vertices.length];
-
-		float zTotal = 0;
-		for (int i=0; i < vertices.length; i++){
-			xpoints[i] = (int)vertices[i].getX();
-			ypoints[i] = (int)vertices[i].getY();
-			zTotal += (int)vertices[i].getZ();
+			final int LINE_LENGTH = 1000;
+			Line3D xLine = new Line3D(new Point3D(0,0,0), new Point3D(LINE_LENGTH,0,			0));
+			Line3D yLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			LINE_LENGTH,0));
+			Line3D zLine = new Line3D(new Point3D(0,0,0), new Point3D(0,			0,			LINE_LENGTH));
+			return new Line3D[]{xLine, yLine, zLine};
 		}
-		float zAverage = zTotal/vertices.length;
-		Color shadedColour = face.makeShadedColour(getTestLightSources(), new Color(20, 20, 20));
-		return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
-	}
+		/**
+		 * @param face
+		 * @return game polygon representing a trixel face
+		 */
+		public static GamePolygon makeGamePolygonFromTrixelFace(TrixelFace face) {
+			Point3D[] vertices = face.getVertices();
+			int[] xpoints = new int[vertices.length];
+			int[] ypoints = new int[vertices.length];
 
-	private static Iterator<LightSource> getTestLightSources() {
-		List<LightSource> lights = new ArrayList<LightSource>();
-		Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
-		lights.add(new LightSource(0.8f, dir, new Color(150, 150, 250)));
-		return lights.iterator();
-	}
-	/**
-	 * rotates a transformable object around a point given a viewer direction
-	 * @param object
-	 * @param viewerDirection
-	 */
-	public static Transform makeTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
-
-		Transform translateToOrigin = Transform.newTranslation(new Vector3D(pivotPoint.negate()));
-		Transform translateBack = Transform.newTranslation(new Vector3D(pivotPoint));
-
-		Transform rotate =
-				Transform.newZRotation(rotateAmount.z).compose(
-				Transform.newYRotation(rotateAmount.y).compose(
-				Transform.newXRotation(rotateAmount.x)
-		));
-
-		Transform viewSpaceTranslation =
-				Transform.newTranslation(viewSpaceTranslateDist);
-
-		return 	viewSpaceTranslation.compose(
-				ISOMETRIC_ROTATION.compose(
-				translateBack.compose(
-				rotate.compose(
-				translateToOrigin
-		))));
-	}
-
-	/**
-	 * @param drawable
-	 * @return whether a Drawable object should be represented as an image.
-	 */
-	private static boolean isImage(Drawable drawable) {
-		return Res.isImage(drawable.getImageName());
-	}
-
-
-	/**
-	 * @param dir
-	 * @param point
-	 * @return array of transforms necessary to perform rotation around the point
-	 */
-	public static Transform[] getRotateAroundPointTransforms(Vector3D dir, Point3D point){
-		Transform translateToOrigin = Transform.newTranslation(-point.getX(), -point.getY(), -point.getZ());
-		Transform rotate = Transform.newYRotation(dir.getY()).compose(Transform.newXRotation(dir.getX())).compose(Transform.newZRotation(dir.getZ()));
-		Transform translateBack = Transform.newTranslation(point.getX(), point.getY(), point.getZ());
-		return new Transform[]{ translateToOrigin, rotate, translateBack };
-	}
-
-	/**
-	 * @return random colour
-	 */
-	public static Color getTrixelColour(){
-		Random ran = new Random();
-		int r = 100 + ran.nextInt(100);
-		int g = 100 + ran.nextInt(100);
-		int b = 200;//
-
-		return new Color(r, g, b);
-	}
-
-	/**
-	 * Temporary (hopefully)
-	 * makes a java.awt.Polygon from a Floor object.
-	 * @param floor
-	 * @return a polygon representing the floor
-	 */
-	public static Polygon floorToVerticalPolygon(Floor floor){
-		Point3D[] floorPoints = floor.getPoints();
-		int[] xpoints = new int[floorPoints.length];
-		int[] ypoints = new int[floorPoints.length];
-
-		for ( int i = 0; i < floorPoints.length; i++){
-			Point3D point = floorPoints[i];
-			xpoints[i] = (int)point.getX();
-			ypoints[i] = (int)point.getZ();
+			float zTotal = 0;
+			for (int i=0; i < vertices.length; i++){
+				xpoints[i] = (int)vertices[i].getX();
+				ypoints[i] = (int)vertices[i].getY();
+				zTotal += (int)vertices[i].getZ();
+			}
+			float zAverage = zTotal/vertices.length;
+			Color shadedColour = face.makeShadedColour(getTestLightSources(), new Color(20, 20, 20));
+			return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
 		}
-		return new Polygon(xpoints, ypoints, floorPoints.length);
-	}
 
-	/**
-	 * @param floor
-	 * @return the center point or centroid of the floor
-	 */
-	public static Point3D getFloorCentroid(Floor floor){
-		float xSum = 0;
-		float ySum = 0;
-		float zSum = 0;
-		Point3D[] vertices = floor.getPoints();
-		for (Point3D vertex : vertices){
-			xSum += vertex.x;
-			ySum += vertex.y;
-			zSum += vertex.z;
+		private static Iterator<LightSource> getTestLightSources() {
+			List<LightSource> lights = new ArrayList<LightSource>();
+			Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
+			lights.add(new LightSource(0.8f, dir, new Color(150, 150, 250)));
+			return lights.iterator();
 		}
-		return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
-	}
+		/**
+		 * rotates a transformable object around a point given a viewer direction
+		 * @param object
+		 * @param viewerDirection
+		 */
+		public static Transform makeTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
+
+			Transform translateToOrigin = Transform.newTranslation(new Vector3D(pivotPoint.negate()));
+			Transform translateBack = Transform.newTranslation(new Vector3D(pivotPoint));
+
+			Transform rotate =
+					Transform.newZRotation(rotateAmount.z).compose(
+					Transform.newYRotation(rotateAmount.y).compose(
+					Transform.newXRotation(rotateAmount.x)
+			));
+
+			Transform viewSpaceTranslation =
+					Transform.newTranslation(viewSpaceTranslateDist);
+
+			return 	viewSpaceTranslation.compose(
+					ISOMETRIC_ROTATION.compose(
+					translateBack.compose(
+					rotate.compose(
+					translateToOrigin
+			))));
+		}
+
+		/**
+		 * @param drawable
+		 * @return whether a Drawable object should be represented as an image.
+		 */
+		private static boolean isImage(Drawable drawable) {
+			return Res.isImage(drawable.getImageName());
+		}
+
+
+		/**
+		 * @param dir
+		 * @param point
+		 * @return array of transforms necessary to perform rotation around the point
+		 */
+		public static Transform[] getRotateAroundPointTransforms(Vector3D dir, Point3D point){
+			Transform translateToOrigin = Transform.newTranslation(-point.getX(), -point.getY(), -point.getZ());
+			Transform rotate = Transform.newYRotation(dir.getY()).compose(Transform.newXRotation(dir.getX())).compose(Transform.newZRotation(dir.getZ()));
+			Transform translateBack = Transform.newTranslation(point.getX(), point.getY(), point.getZ());
+			return new Transform[]{ translateToOrigin, rotate, translateBack };
+		}
+
+		/**
+		 * @return random colour
+		 */
+		public static Color getTrixelColour(){
+			int r = 100 + randomColor.nextInt(100);
+			int g = 100 + randomColor.nextInt(100);
+			int b = 200;//
+
+			return new Color(r, g, b);
+		}
+
+		/**
+		 * Temporary (hopefully)
+		 * makes a java.awt.Polygon from a Floor object.
+		 * @param floor
+		 * @return a polygon representing the floor
+		 */
+		public static Polygon floorToVerticalPolygon(Floor floor){
+			Point3D[] floorPoints = floor.getPoints();
+			int[] xpoints = new int[floorPoints.length];
+			int[] ypoints = new int[floorPoints.length];
+
+			for ( int i = 0; i < floorPoints.length; i++){
+				Point3D point = floorPoints[i];
+				xpoints[i] = (int)point.getX();
+				ypoints[i] = (int)point.getZ();
+			}
+			return new Polygon(xpoints, ypoints, floorPoints.length);
+		}
+
+		/**
+		 * @param floor
+		 * @return the center point or centroid of the floor
+		 */
+		public static Point3D getFloorCentroid(Floor floor){
+			float xSum = 0;
+			float ySum = 0;
+			float zSum = 0;
+			Point3D[] vertices = floor.getPoints();
+			for (Point3D vertex : vertices){
+				xSum += vertex.x;
+				ySum += vertex.y;
+				zSum += vertex.z;
+			}
+			return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
+		}
+
+		/**
+		 * Testing making many stars
+		 * @return
+		 */
+		private static List<GameImage> makeStars(){
+			List<GameImage> stars = new ArrayList<GameImage>();
+
+			Random ran = new Random(RANDOM_SEED);
+
+			int maxX = 500;
+			int maxY = 500;
+			int maxZ = 500;
+
+			int minSize = 1;
+			int maxSize = 20;
+
+			int starCount = 1000;
+			for (int starNum = 0; starNum < starCount; starNum++){
+				float x = ran.nextInt(maxX*2)-maxZ;
+				float y = ran.nextInt(maxY*2)-maxZ;
+				float z = ran.nextInt(maxZ*2)-maxZ;
+
+				int size = randomColor.nextInt(maxSize-minSize)+minSize;
+
+				stars.add(new GameImage(Res.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
+			}
+			return stars;
+		}
+
+		public static void resetColour(){
+			randomColor = new Random(RANDOM_SEED);
+		}
 
 }

@@ -11,7 +11,7 @@ public class Trixel {
 	/**
 	 * value for trixel width, height and depth
 	 */
-	public static final int SIZE = 30;
+	public static final int SIZE = 20;
 	/**
 	 * The trixel's position in the trixel grid (trid)!
 	 */
@@ -41,9 +41,18 @@ public class Trixel {
 
 		return trixition.equals(other.getTrixition());
 	}
-	
+
 	@Override
 	public int hashCode(){
 		return trixition.hashCode();
+	}
+
+	public void setColour(Color colour) {
+		this.colour = colour;
+	}
+
+	@Override
+	public String toString(){
+		return trixition + "\t" + colour;
 	}
 }

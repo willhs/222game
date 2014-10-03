@@ -6,7 +6,7 @@ import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
 import game.world.dimensions.Vector3D;
-
+import game.world.model.Player;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -21,12 +21,17 @@ import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
+import test.world.util.SimpleServerInterface;
+import nw.Client;
+
+/**
+ * @author Nicky van Hulst
+ * */
 public class GameScreen implements GraphicsPane  {
 
 	//the menu drawn ontop on the game screen
 	private GraphicsPane currentMenu;
 	private BlankPanel panel;
-	private Queue<String> keyQue;
 
 	private ArrayList<String> releventQueKeypress;
 
@@ -49,15 +54,27 @@ public class GameScreen implements GraphicsPane  {
 	private BufferedImage[] inventoryImages;
 	//private BufferedImage selectedImage;
 
-	public GameScreen(BlankPanel panel){
+
+	//world fields
+	private Player player;
+
+	private Vector3D rotateVector;
+
+	private Client client;
+
+	public GameScreen(BlankPanel panel, Client client ,Player player){
+		this.client = client;
+		client.start();
+		this.player = player;
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
 		this.inventoryImages = new BufferedImage[6];
 		setUpInventoryBarButtons();
 		this.panel = panel;
-		this.keyQue = GameWindow.getKeyQueue();
+
 		loadImages();
 		releventQueKeypress = createKeylist();
+		rotateVector = new Vector3D(0f, 0f, 0f);
 	}
 
 	public void setUpInventoryBarButtons(){
@@ -83,23 +100,33 @@ public class GameScreen implements GraphicsPane  {
 	private ArrayList<String> createKeylist(){
 		ArrayList<String> keyList = new ArrayList<String>();
 
-		keyList.add("move up");
-		keyList.add("move down");
-		keyList.add("move right");
-		keyList.add("move left");
+		keyList.add("Up");
+		keyList.add("Down");
+		keyList.add("Right");
+		keyList.add("Left");
+		keyList.add("Interact");
 
 		return keyList;
 	}
 
+	@Override
 	public void render(Graphics g){
-		Renderer.render(g, new Vector3D(0,0,0)); //TODO wait for will to implement this method
 		//g.drawImage(testBackGroundImage, 0, 0, panel);
+		//Renderer.render(g,rotateVector); //TODO wait for will to implement this method
+		if(GameWindow.currentRoom != null){
+			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector); //TODO wait for will to implement this method
+		}
+
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}
 
+
+		//at this point draw my own overlay over the game
+
 		drawInventorybar(g);
 		drawInventory(g);
+
 	}
 
 	@Override
@@ -124,13 +151,13 @@ public class GameScreen implements GraphicsPane  {
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
 		else if(keyEvent.equals("inventory")){
-			currentMenu = new InventoryMenu(panel,this);
+			currentMenu = new InventoryMenu(panel,this,player);
 		}
 		else if(keyEvent.equals("escape")){
 			currentMenu = new PauseMenu(panel, this);
 		}
 		else if(releventQueKeypress.contains(keyEvent)){
-			keyQue.offer(keyEvent);
+			client.makeMove(keyEvent);
 		}
 		else if(keyEvent.equals("1")){
 			selectedButton = 0;
@@ -150,8 +177,12 @@ public class GameScreen implements GraphicsPane  {
 		else if(keyEvent.equals("6")){
 			selectedButton = 5;
 		}
-
-
+		else if(keyEvent.equals("rotate right")){
+			rotateVector =  rotateVector.plus( new Vector3D(0f , 0.05f , 0f));
+		}
+		else if(keyEvent.equals("rotate left")){
+			rotateVector =  rotateVector.plus( new Vector3D(0f , -0.05f , 0f));
+		}
 	}
 
 	public void drawInventorybar(Graphics g){
@@ -243,4 +274,7 @@ public class GameScreen implements GraphicsPane  {
 		}
 	}
 
+	public int getGridSize(){
+		return this.boxSize;
+	}
 }

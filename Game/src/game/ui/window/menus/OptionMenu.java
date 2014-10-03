@@ -119,7 +119,6 @@ public class OptionMenu implements GraphicsPane, Animated {
 			animating = true;
 			animatingIn = false;
 			nextMenu = new MainMenu(panel);
-			//panel.setMenu(new MainMenu(panel));
 		}
 		else if(selectedButton == 1){//key binding menu button
 			currentMenu = new KeyOptionScreen(panel);
@@ -136,8 +135,6 @@ public class OptionMenu implements GraphicsPane, Animated {
 			animating = true;
 			animatingIn = false;
 			nextMenu = new MainMenu(panel);
-			//panel.setMenu(new MainMenu(panel));
-
 		}
 		else if(keyEvent.equals("enter")){
 			handleMouseReleased(null);//TODO change to a proper method button pressed like main menu

@@ -1,5 +1,7 @@
 package game.ui.window;
 
+import game.ui.render.Renderer;
+import game.ui.render.Res;
 import game.world.model.Player;
 import game.world.model.Room;
 
@@ -15,7 +17,6 @@ import test.render.RotationTest;
 /**
  * @author Nicky van HUlst
  * */
-
 public class GameWindow extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -32,7 +33,7 @@ public class GameWindow extends JFrame{
 
 	public static HashMap<String , Integer> keyMap;
 
-	private Room currentRoom;
+	public static Room currentRoom;
 	private Player player;//TODO make this work
 
 	/**
@@ -51,6 +52,8 @@ public class GameWindow extends JFrame{
 		setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		setLocationRelativeTo(null);
 		setVisible(true);
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		//adds the main panel where everythin will be drawn on
 		add(blankPanel);
@@ -75,11 +78,12 @@ public class GameWindow extends JFrame{
 		return keyCodeQueue;
 	}
 
-	public void setRoom(Room currentRoom){
-		this.currentRoom = currentRoom;
+	public static void setRoom(Room currentRoom){
+		GameWindow.currentRoom = currentRoom;
 	}
 
 	public static void main(String[] args){
+		Res.readInAllCommonImages();
 		GameWindow window = new GameWindow();
 		TestThread t = new TestThread(20, window);
 		t.start();
@@ -87,5 +91,9 @@ public class GameWindow extends JFrame{
 
 	public Player getPlayer(){
 		return this.player;
+	}
+
+	public Room getRoom(){
+		return null;
 	}
 }

@@ -16,7 +16,7 @@ import test.world.util.SingleRoomWorldTest;
 public class ServerClientWorldTests {
 
 	@Test
-	public void test() {
+	public void makePlayerTest() {
 		ServerWorld serverWorld = new SingleRoomWorldTest().world;
 		ClientWorld clientWorld = new SingleRoomWorldTest().world;
 
@@ -24,21 +24,14 @@ public class ServerClientWorldTests {
 				"FattyBoomBoom"));
 
 		List<String> commands = serverWorld.applyCommand(command);
-		System.out.println("helpers");
-		System.out.println(commands);
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
-		System.out.println("up");
 		clientWorld.getCommand("Up");
-		System.out.println("down");
 		clientWorld.getCommand("Down");
-		System.out.println("left");
 		clientWorld.getCommand("Left");
-		System.out.println("right");
 		clientWorld.getCommand("Right");
 		Iterator<Player> players = clientWorld.getPlayers();
-		System.out.println(players);
 		boolean um = false;
 		while(players.hasNext()){
 			if (players.next().getName().equals("FattyBoomBoom")){
@@ -51,4 +44,35 @@ public class ServerClientWorldTests {
 		}
 	}
 
+
+	@Test
+	public void movePlayerTest() {
+		ServerWorld serverWorld = new SingleRoomWorldTest().world;
+		ClientWorld clientWorld = new SingleRoomWorldTest().world;
+		Player p = new Player("FattyBoomBoom");
+		String command = clientWorld.getSetClientPlayer(p);
+
+		List<String> commands = serverWorld.applyCommand(command);
+		for (String c: commands){
+			clientWorld.applyCommand(c);
+		}
+		String cmd = clientWorld.getCommand("Up");
+		System.out.println(p.getPosition());
+		commands = serverWorld.applyCommand(cmd);
+		for (String c: commands){
+			clientWorld.applyCommand(c);
+		}
+		System.out.println(p.getPosition());
+		Iterator<Player> players = clientWorld.getPlayers();
+		boolean um = false;
+		while(players.hasNext()){
+			Player pp = players.next();
+			if (pp.getName().equals("FattyBoomBoom")){
+				um = true;
+			}
+		}
+		if (!um){
+			fail("Not yet implemented");
+		}
+	}
 }

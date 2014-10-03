@@ -33,20 +33,41 @@ public class MovementHandler {
 	 */
 	public static boolean playerMove(Player player, Point3D to, Place place,
 			Item... toIgnore) {
-		if (!place.contains(to)) {
-			return false;
-		}
+//		if (!place.contains(to)) {
+//			return false;
+//		}
 		if (!place.contains(to, player.getBoundingBox())) {
+
 			return false;
 		}
-		if (checkItemCollision(player, place.getItems(), toIgnore)) {
+		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
+
 			return false;
 		}
-		if (checkPlayerCollision(player, place.getPlayers())) {
+		if (checkPlayerCollision(player, to, place.getPlayers())) {
+
 			return false;
 		}
+		if (checkExitCollision(player, to, place,  place.getExits())){
+
+			return false;
+		}
+		System.out.println("um");
 		player.move(to);
 		return true;
+	}
+
+	private static boolean checkExitCollision(Player player, Point3D playerPoint, Place place,
+			Iterator<Exit> exits) {
+		Rectangle3D playerBox = player.getBoundingBox();
+		while (exits.hasNext()) {
+			Exit exit = exits.next();
+			if (playerBox.collisionDetection(playerPoint,
+					exit.getBoundingBox(), exit.getPosition(place))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -60,10 +81,9 @@ public class MovementHandler {
 	 *            - items to ignore.
 	 * @return - returns true only if the player collieds with a item.
 	 */
-	private static boolean checkItemCollision(Player player,
+	private static boolean checkItemCollision(Player player, Point3D playerPoint,
 			Iterator<Item> items, Item... toIgnore) {
 		Rectangle3D playerBox = player.getBoundingBox();
-		Point3D playerPoint = player.getPosition();
 		while (items.hasNext()) {
 			Item item = items.next();
 			if (playerBox.collisionDetection(playerPoint,
@@ -104,17 +124,17 @@ public class MovementHandler {
 	 *            - players in the place.
 	 * @return - true if the player collides
 	 */
-	private static boolean checkPlayerCollision(Player player,
+	private static boolean checkPlayerCollision(Player player, Point3D playerPoint,
 			Iterator<Player> players) {
 		Rectangle3D playerBox = player.getBoundingBox();
-		Point3D playerPoint = player.getPosition();
 		while (players.hasNext()) {
 			Player otherPlayer = players.next();
 			Rectangle3D otherPlayerBox = otherPlayer.getBoundingBox();
 			Point3D otherPlayerPoint = otherPlayer.getPosition();
 			if (!player.equals(otherPlayer)
-					&& playerBox.collisionDetection(playerPoint,
-							otherPlayerBox, otherPlayerPoint)) {
+					&& (playerBox.collisionDetection(playerPoint,
+							otherPlayerBox, otherPlayerPoint) || playerPoint
+							.equals(otherPlayerPoint))) {
 				return true;
 			}
 		}
@@ -135,18 +155,24 @@ public class MovementHandler {
 	 */
 	public static boolean exitPlace(Player player, Place place, Exit exit) {
 		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
-				exit.getPosition(), exit.getBoundingBox())) {
+				exit.getPosition(place), exit.getBoundingBox())) {
+			System.out.println("shuld not be getting ehre.");
 			return false;
 		}
 		if (exit.isLocked()) {
 			if (!exit.unlock(player.getInventory())) {
+				System.out.println();
 				return false;
 			}
 		}
 		Place otherPlace = exit.getOtherPlace(place);
-		place.removePlayer(player);
-		otherPlace.addPlayer(player);
-		return true;
+		if (setPlayerExitPosition(player, exit, otherPlace)){
+			place.removePlayer(player);
+			otherPlace.addPlayer(player);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -159,13 +185,31 @@ public class MovementHandler {
 	 *            - point of the item.
 	 * @return - true if they are close enough
 	 */
-	private static boolean checkProximity(Point3D pointOne,
+	public static boolean checkProximity(Point3D pointOne,
 			Rectangle3D boundingOne, Point3D pointTwo, Rectangle3D boundingTwo) {
-		if ((Math.abs(pointOne.x - pointTwo.x) <= 5 + (boundingOne.getWidth() + boundingTwo
+		if ((Math.abs(pointOne.x - pointTwo.x) <= 10 + (boundingOne.getWidth() + boundingTwo
 				.getWidth()) / 2)
-				&& (Math.abs(pointOne.z - pointTwo.z) <= 5 + (boundingOne
+				&& (Math.abs(pointOne.z - pointTwo.z) <= 10 + (boundingOne
 						.getLength() + boundingTwo.getLength()) / 2)) {
+			System.out.println("Make it here");
 			return true;
+		}
+		return false;
+	}
+
+	private static boolean setPlayerExitPosition(Player player, Exit exit, Place place){
+		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
+		int x = (int)rect.x-20;
+		int z = (int)rect.z-20;
+		int maxX = (int)(rect.x+rect.width+20);
+		int maxZ = (int)(rect.z+rect.length+20);
+		System.out.println("Exiting");
+		for (;x < maxX; x++){
+			for (;z < maxZ; z++){
+				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
+					return true;
+				}
+			}
 		}
 		return false;
 	}

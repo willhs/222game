@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 
 
 /**
- * @author Nicky van HUlst
+ * @author Nicky van Hulst
  * */
 public class MainMenu implements GraphicsPane, Animated{
 	private final int numbOfButtons = 5;
@@ -107,7 +107,7 @@ public class MainMenu implements GraphicsPane, Animated{
 			}
 			selectedButton = -1;//no button is selected
 		}
-	}
+}
 
 	@Override
 	public void handleMouseReleased(MouseEvent e){
@@ -134,9 +134,9 @@ public class MainMenu implements GraphicsPane, Animated{
 	 * */
 	private void buttonPressed(){
 		switch(selectedButton){
-		case 0: panel.setMenu(new GameScreen(panel));
+		case 0: panel.setMenu(new CharacterSelectionMenu(panel));
 			return;
-		case 1: System.out.println("Multiplayer");
+		case 1: panel.setMenu(new MultiCharacterSelectionMenu(panel));
 			return;
 		case 2 :
 			nextMenu = new OptionMenu(panel);

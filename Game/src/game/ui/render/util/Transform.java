@@ -1,5 +1,7 @@
 package game.ui.render.util;
 
+import java.io.Serializable;
+
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
@@ -18,10 +20,10 @@ matrices, and methods to multiply a translation by a vector or another matrix.
 
 
 /**
- * @author hardwiwill & pondy: pondy wrote most of this class.
+ * @author hardwiwill & pondy; pondy wrote most of this class.
  *
  */
-public class Transform{
+public class Transform implements Serializable{
 
     private final float[][] values;
 

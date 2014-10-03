@@ -12,18 +12,18 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 import game.world.util.Floor;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JFileChooser;
 
 /**
  * @author hardwiwill
@@ -31,7 +31,7 @@ import javax.swing.JPanel;
  * Provides a GUI for building a collection of trixels to define the physical layout of a level.
  * TODO: Save the level in a file for use in the game.
  */
-public class LevelMaker extends JPanel{
+public class LevelMaker{
 
 	/**
 	 * the amount in which to rotate all trixels (so that it can be updated)
@@ -55,25 +55,32 @@ public class LevelMaker extends JPanel{
 	 * the center of all trixels
 	 */
 	private Point3D trixelsCentroid;
+	/**
+	 * the colour that new trixels will be made in
+	 */
+	private Color colour;
+	/**
+	 * is eraser mode on or off
+	 */
+	private boolean eraser;
+
+	private int flipY = 600;
 
 	public LevelMaker(){
-
-		//System.out.println(System.getProperty("java.class.path"));
-
-		// initialise GUI stuff
-		WillMouseMotionListener listener = new WillMouseMotionListener();
-		addMouseListener(listener);
-		addMouseMotionListener(listener);
 
 		// initialise trixels to make up a floor.
 		trixels = new HashSet<Trixel>();
 
+		Renderer.resetColour();
 		Floor floor = makeFloor();
 
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
 				Renderer.floorToVerticalPolygon(floor), -1)){
 			trixels.add(t);
 		}
+
+		// initialise colour
+		colour = Color.WHITE;
 
 		// initialise lastTransform with no rotation
 		lastTransform = makeTransform(new Vector3D(0,0,0));
@@ -88,8 +95,8 @@ public class LevelMaker extends JPanel{
 	 * @return
 	 */
 	private Floor makeFloor() {
-		int[] x = new int[]{100,600,600,100};
-		int[] z = new int[]{100,100,600,600};
+		int[] x = new int[]{100,300,300,100};
+		int[] z = new int[]{100,100,800,800};
 
 		Point3D[] points = new Point3D[x.length];
 		for (int i = 0; i < x.length; i++) {
@@ -99,21 +106,22 @@ public class LevelMaker extends JPanel{
 		return new Floor(points);
 	}
 
-	@Override
-	public void paintComponent(Graphics g){
-		super.paintComponent(g);
-		Renderer.renderTrixels(g, trixels.iterator(), lastTransform);
+	/**
+	 * @param rotateX : how much to rotate in x direction in radians
+	 * @param rotateY : ^ y direction...
+	 */
+	Vector3D changeRotateAmount(int rotateX, int rotateY) {
+		float rotateSpeed = 0.01f;
+		return rotateAmounts.plus(
+				new Vector3D(rotateX*rotateSpeed, rotateY*rotateSpeed, 0)
+		);
 	}
 
 	/**
-	 * @param mouseDragX : how much to rotate in x direction in radians
-	 * @param mouseDragY : ^ y direction...
+	 * @return all trixels to be drawn
 	 */
-	public Vector3D changeRotateAmount(int mouseDragX, int mouseDragY) {
-		float rotateSpeed = 0.01f;
-		return rotateAmounts.plus(
-				new Vector3D(mouseDragY*rotateSpeed, mouseDragX*rotateSpeed, 0)
-		);
+	Iterator<Trixel> getTrixels(){
+		return trixels.iterator();
 	}
 
 	/**
@@ -121,26 +129,14 @@ public class LevelMaker extends JPanel{
 	 * @param rotateX
 	 * @param rotateY
 	 */
-	private void updateRotation(int rotateX, int rotateY){
+	void updateRotation(int rotateX, int rotateY){
 
 		rotateAmounts = changeRotateAmount(rotateX, rotateY);
 		Transform trans = makeTransform(rotateAmounts);
 
-		// reset rotated trixels
-		rotatedFaces = new ArrayList<TrixelFace>();
-
-		for (Trixel trixel : trixels){
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				face.transform(trans);
-				rotatedFaces.add(face);
-			}
-		}
-
-		// sort in order of closest trixels
-		Collections.sort(rotatedFaces, new ZComparator());
+		updateTrixelFaces();
 
 		lastTransform = trans;
-		repaint();
 	}
 
 
@@ -148,7 +144,7 @@ public class LevelMaker extends JPanel{
 	 * Makes a combined transform matrix involving several factors including
 	 * @return
 	 */
-	private Transform makeTransform(Vector3D rotateAmounts) {
+	Transform makeTransform(Vector3D rotateAmounts) {
 
 		trixelsCentroid  = TrixelUtil.findTrixelsCentroid(trixels.iterator());
 		Vector3D viewTranslation = Renderer.STANDARD_VIEW_TRANSLATION;
@@ -161,16 +157,48 @@ public class LevelMaker extends JPanel{
 	 * @param x
 	 * @param y
 	 */
-	private void attemptCreateTrixel(int x, int y) {
+	void dealWithMouseClick(int x, int y) {
+
+		y = flipY - y; // flip y value
+
+		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
+
+		if (face == null)	return;
+
+		Trixel trixel = face.getParentTrixel();
+		if (eraser){ // erase the trixel
+			trixels.remove(trixel);
+		}
+		else { // make a new trixel next to this trixel
+			trixels.add(makeTrixelNextToFace(face, colour));
+		}
+		updateTrixelFaces();
+	}
+
+	private void updateTrixelFaces() {
+		// reset rotated trixels
+		rotatedFaces = new ArrayList<TrixelFace>();
+
+		for (Trixel trixel : trixels){
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				face.transform(lastTransform);
+				rotatedFaces.add(face);
+			}
+		}
+
+		// sort in order of closest trixels
+		Collections.sort(rotatedFaces, new ZComparator());
+		Collections.reverse(rotatedFaces);
+	}
+
+	TrixelFace getTrixelFaceAtViewPoint(int x, int y){
 		for (TrixelFace face : rotatedFaces){
 			GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(face);
 			if (facePoly.contains(x, y)){
-				System.out.println("z: "+face.getZ());
-				trixels.add(makeTrixelNextToFace(face));
-				break; // add only one trixel
+				return face;
 			}
 		}
-		repaint();
+		return null;
 	}
 
 	/**
@@ -178,63 +206,74 @@ public class LevelMaker extends JPanel{
 	 *
 	 * @param neighbourFace - the TrixelFace directly next to the trixel to be made
 	 */
-	private Trixel makeTrixelNextToFace(TrixelFace neighbourFace) {
-
-		GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(neighbourFace);
+	Trixel makeTrixelNextToFace(TrixelFace neighbourFace, Color colour) {
 
 		// find the true (unrotated) normal vector of the face by reversing the transform that was applied
 		neighbourFace.transform(lastTransform.inverse());
-		Point3D centroid = facePoly.getCentroid();
-		Vector3D normal = neighbourFace.calculateNormal().unitVector();
-		Point3D newTrixelPosition = centroid.getTranslatedPoint(normal);
+		//Vector3D normal = neighbourFace.calculateNormal().unitVector();
+		Vector3D normal = new Vector3D(0,1,0);
+		Trixition faceTrixition = neighbourFace.getParentTrixel().getTrixition();
+		Point3D faceRealPosition = TrixelUtil.trixitionToPosition(faceTrixition);
+		// shift position by normal direction * trixel size, this will be at the position of a new trixel
+		Point3D newTrixelPosition = faceRealPosition.getTranslatedPoint(normal.makeScaled(Trixel.SIZE));
 		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);
-		
+
 		/*System.out.println("new trixel position"+newTrixelPosition);
 		System.out.println("normal: "+normal);
 		System.out.println("trixition "+newTrixition);*/
-		System.out.println("center: "+centroid);
-		
-		return new Trixel(newTrixition, Renderer.getTrixelColour());
+		//System.out.println("center: "+centroid);
+
+		return new Trixel(newTrixition, colour);
 	}
 
- 	/**
- 	 * For testing as a module on it's own
-	 * @param args
+	Transform getLastTransform() {
+		return lastTransform;
+	}
+
+	/**
+	 * writes all trixels to a file
 	 */
-	public static void main(String[] args){
-		JFrame frame = new JFrame("Level maker");
-		Dimension SCREEN_SIZE = new Dimension(800,800);
-		frame.setSize(SCREEN_SIZE );
-		frame.add(new LevelMaker());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+	void writeTrixelsToFile(){
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		final int USER_SELECTION = chooser.showSaveDialog(null);
+
+		File fileToSave;
+
+		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
+			fileToSave =  chooser.getSelectedFile();
+		} else return;
+
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(fileToSave, "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		for (Trixel trixel : trixels){
+			writer.println(trixel);
+		}
+
+		writer.close();
 	}
 
-	public class WillMouseMotionListener extends MouseAdapter{
-
-		private int mouseX, mouseY;
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-
-			int dx = e.getX()-mouseX;
-			int dy = e.getY()-mouseY;
-
-			updateRotation(dx, dy);
-
-			mouseX = e.getX();
-			mouseY = e.getY();
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			mouseX = e.getX();
-			mouseY = e.getY();
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e){
-			attemptCreateTrixel(e.getX(), e.getY());
-		}
+	/**
+	 * sets the colour of the next trixel
+	 * @param colour
+	 */
+	public void setColour(Color colour){
+		this.colour = colour;
 	}
+
+	/**
+	 * toggles eraser mode on or off
+	 */
+	public void toggleEraser() {
+		eraser = !eraser;
+	}
+
+	public boolean getIsEraserModeOn(){
+		return eraser;
+	}
+
 }

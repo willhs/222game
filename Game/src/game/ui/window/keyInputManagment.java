@@ -4,6 +4,9 @@ import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public class keyInputManagment  implements KeyEventDispatcher{
 	private BlankPanel panel;
 	private static HashMap<String , Integer> keyMap;
@@ -74,6 +77,10 @@ public class keyInputManagment  implements KeyEventDispatcher{
 				panel.keyPressed("6");
 				return false;
 			}
+			if(e.getKeyCode() == KeyEvent.VK_SPACE){
+				panel.keyPressed("space");
+				return false;
+			}
 
 
 
@@ -96,12 +103,15 @@ public class keyInputManagment  implements KeyEventDispatcher{
 
 
 		//place the keys into the map
-		tempKeyMap.put("move up", KeyEvent.VK_W);//w
-		tempKeyMap.put("move down", KeyEvent.VK_S);//s
-		tempKeyMap.put("move right", KeyEvent.VK_D);//d
-		tempKeyMap.put("move left", KeyEvent.VK_A);//a
+		tempKeyMap.put("Up", KeyEvent.VK_W);//w
+		tempKeyMap.put("Down", KeyEvent.VK_S);//s
+		tempKeyMap.put("Right", KeyEvent.VK_D);//d
+		tempKeyMap.put("Left", KeyEvent.VK_A);//a
 		tempKeyMap.put("inventory", KeyEvent.VK_I);//i
-		tempKeyMap.put("interact", KeyEvent.VK_F);//f
+		tempKeyMap.put("Interact", KeyEvent.VK_F);//f
+		tempKeyMap.put("rotate right", KeyEvent.VK_RIGHT);//f
+		tempKeyMap.put("rotate left", KeyEvent.VK_LEFT);//f
+
 
 		return tempKeyMap;
 	}
