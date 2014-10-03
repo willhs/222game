@@ -160,10 +160,13 @@ public class MovementHandler {
 			}
 		}
 		Place otherPlace = exit.getOtherPlace(place);
-		place.removePlayer(player);
-		otherPlace.addPlayer(player);
-		player.move(findExitPosition(player, exit, otherPlace));
-		return true;
+		if (setPlayerExitPosition(player, exit, otherPlace)){
+			place.removePlayer(player);
+			otherPlace.addPlayer(player);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -188,9 +191,20 @@ public class MovementHandler {
 		return false;
 	}
 
-	private static Point3D findExitPosition(Player player, Exit exit, Place place){
-
-		return null;
+	private static boolean setPlayerExitPosition(Player player, Exit exit, Place place){
+		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
+		int x = (int)rect.x-20;
+		int z = (int)rect.z-20;
+		int maxX = (int)(rect.x+rect.width+20);
+		int maxZ = (int)(rect.z+rect.length+20);
+		for (;x < maxX; x++){
+			for (;z < maxZ; z++){
+				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	// ===============================END===================================//
 

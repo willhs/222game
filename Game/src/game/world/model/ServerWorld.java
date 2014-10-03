@@ -151,7 +151,8 @@ public abstract class ServerWorld implements Serializable {
 		if (MovementHandler.exitPlace(getPlayerByName(playerName), getPlaceByName(placeName), getExitByName(exitName))){
 			Scanner sc = new Scanner(command);
 			sc.next();
-			commands.add("Client "+sc.nextLine());
+			Player player = getPlayerByName(playerName);
+			commands.add("Client "+sc.nextLine()+" Position ( "+player.getPosition()+" )");
 			sc.close();
 		}
 		return commands;

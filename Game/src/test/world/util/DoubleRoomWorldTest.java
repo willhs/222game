@@ -55,6 +55,9 @@ public class DoubleRoomWorldTest {
 		System.out.println();
 		System.out.println(world.getPlaceOfPlayer(player).getName());
 
+		System.out.println();
+		System.out.println(player.getPosition());
+
 
 
 	}
