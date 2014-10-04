@@ -73,5 +73,11 @@ public class Parser {
 	public static Inventory parseInventory(Scanner scan) {
 		return null;
 	}
+	
+	public static void removeUnneedText(String textToRemoveUpto, Scanner scan){
+		while (!scan.hasNext(textToRemoveUpto)) {
+			scan.next();
+		}
+	}
 
 }
