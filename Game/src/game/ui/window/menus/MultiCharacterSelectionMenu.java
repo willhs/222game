@@ -140,7 +140,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		//no errors at this point so create the gane player and client and change menu
 		Player player = new Player(super.name);
 		Client client = new Client(hostString.s,portNumb,panel);
-		if(!player.addPlayerToWorld(player)){
+		if(!client.addPlayerToWorld(player)){
 			//Player name was taken.
 		}
 		System.out.println("Creating : " + "Name :"+ name + " Host :" + hostString.s + " Port :" + portNumb );
