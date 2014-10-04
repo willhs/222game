@@ -201,7 +201,6 @@ public abstract class ClientWorld extends ServerWorld {
 		
 		Place place = getStartPlace();
 		if (name.equals(clientsPlayer.name)) {
-			System.out.println("Made it here");
 			currentPlace = place;
 			this.addPlayer(clientsPlayer);
 			clientsPlayer.move(position);
@@ -227,12 +226,10 @@ public abstract class ClientWorld extends ServerWorld {
 		String command = "";
 		while (exits.hasNext()) {
 			Exit temp = exits.next();
-			boolean b = MovementHandler.checkProximity(
+			if (MovementHandler.checkProximity(
 					clientsPlayer.getPosition(),
 					clientsPlayer.getBoundingBox(), temp.getPosition(place),
-					temp.getBoundingBox());
-			System.out.println(b);
-			if (b) {
+					temp.getBoundingBox())) {
 
 				command = "Server Exit Name ( " + clientsPlayer.getName()
 						+ " ) Name ( " + temp.getName() + " ) Name ( "

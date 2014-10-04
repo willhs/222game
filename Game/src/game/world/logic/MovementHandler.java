@@ -52,7 +52,6 @@ public class MovementHandler {
 
 			return false;
 		}
-		System.out.println("um");
 		player.move(to);
 		return true;
 	}
@@ -156,12 +155,10 @@ public class MovementHandler {
 	public static boolean exitPlace(Player player, Place place, Exit exit) {
 		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
 				exit.getPosition(place), exit.getBoundingBox())) {
-			System.out.println("shuld not be getting ehre.");
 			return false;
 		}
 		if (exit.isLocked()) {
 			if (!exit.unlock(player.getInventory())) {
-				System.out.println();
 				return false;
 			}
 		}
@@ -191,7 +188,6 @@ public class MovementHandler {
 				.getWidth()) / 2)
 				&& (Math.abs(pointOne.z - pointTwo.z) <= 10 + (boundingOne
 						.getLength() + boundingTwo.getLength()) / 2)) {
-			System.out.println("Make it here");
 			return true;
 		}
 		return false;
@@ -203,7 +199,6 @@ public class MovementHandler {
 		int z = (int)rect.z-20;
 		int maxX = (int)(rect.x+rect.width+20);
 		int maxZ = (int)(rect.z+rect.length+20);
-		System.out.println("Exiting");
 		for (;x < maxX; x++){
 			for (;z < maxZ; z++){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
