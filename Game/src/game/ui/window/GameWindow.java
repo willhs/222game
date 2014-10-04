@@ -1,6 +1,5 @@
 package game.ui.window;
 
-import game.ui.render.Renderer;
 import game.ui.render.Res;
 import game.world.model.Player;
 import game.world.model.Room;
@@ -13,8 +12,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.JFrame;
-
-import test.render.RotationTest;
 /**
  * @author Nicky van HUlst
  * */
@@ -23,7 +20,6 @@ public class GameWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
 
 	private BlankPanel blankPanel;
-	private RotationTest graphicsPanel;
 	private static Queue<String> keyCodeQueue;
 
 	private static final String title = "Game";
