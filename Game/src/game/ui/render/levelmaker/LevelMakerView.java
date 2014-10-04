@@ -22,6 +22,9 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class LevelMakerView extends JPanel{
 
@@ -29,19 +32,10 @@ public class LevelMakerView extends JPanel{
 
 	public LevelMakerView(){
 
-		Floor floor = null;
-		try {
-			floor = getFloorPolygon();
-		} catch (NoFloorException e1) {
-			System.exit(0);
-		}
-
 		// initialise GUI stuff
 		WillMouseMotionListener listener = new WillMouseMotionListener();
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
-
-		levelMaker = new LevelMaker(floor);
 
 		setBackground(Color.BLACK);
 		setLayout(new BorderLayout());
@@ -61,16 +55,22 @@ public class LevelMakerView extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				levelMaker.setColour(JColorChooser.showDialog(null, "choose colour", Color.WHITE));
+				repaint();
 			}
 		});
 		colourPanel.add(chooseColourButton);
 		
-		JButton setRandomColourButton = new JButton("Set colour random");
-		setRandomColourButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				levelMaker.setColourToRandom();
+		final JSlider colourRandomLevel = new JSlider(LevelMaker.MIN_COLOUR_DEVIATION, 
+				LevelMaker.MAX_COLOUR_DEVIATION, 
+				LevelMaker.START_COLOUR_DEVIATION);
+		colourRandomLevel.addChangeListener(new ChangeListener(){
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				levelMaker.setColourDeviation(colourRandomLevel.getValue());
 			}
 		});
+		colourPanel.add(colourRandomLevel);
+				
 
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener(){
@@ -99,6 +99,15 @@ public class LevelMakerView extends JPanel{
 		JButton chestButton = new JButton(new ImageIcon(Res.getImageFromName("Chest")));
 		chestButton.addActionListener(modeButtonListener);
 		chestButton.setActionCommand(LevelMaker.CHEST_MODE);
+		
+		// initilise level maker
+		Floor floor = null;
+		try {
+			floor = getFloorPolygon();
+		} catch (NoFloorException e1) {
+			System.exit(0);
+		}
+		levelMaker = new LevelMaker(floor);
 	}
 
 	/**
@@ -148,32 +157,18 @@ public class LevelMakerView extends JPanel{
 			points[i] = new Point3D(x,0,z);
 		}
 
-		System.out.println(numPoints);
-
 		return new Floor(points);
-	}
-
-	private void dealWithMouseDragged(int dx, int dy) {
-		levelMaker.updateRotation(0, dx);
-		repaint();
-	}
-
-	private void makeSomethingAt(int x, int y) {
-		levelMaker.makeSomethingAt(x, y);
-		repaint();
-	}
-	private void deleteSomethingAt(int x, int y) {
-		levelMaker.deleteTrixelAt(x, y);
-
 	}
 
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		//long start = System.currentTimeMillis();
 		Renderer.renderTrixels(g, levelMaker.getTrixels(), levelMaker.getLastTransform());
-		/*System.out.printf("time taken to transform and draw trixels: %d\n",
-				System.currentTimeMillis()-start);*/
+		
+		// displays current colour
+		g.setColor(levelMaker.getTrixelColour());
+		g.fillRect(0, 50, 20, 20);
+		
 	}
 
 	public class WillMouseMotionListener extends MouseAdapter{
@@ -186,7 +181,8 @@ public class LevelMakerView extends JPanel{
 			int dx = e.getX()-mouseX;
 			int dy = e.getY()-mouseY;
 
-			dealWithMouseDragged(dx, dy);
+			levelMaker.updateRotation(0, dx);
+			repaint();
 
 			mouseX = e.getX();
 			mouseY = e.getY();
@@ -203,10 +199,10 @@ public class LevelMakerView extends JPanel{
 
 			// if right-click, delete trixel at this point
 			if (e.getButton() == MouseEvent.BUTTON3) {
-	            deleteSomethingAt(e.getX(), e.getY());
+	            levelMaker.deleteTrixelAt(e.getX(), e.getY());
 	        }
 			else { // else, draw something
-				makeSomethingAt(e.getX(), e.getY());
+				levelMaker.makeSomethingAt(e.getX(), e.getY());
 			}
 			repaint();
 		}

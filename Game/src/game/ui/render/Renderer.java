@@ -311,6 +311,7 @@ public class Renderer {
 		 * @return random colour
 		 */
 		public static Color defaultMakeRandomColour(){
+			if (randomColor == null) randomColor = new Random();
 			int r = 100 + randomColor.nextInt(100);
 			int g = 100 + randomColor.nextInt(100);
 			int b = 200;//
@@ -322,21 +323,31 @@ public class Renderer {
 		 * @param random
 		 * @return a colour based on input random generator
 		 */
-		public static Color makeRandomColour(Random random){
-			int center1 = random.nextInt(255);
-			int center2 = random.nextInt(255);
-			int center3 = random.nextInt(255);
+		public static Color makeRandomColour(){
+			Random random = new Random();
+			int b = random.nextInt(255);
+			int g = random.nextInt(255);
+			int r = random.nextInt(255);
 
-			final int maxDeviation = 40;
+			return new Color(r,g,b);
+		}
+		
+		/**
+		 * @param base
+		 * @param random
+		 * @return a random colour that deviates
+		 */
+		public static Color makeRandomColor(Color base, int maxDeviation){
+			Random random = new Random();
 			int deviation = (int)(random.nextInt(maxDeviation*2) - maxDeviation);
-			int r = center1 + deviation;
+			int r = Math.max(Math.min(base.getRed() + deviation, 255), 0);
 
 			deviation = (int)(random.nextInt(maxDeviation*2) - maxDeviation);
-			int g = center2 + deviation;
+			int g = Math.max(Math.min(base.getGreen() + deviation, 255), 0);
 
 			deviation = (int)(random.nextInt(maxDeviation*2) - maxDeviation);
-			int b = center3 + deviation;
-
+			int b = Math.max(Math.min(base.getBlue() + deviation, 255), 0);
+			
 			return new Color(r,g,b);
 		}
 

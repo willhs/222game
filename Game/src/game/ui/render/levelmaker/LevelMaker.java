@@ -7,7 +7,6 @@ import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
 import game.ui.render.util.TrixelFace;
 import game.ui.render.util.TrixelUtil;
-import game.ui.render.util.Trixition;
 import game.ui.render.util.ZComparator;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
@@ -41,6 +40,10 @@ public class LevelMaker{
 	public static final String DOOR_MODE = "door";
 	public static final String CHEST_MODE = "chest";
 	public static final String TRIXEL_MODE = "trixel";
+	
+	public static final int MIN_COLOUR_DEVIATION = 0;
+	public static final int MAX_COLOUR_DEVIATION = 100;
+	public static final int START_COLOUR_DEVIATION = 20;
 	/**
 	 * the amount in which to rotate all trixels (so that it can be updated)
 	 */
@@ -67,30 +70,34 @@ public class LevelMaker{
 	/**
 	 * the colour that new trixels will be made in
 	 */
-	private Color colour;
+	private Color currentColour;
 
 	private int flipY = 600;
 	private String drawMode;
+	/**
+	 * how much to deviate when making the next colour
+	 */
+	private int randomColourDeviation;
 
 	public LevelMaker(Floor floor){
 
 		// initialise trixels to make up a floor.
 		trixels = new HashSet<Trixel>();
 
-		Renderer.resetColour();
-
+		// intialise colour
+		currentColour = Renderer.makeRandomColour();
+		randomColourDeviation = START_COLOUR_DEVIATION;
+		
 		// initilise trixels and world objects
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
 			Renderer.floorToVerticalPolygon(floor), -1)){
+			t.setColour(getTrixelColour());
 			trixels.add(t);
 		}
 		worldObjects = new HashSet<Drawable>();
 
 		// initialise draw mode
 		drawMode = TRIXEL_MODE;
-
-		// initialise colour
-		colour = Color.WHITE;
 
 		// initialise lastTransform with no rotation
 		lastTransform = makeTransform(new Vector3D(0,0,0));
@@ -166,7 +173,7 @@ public class LevelMaker{
 		Point3D aboveTrixel = TrixelUtil.getPositionOverTrixel(trixel);
 
 		if (drawMode == this.TRIXEL_MODE){
-			trixels.add(makeTrixelNextToFace(face, colour));
+			trixels.add(makeTrixelNextToFace(face, currentColour));
 		}
 		if (drawMode == this.TREE_MODE){
 			// TODO: replace this table with tree
@@ -230,7 +237,7 @@ public class LevelMaker{
 
 		Point3D overTrixel = TrixelUtil.getPositionOverTrixel(face.getParentTrixel());
 
-		return new Trixel(TrixelUtil.positionToTrixition(overTrixel), colour);
+		return new Trixel(TrixelUtil.positionToTrixition(overTrixel), getTrixelColour());
 	}
 
 	Transform getLastTransform() {
@@ -269,9 +276,16 @@ public class LevelMaker{
 	 * @param colour
 	 */
 	public void setColour(Color colour){
-		this.colour = colour;
+		this.currentColour = colour;
 	}
 
+	/**
+	 * @return the next trixel colour
+	 */
+	public Color getTrixelColour(){
+		return Renderer.makeRandomColor(currentColour, randomColourDeviation);
+	}
+	
 	/**
 	 * Sets the drawing mode of the level maker
 	 * @param drawMode
@@ -297,8 +311,8 @@ public class LevelMaker{
 		trixels.remove(trixel);
 	}
 
-	public void setColourToRandom() {
-				
+	public void setColourDeviation(int deviation) {
+		randomColourDeviation = deviation;
 	}
 
 }
