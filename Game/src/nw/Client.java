@@ -24,8 +24,8 @@ public class Client extends Thread{
 	private static Component frame;//The frame to call repaint() on
 	private static Player player;//The player to enter the game, given by the caller
 
-	//Queue of key events added to by the UI.  The game loop will get round to sending them when it feels like it.
-	private static Queue<String> keyCodeQueue = new LinkedList<String>();
+	//Keep the last command so we can ignore duplicate commands
+	private static String lastCommand = "";
 
 	//Outgoing command queue.  Key events are not actually accepted by the server, they have to be translated.
 	//We translate them, then add them to this queue which is polled and added to by the main loop.
@@ -97,7 +97,10 @@ public class Client extends Thread{
 	public static void makeMove(String move, float y){
 		if (player != null){
 			String cmd = world.getCommand(move, y);
-			commandQueue.add(cmd);
+			if(!cmd.equals(lastCommand)){
+				lastCommand = cmd;
+				commandQueue.add(cmd);
+			}
 		}
 	}
 
