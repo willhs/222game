@@ -49,6 +49,9 @@ public class Client extends Thread{
 			//Get the streams
 			inStream = sock.getInputStream();
 			outStream = sock.getOutputStream();
+
+			start();
+			waitForConnection();
 		}catch(IOException e){
 			System.err.println(e);
 		}
@@ -78,6 +81,9 @@ public class Client extends Thread{
 			server = new Server(sIn, sOut);
 			server.initialiseWorld();//Initialise the static world before starting
 			server.start();
+
+			start();
+			waitForConnection();
 		}catch(IOException e){
 			System.err.println(e);
 		}
@@ -91,6 +97,17 @@ public class Client extends Thread{
 	public static void makeMove(String move){
 		if (player != null){
 			keyCodeQueue.add(move);
+		}
+	}
+
+	/*
+	 * Wait until connection has been established and world has been received.
+	 */
+	public static void waitForConnection(){
+		while(world==null){
+			try{
+				Thread.sleep(50);
+			}catch(InterruptedException e){System.err.println(e);}
 		}
 	}
 

@@ -64,7 +64,6 @@ public class GameScreen implements GraphicsPane  {
 
 	public GameScreen(BlankPanel panel, Client client ,Player player){
 		this.client = client;
-		client.start();
 		this.player = player;
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
