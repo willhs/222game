@@ -76,6 +76,10 @@ public class GameScreen implements GraphicsPane  {
 		rotateVector = new Vector3D(0f, 0f, 0f);
 	}
 
+	public Client getClient(){
+		return client;
+	}
+
 	public void setUpInventoryBarButtons(){
 		//modify the stroke size to 4
 		int numbOfBoxes = numbofButtons;
@@ -156,7 +160,7 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu = new PauseMenu(panel, this);
 		}
 		else if(releventQueKeypress.contains(keyEvent)){
-			client.makeMove(keyEvent);
+			client.makeMove(keyEvent, rotateVector.getY());
 		}
 		else if(keyEvent.equals("1")){
 			selectedButton = 0;

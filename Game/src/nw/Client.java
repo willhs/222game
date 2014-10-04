@@ -78,7 +78,7 @@ public class Client extends Thread{
 			outStream = new PipedOutputStream(sIn);
 
 			//Create new server with the server's streams
-			server = new Server(sIn, sOut);
+			server = new Server(sIn, sOut, 0);
 			server.initialiseWorld();//Initialise the static world before starting
 			server.start();
 
@@ -94,9 +94,10 @@ public class Client extends Thread{
 	 * key code queue to be processed and sent to the server
 	 * @param move The move to be sent
 	 */
-	public static void makeMove(String move){
+	public static void makeMove(String move, float y){
 		if (player != null){
-			keyCodeQueue.add(move);
+			String cmd = world.getCommand(move, y);
+			commandQueue.add(cmd);
 		}
 	}
 
@@ -129,6 +130,18 @@ public class Client extends Thread{
 	}
 
 	/*
+	 * Tell the Server and the Client thread to close the connection
+	 */
+	public void quit(){
+		commandQueue.add("Quit");
+		while(world!=null){
+			try{
+				Thread.sleep(50);
+			}catch(InterruptedException e){System.err.println(e);}
+		}
+	}
+
+	/*
 	 * The full client loop.  Creates connections to server, then runs the main loop which
 	 * reads one item from the incoming queue and processes it, then sends one item
 	 * from the outgoing queue, then re-renders the game.
@@ -149,6 +162,7 @@ public class Client extends Thread{
 
 			Object received =  null;//The last object polled from the incoming queue
 			Room currentRoom = null;//The current room to be rendered
+			String cmd;
 
 			while(true){
 				if(bis.available() != 0){//If there is an object ready to be read
@@ -157,6 +171,7 @@ public class Client extends Thread{
 					if(received instanceof String){//If it's a string, it's a command
 						System.out.println("[Client] Got: " + (String)received);
 						world.applyCommand((String)received);//So run it on the world
+						GameWindow.setRoom((Room)world.getCurrentPlace());
 					}
 					else if(received instanceof World){//If we got a world, then
 						System.out.println("[Client] Got world!: " + received);
@@ -170,15 +185,12 @@ public class Client extends Thread{
 					}
 				}
 
-				if(keyCodeQueue.size() != 0 && world != null){//If the UI has added a key event via send() then
-					String action  = keyCodeQueue.poll();//Get the action from the queue
-					String cmd = world.getCommand(action);//Get the network command for the key event
-					System.out.println("[Client] sending action " + action + " as cmd " + cmd);
-					commandQueue.add(cmd);//Send the command
-				}
-
 				if(commandQueue.size() != 0){
-					out.writeObject(commandQueue.poll());
+					cmd = commandQueue.poll();
+					out.writeObject(cmd);
+					if(cmd.equals("Quit")){
+						throw new IOException();
+					}
 				}
 
 				frame.repaint();//Repaint the game
@@ -186,16 +198,17 @@ public class Client extends Thread{
 			}
 
 		}catch(ClassNotFoundException e){
-			System.err.println(e);
+			System.err.println("Client CNF" + e);
 		}catch(IOException e){
-			System.err.println(e);
+			System.err.println("Client IO" + e);
 		}catch(InterruptedException e){
-			System.err.println(e);
+			System.err.println("Client IE" + e);
 		}finally{
+			world=null;
 			try{
 				out.close();
 				in.close();
-			}catch(IOException e){System.err.println(e);}
+			}catch(IOException e){System.err.println("Client close" + e);}
 		}
 	}
 
