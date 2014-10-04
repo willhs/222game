@@ -2,9 +2,9 @@ package test.world.util;
 
 import java.util.List;
 
-import game.world.model.ClientWorld;
+import game.world.logic.ClientWorld;
+import game.world.logic.ServerWorld;
 import game.world.model.Player;
-import game.world.model.ServerWorld;
 
 public class SimpleServerInterface {
 	public final ServerWorld serverW;

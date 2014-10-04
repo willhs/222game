@@ -64,7 +64,7 @@ public class LevelMakerGUI extends JPanel{
 	}
 
 	private void dealWithMouseDragged(int dx, int dy) {
-		levelMaker.updateRotation(dy, dx);
+		levelMaker.updateRotation(0, dx);
 		repaint();
 	}
 

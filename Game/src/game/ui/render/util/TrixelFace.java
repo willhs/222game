@@ -47,7 +47,6 @@ public class TrixelFace implements ZComparable, Transformable{
 	 * @return whether the polygon should be drawn
 	 */
 	public boolean isFacingViewer() {
-
 		return calculateNormal().getZ() > 0;
 	}
 

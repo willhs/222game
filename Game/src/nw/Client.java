@@ -2,10 +2,10 @@ package nw;
 
 import game.ui.window.GameWindow;
 import game.world.model.*;
+import game.world.logic.*;
 
 import java.io.*;
 import java.net.*;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedList;
@@ -14,6 +14,8 @@ import java.awt.Component;
 
 public class Client extends Thread{
 	private static Server server;//This client may instantiate a server if single player mode is chosen
+	private static ClientWorld world = null;
+	private static boolean singlePlayerMode = false;
 
 	//The two client IO streams
 	private static InputStream inStream;
@@ -25,6 +27,10 @@ public class Client extends Thread{
 	//Queue of key events added to by the UI.  The game loop will get round to sending them when it feels like it.
 	private static Queue<String> keyCodeQueue = new LinkedList<String>();
 
+	//Outgoing command queue.  Key events are not actually accepted by the server, they have to be translated.
+	//We translate them, then add them to this queue which is polled and added to by the main loop.
+	private static Queue<String> commandQueue = new LinkedList<String>();
+
 	/*
 	 * Instantiate Client in multiplayer mode, join a remote game
 	 * @param player The player joining the game
@@ -32,7 +38,7 @@ public class Client extends Thread{
 	 * @param port Port of game on server
 	 * @param frame Frame to call repaint() on within gameloop
 	 */
-	public Client(Player player, String host, int port, Component frame){
+	public Client(String host, int port, Component frame){
 		this.frame = frame;
 		this.player = player;
 		//This is multiplayer mode, so we assume a server is already active at hort/port
@@ -53,9 +59,10 @@ public class Client extends Thread{
 	 * @param player Player to put in the game when created
 	 * @param frame Frame to call repaint() on within gameloop
 	 */
-	public Client(Player player, Component frame){
+	public Client(Component frame){
 		this.frame = frame;
 		this.player = player;
+		singlePlayerMode = true;
 		//This is single player, so we instantiate a server here then use local io streams
 		//for communication between us and it.
 		try{
@@ -82,7 +89,26 @@ public class Client extends Thread{
 	 * @param move The move to be sent
 	 */
 	public static void makeMove(String move){
-		keyCodeQueue.add(move);
+		if (player != null){
+			keyCodeQueue.add(move);
+		}
+	}
+
+	/*
+	 * Create the command string for adding a player to the server and send it.
+	 * Raise an error if the world says there's already a player with that name.
+	 * @param p Player to add to the world
+	 */
+	public boolean addPlayerToWorld(Player p){
+		String cmd = world.getSetClientPlayer(p);
+		if(cmd.equals("")){
+			return false;
+		}else{
+			commandQueue.add(cmd);
+			player = p;
+		}
+
+		return true;
 	}
 
 	/*
@@ -91,8 +117,6 @@ public class Client extends Thread{
 	 * from the outgoing queue, then re-renders the game.
 	 */
 	public void run(){
-		ClientWorld world = null;
-
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 
@@ -120,8 +144,10 @@ public class Client extends Thread{
 					else if(received instanceof World){//If we got a world, then
 						System.out.println("[Client] Got world!: " + received);
 						world = (World)received;//Save it
-						GameWindow.setRoom((Room)world.getPlaces().next());//Set the gamewindow's room for rendering
-						out.writeObject(world.getSetClientPlayer(player));//Add our player to the server world
+
+						//Set the room as the player's current place
+						Room cp = (Room)world.getCurrentPlace();
+						GameWindow.setRoom((Room)(cp != null ? cp : world.getPlaces().next()));
 					}else{
 						System.out.println("[Client] No idea what this is: " + received);
 					}
@@ -131,7 +157,11 @@ public class Client extends Thread{
 					String action  = keyCodeQueue.poll();//Get the action from the queue
 					String cmd = world.getCommand(action);//Get the network command for the key event
 					System.out.println("[Client] sending action " + action + " as cmd " + cmd);
-					out.writeObject(cmd);//Send the command
+					commandQueue.add(cmd);//Send the command
+				}
+
+				if(commandQueue.size() != 0){
+					out.writeObject(commandQueue.poll());
 				}
 
 				frame.repaint();//Repaint the game
@@ -155,9 +185,9 @@ public class Client extends Thread{
 	public static void main(String[] args){
 		GameWindow gw = new GameWindow();
 		if(args.length == 3){
-			new Client(new Player(args[2]), args[0], Integer.parseInt(args[1]), gw).start();
+			new Client(args[0], Integer.parseInt(args[1]), gw).start();
 		}else if(args.length == 0){
-			new Client(new Player("TestPlayer"), gw).start();
+			new Client(gw).start();
 		}else{
 			System.err.println("Usage: java Client [host] [port] playername    [or nothing for single player]");
 			System.exit(1);

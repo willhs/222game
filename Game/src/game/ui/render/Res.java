@@ -44,6 +44,7 @@ public class Res {
 		addImage("Table");
 		addImage("Key");
 		addImage("Star1");
+		addImage("Door");
 	}
 
 	/**

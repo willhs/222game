@@ -46,15 +46,6 @@ public class Renderer {
 	public static Random randomColor;
 
 	/**
-	 * Temp render method which uses the SingleRoomWorldtest
-	 * @param g
-	 * @param rotateAmount
-	 */
-	public static void render(Graphics g, Vector3D rotateAmount){
-		renderPlace(g, new SingleRoomWorldTest().world.getPlaces().next(), rotateAmount);
-	}
-
-	/**
 	 * Draws a place using Graphics parameter and viewer direction
 	 * @param g
 	 * @param place
@@ -107,7 +98,7 @@ public class Renderer {
 			if (isImage(drawable)){ // TODO: not be always true
 				// drawable is an image
 				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
-						drawable.getPosition(),
+						drawable.getPosition(place),
 						drawable.getBoundingBox());
 
 				image.transform(transform);
@@ -123,17 +114,7 @@ public class Renderer {
 					toDraw.offer(text);
 				}
 			}
-			else {
-				// drawable is made of trixels
-				Trixel trixel = (Trixel) drawable;
-				TrixelFace[] faces = TrixelUtil.makeTrixelFaces(trixel);
-				for (TrixelFace face : faces){
-					face.transform(transform);
-					if (face.isFacingViewer()){
-						toDraw.offer(makeGamePolygonFromTrixelFace(face));
-					}
-				}
-			}
+
 		}
 		// STARS
 		/*for (GameImage star : makeStars()){

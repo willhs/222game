@@ -264,7 +264,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		player.addItem(new Key("Epic key of Awesome", new Point3D(0, 0, 0)));
 		player.addItem(new Key("Epic key of Awesome 2", new Point3D(0, 0, 0)));
 
-		Client client = new Client(player,panel);
+		Client client = new Client(panel);
 		panel.setMenu(new GameScreen(panel, client,player));
 	}
 
