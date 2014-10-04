@@ -122,10 +122,11 @@ public class PauseMenu implements GraphicsPane {
 			System.out.println("options"); //TODO
 		}
 		else if(selectedButton == 2){//main menu button
+			
 			panel.setMenu(new MainMenu(panel));
 		}
 		else if(selectedButton == 3){//quit button
-			game.getClient().quit();
+			
 			System.exit(0);//exit the game
 		}
 	}

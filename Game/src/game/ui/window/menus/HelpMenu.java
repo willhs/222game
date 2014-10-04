@@ -3,6 +3,7 @@ package game.ui.window.menus;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -14,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -44,8 +46,10 @@ public class HelpMenu implements GraphicsPane, Animated{
 	private float speedMultiplyer = 1f;
 	//the menu to be drawn after the animation
 	private GraphicsPane nextMenu;
+	private StarMation starMation;
 
-	public HelpMenu(BlankPanel panel){
+	public HelpMenu(BlankPanel panel, StarMation starMation){
+		this.starMation = starMation;
 		this.panel = panel;
 		this.numbOfButtons = 2;
 		this.selectedButton = -1;
@@ -89,7 +93,8 @@ public class HelpMenu implements GraphicsPane, Animated{
 	@Override
 	public void render(Graphics g){
 		//draws the background image
-		g.drawImage(backgroundImage, 0, 0,panel);
+		//g.drawImage(backgroundImage, 0, 0,panel);
+		starMation.render(g);
 
 		//if there is a menu to render in the animation render it
 		if(nextMenu!=null){
@@ -212,7 +217,7 @@ public class HelpMenu implements GraphicsPane, Animated{
 				setUp = true;
 			}
 			if(MenuUtil.animateIn(buttonStartX,buttons, aniSpeed += speedMultiplyer)){
-				panel.setMenu(new HelpMenu(panel));//create the new help menu
+				panel.setMenu(new HelpMenu(panel,starMation));//create the new help menu
 			}
 		}
 		else{

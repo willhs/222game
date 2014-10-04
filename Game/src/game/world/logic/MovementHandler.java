@@ -56,6 +56,13 @@ public class MovementHandler {
 		return true;
 	}
 
+	/**
+	 * Check the enviroment for colitions.
+	 * @param player - player to be checked.
+	 * @param playerPoint - point that it is at.
+	 * @param enviroments - the enviroment that there is to collide with.
+	 * @return - true if there is a collition.
+	 */
 	private static boolean checkEnviromentalCollision(Player player,
 			Point3D playerPoint, Iterator<Enviroment> enviroments) {
 		Rectangle3D playerBox = player.getBoundingBox();
@@ -69,6 +76,14 @@ public class MovementHandler {
 		return false;
 	}
 
+	/**
+	 * Checks if the player collids with any exits.
+	 * @param player - the player that is moving.
+	 * @param playerPoint - the point that the player is at.
+	 * @param place - the place that they player is in.
+	 * @param exits - the exits that are being checked.
+	 * @return return if colition detected.
+	 */
 	private static boolean checkExitCollision(Player player, Point3D playerPoint, Place place,
 			Iterator<Exit> exits) {
 		Rectangle3D playerBox = player.getBoundingBox();
@@ -206,6 +221,13 @@ public class MovementHandler {
 		return false;
 	}
 
+	/**
+	 * Sets the players position appon exiting the exit
+	 * @param player - the player neededing a new poition.
+	 * @param exit - the eixt they are exiting from.
+	 * @param place - the place they are in.
+	 * @return - true if they have been placed.
+	 */
 	private static boolean setPlayerExitPosition(Player player, Exit exit, Place place){
 		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
 		int x = (int)rect.x-20;

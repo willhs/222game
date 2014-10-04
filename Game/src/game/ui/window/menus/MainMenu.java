@@ -42,14 +42,17 @@ public class MainMenu implements GraphicsPane, Animated{
 	//the menu to be drawn after the animation
 	private GraphicsPane nextMenu;
 
-	private StarMation startMation;
+	private static StarMation startMation;
 
 	/**
 	 * Constructor for the MainMenu
 	 * */
 	public MainMenu(BlankPanel panel){
 		this.panel = panel;
-		//this.startMation = new StarMation();
+		if(startMation == null){
+			this.startMation = new StarMation();
+		}
+
 
 		buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
@@ -88,8 +91,8 @@ public class MainMenu implements GraphicsPane, Animated{
 	 *Draws all of the elements of the menu on the screen
 	 * */
 	public void render(Graphics g){
-		g.drawImage(backgroundImage, 0, 0,panel);
-		//startMation.render(g);
+		//g.drawImage(backgroundImage, 0, 0,panel);
+		startMation.render(g);
 		//drawBackGroundImage(g);
 		MenuUtil.drawButtons(g,selectedButton,buttons,buttonNames);
 
@@ -149,7 +152,7 @@ public class MainMenu implements GraphicsPane, Animated{
 			animating = true;
 			return;
 		case 3 :
-			nextMenu = new HelpMenu(panel);
+			nextMenu = new HelpMenu(panel,startMation);
 			animating = true;
 			return;
 		case 4 : System.exit(0);
