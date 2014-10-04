@@ -4,6 +4,8 @@ import game.ui.render.util.Transform;
 import game.ui.render.util.Transformable;
 import game.world.dimensions.Point3D;
 
+import java.util.Arrays;
+
 
 public class Floor implements Transformable{
 
@@ -22,6 +24,10 @@ public class Floor implements Transformable{
 		for (int i = 0; i <points.length; i++){
 			points[i] = transform.multiply(points[i]);
 		}
+	}
+
+	public String toString(){
+		return Arrays.toString(points);
 	}
 
 }

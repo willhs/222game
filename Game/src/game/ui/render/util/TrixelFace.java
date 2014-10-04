@@ -4,6 +4,7 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -111,6 +112,10 @@ public class TrixelFace implements ZComparable, Transformable{
 
 	public Trixel getParentTrixel() {
 		return parent;
+	}
+
+	public String toString(){
+		return Arrays.toString(vertices);
 	}
 
 }

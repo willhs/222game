@@ -9,7 +9,10 @@ import game.ui.render.util.TrixelUtil;
 import game.ui.render.util.Trixition;
 import game.ui.render.util.ZComparator;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
+import game.world.model.Table;
+import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
@@ -33,6 +36,10 @@ import javax.swing.JFileChooser;
  */
 public class LevelMaker{
 
+	public static final String TREE_MODE = "tree";
+	public static final String DOOR_MODE = "door";
+	public static final String CHEST_MODE = "chest";
+	public static final String TRIXEL_MODE = "trixel";
 	/**
 	 * the amount in which to rotate all trixels (so that it can be updated)
 	 */
@@ -51,6 +58,7 @@ public class LevelMaker{
 	 * all trixels in the level
 	 */
 	private Set<Trixel> trixels;
+	private Set<Drawable> worldObjects;
 	/**
 	 * the center of all trixels
 	 */
@@ -65,19 +73,24 @@ public class LevelMaker{
 	private boolean eraser;
 
 	private int flipY = 600;
+	private String drawMode;
 
-	public LevelMaker(){
+	public LevelMaker(Floor floor){
 
 		// initialise trixels to make up a floor.
 		trixels = new HashSet<Trixel>();
 
 		Renderer.resetColour();
-		Floor floor = makeFloor();
 
+		// initilise trixels and world objects
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
-				Renderer.floorToVerticalPolygon(floor), -1)){
+			Renderer.floorToVerticalPolygon(floor), -1)){
 			trixels.add(t);
 		}
+		worldObjects = new HashSet<Drawable>();
+
+		// initialise draw mode
+		drawMode = TRIXEL_MODE;
 
 		// initialise colour
 		colour = Color.WHITE;
@@ -88,22 +101,6 @@ public class LevelMaker{
 		//intilise rotatedFaces
 		rotatedFaces = new ArrayList<TrixelFace>();
 		updateRotation(0, 0);
-	}
-
-	/**
-	 * makes a room for use
-	 * @return
-	 */
-	private Floor makeFloor() {
-		int[] x = new int[]{100,300,300,100};
-		int[] z = new int[]{100,100,800,800};
-
-		Point3D[] points = new Point3D[x.length];
-		for (int i = 0; i < x.length; i++) {
-			points[i] = new Point3D(x[i], 0, z[i]);
-		}
-
-		return new Floor(points);
 	}
 
 	/**
@@ -159,7 +156,7 @@ public class LevelMaker{
 	 */
 	void dealWithMouseClick(int x, int y) {
 
-		y = flipY - y; // flip y value
+		y = flipY - y; // flip y value (so up is positive direction)
 
 		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
 
@@ -169,8 +166,23 @@ public class LevelMaker{
 		if (eraser){ // erase the trixel
 			trixels.remove(trixel);
 		}
+
 		else { // make a new trixel next to this trixel
-			trixels.add(makeTrixelNextToFace(face, colour));
+
+			Point3D aboveTrixel = TrixelUtil.getPositionOverTrixel(trixel);
+
+			if (drawMode == this.TRIXEL_MODE){
+				trixels.add(makeTrixelNextToFace(face, colour));
+			}
+			if (drawMode == this.TREE_MODE){
+				// TODO: replace this table with tree
+				worldObjects.add(new Table("Tree", aboveTrixel, new Rectangle3D(40, 80, 40)));
+			}
+			if (drawMode == this.CHEST_MODE){
+				// TODO: replace this table with chest
+				worldObjects.add(new Table("Chest", aboveTrixel, new Rectangle3D(40, 40, 40)));
+			}
+
 		}
 		updateTrixelFaces();
 	}
@@ -191,6 +203,11 @@ public class LevelMaker{
 		Collections.reverse(rotatedFaces);
 	}
 
+	/**
+	 * @param x
+	 * @param y
+	 * @return the closest trixel face at the x,y position in view space
+	 */
 	TrixelFace getTrixelFaceAtViewPoint(int x, int y){
 		for (TrixelFace face : rotatedFaces){
 			GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(face);
@@ -204,26 +221,24 @@ public class LevelMaker{
 	/**
 	 * The trixel will be made directly next to neighbourFace.
 	 *
-	 * @param neighbourFace - the TrixelFace directly next to the trixel to be made
+	 * @param face - the TrixelFace directly next to the trixel to be made
 	 */
-	Trixel makeTrixelNextToFace(TrixelFace neighbourFace, Color colour) {
+	Trixel makeTrixelNextToFace(TrixelFace face, Color colour) {
 
+		/*
 		// find the true (unrotated) normal vector of the face by reversing the transform that was applied
-		neighbourFace.transform(lastTransform.inverse());
+		face.transform(lastTransform.inverse());
 		//Vector3D normal = neighbourFace.calculateNormal().unitVector();
-		Vector3D normal = new Vector3D(0,1,0);
-		Trixition faceTrixition = neighbourFace.getParentTrixel().getTrixition();
+		Vector3D normal = new Vector3D(0,1,0); // temp normal vector
+		Trixition faceTrixition = face.getParentTrixel().getTrixition();
 		Point3D faceRealPosition = TrixelUtil.trixitionToPosition(faceTrixition);
 		// shift position by normal direction * trixel size, this will be at the position of a new trixel
 		Point3D newTrixelPosition = faceRealPosition.getTranslatedPoint(normal.makeScaled(Trixel.SIZE));
-		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);
+		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);*/
 
-		/*System.out.println("new trixel position"+newTrixelPosition);
-		System.out.println("normal: "+normal);
-		System.out.println("trixition "+newTrixition);*/
-		//System.out.println("center: "+centroid);
+		Point3D overTrixel = TrixelUtil.getPositionOverTrixel(face.getParentTrixel());
 
-		return new Trixel(newTrixition, colour);
+		return new Trixel(TrixelUtil.positionToTrixition(overTrixel), colour);
 	}
 
 	Transform getLastTransform() {
@@ -274,6 +289,15 @@ public class LevelMaker{
 
 	public boolean getIsEraserModeOn(){
 		return eraser;
+	}
+
+	/**
+	 * Sets the drawing mode of the level maker
+	 * @param drawMode
+	 */
+	public void setDrawMode(String drawMode) {
+		this.drawMode  = drawMode;
+
 	}
 
 }

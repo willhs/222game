@@ -2,6 +2,7 @@ package game.ui.render.util;
 
 import game.ui.render.Renderer;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Vector3D;
 
 import java.awt.Color;
 import java.awt.Polygon;
@@ -152,26 +153,28 @@ public class TrixelUtil {
 	 * @return
 	 */
 	public static Point3D findTrixelsCentroid(Iterator<Trixel> trixels){
-		
+
 		int vertexCount = 0;
 		float xSum = 0, ySum = 0, zSum = 0;
-		
+
 		while (trixels.hasNext()){
 			Trixel trixel = trixels.next();
 			Point3D trixelCentroid = getTrixelCentroid(trixel);
 			xSum += trixelCentroid.x;
 			ySum += trixelCentroid.y;
 			zSum += trixelCentroid.z;
+
+			vertexCount ++;
 		}
-		
+
 		return new Point3D (xSum/vertexCount, ySum/vertexCount, zSum/vertexCount);
 	}
-	
+
 	public static Point3D getTrixelCentroid(Trixel trixel){
-		
+
 		int vertexCount = 0;
 		float xSum = 0, ySum = 0, zSum = 0;
-		
+
 		for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
 			for (Point3D vertex : face.getVertices()){
 				xSum += vertex.x;
@@ -181,7 +184,17 @@ public class TrixelUtil {
 				vertexCount ++;
 			}
 		}
-		
+
 		return new Point3D (xSum/vertexCount, ySum/vertexCount, zSum/vertexCount);
+	}
+
+	/**
+	 * @param trixel
+	 * @return
+	 */
+	public static Point3D getPositionOverTrixel(Trixel trixel){
+		Vector3D translation = new Vector3D(0,1,0).makeScaled(Trixel.SIZE);
+		Point3D faceRealPosition = TrixelUtil.getTrixelCentroid(trixel);
+		return faceRealPosition.getTranslatedPoint(translation);
 	}
 }

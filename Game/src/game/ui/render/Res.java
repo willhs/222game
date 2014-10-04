@@ -22,11 +22,12 @@ public class Res {
 	public static final String RES_PATH = "src" + SEP + "game" + SEP + "ui" + SEP + "render" + SEP + "res" + SEP;
 	public static final String TEST_PATH = RES_PATH + "test" + SEP;
 	public static final String IMG_PATH = RES_PATH + "img" + SEP;
-	public static final String ROOM_PATH = IMG_PATH + "room" + SEP;
+	public static final String LEVEL_PATH = RES_PATH + "level" + SEP;
+	public static final String FLOOR_PATH = LEVEL_PATH + "floor" + SEP;
 
 	public static final String UNKNOWN_IMAGE_PATH = RES_PATH + "unknown_image.png";
 
-	public static Map<String, BufferedImage> images;
+	public static final Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
 
 	public static final String[] SUPPORTED_IMAGE_TYPES = new String[]{"png", "gif"};
 
@@ -34,7 +35,6 @@ public class Res {
 	 * Reads, from files, all images which are commonly used in the game
 	 */
 	public static void readInAllCommonImages(){
-		images = new HashMap<String, BufferedImage>();
 
 		addImage("Char3");
 		addImage("Char2");
@@ -45,6 +45,8 @@ public class Res {
 		addImage("Key");
 		addImage("Star1");
 		addImage("Door");
+		addImage("Chest");
+		addImage("Tree");
 	}
 
 	/**
@@ -126,7 +128,6 @@ public class Res {
 		return images.containsKey(name);
 	}
 
-
 	/**
 	 * Gets an image for the name
 	 * OR returns the unknown image (question mark)
@@ -134,9 +135,6 @@ public class Res {
 	 * @return an image represented by name
 	 */
 	public static BufferedImage getImageFromName(String name){
-		if (images == null){
-			images = new HashMap<String, BufferedImage>();
-		}
 		return images.get(name);
 	}
 

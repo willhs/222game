@@ -21,7 +21,7 @@ public class Main {
 		JFrame frame = new JFrame("Level maker");
 		Dimension SCREEN_SIZE = new Dimension(800,800);
 		frame.setSize(SCREEN_SIZE );
-		frame.add(new LevelMakerGUI());
+		frame.add(new LevelMakerView());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
