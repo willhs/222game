@@ -29,7 +29,7 @@ public class SimpleServerInterface {
 	}
 
 	public void MakeMove(String move){
-		String cmd = serverC.getCommand(move);
+		String cmd = serverC.getCommand(move, 0);
 		List<String> commands = serverW.applyCommand(cmd);
 		for (String s:commands){
 			serverC.applyCommand(s);
