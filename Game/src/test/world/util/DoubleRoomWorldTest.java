@@ -15,10 +15,10 @@ public class DoubleRoomWorldTest {
 		int[] ypoints = new int[] { 200, 200, 800, 800 };
 		Polygon firstFloor = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> firstItems = new ArrayList<Item>();
-		Room firstRoom = new Room(firstItems, firstFloor, "Room1");
+		Room firstRoom = new Room(firstItems, new ArrayList<Enviroment>(), firstFloor, "Room1");
 		Polygon secontFloor = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> secondItems = new ArrayList<Item>();
-		Room secondRoom = new Room(secondItems, secontFloor, "Room2");
+		Room secondRoom = new Room(secondItems, new ArrayList<Enviroment>(), secontFloor, "Room2");
 
 		List<Place> places = new ArrayList<Place>();
 		places.add(firstRoom);

@@ -1,14 +1,8 @@
 
 package test.world.util;
 
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
-import game.world.model.Item;
-import game.world.model.Place;
-import game.world.model.Player;
-import game.world.model.Room;
-import game.world.model.Table;
-import game.world.model.World;
+import game.world.dimensions.*;
+import game.world.model.*;
 
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -35,7 +29,7 @@ public class SingleRoomWorldTest {
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> items = new ArrayList<Item>();
 		items.add(new Table("Table1", new Point3D(700, 0, 700), new Rectangle3D(50, 50, 50)));
-		Room room = new Room(items, p, "Room1");
+		Room room = new Room(items, new ArrayList<Enviroment>(),  p, "Room1");
 		List<Place> rooms = new ArrayList<Place>();
 		rooms.add(room);
 

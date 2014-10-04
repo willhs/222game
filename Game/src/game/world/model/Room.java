@@ -26,13 +26,15 @@ public class Room implements Place, Serializable {
 	private final List<Item> items;
 	private final Polygon floor;
 	private final String name;
+	private final List<Enviroment> enviroment;
 
-	public Room(List<Item> items, Polygon floor, String name) {
+	public Room(List<Item> items, List<Enviroment> enviroment, Polygon floor, String name) {
 		this.exits = new ArrayList<Exit>();
 		this.players = new ArrayList<Player>();
 		this.items = items;
 		this.floor = floor;
 		this.name = name;
+		this.enviroment = enviroment;
 	}
 
 	@Override
@@ -160,6 +162,11 @@ public class Room implements Place, Serializable {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public Iterator<Enviroment> getEnviroment() {
+		return enviroment.iterator();
 	}
 
 }

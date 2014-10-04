@@ -2,6 +2,7 @@ package game.world.logic;
 
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
+import game.world.model.Enviroment;
 import game.world.model.Exit;
 import game.world.model.Item;
 import game.world.model.Place;
@@ -37,23 +38,35 @@ public class MovementHandler {
 //			return false;
 //		}
 		if (!place.contains(to, player.getBoundingBox())) {
-
 			return false;
 		}
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
-
 			return false;
 		}
 		if (checkPlayerCollision(player, to, place.getPlayers())) {
-
+			return false;
+		}
+		if (checkEnviromentalCollision(player, to, place.getEnviroment())){
 			return false;
 		}
 		if (checkExitCollision(player, to, place,  place.getExits())){
-
 			return false;
 		}
 		player.move(to);
 		return true;
+	}
+
+	private static boolean checkEnviromentalCollision(Player player,
+			Point3D playerPoint, Iterator<Enviroment> enviroments) {
+		Rectangle3D playerBox = player.getBoundingBox();
+		while (enviroments.hasNext()) {
+			Enviroment enviroment = enviroments.next();
+			if (playerBox.collisionDetection(playerPoint,
+					enviroment.getBoundingBox(), enviroment.getPosition())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean checkExitCollision(Player player, Point3D playerPoint, Place place,
