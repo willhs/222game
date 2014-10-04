@@ -1,6 +1,7 @@
 package nw;
 import game.world.dimensions.*;
 import game.world.model.*;
+import game.world.logic.*;
 
 import java.awt.Polygon;
 import java.net.*;
