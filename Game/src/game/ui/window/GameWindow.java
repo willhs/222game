@@ -6,6 +6,7 @@ import game.world.model.Player;
 import game.world.model.Room;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.KeyboardFocusManager;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -83,6 +84,14 @@ public class GameWindow extends JFrame{
 	}
 
 	public static void main(String[] args){
+	    String fonts[] = 
+	    	      GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+
+	    	    for ( int i = 0; i < fonts.length; i++ )
+	    	    {
+	    	      System.out.println(fonts[i]);
+	    	    }
+		
 		Res.readInAllCommonImages();
 		GameWindow window = new GameWindow();
 		TestThread t = new TestThread(20, window);

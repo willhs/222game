@@ -60,7 +60,6 @@ public class BlankPanel extends JPanel{
 	 * */
 	public void keyPressed(String keyPressed){
 		currentMenu.keyPressed(keyPressed);
-		repaint();
 	}
 
 

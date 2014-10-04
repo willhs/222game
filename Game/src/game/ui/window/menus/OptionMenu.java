@@ -3,6 +3,7 @@ package game.ui.window.menus;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -37,11 +38,13 @@ public class OptionMenu implements GraphicsPane, Animated {
 	private int buttonStartX;
 	private int aniSpeed = 1;
 	private int speedIncrease = 1;
+	private StarMation starMation;
 
 	/**
 	 * Constructor for the optionMenu
 	 * */
 	public OptionMenu(BlankPanel panel){
+		this.starMation = MainMenu.getStarMation();
 		this.panel = panel;
 		this.numbOfButtons = 2;
 		this.selectedButton = -1;
@@ -73,7 +76,8 @@ public class OptionMenu implements GraphicsPane, Animated {
 
 	@Override
 	public void render(Graphics g){
-		g.drawImage(backgroundImage, 0, 0,panel);
+		//g.drawImage(backgroundImage, 0, 0,panel);
+		starMation.render(g);
 		if(currentMenu != null){
 			currentMenu.render(g);
 			return;

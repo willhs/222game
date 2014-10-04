@@ -98,7 +98,6 @@ public class MainMenu implements GraphicsPane, Animated{
 
 		if(nextMenu!=null && nextMenu instanceof Animated){
 			if(((Animated) nextMenu).isAnimating()){
-				System.out.println("Next Menu animating");
 				((Animated) nextMenu).animate();
 				nextMenu.render(g);
 			}
@@ -227,5 +226,9 @@ public class MainMenu implements GraphicsPane, Animated{
 	public void handleMousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public static StarMation getStarMation(){
+		return startMation;
 	}
 }

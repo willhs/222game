@@ -61,8 +61,10 @@ public class GameScreen implements GraphicsPane  {
 	private Vector3D rotateVector;
 
 	private Client client;
+	private StarMation starMation;
 
 	public GameScreen(BlankPanel panel, Client client ,Player player){
+		this.starMation = MainMenu.getStarMation();
 		this.client = client;
 		this.player = player;
 		this.inventoryButtons = new Rectangle[numbofButtons];
@@ -116,10 +118,11 @@ public class GameScreen implements GraphicsPane  {
 	public void render(Graphics g){
 		//g.drawImage(testBackGroundImage, 0, 0, panel);
 		//Renderer.render(g,rotateVector); //TODO wait for will to implement this method
+		starMation.render(g);
 		if(GameWindow.currentRoom != null){
-			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector); //TODO wait for will to implement this method
+			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector); 
 		}
-
+		
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}

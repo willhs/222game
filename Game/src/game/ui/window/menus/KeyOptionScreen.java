@@ -3,6 +3,7 @@ package game.ui.window.menus;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 import game.ui.window.keyInputManagment;
 
 import java.awt.Color;
@@ -37,8 +38,10 @@ public class KeyOptionScreen implements GraphicsPane {
 	private String keySelected;
 
 	private String errorMessege;
-
+	private StarMation starMation;
+		
 	public KeyOptionScreen(BlankPanel panel){
+		this.starMation = MainMenu.getStarMation();
 		keyMap = keyInputManagment.getKeyMap();//set  the key map
 		this.numbOfButtons = 1;
 		this.selectedButton = Integer.MAX_VALUE;
@@ -65,6 +68,8 @@ public class KeyOptionScreen implements GraphicsPane {
 
 	@Override
 	public void render(Graphics g) {
+		starMation.render(g);
+
 		drawMesseges(g);
 		drawKeyTable(g);
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);

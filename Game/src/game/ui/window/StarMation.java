@@ -11,12 +11,12 @@ import java.util.ArrayList;
 public class StarMation {
 	ArrayList<Star> stars;
 
-	private int numbofStars = 300;
+	private int numbofStars = 200;
 	private int maxWidth;
 	private int maxHeight;
+	private int size = 60;
 
 	public StarMation(){
-		this.theta = 45;
 		this.stars = new ArrayList<Star>();
 		this.maxHeight = GameWindow.FRAME_HEIGHT;
 		this.maxWidth = GameWindow.FRAME_WIDTH;
@@ -25,7 +25,6 @@ public class StarMation {
 	}
 
 	public void setUpStarMation(){
-
 		for(int i = 0; i < numbofStars; i++){
 			stars.add(createStar(false));
 		}
@@ -33,38 +32,19 @@ public class StarMation {
 
 	public Star createStar(boolean outside){
 		int  randomX = (int) (Math.random()*maxWidth);
-		//if(!outside)randomX = (int) (Math.random()*maxWidth);
-
 		int randomY = (int) (Math.random()*maxHeight);
-		//if(outside)randomY = (int) maxHeight + 20;
-
-
 		int halfChance = (int)(Math.random()*10);
 
 		if(outside){
-		if(halfChance > 5){
-			randomY = (int) maxHeight + 20;
+		if(halfChance > 5){randomY = (int) maxHeight + 20;}
+		else{randomX = -20;}
 		}
-		else{
-			randomX = -20;
-		}
-		}
-
-
-		int randomSize = (int)(Math.random()*80);
+		
+		int randomSize = (int)(Math.random()*size);
 		if(randomSize < 1)randomSize = 1;
-		BufferedImage starImage =  MenuUtil.scale(Res.getImageFromName("Star1"), randomSize, randomSize) ;
-
-		return new Star(starImage,randomX,randomY);
+		
+		return new Star( MenuUtil.scale(Res.getImageFromName("Star1"), randomSize, randomSize),randomX,randomY);
 	}
-
-	private int origX = maxWidth/2;
-	private int origY = maxHeight;
-
-	double a = 600;
-	double b = 800;
-	double r = 500;
-	double theta =  45; //TODO fix
 
 	public void render(Graphics g){
 		g.setColor(Color.black);
@@ -88,13 +68,15 @@ public class StarMation {
 		private int x;
 		private int y;
 		public int speed;
+		private int speedRange = 6;
+
 		private BufferedImage image;
 
 		 public Star(BufferedImage image, int x, int y){
-			 this.x  = x;
+			 this.x = x;
 			 this.y = y;
 			 this.image = image;
-			 this.speed = (int)(Math.random()*3);
+			 this.speed = (int)(Math.random()*speedRange);
 			 if(speed < 1)speed = 1;
 		 }
 

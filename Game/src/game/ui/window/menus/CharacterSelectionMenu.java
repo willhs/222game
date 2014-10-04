@@ -19,6 +19,7 @@ import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 import game.ui.window.keyInputManagment;
 import game.world.dimensions.Point3D;
 import game.world.model.Key;
@@ -60,11 +61,13 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	protected String error = " ";
 
 	protected BlankPanel panel;
-
+	private StarMation starMation;
+	
 	/**
 	 * Constructor for the character selection menu
 	 * */
 	public CharacterSelectionMenu(BlankPanel panel){
+		this.starMation = MainMenu.getStarMation();
 		this.panel = panel;
 		this.buttonNames = new String[numbOfButtons];
 		this.buttons = new Rectangle[numbOfButtons];
@@ -105,8 +108,9 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 	@Override
 	public void render(Graphics g) {
-		g.drawImage(backgroundImage, 0, 0,panel);
-
+		//g.drawImage(backgroundImage, 0, 0,panel);
+		starMation.render(g);
+		
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 		drawBoxes(g);// TODO Auto-generated method stub
 

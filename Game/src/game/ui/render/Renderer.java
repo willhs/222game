@@ -134,8 +134,8 @@ public class Renderer {
 		}
 
 		// ------- DRAW ALL THE THINGS  ...in correct order
-		g.setColor(Color.black);
-		g.fillRect(0,0,2000, 2000);
+	//	g.setColor(Color.black);
+	//	g.fillRect(0,0,2000, 2000);
 		// all gameObjects are either trixel faces or images.
 		while (!toDraw.isEmpty()){
 			Renderable renderObject = toDraw.poll();
@@ -311,9 +311,15 @@ public class Renderer {
 		 * @return random colour
 		 */
 		public static Color defaultMakeRandomColour(){
-			int r = 100 + randomColor.nextInt(100);
-			int g = 100 + randomColor.nextInt(100);
-			int b = 200;//
+//			int r = 100 + randomColor.nextInt(100);
+//			int g = 100 + randomColor.nextInt(100);
+//			int b = 200;//
+		
+			// my code
+			int col = randomColor.nextInt(254);
+			int r = col;
+			int g = col; 
+			int b = col;//
 
 			return new Color(r, g, b);
 		}
