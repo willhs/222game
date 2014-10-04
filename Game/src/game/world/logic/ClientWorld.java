@@ -27,12 +27,12 @@ public abstract class ClientWorld extends ServerWorld {
 	 */
 	public ClientWorld() {
 		keyPressToDirection = new HashMap<String, Transform>();
-		keyPressToDirection.put("Left",
+		keyPressToDirection.put("Up",
 				Transform.newYRotation((float) (Math.PI / 2.0f)));
-		keyPressToDirection.put("Up", Transform.newYRotation(0));
-		keyPressToDirection.put("Right",
-				Transform.newYRotation((float) -(Math.PI / 2.0f)));
+		keyPressToDirection.put("Right", Transform.newYRotation(0));
 		keyPressToDirection.put("Down",
+				Transform.newYRotation((float) -(Math.PI / 2.0f)));
+		keyPressToDirection.put("Left",
 				Transform.newYRotation((float) (Math.PI)));
 	}
 
@@ -47,11 +47,15 @@ public abstract class ClientWorld extends ServerWorld {
 	public String getCommand(String action, float viewAngle) {
 		// where action is like "up", "down", "right", etc
 		String command = "";
+		System.out.println(viewAngle);
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
 
 			Vector3D newDirection = keyPressToDirection.get(action)
 					.multiply(clientsPlayer.getDirection()).unitVector();
+
+			newDirection = Transform.newYRotation(-viewAngle).multiply(newDirection).unitVector();
+
 			Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
 					newDirection.y * movmentScaler, newDirection.z
 							* movmentScaler);
