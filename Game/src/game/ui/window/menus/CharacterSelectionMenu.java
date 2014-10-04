@@ -133,10 +133,11 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 		if(characterSelected == 1)g2d.setColor(Color.blue);
 		g2d.draw(character1);
-		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char1"),(int)character1.getHeight()-20,(int)character1.getHeight()-20),(int)character1.getX()+20,(int)character1.getY()+5, panel);
+		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char1"),(int)character1.getHeight()-20,(int)character1.getHeight()-20),(int)character1.getX()+20,(int)character1.getY()+10, panel);
 		g2d.setColor(Color.white);
 		if(characterSelected == 2)g2d.setColor(Color.blue);
 		g2d.draw(character2);
+		g2d.drawRect((int)character1.getX()+20, (int)character1.getY()+10, (int)character1.getHeight()-20, (int)character1.getHeight()-20);
 		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char2"),(int)character2.getHeight()-20,(int)character2.getHeight()-20),(int)character2.getX()+20,(int)character2.getY()+5, panel);
 		g2d.setColor(Color.white);
 		if(characterSelected == 3)g2d.setColor(Color.blue);
@@ -144,8 +145,6 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char3"),(int)character3.getHeight()-20,(int)character3.getHeight()-20),(int)character3.getX()+20,(int)character3.getY()+5, panel);
 
 		g2d.setColor(Color.white);
-
-
 	}
 
 	@Override
