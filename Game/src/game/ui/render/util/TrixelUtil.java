@@ -140,7 +140,7 @@ public class TrixelUtil {
 			for (int z = polyBounds.y; z < polyBounds.y + polyBounds.height; z += Trixel.SIZE){
 				if (poly.contains(x,z)){
 					Trixition trixition = TrixelUtil.positionToTrixition(new Point3D(x, y, z));
-					trixels.add(new Trixel(trixition, Renderer.getTrixelColour()));
+					trixels.add(new Trixel(trixition, Renderer.defaultMakeRandomColour()));
 				}
 			}
 		}

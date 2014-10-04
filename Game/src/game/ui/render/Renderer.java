@@ -310,12 +310,34 @@ public class Renderer {
 		/**
 		 * @return random colour
 		 */
-		public static Color getTrixelColour(){
+		public static Color defaultMakeRandomColour(){
 			int r = 100 + randomColor.nextInt(100);
 			int g = 100 + randomColor.nextInt(100);
 			int b = 200;//
 
 			return new Color(r, g, b);
+		}
+
+		/**
+		 * @param random
+		 * @return a colour based on input random generator
+		 */
+		public static Color makeRandomColour(Random random){
+			int center1 = random.nextInt(255);
+			int center2 = random.nextInt(255);
+			int center3 = random.nextInt(255);
+
+			final int maxDeviation = 40;
+			int deviation = (int)(random.nextInt(maxDeviation*2) - maxDeviation);
+			int r = center1 + deviation;
+
+			deviation = (int)(random.nextInt(maxDeviation*2) - maxDeviation);
+			int g = center2 + deviation;
+
+			deviation = (int)(random.nextInt(maxDeviation*2) - maxDeviation);
+			int b = center3 + deviation;
+
+			return new Color(r,g,b);
 		}
 
 		/**

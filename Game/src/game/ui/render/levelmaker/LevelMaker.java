@@ -297,4 +297,8 @@ public class LevelMaker{
 		trixels.remove(trixel);
 	}
 
+	public void setColourToRandom() {
+				
+	}
+
 }

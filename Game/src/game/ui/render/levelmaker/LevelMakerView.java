@@ -51,15 +51,26 @@ public class LevelMakerView extends JPanel{
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout());
 		add(buttonPanel, BorderLayout.NORTH);
+		
+		JPanel colourPanel = new JPanel();
+		colourPanel.setLayout(new FlowLayout());
+		buttonPanel.add(colourPanel);
 
-		JButton colourButton = new JButton("Colour");
-		colourButton.addActionListener(new ActionListener(){
+		JButton chooseColourButton = new JButton("Colour");
+		chooseColourButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				levelMaker.setColour(JColorChooser.showDialog(null, "choose colour", Color.WHITE));
 			}
 		});
-		buttonPanel.add(colourButton);
+		colourPanel.add(chooseColourButton);
+		
+		JButton setRandomColourButton = new JButton("Set colour random");
+		setRandomColourButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				levelMaker.setColourToRandom();
+			}
+		});
 
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener(){
