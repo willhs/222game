@@ -4,6 +4,7 @@ import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -41,11 +42,15 @@ public class MainMenu implements GraphicsPane, Animated{
 	//the menu to be drawn after the animation
 	private GraphicsPane nextMenu;
 
+	private StarMation startMation;
+
 	/**
 	 * Constructor for the MainMenu
 	 * */
 	public MainMenu(BlankPanel panel){
 		this.panel = panel;
+		//this.startMation = new StarMation();
+
 		buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		this.selectedButton = -1;
@@ -84,6 +89,7 @@ public class MainMenu implements GraphicsPane, Animated{
 	 * */
 	public void render(Graphics g){
 		g.drawImage(backgroundImage, 0, 0,panel);
+		//startMation.render(g);
 		//drawBackGroundImage(g);
 		MenuUtil.drawButtons(g,selectedButton,buttons,buttonNames);
 

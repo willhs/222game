@@ -1,8 +1,10 @@
-package game.world.model;
+package game.world.logic;
 
 import game.ui.render.util.Transform;
 import game.world.dimensions.*;
-import game.world.logic.MovementHandler;
+import game.world.model.Exit;
+import game.world.model.Place;
+import game.world.model.Player;
 import game.world.util.Parser;
 
 import java.util.*;
@@ -20,25 +22,40 @@ public abstract class ClientWorld extends ServerWorld {
 	private Player clientsPlayer;
 	private Place currentPlace;
 
+	/**
+	 * Used to set up all the key to transform mappings.
+	 */
 	public ClientWorld() {
 		keyPressToDirection = new HashMap<String, Transform>();
-		keyPressToDirection.put("Left",
+		keyPressToDirection.put("Up",
 				Transform.newYRotation((float) (Math.PI / 2.0f)));
-		keyPressToDirection.put("Up", Transform.newYRotation(0));
-		keyPressToDirection.put("Right",
-				Transform.newYRotation((float) -(Math.PI / 2.0f)));
+		keyPressToDirection.put("Right", Transform.newYRotation(0));
 		keyPressToDirection.put("Down",
+				Transform.newYRotation((float) -(Math.PI / 2.0f)));
+		keyPressToDirection.put("Left",
 				Transform.newYRotation((float) (Math.PI)));
 	}
 
-	public String getCommand(String action) {
+	/**
+	 * Takes a commands form the client and returns a command intended for the
+	 * server World.
+	 *
+	 * @param action
+	 *            - the action the client wishes to do.
+	 * @return - a string the represents a command or the empty string.
+	 */
+	public String getCommand(String action, float viewAngle) {
 		// where action is like "up", "down", "right", etc
 		String command = "";
+		System.out.println(viewAngle);
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
 
 			Vector3D newDirection = keyPressToDirection.get(action)
 					.multiply(clientsPlayer.getDirection()).unitVector();
+
+			newDirection = Transform.newYRotation(-viewAngle).multiply(newDirection).unitVector();
+
 			Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
 					newDirection.y * movmentScaler, newDirection.z
 							* movmentScaler);
@@ -58,6 +75,7 @@ public abstract class ClientWorld extends ServerWorld {
 		return command;
 	}
 
+	@Override
 	public List<String> applyCommand(String command) {
 		List<String> commandList = super.applyCommand(command);
 		Scanner scan = new Scanner(command);
@@ -66,79 +84,89 @@ public abstract class ClientWorld extends ServerWorld {
 			if (scan.hasNext("PlayerPlacement")) {
 				setClientPlayer(scan);
 			}
-
 			if (scan.hasNext("Move")) {
 				clientHandleMove(scan);
 			}
-			if (scan.hasNext("Exit")){
+			if (scan.hasNext("Exit")) {
 				clientHandleExiting(scan);
 			}
 		}
-		// applies command to the world
-		// returns a list of commands that resulted from running the given
-		// command
-		// returns an empty string array if the command was invalid or whatever
 
-		// I will call this one by one on the list of commands returned by the
-		// server
 		return commandList;
 	}
 
+	/**
+	 * Handles the server commands for exiting a room.
+	 *
+	 * @param scan
+	 *            - scanner that has the command in it.
+	 */
 	private void clientHandleExiting(Scanner scan) {
-		while (!scan.hasNext("Name")) {
-			scan.next();
-		}
+		// gets the name of the player that is to be moved.
+		Parser.removeUnneedText("Name", scan);
 		String playerName = Parser.parseName(scan);
-		while (!scan.hasNext("Name")) {
-			scan.next();
-		}
+		// gets the name of the exit the player moved through
+		Parser.removeUnneedText("Name", scan);
 		String exitName = Parser.parseName(scan);
-		while (!scan.hasNext("Name")) {
-			scan.next();
-		}
+		// gets the name of the place that the player will be in.
+		Parser.removeUnneedText("Name", scan);
 		String placeName = Parser.parseName(scan);
-		while (!scan.hasNext("Position")){
-			scan.next();
-		}
+		// gets the new position in the new room.
+		Parser.removeUnneedText("Position", scan);
 		Point3D playerPosition = Parser.parsePosition(scan);
-
+		// gets the all from the world.
 		Player player = getPlayerByName(playerName);
 		Place place = getPlaceByName(placeName);
 		Exit exit = getExitByName(exitName);
 
+		// removes the player form his old place.
 		place.removePlayer(player);
-
+		// adds him to the new one.
 		Place otherPlace = exit.getOtherPlace(place);
 		otherPlace.addPlayer(player);
-
+		// and moves him to his new position.
 		player.move(playerPosition);
-
-		if (player.name.equals(clientsPlayer.name)){
+		// and if the players that moved is the clients on then the new current
+		// place is the other place
+		if (player.name.equals(clientsPlayer.name)) {
 			currentPlace = otherPlace;
 		}
 	}
 
+	/**
+	 * Handles a server request to move a player in the client world.
+	 *
+	 * @param scan
+	 *            - scanner with the command in it.
+	 */
 	private void clientHandleMove(Scanner scan) {
-		while (!scan.hasNext("Name")) {
-			scan.next();
-		}
+		Parser.removeUnneedText("Name", scan);
 		String playerName = Parser.parseName(scan);
 
-		while (!scan.hasNext("Point")) {
-			scan.next();
-		}
+		Parser.removeUnneedText("Point", scan);
 		Point3D playerPosition = Parser.parsePosition(scan);
-		while (!scan.hasNext("Name")) {
-			scan.next();
-		}
+
+		Parser.removeUnneedText("Name", scan);
+		// moves the player to the new position.
 		Player player = getPlayerByName(playerName);
 		player.move(playerPosition);
 	}
 
+	/**
+	 * Gets the cunnrent place the player is in.
+	 *
+	 * @return - reutns the current place .. might be null.
+	 */
 	public Place getCurrentPlace() {
 		return currentPlace;
 	}
 
+	/**
+	 * replaces the current place with a new one.
+	 *
+	 * @param place
+	 *            - the place that this current player should be in.
+	 */
 	public void replaceCurrentPlace(Place place) {
 		place.removePlayer(clientsPlayer);
 		place.addPlayer(clientsPlayer);
@@ -154,7 +182,7 @@ public abstract class ClientWorld extends ServerWorld {
 	 */
 	public String getSetClientPlayer(Player player) {
 		clientsPlayer = player;
-		if (getPlayerByName(player.getName()) != null){
+		if (getPlayerByName(player.getName()) != null) {
 			return "";
 		}
 		return "Server PlayerPlacement Name ( " + player.name + " )";
@@ -168,17 +196,15 @@ public abstract class ClientWorld extends ServerWorld {
 	 * @return - return true if the player was moved.
 	 */
 	private boolean setClientPlayer(Scanner scan) {
-		while (!scan.hasNext("Name")) {
-			scan.next();
-		}
+
+		Parser.removeUnneedText("Name", scan);
 		String name = Parser.parseName(scan);
-		while (!scan.hasNext("Position")) {
-			scan.next();
-		}
+
+		Parser.removeUnneedText("Position", scan);
 		Point3D position = Parser.parsePosition(scan);
+
 		Place place = getStartPlace();
 		if (name.equals(clientsPlayer.name)) {
-			System.out.println("Made it here");
 			currentPlace = place;
 			this.addPlayer(clientsPlayer);
 			clientsPlayer.move(position);
@@ -192,17 +218,22 @@ public abstract class ClientWorld extends ServerWorld {
 		return true;
 	}
 
+	/**
+	 * Gets the Interaction command from the exit. This one dose some
+	 * computation to find a exit nere the player that they can interact with.
+	 *
+	 * @return - returns the string intended for the server world to handle.
+	 */
 	private String getInteractionCommand() {
 		Place place = getPlaceOfPlayer(clientsPlayer);
 		Iterator<Exit> exits = place.getExits();
 		String command = "";
 		while (exits.hasNext()) {
 			Exit temp = exits.next();
-			boolean b = MovementHandler.checkProximity(clientsPlayer.getPosition(),
+			if (MovementHandler.checkProximity(
+					clientsPlayer.getPosition(),
 					clientsPlayer.getBoundingBox(), temp.getPosition(place),
-					temp.getBoundingBox());
-			System.out.println(b);
-			if (b) {
+					temp.getBoundingBox())) {
 
 				command = "Server Exit Name ( " + clientsPlayer.getName()
 						+ " ) Name ( " + temp.getName() + " ) Name ( "

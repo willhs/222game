@@ -64,7 +64,6 @@ public class GameScreen implements GraphicsPane  {
 
 	public GameScreen(BlankPanel panel, Client client ,Player player){
 		this.client = client;
-		client.start();
 		this.player = player;
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
@@ -75,6 +74,10 @@ public class GameScreen implements GraphicsPane  {
 		loadImages();
 		releventQueKeypress = createKeylist();
 		rotateVector = new Vector3D(0f, 0f, 0f);
+	}
+
+	public Client getClient(){
+		return client;
 	}
 
 	public void setUpInventoryBarButtons(){
@@ -157,7 +160,7 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu = new PauseMenu(panel, this);
 		}
 		else if(releventQueKeypress.contains(keyEvent)){
-			client.makeMove(keyEvent);
+			client.makeMove(keyEvent, rotateVector.getY());
 		}
 		else if(keyEvent.equals("1")){
 			selectedButton = 0;

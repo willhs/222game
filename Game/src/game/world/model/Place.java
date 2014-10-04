@@ -105,6 +105,21 @@ public interface Place {
 	 */
 	public void addPlayer(Player player);
 
+	/**
+	 * Gets the name of the place.
+	 * @return - returns the name of the place this should be unique to this place.
+	 */
 	public String getName();
+
+	/**
+	 * Adds the exit to the place.
+	 * @param exit - the exit to be added
+	 */
 	public void addExit(Exit exit);
+
+	/**
+	 * Gets the enviroment for the place.
+	 * @return - the enviroment iterator.
+	 */
+	public Iterator<Enviroment> getEnviroment();
 }

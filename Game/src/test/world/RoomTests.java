@@ -1,6 +1,7 @@
 package test.world;
 
 import static org.junit.Assert.fail;
+import game.world.model.Enviroment;
 import game.world.model.Exit;
 import game.world.model.Item;
 import game.world.model.Player;
@@ -55,7 +56,7 @@ public class RoomTests {
 		int[] xpoints = new int[]{0,200,200,0,0};
 		int[] ypoints = new int[]{0,0,200,200,0};
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
-		return new Room(new ArrayList<Item>(), p, "Room1");
+		return new Room(new ArrayList<Item>(), new ArrayList<Enviroment>() , p, "Room1");
 	}
 
 }

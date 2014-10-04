@@ -2,9 +2,9 @@ package test.world;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import game.world.model.ClientWorld;
+import game.world.logic.ClientWorld;
+import game.world.logic.ServerWorld;
 import game.world.model.Player;
-import game.world.model.ServerWorld;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,10 +27,10 @@ public class ServerClientWorldTests {
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
-		clientWorld.getCommand("Up");
-		clientWorld.getCommand("Down");
-		clientWorld.getCommand("Left");
-		clientWorld.getCommand("Right");
+		clientWorld.getCommand("Up", 0);
+		clientWorld.getCommand("Down", 0);
+		clientWorld.getCommand("Left", 0);
+		clientWorld.getCommand("Right", 0);
 		Iterator<Player> players = clientWorld.getPlayers();
 		boolean um = false;
 		while(players.hasNext()){
@@ -56,7 +56,7 @@ public class ServerClientWorldTests {
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
-		String cmd = clientWorld.getCommand("Up");
+		String cmd = clientWorld.getCommand("Up", 0);
 		System.out.println(p.getPosition());
 		commands = serverWorld.applyCommand(cmd);
 		for (String c: commands){

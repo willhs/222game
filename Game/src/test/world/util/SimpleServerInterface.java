@@ -2,9 +2,9 @@ package test.world.util;
 
 import java.util.List;
 
-import game.world.model.ClientWorld;
+import game.world.logic.ClientWorld;
+import game.world.logic.ServerWorld;
 import game.world.model.Player;
-import game.world.model.ServerWorld;
 
 public class SimpleServerInterface {
 	public final ServerWorld serverW;
@@ -29,7 +29,7 @@ public class SimpleServerInterface {
 	}
 
 	public void MakeMove(String move){
-		String cmd = serverC.getCommand(move);
+		String cmd = serverC.getCommand(move, 0);
 		List<String> commands = serverW.applyCommand(cmd);
 		for (String s:commands){
 			serverC.applyCommand(s);
