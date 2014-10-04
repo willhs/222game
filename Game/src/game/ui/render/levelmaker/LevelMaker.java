@@ -1,6 +1,7 @@
 package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
+import game.ui.render.Res;
 import game.ui.render.util.GamePolygon;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Trixel;
@@ -67,10 +68,6 @@ public class LevelMaker{
 	 * the colour that new trixels will be made in
 	 */
 	private Color colour;
-	/**
-	 * is eraser mode on or off
-	 */
-	private boolean eraser;
 
 	private int flipY = 600;
 	private String drawMode;
@@ -154,7 +151,7 @@ public class LevelMaker{
 	 * @param x
 	 * @param y
 	 */
-	void dealWithMouseClick(int x, int y) {
+	void makeSomethingAt(int x, int y) {
 
 		y = flipY - y; // flip y value (so up is positive direction)
 
@@ -163,26 +160,21 @@ public class LevelMaker{
 		if (face == null)	return;
 
 		Trixel trixel = face.getParentTrixel();
-		if (eraser){ // erase the trixel
-			trixels.remove(trixel);
+
+		// make a new thing next to this trixel
+
+		Point3D aboveTrixel = TrixelUtil.getPositionOverTrixel(trixel);
+
+		if (drawMode == this.TRIXEL_MODE){
+			trixels.add(makeTrixelNextToFace(face, colour));
 		}
-
-		else { // make a new trixel next to this trixel
-
-			Point3D aboveTrixel = TrixelUtil.getPositionOverTrixel(trixel);
-
-			if (drawMode == this.TRIXEL_MODE){
-				trixels.add(makeTrixelNextToFace(face, colour));
-			}
-			if (drawMode == this.TREE_MODE){
-				// TODO: replace this table with tree
-				worldObjects.add(new Table("Tree", aboveTrixel, new Rectangle3D(40, 80, 40)));
-			}
-			if (drawMode == this.CHEST_MODE){
-				// TODO: replace this table with chest
-				worldObjects.add(new Table("Chest", aboveTrixel, new Rectangle3D(40, 40, 40)));
-			}
-
+		if (drawMode == this.TREE_MODE){
+			// TODO: replace this table with tree
+			worldObjects.add(new Table("Tree", aboveTrixel, new Rectangle3D(40, 80, 40)));
+		}
+		if (drawMode == this.CHEST_MODE){
+			// TODO: replace this table with chest
+			worldObjects.add(new Table("Chest", aboveTrixel, new Rectangle3D(40, 40, 40)));
 		}
 		updateTrixelFaces();
 	}
@@ -249,7 +241,7 @@ public class LevelMaker{
 	 * writes all trixels to a file
 	 */
 	void writeTrixelsToFile(){
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+Res.LEVELS_PATH);
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
 		File fileToSave;
@@ -281,23 +273,28 @@ public class LevelMaker{
 	}
 
 	/**
-	 * toggles eraser mode on or off
-	 */
-	public void toggleEraser() {
-		eraser = !eraser;
-	}
-
-	public boolean getIsEraserModeOn(){
-		return eraser;
-	}
-
-	/**
 	 * Sets the drawing mode of the level maker
 	 * @param drawMode
 	 */
 	public void setDrawMode(String drawMode) {
 		this.drawMode  = drawMode;
 
+	}
+
+	/**
+	 * deletes a trixel at this x, y location
+	 * @param x
+	 * @param y
+	 */
+	public void deleteTrixelAt(int x, int y) {
+		y = flipY - y; // flip y value (so up is positive direction)
+
+		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
+
+		if (face == null)	return;
+
+		Trixel trixel = face.getParentTrixel();
+		trixels.remove(trixel);
 	}
 
 }

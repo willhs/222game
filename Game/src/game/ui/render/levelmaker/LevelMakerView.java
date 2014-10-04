@@ -61,15 +61,6 @@ public class LevelMakerView extends JPanel{
 		});
 		buttonPanel.add(colourButton);
 
-		JButton eraserButton = new JButton("Eraser");
-		eraserButton.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				levelMaker.toggleEraser();
-			}
-		});
-		buttonPanel.add(eraserButton);
-
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -156,9 +147,13 @@ public class LevelMakerView extends JPanel{
 		repaint();
 	}
 
-	private void dealWithMouseClicked(int x, int y) {
-		levelMaker.dealWithMouseClick(x, y);
+	private void makeSomethingAt(int x, int y) {
+		levelMaker.makeSomethingAt(x, y);
 		repaint();
+	}
+	private void deleteSomethingAt(int x, int y) {
+		levelMaker.deleteTrixelAt(x, y);
+
 	}
 
 	@Override
@@ -194,7 +189,15 @@ public class LevelMakerView extends JPanel{
 
 		@Override
 		public void mouseClicked(MouseEvent e){
-			dealWithMouseClicked(e.getX(), e.getY());
+
+			// if right-click, delete trixel at this point
+			if (e.getButton() == MouseEvent.BUTTON3) {
+	            deleteSomethingAt(e.getX(), e.getY());
+	        }
+			else { // else, draw something
+				makeSomethingAt(e.getX(), e.getY());
+			}
+			repaint();
 		}
 	}
 

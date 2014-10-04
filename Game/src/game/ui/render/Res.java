@@ -24,6 +24,7 @@ public class Res {
 	public static final String IMG_PATH = RES_PATH + "img" + SEP;
 	public static final String LEVEL_PATH = RES_PATH + "level" + SEP;
 	public static final String FLOOR_PATH = LEVEL_PATH + "floor" + SEP;
+	public static final String LEVELS_PATH = LEVEL_PATH + "levels" + SEP;
 
 	public static final String UNKNOWN_IMAGE_PATH = RES_PATH + "unknown_image.png";
 
