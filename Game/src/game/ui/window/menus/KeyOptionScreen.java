@@ -3,6 +3,7 @@ package game.ui.window.menus;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 import game.ui.window.keyInputManagment;
 
 import java.awt.Color;
@@ -25,46 +26,62 @@ public class KeyOptionScreen implements GraphicsPane {
 	private int selectedButton;
 
 
-	//zise of the table
+	//size of the table
 	private int tableWidth  = 500;
 	private int colWidth = tableWidth/2;
 	private int colHeight = 20; //could do calculation baesd on size of screen and size of key map
 	private int startX = (GameWindow.FRAME_WIDTH/2)- (tableWidth/2);
 	private int startY = 50;
-
+	
+	//the row the mouse is on 
 	private int mouseOnRow = -1;
-	private boolean selectedRow;//if the user has clicked on a valid row
+	
+	//if the user has clicked on a valid row
+	private boolean selectedRow;
+	
+	//the currently selected key
 	private String keySelected;
-
+	
+	//error string 
 	private String errorMessege;
-
+	
+	//the background animation
+	private StarMation starMation;
+	
+	
+	/**
+	 * Constructor for the key option screen
+	 * */
 	public KeyOptionScreen(BlankPanel panel){
-		keyMap = keyInputManagment.getKeyMap();//set  the key map
+		this.starMation = MainMenu.getStarMation();
+		this.keyMap = keyInputManagment.getKeyMap();//set  the key map
 		this.numbOfButtons = 1;
 		this.selectedButton = Integer.MAX_VALUE;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		this.panel = panel;
 		this.errorMessege = "";
+		
 		setupButtons();
-
 	}
 
-
+	/**
+	 * Sets up the buttons for the menu
+	 * */
 	private void setupButtons(){
-		int buttonGap = 20;
 		int x = 50;
 		int y = 50;
 		int width = 200;
 		int height = 50;
 
 		buttons[0] = new Rectangle(x,y,width,height);
-
 		buttonNames[0] = "Back";
 	}
 
 	@Override
 	public void render(Graphics g) {
+		starMation.render(g);
+
 		drawMesseges(g);
 		drawKeyTable(g);
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
@@ -87,6 +104,7 @@ public class KeyOptionScreen implements GraphicsPane {
 		}
 	}
 
+	
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		//the mouse is currently on a row
@@ -98,6 +116,7 @@ public class KeyOptionScreen implements GraphicsPane {
 		}
 	}
 
+	
 	@Override
 	public void keyPressed(String keyEvent) {
 		//check if escape is pressed
@@ -122,12 +141,13 @@ public class KeyOptionScreen implements GraphicsPane {
 				}
 			}
 
-			this.errorMessege = "";//the user can rebind so reset error messege
+			this.errorMessege = "";//the user can rebind so reset error message
 			keyMap.put(keySelected, e.getKeyCode());//update the map with the new key binding
 			selectedRow = false;//unselect the row as the user has selected the new key
 		}
 	}
 
+	
 	/**
 	 * Draws the key table onto the graphics object
 	 * @return
@@ -161,7 +181,6 @@ public class KeyOptionScreen implements GraphicsPane {
 				g.drawString("_", x + 20 + colWidth, y + 15);
 				keySelected = key;
 				System.out.println(key);
-
 			}
 			y+=colHeight;
 			row++;
@@ -194,11 +213,6 @@ public class KeyOptionScreen implements GraphicsPane {
 		return -1;//return this if not on a row in the table
 	}
 
-
 	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public void handleMousePressed(MouseEvent e) {}
 }

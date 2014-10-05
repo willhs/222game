@@ -1,5 +1,16 @@
 package game.ui.window.menus;
 
+import game.ui.render.Res;
+import game.ui.window.BlankPanel;
+import game.ui.window.GameScreen;
+import game.ui.window.GameWindow;
+import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
+import game.ui.window.keyInputManagment;
+import game.world.dimensions.Point3D;
+import game.world.model.Key;
+import game.world.model.Player;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -7,64 +18,56 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import nw.Client;
-import game.ui.render.Res;
-import game.ui.window.BlankPanel;
-import game.ui.window.GameScreen;
-import game.ui.window.GameWindow;
-import game.ui.window.GraphicsPane;
-import game.ui.window.keyInputManagment;
-import game.world.dimensions.Point3D;
-import game.world.model.Key;
-import game.world.model.Player;
 
 public class CharacterSelectionMenu implements GraphicsPane{
-	private BufferedImage backgroundImage;
-
 
 	//button fields
 	private int selectedButton;
-
+	
+	//buttons fields
 	protected Rectangle[] buttons;
 	private String[] buttonNames;
 	private int numbOfButtons = 2;
 
-
+	//fields for the name text box
 	private Rectangle nameBox;
-
+	private String label = "Enter Name : ";
+	protected boolean nameBoxSelected;
+	protected String name = "";
+	private boolean nextCap;
+	private int maxNameLength = 30;
+	
+	//the character selection rectangles
 	private Rectangle character1;
 	private Rectangle character2;
 	private Rectangle character3;
-
+	
+	//the character that is selected
 	int characterSelected = -1;
-
-
+	
 	private int startX = 20;
 	private int startY = 20;
 	private int boxWidth = GameWindow.FRAME_WIDTH-startX*2;
 	private int gap = 40;
 	private int height = 150;
 
-	private String label = "Enter Name : ";
-	protected boolean nameBoxSelected;
-	protected String name = "";
-	private boolean nextCap;
-	private int maxNameLength = 30;
-
+	//error message for the user
 	protected String error = " ";
-
+	
+	//panel to draw on 
 	protected BlankPanel panel;
-
+	
+	//the background animation
+	private StarMation starMation;
+	
+	
 	/**
 	 * Constructor for the character selection menu
 	 * */
 	public CharacterSelectionMenu(BlankPanel panel){
+		this.starMation = MainMenu.getStarMation();
 		this.panel = panel;
 		this.buttonNames = new String[numbOfButtons];
 		this.buttons = new Rectangle[numbOfButtons];
@@ -72,9 +75,12 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 		setUpButtons();
 		setUpCharacterBoxes();
-		loadImages();
 	}
-
+	
+	
+	/**
+	 * Sets up the buttons for the menu
+	 * */
 	public void setUpButtons(){
 		int width = 200;
 		int height = 50;
@@ -87,35 +93,39 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		buttonNames[0] = "Back";
 		buttonNames[1] = "Ok";
 	}
-
+	
+	
+	/**
+	 *Sets up the characters selection boxes 
+	 * */
 	public void setUpCharacterBoxes(){
 		int y = startY;
 		nameBox = new Rectangle(startX,y,boxWidth,40);
 
 		y+=gap+50;
-
 		character1 = new Rectangle(startX,y,boxWidth,height);
 		y+=gap+height;
 		character2 = new Rectangle(startX,y,boxWidth,height);
 		y+=gap+height;
 		character3 = new Rectangle(startX,y,boxWidth,height);
-
-
 	}
 
 	@Override
 	public void render(Graphics g) {
-		g.drawImage(backgroundImage, 0, 0,panel);
-
+		starMation.render(g);
+		
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
-		drawBoxes(g);// TODO Auto-generated method stub
-
+		drawBoxes(g);
 	}
-
+	
+	
+	/**
+	 * Draws the character selection boxes on the screen
+	 * */
 	public void drawBoxes(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
-
-
+		
+		//set the font
 		Font myFont = new Font("arial",0,20);
 		g.setFont(myFont);
 
@@ -125,10 +135,9 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		g2d.draw(nameBox);
 		g2d.setColor(Color.white);
 
-		//g2d.drawString(label, nameBox.x + ((nameBox.width/2) - g.getFontMetrics(myFont).stringWidth(label)/2), (int) ((nameBox.y + nameBox.getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
 		g2d.drawString(label, startX, (int) ((nameBox.y + nameBox.getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
 
-		//displayes the name being typed on the screen
+		//Displays the name being typed on the screen
 		g2d.drawString(name, startX + g.getFontMetrics(myFont).stringWidth(label) + 5,(int) ((nameBox.y + nameBox.getHeight() - (g.getFontMetrics(myFont).getHeight()/2)) ));
 
 		if(characterSelected == 1)g2d.setColor(Color.blue);
@@ -143,10 +152,10 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		if(characterSelected == 3)g2d.setColor(Color.blue);
 		g2d.draw(character3);
 		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char3"),(int)character3.getHeight()-20,(int)character3.getHeight()-20),(int)character3.getX()+20,(int)character3.getY()+5, panel);
-
 		g2d.setColor(Color.white);
 	}
 
+	
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
 		//set selected button
@@ -159,13 +168,15 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		}
 	}
 
+	
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		buttonPressed();
 
 		int x = e.getX();
 		int y = e.getY();
-
+		
+		//set the selected character or name box
 		if(character1.contains(x,y)){
 			characterSelected = 1;
 		}
@@ -181,7 +192,6 @@ public class CharacterSelectionMenu implements GraphicsPane{
 			return;
 		}
 		nameBoxSelected = false;
-
 	}
 
 	@Override
@@ -196,39 +206,44 @@ public class CharacterSelectionMenu implements GraphicsPane{
 			panel.setMenu(new MainMenu(panel));
 		}
 	}
-
+	
+	
+	/**
+	 * Performs action based on the key that is pressed
+	 * */
 	public void handleNameBoxKeyPress(String keyEvent){
 		if(keyEvent.equals("backspace")){
 			if(name.length() == 0)return;//make sure we dont try and shortan an empty string
-
 			name = name.substring(0, name.length()-1);//take one char of the string
 			return;
 		}
+		
 		if(name.length() > maxNameLength)return;//max size of name
+		
+		//get the last key event
 		KeyEvent e = keyInputManagment.getLastKeyEvent();
-		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());//TODO may need to fix
+		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());
 
-		//should make it a number or letter i think
+		//check if its a number or letter
 		if(key.length() == 1 || keyEvent.equals("space")){
 			if(keyEvent.equals("space")){
 				name = name.concat(" ");
 				nextCap = true;
 				return;
 			}
-
+			
+			//start with a capitol letter
 			if(name.length() == 0 )nextCap = true;
-
+			
+			//change the key to be a lower case
 			if(!nextCap)key = key.toLowerCase();
-			name = name.concat(key);//add to the end of the string
+			
+			//add to the end of the string
+			name = name.concat(key);
 			nextCap = false;
 		}
 	}
 
-	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
 
 	/**
 	 *Decides what should happen when a button is pressed
@@ -242,8 +257,9 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		}
 	}
 
+	
 	/**
-	 * The ok button is pressed check if user has entered required fields
+	 * The OK button is pressed check if user has entered required fields
 	 * and create player and client
 	 * */
 	public void okPressed(){
@@ -268,23 +284,10 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		client.addPlayerToWorld(player);
 		panel.setMenu(new GameScreen(panel, client,player));
 	}
-
-	/**
-	 * Loads the images for the menu
-	 * */
-	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
-
-
-		//load background image
-		try {
-			this.backgroundImage = ImageIO.read(imagefile);
-			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
-			System.out.println(backgroundImage.getWidth());
-		} catch (IOException e) {
-			System.out.println("failed reading imagge");
-			e.printStackTrace();
-		}
+	
+	
+	@Override
+	public void handleMousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
 	}
-
 }

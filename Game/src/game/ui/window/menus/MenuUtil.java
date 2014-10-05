@@ -10,14 +10,13 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import javax.imageio.ImageIO;
-
 /**
  * @author Nicky van Hulst
  * */
 public class MenuUtil {
-
-	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.5f);
+	
+	//Standard colors 
+	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.1f);
 	public static final Color BLACK_TRAN = new Color(0f,0.5f,0.5f,0.5f);
 
 
@@ -27,23 +26,28 @@ public class MenuUtil {
 	public static void drawButtons(Graphics g, int selectedButton, Rectangle[] buttons, String[] buttonNames){
 		Graphics2D g2d = (Graphics2D)g;
 
-		Font myFont = new Font("arial",0,20);
+		Font myFont = new Font("Tunga",0,20);
 		g.setFont(myFont);
 
 		for(int i = 0; i < buttons.length; i++){
 			g2d.setColor(WHITE_TRAN);
 			g2d.fill(buttons[i]);
-			g2d.setColor(Color.black);
+			g2d.setColor(Color.red);
 			g2d.draw(buttons[i]);
 
 			if(selectedButton == i){
-				//g2d.setColor(new Color(0f,0f,0f,0.5f));
-				g.setColor(Color.blue);
-
+				g.setColor(Color.red);
 				g2d.fill(buttons[i]);
 			}
+			
 			//draws the string in the center of the current button
-			g.setColor(Color.white);
+			if(selectedButton == i){
+				g.setColor(Color.white);
+			}
+			else{
+				g.setColor(Color.white);
+			}
+			
 			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
 		}
 	}
@@ -97,7 +101,8 @@ public class MenuUtil {
 		boolean isDone = false;
 
 		for(int i = 0; i < buttons.length; i++){
-			buttons[i].x -=speed;//decrease the x value of all the buttons
+			//decrease the x value of all the buttons
+			buttons[i].x -=speed;
 
 			//check if all buttons outside of the screen
 			if(buttons[0].x <=  buttonStartX){
@@ -126,6 +131,7 @@ public class MenuUtil {
 		return isDone;
 	}
 
+	
 	/**
 	 * Takes a buffered Image and return a buffered Image with the size
 	 * width and height

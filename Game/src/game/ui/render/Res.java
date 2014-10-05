@@ -14,12 +14,13 @@ import javax.imageio.ImageIO;
 
 /**
  * @author hardwiwill
+ *
  * Contains references to all resources (e.g. images)
  */
 public class Res {
 
 	public static final char SEP = File.separatorChar;
-	public static final String RES_PATH = "src" + SEP + "game" + SEP + "ui" + SEP + "render" + SEP + "res" + SEP;
+	public static final String RES_PATH = "res"+SEP;
 	public static final String TEST_PATH = RES_PATH + "test" + SEP;
 	public static final String IMG_PATH = RES_PATH + "img" + SEP;
 	public static final String LEVEL_PATH = RES_PATH + "level" + SEP;
@@ -102,7 +103,7 @@ public class Res {
 	 * @param image
 	 * @return a better bufferedimage
 	 */
-	public static BufferedImage createCompatibleImage(BufferedImage image){
+	private static BufferedImage createCompatibleImage(BufferedImage image){
 
 	    GraphicsConfiguration gc = GraphicsEnvironment.
 	        getLocalGraphicsEnvironment().

@@ -7,9 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-
-import javax.net.ssl.HostnameVerifier;
-
 import nw.Client;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
@@ -20,23 +17,28 @@ import game.world.model.Player;
  * @author Nicky van Hulst
  * */
 public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
-
+	
+	//text field fields
 	private Rectangle textFieldPort;
 	private boolean portSelected;
 	private Rectangle textFieldHostName;
 	private boolean hostSelected;
-
+	
+	//labels for text boxes
 	private String host = "Host Name :";
 	private String port = "Port Number :";
-
+	
+	//the strings the users have entered
 	private textBoxWrapper hostString = new textBoxWrapper("");
 	private textBoxWrapper portString = new textBoxWrapper("");
 
 	private int startX = 20;
 	private int startY = 70;
-	private int maxTextLenght = 30;
-
-
+	
+	
+	/**
+	 * The constructor for the multiplier selection menu
+	 * */
 	public MultiCharacterSelectionMenu(BlankPanel panel) {
 		super(panel);
 
@@ -110,7 +112,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 	@Override
 	public void okPressed(){
-		//check with the server that the name is ok
 
 		//make sure a all the fields have something entered
 		if(portString.s.length() == 0 || hostString.s.length() == 0 || super.name.length() == 0 ){
@@ -124,7 +125,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			return;
 		}
 
-
 		int portNumb = -1;
 		//check the port number is a number
 		try {
@@ -136,14 +136,15 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			return;
 		}
 
-
-		//no errors at this point so create the gane player and client and change menu
+		//no errors at this point so create the game player and client and change menu
 		Player player = new Player(super.name);
 		Client client = new Client(hostString.s,portNumb,panel);
 		if(!client.addPlayerToWorld(player)){
 			//Player name was taken.
+			error = "Name already taken please enter another";
+			name = "";
+			return;
 		}
-		System.out.println("Creating : " + "Name :"+ name + " Host :" + hostString.s + " Port :" + portNumb );
 		panel.setMenu(new GameScreen(panel, client,player));
 	}
 
@@ -174,19 +175,19 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		KeyEvent e = keyInputManagment.getLastKeyEvent();
 
 		if(e.getKeyCode() == KeyEvent.VK_TAB){
-			handleTabPress();
+			handleTabPress();//tab pressed
 		}
 		if(super.nameBoxSelected){
-			handleNameBoxKeyPress(keyEvent);
+			handleNameBoxKeyPress(keyEvent);//the name text box needs to be updated 
 		}
 		else if(hostSelected){
-			handleTextBoxKeyPress(keyEvent, hostString);
+			handleTextBoxKeyPress(keyEvent, hostString);//host text box  updated
 		}
 		else if(portSelected){
-			handleTextBoxKeyPress(keyEvent, portString);
+			handleTextBoxKeyPress(keyEvent, portString);//port text box updated
 		}
 		else if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
-			panel.setMenu(new MainMenu(panel));
+			panel.setMenu(new MainMenu(panel));//no text box is selected so go back to the previous menu
 		}
 	}
 
@@ -198,7 +199,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		KeyEvent e = keyInputManagment.getLastKeyEvent();
 		String textBox = text.s;
 
-		//grabs the last key event that occoured
+		//grabs the last key event that occurred
 		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());//TODO may need to fix
 		
 		//should make it a number or letter i think
@@ -216,14 +217,17 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	 * Switches which text box is selected depending on which one is currently selected
 	 * */
 	public void handleTabPress(){
+		//name text box is selected 
 		if(nameBoxSelected){
 			hostSelected = true;
 			nameBoxSelected = false;
 		}
+		//host text box is selected 
 		else if(hostSelected){
 			portSelected = true;
 			hostSelected = false;
 		}
+		//port text box is selected
 		else if(portSelected){
 			nameBoxSelected = true;
 			portSelected = false;
@@ -236,35 +240,40 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	 * */
 	public void handleSpecialKeyPress(KeyEvent e, textBoxWrapper text){
 		String textBox = text.s;
-
-		if(e.getKeyCode() == KeyEvent.VK_SPACE){
+		
+		//if the key pressed is backspace remove char from the string
+		if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
 			if(textBox.length() == 0)return;//make sure we dont try and shorten an empty string
 			textBox = textBox.substring(0, textBox.length()-1);//take one char of the string
 			text.s = textBox;
 			return;
 		}
-
+		
+		//if the key pressed is ' ' add to the string
 		if(e.getKeyCode() == KeyEvent.VK_SPACE){
 			textBox = textBox.concat(" ").toLowerCase();
 			text.s = textBox;
 			return;
 		}
-
-		 if(e.getKeyCode() == KeyEvent.VK_MINUS){
+		
+		//if the key pressed is '-' add to the string
+		if(e.getKeyCode() == KeyEvent.VK_MINUS){
 			System.out.println("MINUS");
 			textBox = textBox.concat("-");
 			text.s = textBox;
 			return;
 		}
-
-		 if(e.getKeyCode() == KeyEvent.VK_PERIOD){
+		 
+		//if the key pressed is '.' add to the string
+		if(e.getKeyCode() == KeyEvent.VK_PERIOD){
 			System.out.println("PERIOD");
 			textBox = textBox.concat(".");
 			text.s = textBox;
 			return;
 		}
-
-		 if(e.getKeyCode() == KeyEvent.VK_SLASH){
+		
+		//if the key pressed is '/' add to the string
+		if(e.getKeyCode() == KeyEvent.VK_SLASH){
 			System.out.println("Slash");
 			textBox = textBox.concat("/");
 			text.s = textBox;
@@ -272,7 +281,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		}
 	}
 
-	//class the wrap a string to send by reference
+	//class the wrap a string to send by reference used by the text boxes
 	class textBoxWrapper{
 		public String s;
 		public textBoxWrapper(String s ){

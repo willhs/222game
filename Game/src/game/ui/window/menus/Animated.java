@@ -12,7 +12,7 @@ public interface Animated {
 
 
 	/**
-	 * Starts the anamations of the menu
+	 * Starts the animations of the menu
 	 * */
 	public void animate();
 

@@ -12,21 +12,20 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Iterator;
-
-import javax.imageio.ImageIO;
 
 /**
  * @author Nicky van Hulst
  * */
 public class InventoryMenu implements GraphicsPane {
+	
+	//the game screen
 	private GameScreen game;
+	
+	//the panel to draw on
 	private BlankPanel panel;
 
 	//the draw able space for the inventory menu
@@ -42,28 +41,30 @@ public class InventoryMenu implements GraphicsPane {
 	private int gap = 20;
 	private int numbCol = 5;
 	private int numbRow = 3;
-
+	
+	//character fields
 	private Color backColor;
 	private BufferedImage characterImage;
 	private Rectangle characterFrame;
 	int selectedGrid = -1;
-
-	//inventory images fields
+	
+	//the number of squares in the grid
 	private int gridNumb = 15;
-	private BufferedImage[] inventoryImages;
-	private BufferedImage selectedImage;
-	private int selectImageGrid = -1;
-
-	//mouse selection fields
-	private int lastXPress;
-	private int lastYPress;
-
+		
+	//the items in the inventory
+	private Item[] items;
+	
+	//the selected item
+	private Item selectedItem;
+	
+	//the item that is selecteds number
+	private int selectItemOnGrid = -1;
+	
+	//the current mouse location
 	private int currMouseY;
 	private int currMouseX;
-
-
+	
 	private Player player;
-
 	private long prevTime;
 	private boolean displayingInfo;
 
@@ -76,20 +77,17 @@ public class InventoryMenu implements GraphicsPane {
 		this.game = game;
 		this.player = player;
 		this.backColor = MenuUtil.WHITE_TRAN;
-
 		this.startX = (GameWindow.FRAME_WIDTH/2) - (width/2);//places the frame in the middle of the screen
 		this.frame = new Rectangle(startX, startY, width, GameWindow.FRAME_HEIGHT - (startY*2));//creates the frame as a rectangle
-
 		this.gridX = startX + 20;//set the start of the grid
 		this.gridY = (int) (startY + frame.height/2);//start the grid half way down the frame
 		this.gridSize = (int) ((frame.getWidth() - (gap*2))/numbCol);//creates a grid that fits within the frame
-		this.inventoryImages = new BufferedImage[gridNumb];
+		this.items = new Item[gridNumb];
 
 		setCharacterInventory();
-		loadImages();
 		setUpInventoryFromPlayer();
-
 	}
+	
 
 	/**
 	 *Gets the inventory from the player and places it in the inventory
@@ -98,11 +96,44 @@ public class InventoryMenu implements GraphicsPane {
 	public void setUpInventoryFromPlayer(){
 		int i = 0;
 		for(Item item : player.getInventory()){
-			if(i >=  inventoryImages.length)return;//TODO check with someone
+			if(i >=  items.length)return;//TODO check with someone
 			System.out.println("inventory");
-			inventoryImages[i] = Res.getImageFromName(item.getImageName());
-			inventoryImages[i] = MenuUtil.scale(inventoryImages[i], gridSize, gridSize);
+			items[i] = item;
 			i++;
+		}
+	}
+	
+	
+	/**
+	 * Updates the inventory, if there is a new item it will place it in the first
+	 * empty location it comes across in the grid
+	 * */
+	public void updateInventory(){
+		
+		//first check if item already in inventory
+		boolean in = false;
+		
+		//iterate through the players inventory 
+		for(Item item : player.getInventory()){
+			
+			//iterate through the current items already in the inventory
+			for(int i = 0; i < items.length; i++){
+				if(items[i] != null){//check if there is an item at this location 
+					if(items[i].getName().equals(item.getName()) || game.inInventory(item)){
+						in = true;//the item is already in  the item array
+					} 
+				}
+				if( game.inInventory(item))in = true;//becuase if all empty needs to check the other inventory 
+			}
+			if(!in){//the item is not in the items array so add it in
+				for(int j = 0; j < items.length; j++){
+					if(items[j] == null){
+						items[j] = item;//nothing in this location so add the new item
+						return;
+					}
+				}
+			}
+			in = false;//reset for the next item
 		}
 	}
 
@@ -128,21 +159,21 @@ public class InventoryMenu implements GraphicsPane {
 
 				//if the current grid square is selected change the color
 				if(curGrid == selectedGrid){
-					g.setColor(Color.BLUE);
+					//g.setColor(Color.BLUE);
 				}
 				else{
 					g.setColor(backColor);
 				}
+				
 				//draw the current grid square
 				g.fillRect(x, y, gridSize, gridSize);
 				g.setColor(Color.black);
 				g.drawRect(x, y, gridSize, gridSize);
-
-				//draw the image for the inventory
-				if(inventoryImages[curGrid] != null ){
-					if(selectImageGrid != curGrid)g.drawImage(inventoryImages[curGrid], x, y, panel);
-
+				
+				if(items[curGrid] != null ){
+					if(selectItemOnGrid != curGrid)g.drawImage(Res.getImageFromName(items[curGrid].getImageName()), x, y,gridSize,gridSize, panel);
 				}
+				
 				x +=gridSize;
 				curGrid++;
 			}
@@ -150,10 +181,9 @@ public class InventoryMenu implements GraphicsPane {
 			y += gridSize;
 		}
 
-		if(selectedImage !=null){
-			g.drawImage(selectedImage, currMouseX, currMouseY,panel);
+		if(selectedItem !=null){
+			g.drawImage(Res.getImageFromName(selectedItem.getImageName()), currMouseX, currMouseY,gridSize,gridSize,panel);
 		}
-
 		g2d.setStroke(oldStroke);
 	}
 
@@ -168,11 +198,13 @@ public class InventoryMenu implements GraphicsPane {
 		//set the border size to 4
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
-
+		
+		//gets the players image for Resources and scales it to the size of the frame
+		g.drawImage(MenuUtil.scale(Res.getImageFromName(player.getImageName()),(int)characterFrame.getWidth(),(int)characterFrame.getHeight()), characterFrame.x,characterFrame.y,panel);
 		g2d.draw(characterFrame);
+		
 		g.setColor(backColor);
 		g2d.fill(characterFrame);
-
 
 		//reset the border size
 		g2d.setStroke(oldStroke);
@@ -200,8 +232,10 @@ public class InventoryMenu implements GraphicsPane {
 		//reset the border size
 		g2d.setStroke(oldStroke);
 	}
-
-	public void setCharacterInventory(){
+	/**
+	 *Sets up the characters inventory 
+	 * */
+	private void setCharacterInventory(){
 		int width = 200;
 		int x = (GameWindow.FRAME_WIDTH/2) - (width/2);
 		int y = startY+20;
@@ -254,21 +288,23 @@ public class InventoryMenu implements GraphicsPane {
 
 		//black square over inventory check
 		if( selectedGrid != -1 && prevTime - System.currentTimeMillis() < -2000 || displayingInfo &&  selectedGrid != -1 ){
-			if(inventoryImages[selectedGrid] != null){
+			if(items[selectedGrid] != null){
 				displayMenu(g);
 				displayingInfo = true;
 			}
 		}
-
 	}
-
+	
+	/**
+	 * The pop up menu for items 
+	 * */
 	public void displayMenu(Graphics g){
-		if(selectedGrid != -1){
+		if(selectedGrid != -1 && items[selectedGrid] != null){
 			g.setColor(Color.black);
-			g.fillRect(currMouseX, currMouseY, 100, 100);
+			g.setColor(Color.white);
+			g.drawString(items[selectedGrid].getName(), currMouseX+5,currMouseY+10);
 			g.setColor(Color.white);
 		}
-
 	}
 
 
@@ -280,15 +316,13 @@ public class InventoryMenu implements GraphicsPane {
 		selectedGrid = getGridClicked(e.getX(), e.getY());
 		currMouseX = e.getX();
 		currMouseY = e.getY();
-		//TODO check the rest of the menu
 	}
 
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
-		if(selectedGrid != -1 && selectedImage !=null){
-			inventoryImages[selectedGrid] = selectedImage;
-			//selectedImage = null;
+		if(selectedGrid != -1 && selectedItem !=null && items[selectedGrid] == null){
+			items[selectedGrid] = selectedItem;
 		}
 	}
 
@@ -300,81 +334,59 @@ public class InventoryMenu implements GraphicsPane {
 		}
 	}
 
-	public void loadImages(){
-		java.net.URL imagefile = InventoryMenu.class.getResource("resources/characterAlph.jpg");
-		java.net.URL imagefileInvetorytest = InventoryMenu.class.getResource("resources/Player.gif");
-
-
-		//load background image
-		try {
-			this.characterImage = ImageIO.read(imagefile);
-
-
-			//inventory test images
-			this.inventoryImages[0] = ImageIO.read(imagefileInvetorytest );
-			Image tempCharImage = inventoryImages[0].getScaledInstance(gridSize, gridSize, BufferedImage.SCALE_DEFAULT);
-			inventoryImages[0] = new BufferedImage(tempCharImage.getWidth(null), tempCharImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-		    Graphics2D bGr1 = inventoryImages[0].createGraphics();
-		    bGr1.drawImage(tempCharImage, 0, 0, null);
-		    bGr1.dispose();
-
-			Image tempImage =  characterImage.getScaledInstance((int)characterFrame.getWidth(),(int)characterFrame.getHeight(), BufferedImage.SCALE_DEFAULT);//TODO change to the selected image by the user
-			characterImage = new BufferedImage(tempImage.getWidth(null), tempImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-			//writes the temp image onto the bufferedimage
-		    Graphics2D bGr = characterImage.createGraphics();
-		    bGr.drawImage(tempImage, 0, 0, null);
-		    bGr.dispose();
-
-		} catch (IOException e) {
-			System.out.println("failed reading image");
-			e.printStackTrace();
-		}
-	}
-
-
+	
 	@Override
 	public void handleMousePressed(MouseEvent e) {
-		System.out.println("Mouse pressed");
-		lastXPress = e.getX();
-		lastYPress = e.getY();
 
-		//TODO place all of this stuff into its own method some time dont be lazy
-
-		//first check if theres is a selected image
-		if(selectedImage != null){
+		//first check if there is is a selected image
+		if(selectedItem != null){
 
 			//check the image is to be placed on a valid location
 			if(selectedGrid != -1 ){
 
 				//set the image array to the new image
-				inventoryImages[selectedGrid] = selectedImage;
+				if(items[selectedGrid] == null && selectedGrid != selectItemOnGrid){
+					items[selectedGrid] = selectedItem;
+					if(selectItemOnGrid!=-1)items[selectItemOnGrid] = null;
+					selectedItem = null; 
+					return;
+				}				
 
 				//check the selected grid is not the same as the one the image came from
-				if(selectedGrid != selectImageGrid){
-					inventoryImages[selectImageGrid] = null;//clear the image from the array
+				if(selectedGrid == selectItemOnGrid){
+					selectItemOnGrid = -1;
+					selectedItem = null; 
+					return;
 				}
-
-				//reset the selected the image and return
-				selectedImage = null;
-				return;
 			}
 
 			//check if the mouse click is on the grid of the game screen inventory bar
-			if(game.isOnGrid((int)e.getX(),(int)e.getY()) != -1){
+			int gridOnGameBar = game.isOnGrid((int)e.getX(),(int)e.getY());
+			if(gridOnGameBar != -1 && (!(game.containsItem(gridOnGameBar)))){
 
 				//place the item on the game screen at the appropriate grid location
-				game.placeItemOnGrid(game.isOnGrid((int)e.getX(),(int)e.getY()), MenuUtil.scale(selectedImage,game.getGridSize()-10,game.getGridSize()-10));
-				selectedImage = null;
-				//inventoryImages[selectImageGrid] = null;
+				game.placeItemOnGrid(gridOnGameBar, selectedItem);
+				selectedItem = null;
+				items[selectItemOnGrid] = null;
+				return;
 			}
 		}
-
-		//at this point if a valid grid is clicked it selected the image
-		if(selectedGrid != -1){
-			if(inventoryImages[selectedGrid] != null){
-				selectedImage = inventoryImages[selectedGrid];
-				selectImageGrid = selectedGrid;
+		else{
+			//at this point if a valid grid is clicked it selected the image
+			if(selectedGrid != -1){
+				if(items[selectedGrid] != null){
+					selectedItem = items[selectedGrid];
+					selectItemOnGrid = selectedGrid;
+				}
+			}
+			
+			//at this point nothing is selected so we try grab something from the hot bar
+			if(game.isOnGrid((int)e.getX(),(int)e.getY()) != -1){
+				Item item = game.grabItemFromIventory(game.isOnGrid((int)e.getX(),(int)e.getY()));
+				if(item!=null){
+					selectedItem = item;
+					selectItemOnGrid = -1;//TODO fix the problem is the last place is on the hotbar			
+				}	
 			}
 		}
 	}

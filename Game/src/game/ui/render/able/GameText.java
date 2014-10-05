@@ -1,7 +1,12 @@
-package game.ui.render.util;
+package game.ui.render.able;
 
 import game.world.dimensions.Point3D;
 
+/**
+ * @author hardwiwill
+ *
+ * Used for drawing text at a position
+ */
 public class GameText implements Renderable{
 
 	private Point3D position;
@@ -13,12 +18,12 @@ public class GameText implements Renderable{
 	}
 
 	@Override
-	public float getZ() {
+	public float getDepth() {
 		return position.z;
 	}
 
 	@Override
-	public void flipY(int top) {
+	public void flipAroundY(int top) {
 		position = position.flipY(top);
 	}
 

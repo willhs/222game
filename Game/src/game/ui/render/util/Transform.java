@@ -9,18 +9,16 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 
-/** 3x4 array representing an affine transformation
-(= a 4x4 matrix in which the bottom row is always {0 0 0 1} )
-Note that this cannot be used for perspective projection tranformations
-since these require a non-0 bottom row.
-
-The class provides static methods to construct translation, scaling, and rotation
-matrices, and methods to multiply a translation by a vector or another matrix.
- */
-
-
 /**
  * @author hardwiwill & pondy; pondy wrote most of this class.
+ *
+ * 3x4 array representing an affine transformation
+ * (= a 4x4 matrix in which the bottom row is always {0 0 0 1} )
+ * Note that this cannot be used for perspective projection tranformations
+ * since these require a non-0 bottom row.
+ *
+ * The class provides static methods to construct translation, scaling, and rotation
+ * matrices, and methods to multiply a translation by a vector or another matrix.
  *
  */
 public class Transform implements Serializable{

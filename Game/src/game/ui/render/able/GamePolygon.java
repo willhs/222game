@@ -1,4 +1,4 @@
-package game.ui.render.util;
+package game.ui.render.able;
 
 import game.world.dimensions.Point3D;
 
@@ -7,8 +7,8 @@ import java.awt.Polygon;
 
 /**
  * @author hardwiwill
- * Wrapper class for a java.awt.Polygon so that i can assign z position (to determine order of drawing) and hold a colour.
  *
+ * A java.awt.Polygon with a depth component.
  */
 public class GamePolygon extends Polygon implements Renderable{
 
@@ -22,7 +22,7 @@ public class GamePolygon extends Polygon implements Renderable{
 	}
 
 	@Override
-	public float getZ() {
+	public float getDepth() {
 		return z;
 	}
 
@@ -42,7 +42,7 @@ public class GamePolygon extends Polygon implements Renderable{
 	}
 
 	@Override
-	public void flipY(int top) {
+	public void flipAroundY(int top) {
 		for (int i = 0; i < ypoints.length; i++){
 			ypoints[i] = top - ypoints[i];
 		}

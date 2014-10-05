@@ -1,5 +1,7 @@
-package game.ui.render.util;
+package game.ui.render.able;
 
+import game.ui.render.util.Transform;
+import game.ui.render.util.Transformable;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 
@@ -7,6 +9,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * @author hardwiwill
+ *
  * Contains an (2d) image at a point
  */
 public class GameImage implements Renderable, Transformable{
@@ -22,8 +25,8 @@ public class GameImage implements Renderable, Transformable{
 	}
 
 	@Override
-	public float getZ() {
-		return position.getZ();
+	public float getDepth() { // TODO: make this proper:
+		return position.getZ() + boundingBox.length/4;
 	}
 
 	public Rectangle3D getBoundingBox(){
@@ -44,7 +47,7 @@ public class GameImage implements Renderable, Transformable{
 	}
 
 	@Override
-	public void flipY(int top) {
+	public void flipAroundY(int top) {
 		position = position.flipY(top);
 	}
 }

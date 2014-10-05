@@ -7,10 +7,17 @@ import java.util.HashMap;
 /**
  * @author Nicky van Hulst
  * */
-public class keyInputManagment  implements KeyEventDispatcher{
+public class keyInputManagment implements KeyEventDispatcher{
+	
 	private BlankPanel panel;
+	
+	//map mapping strings to keys 
 	private static HashMap<String , Integer> keyMap;
+	
+	//the last key that was pressed
 	private static KeyEvent lastKeyEvent;
+	
+	//set the escape key
 	private int escapeKey;
 
 
@@ -28,7 +35,7 @@ public class keyInputManagment  implements KeyEventDispatcher{
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
 
-		//set the last key event used by rebinding menu
+		//set the last key event
 		lastKeyEvent = e;
 
 		//if a key is pressed
@@ -81,26 +88,24 @@ public class keyInputManagment  implements KeyEventDispatcher{
 				panel.keyPressed("space");
 				return false;
 			}
-
-
-
+			
 			for(String key : keyMap.keySet() ){
 				if(keyMap.get(key) == e.getKeyCode()){
-					panel.keyPressed(key);
+					panel.keyPressed(key);//send the key press to the panel
 					return false;
 				}
 			}
-			panel.keyPressed("unbound key");
+			panel.keyPressed("unbound key");//unknown key pressed
 		}
 		return false;
 	}
-
+	
+	
 	/**
-	 * Sets up the key values corrosponding to the actions
+	 * Sets up the key values corresponding to the actions
 	 * */
 	private HashMap<String,Integer> setUpkeys(){
 		HashMap<String, Integer> tempKeyMap = new HashMap<String, Integer>();
-
 
 		//place the keys into the map
 		tempKeyMap.put("Up", KeyEvent.VK_W);//w
@@ -112,25 +117,19 @@ public class keyInputManagment  implements KeyEventDispatcher{
 		tempKeyMap.put("rotate right", KeyEvent.VK_RIGHT);//f
 		tempKeyMap.put("rotate left", KeyEvent.VK_LEFT);//f
 
-
 		return tempKeyMap;
 	}
 
-
+	
 	/**
 	 * Returns the keyMap
 	 * */
-	public static HashMap<String,Integer> getKeyMap(){
-		return keyMap;
-	}
+	public static HashMap<String,Integer> getKeyMap(){return keyMap;}
 
 
 	/**
 	 * Returns the last key press from the user
 	 * */
-	public static KeyEvent getLastKeyEvent(){
-		return lastKeyEvent;
-	}
-
+	public static KeyEvent getLastKeyEvent(){return lastKeyEvent;}
 
 }

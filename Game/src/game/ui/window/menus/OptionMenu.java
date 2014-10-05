@@ -3,22 +3,23 @@ package game.ui.window.menus;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 /**
  * @author Nicky van Hulst
  * */
 public class OptionMenu implements GraphicsPane, Animated {
+	
+	//panel to draw on 
 	private BlankPanel panel;
+	
+	//number of buttons to be created
 	private int numbOfButtons;
-	private BufferedImage backgroundImage;
-
+	
 	//arrays for buttons and button names
 	private Rectangle[] buttons;
 	private String[] buttonNames;
@@ -37,17 +38,20 @@ public class OptionMenu implements GraphicsPane, Animated {
 	private int buttonStartX;
 	private int aniSpeed = 1;
 	private int speedIncrease = 1;
+	private StarMation starMation;
 
+	
 	/**
 	 * Constructor for the optionMenu
 	 * */
 	public OptionMenu(BlankPanel panel){
+		this.starMation = MainMenu.getStarMation();
 		this.panel = panel;
 		this.numbOfButtons = 2;
 		this.selectedButton = -1;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
-		loadImages();
+
 		setupButtons();
 	}
 
@@ -73,7 +77,8 @@ public class OptionMenu implements GraphicsPane, Animated {
 
 	@Override
 	public void render(Graphics g){
-		g.drawImage(backgroundImage, 0, 0,panel);
+		//g.drawImage(backgroundImage, 0, 0,panel);
+		starMation.render(g);
 		if(currentMenu != null){
 			currentMenu.render(g);
 			return;
@@ -147,20 +152,6 @@ public class OptionMenu implements GraphicsPane, Animated {
 		}
 	}
 
-	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
-
-
-		//load background image
-		try {
-			this.backgroundImage = ImageIO.read(imagefile);
-			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
-		} catch (IOException e) {
-			System.out.println("failed reading imagge");
-			e.printStackTrace();
-		}
-	}
-
 
 	@Override
 	public void animate() {
@@ -179,10 +170,7 @@ public class OptionMenu implements GraphicsPane, Animated {
 				((Animated) nextMenu).animate();
 			}
 		}
-
 	}
-
-
 
 	@Override
 	public boolean isAnimating() {
@@ -195,11 +183,6 @@ public class OptionMenu implements GraphicsPane, Animated {
 		animating = true;
 	}
 
-
 	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public void handleMousePressed(MouseEvent e) {}
 }

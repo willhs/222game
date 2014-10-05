@@ -1,7 +1,6 @@
 package game.ui.window.menus;
 
 import game.ui.window.BlankPanel;
-import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 import game.ui.window.StarMation;
@@ -9,10 +8,6 @@ import game.ui.window.StarMation;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 
 
@@ -22,7 +17,6 @@ import javax.imageio.ImageIO;
 public class MainMenu implements GraphicsPane, Animated{
 	private final int numbOfButtons = 5;
 	private BlankPanel panel;
-	private BufferedImage backgroundImage;
 
 	//the currently selected button
 	private int selectedButton;
@@ -41,23 +35,22 @@ public class MainMenu implements GraphicsPane, Animated{
 
 	//the menu to be drawn after the animation
 	private GraphicsPane nextMenu;
-
 	private static StarMation startMation;
 
+	
 	/**
 	 * Constructor for the MainMenu
 	 * */
 	public MainMenu(BlankPanel panel){
 		this.panel = panel;
 		if(startMation == null){
-			this.startMation = new StarMation();
+			startMation = new StarMation();
 		}
-
 
 		buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
 		this.selectedButton = -1;
-		loadImages();
+
 		setUpButtons();
 	}
 
@@ -98,7 +91,6 @@ public class MainMenu implements GraphicsPane, Animated{
 
 		if(nextMenu!=null && nextMenu instanceof Animated){
 			if(((Animated) nextMenu).isAnimating()){
-				System.out.println("Next Menu animating");
 				((Animated) nextMenu).animate();
 				nextMenu.render(g);
 			}
@@ -116,7 +108,7 @@ public class MainMenu implements GraphicsPane, Animated{
 			}
 			selectedButton = -1;//no button is selected
 		}
-}
+	}
 
 	@Override
 	public void handleMouseReleased(MouseEvent e){
@@ -181,12 +173,12 @@ public class MainMenu implements GraphicsPane, Animated{
 				else{
 					((HelpMenu)nextMenu).setAnimating(true);
 				}
-
 				((Animated) nextMenu).animate();
 			}
 		}
 	}
 
+	
 	/**
 	 * Sets whether the menu is animating in or out
 	 * */
@@ -195,37 +187,21 @@ public class MainMenu implements GraphicsPane, Animated{
 		animating = true;
 	}
 
-	/**
-	 * Loads the images for the menu
-	 * */
-	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
-
-
-		//load background image
-		try {
-			this.backgroundImage = ImageIO.read(imagefile);
-			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
-			System.out.println(backgroundImage.getWidth());
-		} catch (IOException e) {
-			System.out.println("failed reading imagge");
-			e.printStackTrace();
-		}
-	}
-
 
 	/**
 	 * Returns whether or not the menu is currently animating
 	 * */
 	@Override
-	public boolean isAnimating(){
-		return animating;
+	public boolean isAnimating(){return animating;}
+	
+	
+	/**
+	 * Returns the star animation
+	 * */
+	public static StarMation getStarMation(){
+		return startMation;
 	}
-
-
+	
 	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
+	public void handleMousePressed(MouseEvent e) {}
 }

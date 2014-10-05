@@ -4,11 +4,27 @@ import game.world.dimensions.Vector3D;
 
 import java.awt.Color;
 
-public class LightSource implements Transformable{
+/**
+ * @author hardwiwill
+ *
+ * A light source.
+ * Light sources emanate from infinitely far away, so as to reduce computation difficulty.
+ */
+public class LightSource implements Transformable {
+	/**
+	 * Intensity of the light.
+	 * 0 < intensity < 1
+	 */
 	private float intensity;
 	private Vector3D direction;
 	private Color colour;
 
+	/**
+	 * PRE: 0 < intensity < 1
+	 * @param intensity
+	 * @param direction
+	 * @param colour
+	 */
 	public LightSource(float intensity, Vector3D direction, Color colour){
 		this.intensity = intensity;
 		this.direction = direction;

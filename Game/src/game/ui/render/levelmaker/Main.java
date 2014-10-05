@@ -7,9 +7,9 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 
 /**
- * For initialising the level maker.
  * @author hardwiwill
  *
+ * For initialising the level maker.
  */
 public class Main {
 

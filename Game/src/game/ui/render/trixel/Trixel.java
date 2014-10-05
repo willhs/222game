@@ -1,10 +1,14 @@
-package game.ui.render.util;
+package game.ui.render.trixel;
 
 import java.awt.Color;
 
 /**
  * @author hardwiwill
- * A 3D pixel/voxel/cube.
+ *
+ * Trixel - a pixel in tri dimensions. Also known as Voxel. Naming inspired by it's usage in FEZ game.
+ *
+ * A 3D pixel/voxel/cube at a position in trixel space (could be thought of as a 3d array).
+ * 6 faces, all with equal area (like a cube).
  */
 public class Trixel {
 

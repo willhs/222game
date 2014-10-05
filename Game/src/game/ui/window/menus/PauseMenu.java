@@ -76,7 +76,11 @@ public class PauseMenu implements GraphicsPane {
 		//drawButtons(g);
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 	}
-
+	
+	
+	/**
+	 * Draws the frame around the pause menu
+	 * */
 	public void drawFrame(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
@@ -122,11 +126,11 @@ public class PauseMenu implements GraphicsPane {
 			System.out.println("options"); //TODO
 		}
 		else if(selectedButton == 2){//main menu button
-			
+			game.getClient().quit();
 			panel.setMenu(new MainMenu(panel));
 		}
 		else if(selectedButton == 3){//quit button
-			
+			game.getClient().quit();
 			System.exit(0);//exit the game
 		}
 	}
@@ -135,11 +139,10 @@ public class PauseMenu implements GraphicsPane {
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("escape")){
-			System.out.println("Escape");
 			game.setMenu(null);
 		}
 		else if(keyEvent.equals("enter")){
-			handleMouseReleased(null);//TODO buttonPressed();
+			handleMouseReleased(null);
 		}
 		else if(keyEvent.equals("down") || keyEvent.equals("move down")){
 			selectedButton = MenuUtil.moveButtonSelectionDown(selectedButton, buttons.length);
@@ -151,9 +154,5 @@ public class PauseMenu implements GraphicsPane {
 
 
 	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
+	public void handleMousePressed(MouseEvent e) {}
 }
