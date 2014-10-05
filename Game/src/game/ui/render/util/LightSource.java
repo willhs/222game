@@ -4,7 +4,7 @@ import game.world.dimensions.Vector3D;
 
 import java.awt.Color;
 
-public class LightSource implements Transformable{
+public class LightSource implements Transformable {
 	private float intensity;
 	private Vector3D direction;
 	private Color colour;

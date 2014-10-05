@@ -19,7 +19,7 @@ import javax.imageio.ImageIO;
 public class Res {
 
 	public static final char SEP = File.separatorChar;
-	public static final String RES_PATH = "src" + SEP + "game" + SEP + "ui" + SEP + "render" + SEP + "res" + SEP;
+	public static final String RES_PATH = "res"+SEP;
 	public static final String TEST_PATH = RES_PATH + "test" + SEP;
 	public static final String IMG_PATH = RES_PATH + "img" + SEP;
 	public static final String LEVEL_PATH = RES_PATH + "level" + SEP;

@@ -1,4 +1,4 @@
-package game.ui.render.util;
+package game.ui.render.trixel;
 
 public class Trixition {
 

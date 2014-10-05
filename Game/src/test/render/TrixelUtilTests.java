@@ -2,10 +2,10 @@ package test.render;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import game.ui.render.util.Trixel;
-import game.ui.render.util.TrixelFace;
-import game.ui.render.util.TrixelUtil;
-import game.ui.render.util.Trixition;
+import game.ui.render.trixel.Trixel;
+import game.ui.render.trixel.TrixelFace;
+import game.ui.render.trixel.TrixelUtil;
+import game.ui.render.trixel.Trixition;
 import game.world.dimensions.Point3D;
 
 import java.awt.Color;
@@ -171,7 +171,7 @@ public class TrixelUtilTests {
 			
 			Trixition trix = new Trixition(x,y,z);
 			Trixel t = new Trixel(trix, Color.WHITE);
-			Point3D centroid = TrixelUtil.getTrixelCentroid(t);
+			Point3D centroid = TrixelUtil.findTrixelCentroid(t);
 			
 			assertEquals(TrixelUtil.trixitionToPosition(trix), centroid);
 		}

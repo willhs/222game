@@ -1,4 +1,4 @@
-package game.ui.render.util;
+package game.ui.render.able;
 
 import game.world.dimensions.Point3D;
 
@@ -18,7 +18,7 @@ public class GameText implements Renderable{
 	}
 
 	@Override
-	public void flipY(int top) {
+	public void flipAroundY(int top) {
 		position = position.flipY(top);
 	}
 

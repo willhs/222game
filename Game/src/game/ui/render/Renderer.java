@@ -1,16 +1,17 @@
 package game.ui.render;
 
-import game.ui.render.util.GameImage;
-import game.ui.render.util.GamePolygon;
-import game.ui.render.util.GameText;
+import game.ui.render.able.GameImage;
+import game.ui.render.able.GamePolygon;
+import game.ui.render.able.GameText;
+import game.ui.render.able.Line3D;
+import game.ui.render.able.Renderable;
+import game.ui.render.trixel.Trixel;
+import game.ui.render.trixel.TrixelFace;
+import game.ui.render.trixel.TrixelUtil;
 import game.ui.render.util.LightSource;
-import game.ui.render.util.Line3D;
-import game.ui.render.util.Renderable;
 import game.ui.render.util.Transform;
-import game.ui.render.util.Trixel;
-import game.ui.render.util.TrixelFace;
-import game.ui.render.util.TrixelUtil;
 import game.ui.render.util.ZComparator;
+import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
@@ -31,40 +32,42 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-import test.world.util.SingleRoomWorldTest;
-
 public class Renderer {
 
 	// TEMPORARY
 
 	private static final Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
-	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,300,0);
+	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,500,0);
 
-	private static final int FRAME_TOP = 600;
+	private static final int FRAME_TOP = GameWindow.FRAME_HEIGHT;
 
 	public static final long RANDOM_SEED = 15274910874912L;
-	public static Random randomColor;
+	private static final Color DEFAULT_AMBIENT_LIGHT = new Color(100, 100, 100);
+	public static Random randomGen;
 
 	/**
-	 * Draws a place using Graphics parameter and viewer direction
+	 * Draws a place using Graphics object, viewer direction and place
+	 * Floor from the place is converted into trixels which are then drawn
+	 * All drawable objects from the place are drawn as images
 	 * @param g
 	 * @param place
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
-		resetColour();
+		resetColour(); //  TODO: replace this random colour implementation
 
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new ZComparator());
+
 		// convert floor into trixels and add those to toDraw
-		// TODO: please rewrite/refactor this part when we can
 		Floor floor = place.getFloor();
 		Polygon floorPolygon = floorToVerticalPolygon(floor);
 		Point3D floorCentroid = getFloorCentroid(floor);
 
 		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;
-		//Vector3D rotation = new Vector3D(rotateAmount.y, rotateAmount.x, 0);
 
 		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
@@ -73,72 +76,116 @@ public class Renderer {
 				viewTranslation
 			);
 
-		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
-
-
-		// temporary solution to having floor behind everything.
-		Transform floorBehindEverything = Transform.newTranslation(0,0,-Trixel.SIZE);//Transform.newTranslation(0, 0, -5);
 
 		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
 
-		for (Trixel floorTrixel : floorTrixels){
-			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(floorTrixel);
-			for (TrixelFace face : faces){
+		// get everything ready to render
+		renderables.addAll(trixelsToRenderables(floorTrixels.iterator(), transform));
+		renderables.addAll(drawablesToRenderables(place.getDrawable(), transform, place));
+
+		flipYAxis(renderables);
+
+		// draw everything
+		drawThings(renderables, g2);
+
+	}
+
+	/**
+	 * Draws trixels and drawables using a graphics object
+	 * Currently used for the level maker
+	 *
+	 * @param g
+	 * @param trixels
+	 * @param iterator
+	 * @param transform
+	 */
+	public static void renderLevel(Graphics g, Iterator<Trixel> trixels, Iterator<Drawable> drawables, Transform transform){
+		Graphics2D g2 = (Graphics2D) g;
+		// enable anti-aliasing
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
+
+		toDraw.addAll(trixelsToRenderables(trixels, transform));
+		toDraw.addAll(drawablesToRenderables(drawables, transform, null));
+
+		flipYAxis(toDraw);
+
+		drawThings(toDraw, g2);
+	}
+
+	/**
+	 * Makes a list of transformed renderable objects
+	 * @param drawables
+	 * @param place
+	 * @return
+	 */
+	private static List<Renderable> drawablesToRenderables(Iterator<Drawable> drawables, Transform transform, Place place) {
+		List<Renderable> renderables = new ArrayList<Renderable>();
+		while (drawables.hasNext()){
+			Drawable drawable = drawables.next();
+			// drawable is an image
+			GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
+					drawable.getPosition(place),
+					drawable.getBoundingBox());
+
+			image.transform(transform);
+			renderables.add(image);
+
+			// if it's player, put name above head
+			if (drawable instanceof Player){
+				GameText text = new GameText(drawable.getName(),
+						image.getPosition().getTranslatedPoint(
+								new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
+
+				renderables.add(text);
+			}
+		}
+		return renderables;
+	}
+
+	/**
+	 * Converts trixels into GamePolygons and then transforms them all
+	 * @param trixels
+	 * @param transform
+	 * @return transform renderable trixels
+	 */
+	private static List<Renderable> trixelsToRenderables(Iterator<Trixel> trixels, Transform transform) {
+		List<Renderable> renderables = new ArrayList<Renderable>();
+		// temporary solution to having floor behind everything.
+		Transform floorBehindDrawables = Transform.newTranslation(0,0,-Trixel.SIZE);
+
+		while (trixels.hasNext()){
+			Trixel trixel = trixels.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
 				face.transform(transform);
-				face.transform(floorBehindEverything);
-				if (face.isFacingViewer()){
-					toDraw.offer(makeGamePolygonFromTrixelFace(face));
-				}
+				face.transform(floorBehindDrawables);
+				renderables.add(Renderer.makeGamePolygonFromTrixelFace(face));
 			}
 		}
+		return renderables;
+	}
 
-		for (Iterator<Drawable> iter = place.getDrawable(); iter.hasNext();){
-			Drawable drawable = iter.next();
-			if (isImage(drawable)){ // TODO: not be always true
-				// drawable is an image
-				GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
-						drawable.getPosition(place),
-						drawable.getBoundingBox());
-
-				image.transform(transform);
-
-				toDraw.offer(image);
-
-				// if it's player, put name above head
-				if (drawable instanceof Player){
-					GameText text = new GameText(drawable.getName(),
-							image.getPosition().getTranslatedPoint(
-									new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
-
-					toDraw.offer(text);
-				}
-			}
-
-		}
-		// STARS
-		/*for (GameImage star : makeStars()){
-			star.transform(transform);
-			toDraw.add(star);
-		}*/
-		// testing
-		// axis lines
-		/*for (Line3D axisLine : makeAxisLines()){
-			axisLine.transform(transform);
-			toDraw.offer(axisLine);
-		}*/
-
-		// ------- FLIP Y VALUES OF ALL THINGS
+	/**
+	 * FLIP Y VALUES OF ALL THINGS
+	 * So that y increases upwards.
+	 * @param toDraw
+	 */
+	private static void flipYAxis(Queue<Renderable> toDraw) {
 		for (Renderable shape : toDraw){
-			shape.flipY(FRAME_TOP);
+			shape.flipAroundY(FRAME_TOP);
 		}
+	}
 
-		// ------- DRAW ALL THE THINGS  ...in correct order
-	//	g.setColor(Color.black);
-	//	g.fillRect(0,0,2000, 2000);
-		// all gameObjects are either trixel faces or images.
-		while (!toDraw.isEmpty()){
-			Renderable renderObject = toDraw.poll();
+	/**
+	 * DRAW ALL THE THINGS  ...in correct order
+	 * @param renderables
+	 * @param g2
+	 */
+	private static void drawThings(Queue<Renderable> renderables, Graphics2D g2){
+		while (!renderables.isEmpty()){
+			Renderable renderObject = renderables.poll();
 			if (renderObject instanceof GameImage){
 				GameImage image = (GameImage) renderObject;
 				Point3D position = image.getPosition();
@@ -170,60 +217,10 @@ public class Renderer {
 		}
 	}
 
-
-	/**
-	 * Draws trixels using a graphics object
-	 * Currently used for the level maker
-	 *
-	 * @param g
-	 * @param trixels
-	 * @param transform
-	 */
-	public static void renderTrixels(Graphics g, Iterator<Trixel> trixels, Transform transform){
-		Graphics2D g2 = (Graphics2D) g;
-		// enable anti-aliasing
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
-
-		while (trixels.hasNext()){
-			Trixel trixel = trixels.next();
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				face.transform(transform);
-				toDraw.offer(Renderer.makeGamePolygonFromTrixelFace(face));
-			}
-		}
-
-		/*for (GameImage star : makeStars()){
-			star.transform(transform);
-			toDraw.offer(star);
-		}*/
-
-		// ------- FLIP Y VALUES OF ALL THINGS
-		for (Renderable shape : toDraw){
-			shape.flipY(FRAME_TOP);
-		}
-
-		while (!toDraw.isEmpty()){
-			Renderable renderable = toDraw.poll();
-			if (renderable instanceof GamePolygon){
-				GamePolygon poly = (GamePolygon) renderable;
-				g2.setColor(poly.getColour());
-				g2.fillPolygon(poly);
-			}
-			if (renderable instanceof GameImage){
-				GameImage image = (GameImage) renderable;
-				Point3D position = image.getPosition();
-				g2.drawImage(image.getImage(), (int)position.x, (int)position.y, (int)image.getBoundingBox().width, (int)image.getBoundingBox().height, null);
-			}
-		}
-	}
-
-	// -------------- HELPER METHODS -----------------------
+		// -------------- HELPER METHODS -----------------------
 		//
 		/**
-		 * @return array of lines which draw the axis
+		 * @return array of lines which are along the x,y,z axis
 		 */
 		private static Line3D[] makeAxisLines() {
 
@@ -249,14 +246,14 @@ public class Renderer {
 				zTotal += (int)vertices[i].getZ();
 			}
 			float zAverage = zTotal/vertices.length;
-			Color shadedColour = face.makeShadedColour(getTestLightSources(), new Color(20, 20, 20));
+			Color shadedColour = face.makeShadedColour(getTestLightSources(), DEFAULT_AMBIENT_LIGHT);
 			return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
 		}
 
 		private static Iterator<LightSource> getTestLightSources() {
 			List<LightSource> lights = new ArrayList<LightSource>();
 			Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
-			lights.add(new LightSource(0.8f, dir, new Color(150, 150, 250)));
+			lights.add(new LightSource(0.8f, dir, new Color(150, 150, 150)));
 			return lights.iterator();
 		}
 		/**
@@ -312,17 +309,18 @@ public class Renderer {
 		 */
 		public static Color defaultMakeRandomColour(){
 
-			int r = 100 + randomColor.nextInt(100);
-			int g = 100 + randomColor.nextInt(100);
+			if (randomGen == null) randomGen = new Random();
+			int r = 100 + randomGen.nextInt(100);
+			int g = 100 + randomGen.nextInt(100);
 			int b = 200;//
-		
+
 			// nicky's color code
 //			int col = randomColor.nextInt(254);
 //			int r = col;
-//			int g = col; 
+//			int g = col;
 //			int b = col;//
-//			
-//			if (randomColor == null) randomColor = new Random();
+//
+//
 //			int r = 100 + randomColor.nextInt(100);
 //			int g = 100 + randomColor.nextInt(100);
 //			int b = 200;//
@@ -342,7 +340,7 @@ public class Renderer {
 
 			return new Color(r,g,b);
 		}
-		
+
 		/**
 		 * @param base
 		 * @param random
@@ -358,7 +356,7 @@ public class Renderer {
 
 			deviation = (int)(random.nextInt(maxDeviation*2) - maxDeviation);
 			int b = Math.max(Math.min(base.getBlue() + deviation, 255), 0);
-			
+
 			return new Color(r,g,b);
 		}
 
@@ -420,7 +418,7 @@ public class Renderer {
 				float y = ran.nextInt(maxY*2)-maxZ;
 				float z = ran.nextInt(maxZ*2)-maxZ;
 
-				int size = randomColor.nextInt(maxSize-minSize)+minSize;
+				int size = randomGen.nextInt(maxSize-minSize)+minSize;
 
 				stars.add(new GameImage(Res.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
 			}
@@ -428,7 +426,7 @@ public class Renderer {
 		}
 
 		public static void resetColour(){
-			randomColor = new Random(RANDOM_SEED);
+			randomGen = new Random(RANDOM_SEED);
 		}
 
 }

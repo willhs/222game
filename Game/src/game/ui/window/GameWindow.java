@@ -80,14 +80,14 @@ public class GameWindow extends JFrame{
 	}
 
 	public static void main(String[] args){
-	    String fonts[] = 
+/*	    String fonts[] =
 	    	      GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
 	    	    for ( int i = 0; i < fonts.length; i++ )
 	    	    {
 	    	      System.out.println(fonts[i]);
-	    	    }
-		
+	    	    }*/
+
 		Res.readInAllCommonImages();
 		GameWindow window = new GameWindow();
 		TestThread t = new TestThread(20, window);

@@ -1,4 +1,4 @@
-package game.ui.render.util;
+package game.ui.render.able;
 
 import game.world.dimensions.Point3D;
 
@@ -42,7 +42,7 @@ public class GamePolygon extends Polygon implements Renderable{
 	}
 
 	@Override
-	public void flipY(int top) {
+	public void flipAroundY(int top) {
 		for (int i = 0; i < ypoints.length; i++){
 			ypoints[i] = top - ypoints[i];
 		}

@@ -3,7 +3,7 @@ package game.ui.render.util;
 
 /**
  * @author will
- * Able to be transformed with 3d vector transformations e.g. things with points, vectors
+ * Able to be transformed with 3d vector transformations.
  */
 public interface Transformable {
 

@@ -1,5 +1,9 @@
-package game.ui.render.util;
+package game.ui.render.trixel;
 
+import game.ui.render.util.LightSource;
+import game.ui.render.util.Transform;
+import game.ui.render.util.Transformable;
+import game.ui.render.util.ZComparable;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
@@ -18,7 +22,8 @@ public class TrixelFace implements ZComparable, Transformable{
 	private Trixel parent;
 	/**
 	 * PRE: must have 4 vertices
-	 * PRE: must be ordered so that lines from each point in order (i to i+1) form a square (eg (0,0,0), (1,0,0), (1,1,0), (0,1,0))
+	 * PRE: must be ordered so that lines from each point in order (i to i+1)
+	 * 		form a square (eg (0,0,0), (1,0,0), (1,1,0), (0,1,0))
 	 * PRE: element 0 be must leftest, bottomest, farest point.
 	 * @param vertices
 	 * @param z
