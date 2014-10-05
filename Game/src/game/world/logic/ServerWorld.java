@@ -14,6 +14,11 @@ import java.util.*;
  */
 public abstract class ServerWorld implements Serializable {
 
+	/**
+	 * applys commands that are sent by the client.
+	 * @param command - clients command.
+	 * @return - returns a list of commands.
+	 */
 	public List<String> applyCommand(String command) {
 		List<String> commands = new ArrayList<String>();
 		Scanner scan = new Scanner(command);

@@ -2,18 +2,16 @@ package game.world.logic;
 
 import game.ui.render.util.Transform;
 import game.world.dimensions.*;
-import game.world.model.Exit;
-import game.world.model.Place;
-import game.world.model.Player;
+import game.world.model.*;
 import game.world.util.Parser;
 
 import java.util.*;
 
 /**
  * Handles all the client side modeling and some interation.
- *
+ * 
  * @author Shane Brewer.
- *
+ * 
  */
 public abstract class ClientWorld extends ServerWorld {
 
@@ -39,7 +37,7 @@ public abstract class ClientWorld extends ServerWorld {
 	/**
 	 * Takes a commands form the client and returns a command intended for the
 	 * server World.
-	 *
+	 * 
 	 * @param action
 	 *            - the action the client wishes to do.
 	 * @return - a string the represents a command or the empty string.
@@ -54,7 +52,8 @@ public abstract class ClientWorld extends ServerWorld {
 			Vector3D newDirection = keyPressToDirection.get(action)
 					.multiply(clientsPlayer.getDirection()).unitVector();
 
-			newDirection = Transform.newYRotation(-viewAngle).multiply(newDirection).unitVector();
+			newDirection = Transform.newYRotation(-viewAngle)
+					.multiply(newDirection).unitVector();
 
 			Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
 					newDirection.y * movmentScaler, newDirection.z
@@ -97,7 +96,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Handles the server commands for exiting a room.
-	 *
+	 * 
 	 * @param scan
 	 *            - scanner that has the command in it.
 	 */
@@ -135,7 +134,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Handles a server request to move a player in the client world.
-	 *
+	 * 
 	 * @param scan
 	 *            - scanner with the command in it.
 	 */
@@ -154,7 +153,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Gets the cunnrent place the player is in.
-	 *
+	 * 
 	 * @return - reutns the current place .. might be null.
 	 */
 	public Place getCurrentPlace() {
@@ -163,7 +162,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * replaces the current place with a new one.
-	 *
+	 * 
 	 * @param place
 	 *            - the place that this current player should be in.
 	 */
@@ -175,7 +174,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Makes the first player.
-	 *
+	 * 
 	 * @param player
 	 *            - player that is to be the player of this client.
 	 * @return - a string only ment to be parsed by the server.
@@ -190,7 +189,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Sets the client player.
-	 *
+	 * 
 	 * @param scan
 	 *            - used to scan the text to get the player out.
 	 * @return - return true if the player was moved.
@@ -221,7 +220,7 @@ public abstract class ClientWorld extends ServerWorld {
 	/**
 	 * Gets the Interaction command from the exit. This one dose some
 	 * computation to find a exit nere the player that they can interact with.
-	 *
+	 * 
 	 * @return - returns the string intended for the server world to handle.
 	 */
 	private String getInteractionCommand() {
@@ -230,8 +229,7 @@ public abstract class ClientWorld extends ServerWorld {
 		String command = "";
 		while (exits.hasNext()) {
 			Exit temp = exits.next();
-			if (MovementHandler.checkProximity(
-					clientsPlayer.getPosition(),
+			if (MovementHandler.checkProximity(clientsPlayer.getPosition(),
 					clientsPlayer.getBoundingBox(), temp.getPosition(place),
 					temp.getBoundingBox())) {
 
@@ -244,4 +242,21 @@ public abstract class ClientWorld extends ServerWorld {
 		return command;
 	}
 
+	private String getItemPickUpCommand() {
+		Place place = getCurrentPlace();
+		Iterator<Item> items = place.getItems();
+		String command = "";
+		while (items.hasNext()) {
+			Item item = items.next();
+			if (ItemInteractionHandler.checkProximity(
+					clientsPlayer.getPosition(),
+					clientsPlayer.getBoundingBox(), item.getPosition(),
+					item.getBoundingBox())) {
+				command = "Server ItemPickUp Name ( " + clientsPlayer.getName()
+						+ " ) Name ( " + item.getName() + " ) Name ( "
+						+ place.getName() + " )";
+			}
+		}
+		return command;
+	}
 }
