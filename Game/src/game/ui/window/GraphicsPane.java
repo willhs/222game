@@ -1,11 +1,12 @@
 package game.ui.window;
 
-/**
- * @author Nicky van Hulst
- * */
+
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
+/**
+ * @author Nicky van Hulst
+ * */
 public interface GraphicsPane{
 
 	/**

@@ -10,13 +10,12 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import javax.imageio.ImageIO;
-
 /**
  * @author Nicky van Hulst
  * */
 public class MenuUtil {
-
+	
+	//Standard colors 
 	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.1f);
 	public static final Color BLACK_TRAN = new Color(0f,0.5f,0.5f,0.5f);
 
@@ -37,17 +36,13 @@ public class MenuUtil {
 			g2d.draw(buttons[i]);
 
 			if(selectedButton == i){
-				//g2d.setColor(new Color(0f,0f,0f,0.5f));
 				g.setColor(Color.red);
-
 				g2d.fill(buttons[i]);
 			}
+			
 			//draws the string in the center of the current button
 			if(selectedButton == i){
-				//g2d.setColor(new Color(0f,0f,0f,0.5f));
-				//.g.setColor(Color.yellow);
 				g.setColor(Color.white);
-
 			}
 			else{
 				g.setColor(Color.white);
@@ -106,7 +101,8 @@ public class MenuUtil {
 		boolean isDone = false;
 
 		for(int i = 0; i < buttons.length; i++){
-			buttons[i].x -=speed;//decrease the x value of all the buttons
+			//decrease the x value of all the buttons
+			buttons[i].x -=speed;
 
 			//check if all buttons outside of the screen
 			if(buttons[0].x <=  buttonStartX){
@@ -135,6 +131,7 @@ public class MenuUtil {
 		return isDone;
 	}
 
+	
 	/**
 	 * Takes a buffered Image and return a buffered Image with the size
 	 * width and height

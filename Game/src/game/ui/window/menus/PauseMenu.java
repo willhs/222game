@@ -154,8 +154,5 @@ public class PauseMenu implements GraphicsPane {
 
 
 	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
+	public void handleMousePressed(MouseEvent e) {}
 }

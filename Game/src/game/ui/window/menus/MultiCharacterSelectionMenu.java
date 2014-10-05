@@ -7,9 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-
-import javax.net.ssl.HostnameVerifier;
-
 import nw.Client;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
@@ -20,23 +17,28 @@ import game.world.model.Player;
  * @author Nicky van Hulst
  * */
 public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
-
+	
+	//text field fields
 	private Rectangle textFieldPort;
 	private boolean portSelected;
 	private Rectangle textFieldHostName;
 	private boolean hostSelected;
-
+	
+	//labels for text boxes
 	private String host = "Host Name :";
 	private String port = "Port Number :";
-
+	
+	//the strings the users have entered
 	private textBoxWrapper hostString = new textBoxWrapper("");
 	private textBoxWrapper portString = new textBoxWrapper("");
 
 	private int startX = 20;
 	private int startY = 70;
-	private int maxTextLenght = 30;
-
-
+	
+	
+	/**
+	 * The constructor for the multiplier selection menu
+	 * */
 	public MultiCharacterSelectionMenu(BlankPanel panel) {
 		super(panel);
 
@@ -110,7 +112,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 	@Override
 	public void okPressed(){
-		//check with the server that the name is ok
 
 		//make sure a all the fields have something entered
 		if(portString.s.length() == 0 || hostString.s.length() == 0 || super.name.length() == 0 ){
@@ -124,7 +125,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			return;
 		}
 
-
 		int portNumb = -1;
 		//check the port number is a number
 		try {
@@ -136,7 +136,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			return;
 		}
 
-
 		//no errors at this point so create the game player and client and change menu
 		Player player = new Player(super.name);
 		Client client = new Client(hostString.s,portNumb,panel);
@@ -146,7 +145,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			name = "";
 			return;
 		}
-		System.out.println("Creating : " + "Name :"+ name + " Host :" + hostString.s + " Port :" + portNumb );
 		panel.setMenu(new GameScreen(panel, client,player));
 	}
 

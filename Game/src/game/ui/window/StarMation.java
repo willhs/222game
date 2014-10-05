@@ -15,7 +15,11 @@ public class StarMation {
 	private int maxWidth;
 	private int maxHeight;
 	private int size = 60;
-
+	
+	
+	/**
+	 * The constructor for starMation
+	 * */
 	public StarMation(){
 		this.stars = new ArrayList<Star>();
 		this.maxHeight = GameWindow.FRAME_HEIGHT;
@@ -23,18 +27,30 @@ public class StarMation {
 
 		setUpStarMation();
 	}
-
-	public void setUpStarMation(){
+	
+	
+	/**
+	 * Creates the number of stars based on the number of stars variable
+	 * */
+	private void setUpStarMation(){
 		for(int i = 0; i < numbofStars; i++){
 			stars.add(createStar(false));
 		}
 	}
-
-	public Star createStar(boolean outside){
-		int  randomX = (int) (Math.random()*maxWidth);
+	
+	
+	/***
+	 * Creates a star at a random location 
+	 * if outside is true it creates it outside the screen
+	 * */
+	private Star createStar(boolean outside){
+		
+		//set random variable based on screen size
+		int randomX = (int) (Math.random()*maxWidth);
 		int randomY = (int) (Math.random()*maxHeight+20);
 		int halfChance = (int)(Math.random()*10);
-
+		
+		//if the star is outside the screen there should be 50/50 change to spawn outside x axis or y axis
 		if(outside){
 		if(halfChance > 5){
 			randomY = maxHeight - 50;
@@ -44,24 +60,34 @@ public class StarMation {
 			}
 		}
 		
+		//set the star to a random size
 		int randomSize = (int)(Math.random()*size);
+		
+		//make sure the size is at least 1
 		if(randomSize < 1)randomSize = 1;
 		
 		return new Star( MenuUtil.scale(Res.getImageFromName("Star1"), randomSize, randomSize),randomX,randomY);
 	}
-
+	
+	
+	/**
+	 * Renders all of the stars on the graphics object
+	 * */
 	public void render(Graphics g){
 		g.setColor(Color.black);
 		g.fillRect(0, 0, maxWidth, maxHeight);
-
+		
+		//place down more stars if less than a certain count
 		if(stars.size() < numbofStars)stars.add(createStar(true));
 
 		for(int i = 0; i < stars.size(); i++){
-
+			//draw the star at its location 
 			g.drawImage(stars.get(i).getImage(), stars.get(i).getX(),stars.get(i).getY() ,null);
-
+			
+			//increment its location 
 			stars.get(i).setX(stars.get(i).getX()+stars.get(i).speed);
 			stars.get(i).setY(stars.get(i).getY()-1);
+			
 			//remove the star once it leaves the screen
 			if(stars.get(i).getX() > maxWidth || stars.get(i).getY() > maxHeight )stars.remove(stars.get(i));
 		}

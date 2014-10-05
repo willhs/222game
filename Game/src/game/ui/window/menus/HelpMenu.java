@@ -11,30 +11,27 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 /**
  * @author Nicky van Hulst
  * */
 public class HelpMenu implements GraphicsPane, Animated{
+	
+	//panel to draw on 
 	private BlankPanel panel;
-	private int numbOfButtons;
-
+	
+	//button fields
 	private Rectangle[] buttons;
 	private String[] buttonNames;
-
+	private int numbOfButtons;
 	private int selectedButton;
-	private BufferedImage backgroundImage;
-
+	
+	//help text fields
 	private String helpText;
 	private Font helpTextFont;
-
 	private Rectangle textBox;
 
 	//animation fields
@@ -44,10 +41,15 @@ public class HelpMenu implements GraphicsPane, Animated{
 	private int buttonStartX;
 	private int aniSpeed = 1;
 	private float speedMultiplyer = 1f;
+	
 	//the menu to be drawn after the animation
 	private GraphicsPane nextMenu;
 	private StarMation starMation;
-
+	
+	
+	/**
+	 * The constructor for the help menu
+	 * */
 	public HelpMenu(BlankPanel panel, StarMation starMation){
 		this.starMation = starMation;
 		this.panel = panel;
@@ -57,7 +59,6 @@ public class HelpMenu implements GraphicsPane, Animated{
 		this.buttonNames = new String[numbOfButtons];
 		this.helpTextFont = new Font("arial",Font.BOLD,15);
 
-		loadImages();
 		setupButtons();
 		setUpTextBox();
 		readHelpText();
@@ -73,10 +74,12 @@ public class HelpMenu implements GraphicsPane, Animated{
 		buttons[1] = textBox;
 		buttonNames[0] = "Back";
 		buttonNames[1] = "";
-
 	}
 
-
+	
+	/**
+	 * Sets up the text box to display the help text
+	 * */
 	private void setUpTextBox(){
 		int gap = 50;//the gap between button and text box
 		int x = buttons[0].x + buttons[0].width + gap;
@@ -86,7 +89,6 @@ public class HelpMenu implements GraphicsPane, Animated{
 		int height = GameWindow.FRAME_HEIGHT - (y*2);
 
 		textBox = new Rectangle(x,y,width,height);
-
 	}
 
 
@@ -123,7 +125,6 @@ public class HelpMenu implements GraphicsPane, Animated{
 
 	@Override
 	public void handleMouseMoved(MouseEvent e){
-
 		//set selected button
 		for(int i = 0; i < buttons.length; i++){
 			if(buttons[0].contains(e.getX(), e.getY())){//TODO currently zero beuase there is only one button
@@ -153,7 +154,7 @@ public class HelpMenu implements GraphicsPane, Animated{
 			((MainMenu)nextMenu).setAnimating(true);
 		}
 		else if(keyEvent.equals("enter")){
-			handleMouseReleased(null);//TODO create buttonPressed();
+			handleMouseReleased(null);
 		}
 		else if(keyEvent.equals("down") || keyEvent.equals("move down")){
 			selectedButton = MenuUtil.moveButtonSelectionDown(selectedButton, buttons.length);
@@ -177,19 +178,17 @@ public class HelpMenu implements GraphicsPane, Animated{
 
 		int curLineWidth = 0;
 		try {
-
 			int i = textReader.read();//reads a single character
 			char c = (char)i;
 
 			while(i != -1){//not the end of input stream
-
+				
 				if(curLineWidth >= (textBox.width - 40)){//check if we should place a new line character
 					helpText = helpText.concat("\n");
 					curLineWidth = 0;//reset the line width
 				}
 
 				helpText = helpText.concat(""+c);//adds the char at the end of the string
-
 
 				i = textReader.read();
 				c = (char)i;
@@ -199,7 +198,7 @@ public class HelpMenu implements GraphicsPane, Animated{
 				}
 
 				int charWidth = canvas.getFontMetrics(helpTextFont).stringWidth(""+c);
-				curLineWidth += charWidth;// TODO use graphics object to get  font metrics
+				curLineWidth += charWidth;
 			}
 		} catch (IOException e) {
 			System.out.println("Failed at reading HelpText File");
@@ -233,33 +232,14 @@ public class HelpMenu implements GraphicsPane, Animated{
 	public boolean isAnimating() {
 		return animating;
 	}
-
+	
+	
 	@Override
 	public void setAnimating(boolean in){
 		animatingIn = in;
 		animating = true;
 	}
 
-	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("resources/bocks.jpg");
-
-		//load background image
-		try {
-			this.backgroundImage = ImageIO.read(imagefile);
-			backgroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
-		} catch (IOException e) {
-			System.out.println("failed reading image");
-			e.printStackTrace();
-		}
-	}
-
-
 	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-
-
+	public void handleMousePressed(MouseEvent e) {}
 }

@@ -14,14 +14,12 @@ import javax.swing.JPanel;
  *@author Nicky van Hulst
  * */
 public class BlankPanel extends JPanel{
-
-
 	private static final long serialVersionUID = 1L;
 
-	//the menu the panel is displaying at the moment
+	//the menu the panel is rendering at the moment
 	private GraphicsPane currentMenu;
-
-
+	
+	
 	/**
 	 * Constructor for the blank panel sets up the panel
 	 * with the current menu being the main menu
@@ -38,7 +36,6 @@ public class BlankPanel extends JPanel{
 
 		//set the main menu to be the current menu
 		currentMenu = new MainMenu(this);
-
 	}
 
 
@@ -49,6 +46,7 @@ public class BlankPanel extends JPanel{
 		if(currentMenu instanceof Animated){
 			if(((Animated) currentMenu).isAnimating())((Animated) currentMenu).animate();
 		}
+		
 		//make the current menu draw itself on the graphics object
 		currentMenu.render(g);
 	}
@@ -64,26 +62,25 @@ public class BlankPanel extends JPanel{
 
 
 	/**
-	 * Sets up the mouse listner for the panel
+	 * Sets up the mouse listener for the panel
 	 * */
 	public void setUpMouseListner(){
 		this.addMouseMotionListener(new MouseAdapter() {
-
 			@Override
 			public void mouseMoved(MouseEvent e){
-				currentMenu.handleMouseMoved(e);
+				currentMenu.handleMouseMoved(e);//passes info on to current menu
 			}
 		});
 
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e){
-				currentMenu.handleMouseReleased(e);
+				currentMenu.handleMouseReleased(e);//passes info on to current menu
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e){
-				currentMenu.handleMousePressed(e);
+				currentMenu.handleMousePressed(e);//passes info on to current menu
 			}
 		});
 	}
