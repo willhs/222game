@@ -160,9 +160,9 @@ public class LevelMaker{
 		rotateAmounts = changeRotateAmount(rotateX, rotateY);
 		Transform trans = makeTransform(rotateAmounts);
 
-		updateTrixelFaces();
-
 		lastTransform = trans;
+
+		updateTrixelFaces();
 	}
 
 
@@ -204,7 +204,6 @@ public class LevelMaker{
 		}
 		if (drawMode == CHEST_MODE){
 			worldObjects.add(new Chest("Chest", new Inventory(), aboveTrixel));
-			System.out.println("chesting");
 		}
 		updateTrixelFaces();
 	}

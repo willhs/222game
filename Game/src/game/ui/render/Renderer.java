@@ -124,6 +124,25 @@ public class Renderer {
 	}
 
 	/**
+	 * Converts trixels into GamePolygons and then transforms them all
+	 * @param trixels
+	 * @param transform
+	 * @return transform renderable trixels
+	 */
+	private static List<Renderable> trixelsToRenderables(Iterator<Trixel> trixels, Transform transform) {
+		List<Renderable> renderables = new ArrayList<Renderable>();
+
+		while (trixels.hasNext()){
+			Trixel trixel = trixels.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				face.transform(transform);
+				renderables.add(Renderer.makeGamePolygonFromTrixelFace(face));
+			}
+		}
+		return renderables;
+	}
+
+	/**
 	 * Makes a list of transformed renderable objects
 	 * @param drawables
 	 * @param place
@@ -148,28 +167,6 @@ public class Renderer {
 								new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
 
 				renderables.add(text);
-			}
-		}
-		return renderables;
-	}
-
-	/**
-	 * Converts trixels into GamePolygons and then transforms them all
-	 * @param trixels
-	 * @param transform
-	 * @return transform renderable trixels
-	 */
-	private static List<Renderable> trixelsToRenderables(Iterator<Trixel> trixels, Transform transform) {
-		List<Renderable> renderables = new ArrayList<Renderable>();
-		// temporary solution to having floor behind everything.
-		Transform floorBehindDrawables = Transform.newTranslation(0,0,-Trixel.SIZE);
-
-		while (trixels.hasNext()){
-			Trixel trixel = trixels.next();
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				face.transform(transform);
-				face.transform(floorBehindDrawables);
-				renderables.add(Renderer.makeGamePolygonFromTrixelFace(face));
 			}
 		}
 		return renderables;

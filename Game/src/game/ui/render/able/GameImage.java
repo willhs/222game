@@ -25,8 +25,8 @@ public class GameImage implements Renderable, Transformable{
 	}
 
 	@Override
-	public float getDepth() {
-		return position.getZ();
+	public float getDepth() { // TODO: make this proper:
+		return position.getZ() + boundingBox.length/4;
 	}
 
 	public Rectangle3D getBoundingBox(){
