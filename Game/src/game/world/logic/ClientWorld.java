@@ -91,6 +91,9 @@ public abstract class ClientWorld extends ServerWorld {
 			if (scan.hasNext("Exit")) {
 				clientHandleExiting(scan);
 			}
+			if (scan.hasNext("ItemPickUp")){
+				clientHandleItemPickUp(scan);
+			}
 		}
 
 		return commandList;
@@ -132,6 +135,25 @@ public abstract class ClientWorld extends ServerWorld {
 		if (player.name.equals(clientsPlayer.name)) {
 			currentPlace = otherPlace;
 		}
+	}
+	
+	private void clientHandleItemPickUp(Scanner scan){
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		
+		place.removeItem(item);
+		player.getInventory().addItem(item);
+		item.setPosition(new Point3D(0, 0, 0));
 	}
 
 	/**

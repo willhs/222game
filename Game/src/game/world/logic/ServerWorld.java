@@ -32,6 +32,8 @@ public abstract class ServerWorld implements Serializable {
 				commands = serverHandleMove(scan, command);
 			} else if (scan.hasNext("Exit")) {
 				commands = serverExitInteraction(scan, command);
+			} else if (scan.hasNext("ItemPickUp")){
+				commands = serverItemPickUp(scan, command);
 			}
 		}
 		return commands;
