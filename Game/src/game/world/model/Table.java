@@ -8,6 +8,7 @@ public class Table implements Item{
 	private final String name;
 	private Point3D position;
 	private final Rectangle3D boundingBox;
+	private boolean selected;
 
 	public Table(String name, Point3D posistion, Rectangle3D size){
 		this.name = name;
@@ -53,6 +54,16 @@ public class Table implements Item{
 	@Override
 	public Point3D getPosition(Place place) {
 		return getPosition();
+	}
+
+	@Override
+	public boolean isSlelected() {
+		return selected;
+	}
+
+	@Override
+	public void setSelected(boolean change) {
+		selected = change;
 	}
 
 

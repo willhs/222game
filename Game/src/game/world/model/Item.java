@@ -51,5 +51,9 @@ public interface Item extends Drawable, Serializable{
 	 * @param point3d  the point that is to be set
 	 */
 	public void setPosition(Point3D point);
+	
+	public boolean isSlelected();
+	
+	public void setSelected(boolean change);
 
 }
