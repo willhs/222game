@@ -14,8 +14,8 @@ import java.awt.image.BufferedImage;
  * @author Nicky van Hulst
  * */
 public class MenuUtil {
-	
-	//Standard colors 
+
+	//Standard colors
 	public static final Color WHITE_TRAN = new Color(1f,1f,1f,0.1f);
 	public static final Color BLACK_TRAN = new Color(0f,0.5f,0.5f,0.5f);
 
@@ -24,6 +24,7 @@ public class MenuUtil {
 	 * Draws the buttons on the graphics object on the screen vertically
 	 * */
 	public static void drawButtons(Graphics g, int selectedButton, Rectangle[] buttons, String[] buttonNames){
+		if(buttons == null)return;
 		Graphics2D g2d = (Graphics2D)g;
 
 		Font myFont = new Font("Tunga",0,20);
@@ -39,7 +40,7 @@ public class MenuUtil {
 				g.setColor(Color.red);
 				g2d.fill(buttons[i]);
 			}
-			
+
 			//draws the string in the center of the current button
 			if(selectedButton == i){
 				g.setColor(Color.white);
@@ -47,7 +48,7 @@ public class MenuUtil {
 			else{
 				g.setColor(Color.white);
 			}
-			
+
 			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
 		}
 	}
@@ -131,7 +132,7 @@ public class MenuUtil {
 		return isDone;
 	}
 
-	
+
 	/**
 	 * Takes a buffered Image and return a buffered Image with the size
 	 * width and height

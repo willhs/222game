@@ -19,20 +19,20 @@ import java.io.InputStreamReader;
  * @author Nicky van Hulst
  * */
 public class HelpMenu implements GraphicsPane, Animated{
-	
-	//panel to draw on 
+
+	//panel to draw on
 	private BlankPanel panel;
-	
+
 	//button fields
-	private Rectangle[] buttons;
+	protected Rectangle[] buttons;
 	private String[] buttonNames;
 	private int numbOfButtons;
 	private int selectedButton;
-	
+
 	//help text fields
-	private String helpText;
+	protected String helpText;
 	private Font helpTextFont;
-	private Rectangle textBox;
+	protected Rectangle textBox;
 
 	//animation fields
 	private boolean animating;
@@ -41,12 +41,12 @@ public class HelpMenu implements GraphicsPane, Animated{
 	private int buttonStartX;
 	private int aniSpeed = 1;
 	private float speedMultiplyer = 1f;
-	
+
 	//the menu to be drawn after the animation
 	private GraphicsPane nextMenu;
-	private StarMation starMation;
-	
-	
+	protected StarMation starMation;
+
+
 	/**
 	 * The constructor for the help menu
 	 * */
@@ -76,7 +76,7 @@ public class HelpMenu implements GraphicsPane, Animated{
 		buttonNames[1] = "";
 	}
 
-	
+
 	/**
 	 * Sets up the text box to display the help text
 	 * */
@@ -182,7 +182,7 @@ public class HelpMenu implements GraphicsPane, Animated{
 			char c = (char)i;
 
 			while(i != -1){//not the end of input stream
-				
+
 				if(curLineWidth >= (textBox.width - 40)){//check if we should place a new line character
 					helpText = helpText.concat("\n");
 					curLineWidth = 0;//reset the line width
@@ -232,8 +232,8 @@ public class HelpMenu implements GraphicsPane, Animated{
 	public boolean isAnimating() {
 		return animating;
 	}
-	
-	
+
+
 	@Override
 	public void setAnimating(boolean in){
 		animatingIn = in;

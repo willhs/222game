@@ -25,7 +25,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 	//button fields
 	private int selectedButton;
-	
+
 	//buttons fields
 	protected Rectangle[] buttons;
 	private String[] buttonNames;
@@ -38,15 +38,15 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	protected String name = "";
 	private boolean nextCap;
 	private int maxNameLength = 30;
-	
+
 	//the character selection rectangles
 	private Rectangle character1;
 	private Rectangle character2;
 	private Rectangle character3;
-	
+
 	//the character that is selected
 	int characterSelected = -1;
-	
+
 	private int startX = 20;
 	private int startY = 20;
 	private int boxWidth = GameWindow.FRAME_WIDTH-startX*2;
@@ -55,14 +55,14 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 	//error message for the user
 	protected String error = " ";
-	
-	//panel to draw on 
+
+	//panel to draw on
 	protected BlankPanel panel;
-	
+
 	//the background animation
 	private StarMation starMation;
-	
-	
+
+
 	/**
 	 * Constructor for the character selection menu
 	 * */
@@ -76,8 +76,8 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		setUpButtons();
 		setUpCharacterBoxes();
 	}
-	
-	
+
+
 	/**
 	 * Sets up the buttons for the menu
 	 * */
@@ -93,10 +93,10 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		buttonNames[0] = "Back";
 		buttonNames[1] = "Ok";
 	}
-	
-	
+
+
 	/**
-	 *Sets up the characters selection boxes 
+	 *Sets up the characters selection boxes
 	 * */
 	public void setUpCharacterBoxes(){
 		int y = startY;
@@ -113,18 +113,18 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	@Override
 	public void render(Graphics g) {
 		starMation.render(g);
-		
+
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 		drawBoxes(g);
 	}
-	
-	
+
+
 	/**
 	 * Draws the character selection boxes on the screen
 	 * */
 	public void drawBoxes(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
-		
+
 		//set the font
 		Font myFont = new Font("arial",0,20);
 		g.setFont(myFont);
@@ -155,7 +155,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		g2d.setColor(Color.white);
 	}
 
-	
+
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
 		//set selected button
@@ -168,14 +168,14 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		}
 	}
 
-	
+
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		buttonPressed();
 
 		int x = e.getX();
 		int y = e.getY();
-		
+
 		//set the selected character or name box
 		if(character1.contains(x,y)){
 			characterSelected = 1;
@@ -206,8 +206,8 @@ public class CharacterSelectionMenu implements GraphicsPane{
 			panel.setMenu(new MainMenu(panel));
 		}
 	}
-	
-	
+
+
 	/**
 	 * Performs action based on the key that is pressed
 	 * */
@@ -217,9 +217,9 @@ public class CharacterSelectionMenu implements GraphicsPane{
 			name = name.substring(0, name.length()-1);//take one char of the string
 			return;
 		}
-		
+
 		if(name.length() > maxNameLength)return;//max size of name
-		
+
 		//get the last key event
 		KeyEvent e = keyInputManagment.getLastKeyEvent();
 		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());
@@ -231,13 +231,13 @@ public class CharacterSelectionMenu implements GraphicsPane{
 				nextCap = true;
 				return;
 			}
-			
+
 			//start with a capitol letter
 			if(name.length() == 0 )nextCap = true;
-			
+
 			//change the key to be a lower case
 			if(!nextCap)key = key.toLowerCase();
-			
+
 			//add to the end of the string
 			name = name.concat(key);
 			nextCap = false;
@@ -257,7 +257,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		}
 	}
 
-	
+
 	/**
 	 * The OK button is pressed check if user has entered required fields
 	 * and create player and client
@@ -276,7 +276,8 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		}
 
 		Player player = new Player(name);
-		//player.setImage("char1");
+		String imageName = "Char"+characterSelected;
+		player.setImageName(imageName);
 		player.addItem(new Key("Epic key of Awesome", new Point3D(0, 0, 0)));
 		player.addItem(new Key("Epic key of Awesome 2", new Point3D(0, 0, 0)));
 
@@ -284,8 +285,8 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		client.addPlayerToWorld(player);
 		panel.setMenu(new GameScreen(panel, client,player));
 	}
-	
-	
+
+
 	@Override
 	public void handleMousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub

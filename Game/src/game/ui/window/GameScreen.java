@@ -29,7 +29,7 @@ public class GameScreen implements GraphicsPane  {
 	//the menu drawn on top on the game screen
 	private GraphicsPane currentMenu;
 	private BlankPanel panel;
-	
+
 	//list of key presses to pass on to the client
 	private ArrayList<String> releventQueKeypress;
 
@@ -38,7 +38,7 @@ public class GameScreen implements GraphicsPane  {
 	private Rectangle[] inventoryButtons;
 	private String[] names;
 	private int boxSize = 80;
-	
+
 	//selected button
 	private int selectedButton = -1;
 
@@ -48,14 +48,14 @@ public class GameScreen implements GraphicsPane  {
 	//world fields
 	private Vector3D rotateVector;
 	private Client client;
-	
+
 	//the animation of stars
 	private StarMation starMation;
-	
+
 	//the inventory menu
 	private InventoryMenu popUpInventory;
-	
-	
+
+
 	/**
 	 * Constructor for the game screen
 	 * */
@@ -67,17 +67,17 @@ public class GameScreen implements GraphicsPane  {
 		this.panel = panel;
 		this.items = new Item[6];
 		this.popUpInventory = new InventoryMenu(panel, this, player);
-		
+
 		popUpInventory.updateInventory();
 		releventQueKeypress = createKeylist();
 		rotateVector = new Vector3D(0f, 0f, 0f);
-		
+
 		setUpInventoryBarButtons();
 	}
 
-	
+
 	/**
-	 *sets up the inventory on the game screen 
+	 *sets up the inventory on the game screen
 	 * */
 	private void setUpInventoryBarButtons(){
 		//modify the stroke size to 4
@@ -97,40 +97,42 @@ public class GameScreen implements GraphicsPane  {
 			x+= boxSize;
 		}
 	}
-	
-	
+
+
 	/**
-	 * Creates a list of the relevant key presses the client needs to 
+	 * Creates a list of the relevant key presses the client needs to
 	 * know about
 	 * */
 	private ArrayList<String> createKeylist(){
 		ArrayList<String> keyList = new ArrayList<String>();
-		
+
 		//add relevent key presses
 		keyList.add("Up");
 		keyList.add("Down");
 		keyList.add("Right");
 		keyList.add("Left");
 		keyList.add("Interact");
+		keyList.add("Drop");
+		keyList.add("PickUp");
 
 		return keyList;
 	}
 
 	@Override
 	public void render(Graphics g){
-		//render the star animation 
+		//render the star animation
 		starMation.render(g);
-		
+
 		//render the game
 		if(GameWindow.currentRoom != null){
-			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector); 
+			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector);
 		}
-		
+
 		//render the current menu over top of the game
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}
-		
+
 		//draws the selected inventory bar
 		drawInventorybar(g);
 		drawInventory(g);
@@ -163,7 +165,7 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu = popUpInventory;
 		}
 		else if(keyEvent.equals("escape")){
-			currentMenu = new PauseMenu(panel, this);
+			currentMenu = new PauseMenu(panel, this, starMation);
 		}
 		else if(releventQueKeypress.contains(keyEvent)){
 			client.makeMove(keyEvent, rotateVector.getY());
@@ -193,8 +195,8 @@ public class GameScreen implements GraphicsPane  {
 			rotateVector =  rotateVector.plus( new Vector3D(0f , -0.05f , 0f));
 		}
 	}
-	
-	
+
+
 	/**
 	 * Draws the inventory bar at the bottom of the game screen
 	 * */
@@ -213,7 +215,7 @@ public class GameScreen implements GraphicsPane  {
 		}
 		g2d.setStroke(oldStroke);//reset the font
 	}
-	
+
 
 	@Override
 	public void handleMousePressed(MouseEvent e) {
@@ -223,7 +225,7 @@ public class GameScreen implements GraphicsPane  {
 		}
 	}
 
-	
+
 	/**
 	 * Returns whether or not a point is on the inventory grid
 	 * returns -1 if not on the grid
@@ -234,8 +236,8 @@ public class GameScreen implements GraphicsPane  {
 		}
 		return -1;//not on grid
 	}
-	
-	
+
+
 	/**
 	 * Returns whether or not the there is an item at this location
 	 * */
@@ -243,10 +245,10 @@ public class GameScreen implements GraphicsPane  {
 		if(items[gridNumb] != null)return true;
 		return false;
 	}
-	
-	
+
+
 	/**
-	 *Places the item on the grid at the selected location 
+	 *Places the item on the grid at the selected location
 	 * */
 	public void placeItemOnGrid(int gridNumb, Item item){//TODO will most likely change to an item instead of an image but just to test for now
 		if(gridNumb < 0 || gridNumb >= items.length)return;//error
@@ -254,22 +256,22 @@ public class GameScreen implements GraphicsPane  {
 			items[gridNumb] = item;
 		}
 	}
-	
-	
+
+
 	/**
-	 * Returns the item at a given location 
-	 * null if it does not removes it from this inventory 
+	 * Returns the item at a given location
+	 * null if it does not removes it from this inventory
 	 * */
 	public Item grabItemFromIventory(int gridLocation){
 		Item tempItem = items[gridLocation];
 		items[gridLocation] = null;
 		return  tempItem;//could still be null
 	}
-	
-	
+
+
 	/**
 	 * Returns if the item is in the bar inventory
-	 * on the game screen 
+	 * on the game screen
 	 * */
 	public boolean inInventory(Item item){
 		for(Item i : items){
@@ -279,8 +281,8 @@ public class GameScreen implements GraphicsPane  {
 		}
 		return false;//not in the inventory
 	}
-	
-	
+
+
 	/**
 	 *Draws the images of the inventory in the bar
 	 * */
@@ -291,22 +293,22 @@ public class GameScreen implements GraphicsPane  {
 			}
 		}
 	}
-	
-	
+
+
 	/**
-	 * Returns the grid size 
+	 * Returns the grid size
 	 * */
 	public int getGridSize(){return this.boxSize;}
-	
-	
+
+
 	/**
 	 * Returns the client
 	 * */
 	public Client getClient(){return client;}
-	
-	
+
+
 	/**
-	 * Set the current menu in focus on the screen 
+	 * Set the current menu in focus on the screen
 	 * */
 	public void setMenu(GraphicsPane menu){this.currentMenu = menu;}
 }

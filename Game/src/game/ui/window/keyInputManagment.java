@@ -8,15 +8,15 @@ import java.util.HashMap;
  * @author Nicky van Hulst
  * */
 public class keyInputManagment implements KeyEventDispatcher{
-	
+
 	private BlankPanel panel;
-	
-	//map mapping strings to keys 
+
+	//map mapping strings to keys
 	private static HashMap<String , Integer> keyMap;
-	
+
 	//the last key that was pressed
 	private static KeyEvent lastKeyEvent;
-	
+
 	//set the escape key
 	private int escapeKey;
 
@@ -88,7 +88,7 @@ public class keyInputManagment implements KeyEventDispatcher{
 				panel.keyPressed("space");
 				return false;
 			}
-			
+
 			for(String key : keyMap.keySet() ){
 				if(keyMap.get(key) == e.getKeyCode()){
 					panel.keyPressed(key);//send the key press to the panel
@@ -99,8 +99,8 @@ public class keyInputManagment implements KeyEventDispatcher{
 		}
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * Sets up the key values corresponding to the actions
 	 * */
@@ -116,11 +116,13 @@ public class keyInputManagment implements KeyEventDispatcher{
 		tempKeyMap.put("Interact", KeyEvent.VK_F);//f
 		tempKeyMap.put("rotate right", KeyEvent.VK_RIGHT);//f
 		tempKeyMap.put("rotate left", KeyEvent.VK_LEFT);//f
+		tempKeyMap.put("Drop", KeyEvent.VK_E);
+		tempKeyMap.put("PickUp", KeyEvent.VK_Q);
 
 		return tempKeyMap;
 	}
 
-	
+
 	/**
 	 * Returns the keyMap
 	 * */

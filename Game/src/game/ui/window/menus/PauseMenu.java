@@ -4,6 +4,7 @@ import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
+import game.ui.window.StarMation;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -28,13 +29,16 @@ public class PauseMenu implements GraphicsPane {
 	//currently selected button by the mouse
 	private int selectedButton;
 
+	private GraphicsPane currentMenu;
+	private StarMation starmation ;
 
 	/**
 	 * The constructor for the pause menu sets up the pause menu to be rendered
 	 * on the screen.
 	 * */
-	public PauseMenu(BlankPanel panel, GameScreen game){
+	public PauseMenu(BlankPanel panel, GameScreen game, StarMation starmation){
 		this.game = game;
+		this.starmation = starmation;
 		this.numbOfButtons = 4;
 		this.buttons = new Rectangle[numbOfButtons];
 		this.buttonNames = new String[numbOfButtons];
@@ -62,7 +66,7 @@ public class PauseMenu implements GraphicsPane {
 
 		//name the buttons
 		buttonNames[0] = "Resume";
-		buttonNames[1] = "Options";
+		buttonNames[1] = "Help";
 		buttonNames[2] = "Main Menu";
 		buttonNames[3] = "Quit";
 	}
@@ -70,14 +74,18 @@ public class PauseMenu implements GraphicsPane {
 
 	@Override
 	public void render(Graphics g) {
+		if(currentMenu != null){
+			currentMenu.render(g);
+		}
+
 		//draws the outside of the menu
 		drawFrame(g);
 
 		//drawButtons(g);
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 	}
-	
-	
+
+
 	/**
 	 * Draws the frame around the pause menu
 	 * */
@@ -123,7 +131,7 @@ public class PauseMenu implements GraphicsPane {
 			game.setMenu(null);//set to null so no menu shows up on the game screen
 		}
 		else if(selectedButton == 1){//options button
-			System.out.println("options"); //TODO
+			currentMenu = new BasicHelpMenu(panel, starmation, game);
 		}
 		else if(selectedButton == 2){//main menu button
 			game.getClient().quit();
