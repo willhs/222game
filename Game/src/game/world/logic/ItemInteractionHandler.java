@@ -26,7 +26,7 @@ public class ItemInteractionHandler {
 	 *            - place the player and the item should be.
 	 * @return - true if and only if the the player now has the item.
 	 */
-	public static boolean PickupItem(Player player, Item item, Place place) {
+	public static boolean pickupItem(Player player, Item item, Place place) {
 		if (!checkPlayers(place, player) && !checkItems(place, item)) {
 			return false;
 		}
@@ -107,6 +107,13 @@ public class ItemInteractionHandler {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param player
+	 * @param item
+	 * @param place
+	 * @return
+	 */
 	public static boolean dropItem(Player player, Item item, Place place) {
 		if (!checkPlayers(place, player)) {
 			return false;

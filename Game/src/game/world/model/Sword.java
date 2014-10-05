@@ -8,6 +8,7 @@ public class Sword implements Item{
 	private final String name;
 	private final Rectangle3D boundingBox = new Rectangle3D(5,5,10);
 	private Point3D position;
+	private boolean selected;
 	
 	public Sword (String name, Point3D position){
 		this.name = name;
@@ -52,6 +53,16 @@ public class Sword implements Item{
 	@Override
 	public void setPosition(Point3D point) {
 		position = point;
+	}
+
+	@Override
+	public boolean isSlelected() {
+		return selected;
+	}
+
+	@Override
+	public void setSelected(boolean change) {
+		selected = change;
 	}
 	
 }

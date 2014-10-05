@@ -134,4 +134,9 @@ public class World extends ClientWorld implements Serializable{
 	protected Exit getExitByName(String exitName) {
 		return allExits.get(exitName);
 	}
+
+	@Override
+	protected Item getItemByName(String itemName) {
+		return allItems.get(itemName);
+	}
 }

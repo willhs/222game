@@ -65,8 +65,10 @@ public abstract class ClientWorld extends ServerWorld {
 					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
 		}
 		if (action.equals("Interact")) {
-			System.out.println("made it here");
 			command = getInteractionCommand();
+		}
+		if (action.equals("PickUp")){
+			command = getItemPickUpCommand();
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
@@ -88,6 +90,9 @@ public abstract class ClientWorld extends ServerWorld {
 			}
 			if (scan.hasNext("Exit")) {
 				clientHandleExiting(scan);
+			}
+			if (scan.hasNext("ItemPickUp")){
+				clientHandleItemPickUp(scan);
 			}
 		}
 
@@ -130,6 +135,25 @@ public abstract class ClientWorld extends ServerWorld {
 		if (player.name.equals(clientsPlayer.name)) {
 			currentPlace = otherPlace;
 		}
+	}
+	
+	private void clientHandleItemPickUp(Scanner scan){
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		
+		place.removeItem(item);
+		player.getInventory().addItem(item);
+		item.setPosition(new Point3D(0, 0, 0));
 	}
 
 	/**

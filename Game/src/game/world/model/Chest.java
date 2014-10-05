@@ -6,7 +6,6 @@ import game.world.dimensions.Rectangle3D;
 public class Chest extends Container{
 	
 	
-	private static final long serialVersionUID = -2847746894980423704L;
 	
 	/**
 	 * Constrcts the Chest.
@@ -46,6 +45,16 @@ public class Chest extends Container{
 	@Override
 	public boolean unlock(Inventory playersInventory) {
 		return true;
+	}
+
+	@Override
+	public boolean isSlelected() {
+		return false;
+	}
+
+	@Override
+	public void setSelected(boolean change) {
+		
 	}
 
 }

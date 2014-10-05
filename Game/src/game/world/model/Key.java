@@ -9,6 +9,7 @@ public class Key implements Item {
 	private final String name;
 	private final String imageName;
 	private Point3D position;
+	private boolean selected;
 
 	//==================Constructor=================//
 	public Key(String name,
@@ -56,6 +57,14 @@ public class Key implements Item {
 	@Override
 	public Point3D getPosition(Place place) {
 		return getPosition();
+	}
+	@Override
+	public boolean isSlelected() {
+		return selected;
+	}
+	@Override
+	public void setSelected(boolean change) {
+		selected = change;
 	}
 
 }
