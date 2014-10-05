@@ -237,7 +237,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	public void handleSpecialKeyPress(KeyEvent e, textBoxWrapper text){
 		String textBox = text.s;
 
-		if(e.getKeyCode() == KeyEvent.VK_SPACE){
+		if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
 			if(textBox.length() == 0)return;//make sure we dont try and shorten an empty string
 			textBox = textBox.substring(0, textBox.length()-1);//take one char of the string
 			text.s = textBox;
