@@ -1,5 +1,9 @@
-package game.ui.render.util;
+package game.ui.render.trixel;
 
+import game.ui.render.util.LightSource;
+import game.ui.render.util.Transform;
+import game.ui.render.util.Transformable;
+import game.ui.render.util.DepthComparable;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
@@ -9,16 +13,22 @@ import java.util.Iterator;
 
 /**
  * @author will
- * Represents a face of a trixel/voxel/cube
+ *
+ * Represents a face of a Trixel
+ * 4 vertices, area = Trixel.SIZE
  */
-public class TrixelFace implements ZComparable, Transformable{
+public class TrixelFace implements DepthComparable, Transformable{
 
 	private final Point3D[] vertices;
 
+	/**
+	 * The trixel which this face is representing.
+	 */
 	private Trixel parent;
 	/**
 	 * PRE: must have 4 vertices
-	 * PRE: must be ordered so that lines from each point in order (i to i+1) form a square (eg (0,0,0), (1,0,0), (1,1,0), (0,1,0))
+	 * PRE: must be ordered so that lines from each point in order (i to i+1)
+	 * 		form a square (eg (0,0,0), (1,0,0), (1,1,0), (0,1,0))
 	 * PRE: element 0 be must leftest, bottomest, farest point.
 	 * @param vertices
 	 * @param z
@@ -31,7 +41,7 @@ public class TrixelFace implements ZComparable, Transformable{
 	/* Gets center z position
 	 * @see game.ui.render.ZComparable#getZ()
 	 */
-	public float getZ(){
+	public float getDepth(){
 		float z = 0;
 		for (Point3D vertex : vertices){
 			z += vertex.getZ();

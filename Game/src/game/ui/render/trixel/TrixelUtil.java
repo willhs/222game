@@ -1,4 +1,4 @@
-package game.ui.render.util;
+package game.ui.render.trixel;
 
 import game.ui.render.Renderer;
 import game.world.dimensions.Point3D;
@@ -13,8 +13,11 @@ import java.util.List;
 
 /**
  * @author hardwiwill
+ *
  * For helper methods involving trixels,
- * especially for converting between trixitions and 3d points in the world.
+ * Functions include converting between trixitions and 3d points in the world,
+ * converting between 2d polygons, making trixel faces in real space given a trixel,
+ * finding the centroid of a trixel in real space, finding points in real space relative to a trixel.
  */
 public class TrixelUtil {
 
@@ -150,7 +153,7 @@ public class TrixelUtil {
 	/**
 	 * Finds the center point of all input trixels
 	 * @param trixels
-	 * @return
+	 * @return the center point of many trixels
 	 */
 	public static Point3D findTrixelsCentroid(Iterator<Trixel> trixels){
 
@@ -159,7 +162,7 @@ public class TrixelUtil {
 
 		while (trixels.hasNext()){
 			Trixel trixel = trixels.next();
-			Point3D trixelCentroid = getTrixelCentroid(trixel);
+			Point3D trixelCentroid = findTrixelCentroid(trixel);
 			xSum += trixelCentroid.x;
 			ySum += trixelCentroid.y;
 			zSum += trixelCentroid.z;
@@ -167,10 +170,17 @@ public class TrixelUtil {
 			vertexCount ++;
 		}
 
+		if (vertexCount == 0){ // to prevent division by 0
+			return new Point3D(0,0,0);
+		}
 		return new Point3D (xSum/vertexCount, ySum/vertexCount, zSum/vertexCount);
 	}
 
-	public static Point3D getTrixelCentroid(Trixel trixel){
+	/**
+	 * @param trixel
+	 * @return the center point of a trixel
+	 */
+	public static Point3D findTrixelCentroid(Trixel trixel){
 
 		int vertexCount = 0;
 		float xSum = 0, ySum = 0, zSum = 0;
@@ -189,12 +199,13 @@ public class TrixelUtil {
 	}
 
 	/**
+	 * Get's the top, center position of the trixel
 	 * @param trixel
-	 * @return
+	 * @return point in the center of a trixel's top face
 	 */
-	public static Point3D getPositionOverTrixel(Trixel trixel){
+	public static Point3D findTopCenterOfTrixel(Trixel trixel){
 		Vector3D translation = new Vector3D(0,1,0).makeScaled(Trixel.SIZE);
-		Point3D faceRealPosition = TrixelUtil.getTrixelCentroid(trixel);
+		Point3D faceRealPosition = TrixelUtil.findTrixelCentroid(trixel);
 		return faceRealPosition.getTranslatedPoint(translation);
 	}
 }

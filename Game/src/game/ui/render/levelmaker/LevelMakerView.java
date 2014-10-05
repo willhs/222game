@@ -2,6 +2,7 @@ package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.Res;
+import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
 import game.world.util.Floor;
 
@@ -26,8 +27,18 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * @author hardwiwill
+ *
+ * The view/controller element of the Level maker.
+ * Deals with user-input like clicking, dragging, interacting with buttons and other GUI elements.
+ * Triggers methods in the levelMaker with this input.
+ * Draws the Level when it's updated.
+ *
+ */
 public class LevelMakerView extends JPanel{
 
+	private static final int ICON_SIZE = 30;
 	private LevelMaker levelMaker;
 
 	public LevelMakerView(){
@@ -45,7 +56,33 @@ public class LevelMakerView extends JPanel{
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout());
 		add(buttonPanel, BorderLayout.NORTH);
-		
+
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				levelMaker.writeTrixelsToFile();
+			}
+		});
+		buttonPanel.add(saveButton);
+
+		JButton loadButton = new JButton("Load");
+		loadButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				// initilise level maker
+				Floor floor = null;
+				try {
+					floor = getFloorPolygon();
+				} catch (NoFloorChosenException e1) {
+					return;
+				}
+				levelMaker.loadFloor(floor);
+				repaint();
+			}
+		});
+		buttonPanel.add(loadButton);
+
+		// ---------- colour panel
+
 		JPanel colourPanel = new JPanel();
 		colourPanel.setLayout(new FlowLayout());
 		buttonPanel.add(colourPanel);
@@ -59,26 +96,17 @@ public class LevelMakerView extends JPanel{
 			}
 		});
 		colourPanel.add(chooseColourButton);
-		
-		final JSlider colourRandomLevel = new JSlider(LevelMaker.MIN_COLOUR_DEVIATION, 
-				LevelMaker.MAX_COLOUR_DEVIATION, 
+
+		final JSlider colourRandomLevel = new JSlider(LevelMaker.MIN_COLOUR_DEVIATION,
+				LevelMaker.MAX_COLOUR_DEVIATION,
 				LevelMaker.START_COLOUR_DEVIATION);
 		colourRandomLevel.addChangeListener(new ChangeListener(){
 			@Override
-			public void stateChanged(ChangeEvent arg0) {
+			public void stateChanged(ChangeEvent e) {
 				levelMaker.setColourDeviation(colourRandomLevel.getValue());
 			}
 		});
 		colourPanel.add(colourRandomLevel);
-				
-
-		JButton saveButton = new JButton("Save");
-		saveButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				levelMaker.writeTrixelsToFile();
-			}
-		});
-		buttonPanel.add(saveButton);
 
 		// -------- objects panel
 
@@ -91,30 +119,29 @@ public class LevelMakerView extends JPanel{
 		JButton trixelButton = new JButton("Trixel");
 		trixelButton.addActionListener(modeButtonListener);
 		trixelButton.setActionCommand(LevelMaker.TRIXEL_MODE);
+		objectsPanel.add(trixelButton);
 
-		JButton treeButton = new JButton(new ImageIcon(Res.getImageFromName("Tree")));
+		JButton treeButton = new JButton(new ImageIcon(
+				MenuUtil.scale(Res.getImageFromName("Tree"), ICON_SIZE, ICON_SIZE)));
 		treeButton.addActionListener(modeButtonListener);
 		treeButton.setActionCommand(LevelMaker.TREE_MODE);
+		objectsPanel.add(treeButton);
 
-		JButton chestButton = new JButton(new ImageIcon(Res.getImageFromName("Chest")));
+		JButton chestButton = new JButton(new ImageIcon(
+				MenuUtil.scale(Res.getImageFromName("Chest"), ICON_SIZE, ICON_SIZE)));
 		chestButton.addActionListener(modeButtonListener);
 		chestButton.setActionCommand(LevelMaker.CHEST_MODE);
-		
-		// initilise level maker
-		Floor floor = null;
-		try {
-			floor = getFloorPolygon();
-		} catch (NoFloorException e1) {
-			System.exit(0);
-		}
-		levelMaker = new LevelMaker(floor);
+		objectsPanel.add(chestButton);
+
+		// initialise level maker
+		levelMaker = new LevelMaker();
 	}
 
 	/**
 	 * @return gets a floor polygon for the level maker to use
-	 * @throws NoFloorException
+	 * @throws NoFloorChosenException
 	 */
-	private Floor getFloorPolygon() throws NoFloorException {
+	private Floor getFloorPolygon() throws NoFloorChosenException {
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
 		final int USER_SELECTION = chooser.showOpenDialog(null);
 
@@ -123,7 +150,7 @@ public class LevelMakerView extends JPanel{
 		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
 			floorFile =  chooser.getSelectedFile();
 		}
-		else throw new NoFloorException();
+		else throw new NoFloorChosenException();
 
 		return parseFloorFile(floorFile);
 	}
@@ -163,12 +190,12 @@ public class LevelMakerView extends JPanel{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Renderer.renderTrixels(g, levelMaker.getTrixels(), levelMaker.getLastTransform());
-		
+		Renderer.renderLevel(g, levelMaker.getTrixels(), levelMaker.getWorldObjects(), levelMaker.getLastTransform());
+
 		// displays current colour
 		g.setColor(levelMaker.getTrixelColour());
 		g.fillRect(0, 50, 20, 20);
-		
+
 	}
 
 	public class WillMouseMotionListener extends MouseAdapter{

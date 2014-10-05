@@ -1,11 +1,13 @@
-package game.ui.render.util;
+package game.ui.render.trixel;
 
+/**
+ * @author hardwiwill
+ *
+ * The position of a Trixel in the trixel space.
+ * Can be converted into real space, using TrixelUtil.trixitionToPosition
+ */
 public class Trixition {
 
-	/**
-	 * The position of a Trixel in the 3d Trixel grid, or "Trid".
-	 * public because they are immutable
-	 */
 	public final int x, y, z;
 
 	public Trixition(int x, int y, int z){
@@ -23,12 +25,12 @@ public class Trixition {
 
 		return x == t.x && y == t.y && z == t.z;
 	}
-	
+
 	@Override
 	public int hashCode(){
 		return x * y * z;
 	}
-	
+
 	@Override
 	public String toString(){
 		return String.format("(%d, %d, %d)", x, y, z);
