@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class StarMation {
 	ArrayList<Star> stars;
 
-	private int numbofStars = 200;
+	private int numbofStars = 100;
 	private int maxWidth;
 	private int maxHeight;
 	private int size = 60;
@@ -32,12 +32,16 @@ public class StarMation {
 
 	public Star createStar(boolean outside){
 		int  randomX = (int) (Math.random()*maxWidth);
-		int randomY = (int) (Math.random()*maxHeight);
+		int randomY = (int) (Math.random()*maxHeight+20);
 		int halfChance = (int)(Math.random()*10);
 
 		if(outside){
-		if(halfChance > 5){randomY = (int) maxHeight + 20;}
-		else{randomX = -20;}
+		if(halfChance > 5){
+			randomY = maxHeight - 50;
+		}
+		else{
+			randomX = -20;
+			}
 		}
 		
 		int randomSize = (int)(Math.random()*size);
@@ -58,9 +62,8 @@ public class StarMation {
 
 			stars.get(i).setX(stars.get(i).getX()+stars.get(i).speed);
 			stars.get(i).setY(stars.get(i).getY()-1);
-
-
-			if(stars.get(i).getX() > maxWidth)stars.remove(stars.get(i));
+			//remove the star once it leaves the screen
+			if(stars.get(i).getX() > maxWidth || stars.get(i).getY() > maxHeight )stars.remove(stars.get(i));
 		}
 	}
 
@@ -72,13 +75,13 @@ public class StarMation {
 
 		private BufferedImage image;
 
-		 public Star(BufferedImage image, int x, int y){
+		public Star(BufferedImage image, int x, int y){
 			 this.x = x;
 			 this.y = y;
 			 this.image = image;
 			 this.speed = (int)(Math.random()*speedRange);
 			 if(speed < 1)speed = 1;
-		 }
+		}
 
 		 public BufferedImage getImage(){
 			 return this.image;
@@ -87,17 +90,7 @@ public class StarMation {
 		 public int getX(){ return this.x;}
 		 public int getY(){return this.y;}
 
-		 public void setY(int y){
-			 this.y = y;
-		 }
-
-
-		 public void setX(int x){
-			 this.x = x;
-		 }
-
-
+		 public void setY(int y){this.y = y;}
+		 public void setX(int x){this.x = x;}
 	}
-
-
 }

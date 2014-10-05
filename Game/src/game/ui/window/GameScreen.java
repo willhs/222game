@@ -1,11 +1,13 @@
 package game.ui.window;
 
 import game.ui.render.Renderer;
+import game.ui.render.Res;
 import game.ui.window.menus.InventoryMenu;
 import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
 import game.world.dimensions.Vector3D;
+import game.world.model.Item;
 import game.world.model.Player;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,55 +31,57 @@ import nw.Client;
  * */
 public class GameScreen implements GraphicsPane  {
 
-	//the menu drawn ontop on the game screen
+	//the menu drawn on top on the game screen
 	private GraphicsPane currentMenu;
 	private BlankPanel panel;
-
+	
+	//list of key presses to pass on to the client
 	private ArrayList<String> releventQueKeypress;
-
-	private BufferedImage testBackGroundImage;
-
-
-	private int lastXPress;
-	private int lastYPress;
 
 	//inventory bar fields
 	private int numbofButtons = 6;
 	private Rectangle[] inventoryButtons;
 	private String[] names;
 	private int boxSize = 80;
-
+	
+	//selected button
 	private int selectedButton = -1;
 
-
 	//inventory grid images
-	private BufferedImage[] inventoryImages;
+	//private BufferedImage[] inventoryImages;
+	private Item items[];
 	//private BufferedImage selectedImage;
-
 
 	//world fields
 	private Player player;
-
 	private Vector3D rotateVector;
-
 	private Client client;
+	
+	//the animation of stars
 	private StarMation starMation;
-
+	
+	private InventoryMenu popUpInventory;
+	
+	/**
+	 * Constructor for the game screen
+	 * */
 	public GameScreen(BlankPanel panel, Client client ,Player player){
 		this.starMation = MainMenu.getStarMation();
 		this.client = client;
 		this.player = player;
 		this.inventoryButtons = new Rectangle[numbofButtons];
 		this.names = new String[numbofButtons];
-		this.inventoryImages = new BufferedImage[6];
+	//	this.inventoryImages = new BufferedImage[6];
 		setUpInventoryBarButtons();
 		this.panel = panel;
 
-		loadImages();
+		this.items = new Item[6];
+		this.popUpInventory = new InventoryMenu(panel, this, player);
+		popUpInventory.updateInventory();
 		releventQueKeypress = createKeylist();
 		rotateVector = new Vector3D(0f, 0f, 0f);
 	}
-
+	
 	public Client getClient(){
 		return client;
 	}
@@ -99,9 +103,13 @@ public class GameScreen implements GraphicsPane  {
 			names[i] = "";
 			x+= boxSize;
 		}
-
 	}
-
+	
+	
+	/**
+	 * Creates a list of the relevant key presses the client needs to 
+	 * know about
+	 * */
 	private ArrayList<String> createKeylist(){
 		ArrayList<String> keyList = new ArrayList<String>();
 
@@ -116,23 +124,22 @@ public class GameScreen implements GraphicsPane  {
 
 	@Override
 	public void render(Graphics g){
-		//g.drawImage(testBackGroundImage, 0, 0, panel);
-		//Renderer.render(g,rotateVector); //TODO wait for will to implement this method
+		//render the star animation 
 		starMation.render(g);
+		
+		
 		if(GameWindow.currentRoom != null){
 			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector); 
 		}
 		
+		//render the current menu over top of the game
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}
-
-
-		//at this point draw my own overlay over the game
-
+		
+		//draws the selected inventory bar
 		drawInventorybar(g);
 		drawInventory(g);
-
 	}
 
 	@Override
@@ -157,7 +164,8 @@ public class GameScreen implements GraphicsPane  {
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
 		else if(keyEvent.equals("inventory")){
-			currentMenu = new InventoryMenu(panel,this,player);
+			popUpInventory.updateInventory();
+			currentMenu = popUpInventory;
 		}
 		else if(keyEvent.equals("escape")){
 			currentMenu = new PauseMenu(panel, this);
@@ -190,7 +198,11 @@ public class GameScreen implements GraphicsPane  {
 			rotateVector =  rotateVector.plus( new Vector3D(0f , -0.05f , 0f));
 		}
 	}
-
+	
+	
+	/**
+	 * Draws the inventory bar at the bottom of the game screen
+	 * */
 	public void drawInventorybar(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
@@ -204,15 +216,21 @@ public class GameScreen implements GraphicsPane  {
 			g.setColor(Color.blue);
 			g.drawRect((int)inventoryButtons[selectedButton].getX(), (int)inventoryButtons[selectedButton].getY(), boxSize, boxSize);
 		}
-
 		g2d.setStroke(oldStroke);
 	}
-
+	
+	/**
+	 * Set the current menu in focus on the screen 
+	 * */
 	public void setMenu(GraphicsPane menu){
-		//if null just means no need to draw any exra windows on the game screen
 		this.currentMenu = menu;
 	}
-
+		
+	
+	/**
+	 *places an item in the inventory bar at the bottom of the screen 
+	 * */
+	//TODO change to boolean and check for duplicate items 
 	public void placeInInventory(int x, int y, BufferedImage image){
 		int selectedGrid = -1;
 
@@ -223,36 +241,12 @@ public class GameScreen implements GraphicsPane  {
 		}
 	}
 
-
-
-
-	/**
-	 *loads all of the images required for the game screen
-	 *scaled the images to the size of the screen
-	 * */
-	public void loadImages(){
-		java.net.URL imagefile = MainMenu.class.getResource("resources/test-Game.jpg");
-
-		//TODO accualy do scaling this current does nothing it needs to be assigned
-		//load background image
-		try {
-			this.testBackGroundImage = ImageIO.read(imagefile);
-			testBackGroundImage.getScaledInstance(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT, BufferedImage.SCALE_DEFAULT);
-		} catch (IOException e) {
-			System.out.println("failed reading imagge");
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public void handleMousePressed(MouseEvent e) {
 		if(currentMenu != null ){
 			currentMenu.handleMousePressed(e);
 			return;
 		}
-
-		lastXPress = e.getX();
-		lastYPress = e.getY();
 	}
 
 	/**
@@ -261,21 +255,61 @@ public class GameScreen implements GraphicsPane  {
 	 * */
 	public int isOnGrid(int x, int y){
 		for(int i = 0; i < inventoryButtons.length; i++){
-			if(inventoryButtons[i].contains(x,y))return i;
+			if(inventoryButtons[i].contains(x,y))return i;//also checks if there is an item in the location
 		}
 		return -1;
 	}
-
-	public void placeItemOnGrid(int gridNumb, BufferedImage image){//TODO will most likely change to an item instead of an image but just to test for now
-		if(inventoryImages[gridNumb] == null){
-			inventoryImages[gridNumb] = image;
+	
+	public boolean containsItem(int gridNumb){
+		if(items[gridNumb] != null)return true;
+		return false;
+	}
+	
+	//TODO check if used and how to make better
+	/**
+	 * 
+	 * */
+	public void placeItemOnGrid(int gridNumb, Item item){//TODO will most likely change to an item instead of an image but just to test for now
+//		if(inventoryImages[gridNumb] == null){
+//			inventoryImages[gridNumb] = image;
+//		}
+		if(gridNumb < 0 || gridNumb >= items.length)return;//error
+		if(items[gridNumb] == null){
+			items[gridNumb] = item;
 		}
 	}
-
+	
+	/**
+	 * Returns the item at a given location 
+	 * null if it does not exsist 
+	 * */
+	public Item grabItemFromIventory(int gridLocation){
+		Item tempItem = items[gridLocation];
+		items[gridLocation] = null;
+		return  tempItem;//could still be null
+	}
+	
+	public boolean inInventory( Item item){
+		System.out.println("In Inventory");
+		System.out.println(items.length);
+		for(Item i : items){
+			System.out.println("Iterating");
+			if(i!=null){
+				System.out.println("Not null in ininventory");
+				if(i.getName().equals(item.getName()))return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 *Draws the images of the inventory in the bar
+	 * */
 	public void drawInventory(Graphics g){
-		for(int i = 0; i < inventoryImages.length; i++){
-			if(inventoryImages != null){
-				g.drawImage(inventoryImages[i], (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(), panel);
+		for(int i = 0; i < items.length; i++){
+			if(items[i] != null){
+				g.drawImage(Res.getImageFromName(items[i].getImageName()), (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(),boxSize-5,boxSize-5, panel);
 			}
 		}
 	}
