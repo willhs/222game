@@ -65,8 +65,10 @@ public abstract class ClientWorld extends ServerWorld {
 					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
 		}
 		if (action.equals("Interact")) {
-			System.out.println("made it here");
 			command = getInteractionCommand();
+		}
+		if (action.equals("PickUp")){
+			command = getItemPickUpCommand();
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something

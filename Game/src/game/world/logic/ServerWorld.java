@@ -16,7 +16,9 @@ public abstract class ServerWorld implements Serializable {
 
 	/**
 	 * applys commands that are sent by the client.
-	 * @param command - clients command.
+	 * 
+	 * @param command
+	 *            - clients command.
 	 * @return - returns a list of commands.
 	 */
 	public List<String> applyCommand(String command) {
@@ -121,6 +123,15 @@ public abstract class ServerWorld implements Serializable {
 	protected abstract Exit getExitByName(String exitName);
 
 	/**
+	 * Gets the items that matches the name.
+	 * 
+	 * @param itemName
+	 *            - the items name.
+	 * @return - the item that matches the name.
+	 */
+	protected abstract Item getItemByName(String itemName);
+
+	/**
 	 * Adds the exit to the game world.
 	 * 
 	 * @param exit
@@ -152,24 +163,27 @@ public abstract class ServerWorld implements Serializable {
 	}
 
 	/**
-	 * server handling of the handle move checks if the player can move
-	 * and moves them if they can.
-	 * @param scan - scanner with the command in it.
-	 * @param command - the command for later use.
+	 * server handling of the handle move checks if the player can move and
+	 * moves them if they can.
+	 * 
+	 * @param scan
+	 *            - scanner with the command in it.
+	 * @param command
+	 *            - the command for later use.
 	 * @return - a list of commands could have the sucsessful command in it.
 	 */
 	private List<String> serverHandleMove(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();
-		
+
 		Parser.removeUnneedText("Name", scan);
 		String playerName = Parser.parseName(scan);
-		
+
 		Parser.removeUnneedText("Point", scan);
 		Point3D playerPosition = Parser.parsePosition(scan);
-		
+
 		Parser.removeUnneedText("Name", scan);
 		String placeName = Parser.parseName(scan);
-		
+
 		if (MovementHandler.playerMove(getPlayerByName(playerName),
 				playerPosition, getPlaceByName(placeName))) {
 			Scanner sc = new Scanner(command);
@@ -180,22 +194,26 @@ public abstract class ServerWorld implements Serializable {
 		}
 		return commands;
 	}
-	
+
 	/**
 	 * Handles the server checking for the exit interaction
-	 * @param scan - scanner with the command in it.
-	 * @param command - the command needed for concatatantion to make a new command.
-	 * @return - a list of commands that are to be returns will have one of none in it.
+	 * 
+	 * @param scan
+	 *            - scanner with the command in it.
+	 * @param command
+	 *            - the command needed for concatatantion to make a new command.
+	 * @return - a list of commands that are to be returns will have one of none
+	 *         in it.
 	 */
 	private List<String> serverExitInteraction(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();
-		
+
 		Parser.removeUnneedText("Name", scan);
 		String playerName = Parser.parseName(scan);
-		
+
 		Parser.removeUnneedText("Name", scan);
 		String exitName = Parser.parseName(scan);
-		
+
 		Parser.removeUnneedText("Name", scan);
 		String placeName = Parser.parseName(scan);
 		if (MovementHandler.exitPlace(getPlayerByName(playerName),
@@ -206,6 +224,32 @@ public abstract class ServerWorld implements Serializable {
 			commands.add("Client " + sc.nextLine() + " Position ( "
 					+ player.getPosition() + " )");
 			sc.close();
+		}
+		return commands;
+	}
+
+	private List<String> serverItemPickUp(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		
+		if (ItemInteractionHandler.pickupItem(player, item, place)){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Client "+ sc.nextLine());
+			sc.close();
+			System.out.println("Cleint has picked up the item.");
 		}
 		return commands;
 	}
