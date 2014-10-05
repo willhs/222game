@@ -10,7 +10,7 @@ import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
 import game.ui.render.util.LightSource;
 import game.ui.render.util.Transform;
-import game.ui.render.util.ZComparator;
+import game.ui.render.util.DepthComparator;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
@@ -32,6 +32,13 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+/**
+ * @author hardwiwill
+ *
+ * Uses for rendering functions, like drawing a Place, a level in progress,
+ * making random colours, applying and constructing affine transformations,
+ * computing lighting changes, etc.
+ */
 public class Renderer {
 
 	// TEMPORARY
@@ -49,6 +56,7 @@ public class Renderer {
 	 * Draws a place using Graphics object, viewer direction and place
 	 * Floor from the place is converted into trixels which are then drawn
 	 * All drawable objects from the place are drawn as images
+	 *
 	 * @param g
 	 * @param place
 	 */
@@ -60,7 +68,7 @@ public class Renderer {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new ZComparator());
+		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
 
 		// convert floor into trixels and add those to toDraw
 		Floor floor = place.getFloor();
@@ -105,7 +113,7 @@ public class Renderer {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new ZComparator());
+		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new DepthComparator());
 
 		toDraw.addAll(trixelsToRenderables(trixels, transform));
 		toDraw.addAll(drawablesToRenderables(drawables, transform, null));
@@ -190,7 +198,7 @@ public class Renderer {
 				GameImage image = (GameImage) renderObject;
 				Point3D position = image.getPosition();
 				Rectangle3D boundingBox = image.getBoundingBox();
-				// the following drawimage changes y position based on length of gameimage. TODO: find better solution
+				// the following draws y position based on length of gameimage. TODO: find better solution
 				g2.drawImage(image.getImage(),
 						(int)(position.x - boundingBox.width/2),
 						(int)(position.y + boundingBox.length/2 - boundingBox.height),
@@ -250,6 +258,11 @@ public class Renderer {
 			return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
 		}
 
+		/**
+		 * Makes some test light sources for testing
+		 * TODO: delete this method, use light sources from Place
+		 * @return some cool light sources
+		 */
 		private static Iterator<LightSource> getTestLightSources() {
 			List<LightSource> lights = new ArrayList<LightSource>();
 			Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);

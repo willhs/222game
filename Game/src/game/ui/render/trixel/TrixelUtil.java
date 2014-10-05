@@ -13,8 +13,11 @@ import java.util.List;
 
 /**
  * @author hardwiwill
+ *
  * For helper methods involving trixels,
- * especially for converting between trixitions and 3d points in the world.
+ * Functions include converting between trixitions and 3d points in the world,
+ * converting between 2d polygons, making trixel faces in real space given a trixel,
+ * finding the centroid of a trixel in real space, finding points in real space relative to a trixel.
  */
 public class TrixelUtil {
 

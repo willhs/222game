@@ -1,14 +1,14 @@
 package game.ui.render.able;
 
-import game.ui.render.util.ZComparable;
+import game.ui.render.util.DepthComparable;
 
 
 /**
- * Ready for rendering
+ * Ready for rendering.
  *
  * @author hardwiwill
  */
-public interface Renderable extends ZComparable{
+public interface Renderable extends DepthComparable{
 
 	/**
 	 * flips the shape

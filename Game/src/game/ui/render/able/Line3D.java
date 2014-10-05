@@ -4,6 +4,11 @@ import game.ui.render.util.Transform;
 import game.ui.render.util.Transformable;
 import game.world.dimensions.Point3D;
 
+/**
+ * @author hardwiwill
+ *
+ * A line from p1, to p2.
+ */
 public class Line3D implements Renderable, Transformable{
 
 	private Point3D p1, p2;
@@ -21,7 +26,7 @@ public class Line3D implements Renderable, Transformable{
 	}
 
 	@Override
-	public float getZ() {
+	public float getDepth() {
 		return 0;
 	}
 

@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 
 /**
  * @author hardwiwill
+ *
  * Contains references to all resources (e.g. images)
  */
 public class Res {
@@ -102,7 +103,7 @@ public class Res {
 	 * @param image
 	 * @return a better bufferedimage
 	 */
-	public static BufferedImage createCompatibleImage(BufferedImage image){
+	private static BufferedImage createCompatibleImage(BufferedImage image){
 
 	    GraphicsConfiguration gc = GraphicsEnvironment.
 	        getLocalGraphicsEnvironment().

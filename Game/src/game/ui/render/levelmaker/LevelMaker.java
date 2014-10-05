@@ -7,7 +7,7 @@ import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
 import game.ui.render.util.Transform;
-import game.ui.render.util.ZComparator;
+import game.ui.render.util.DepthComparator;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
@@ -33,8 +33,12 @@ import javax.swing.JFileChooser;
 
 /**
  * @author hardwiwill
- * Used for designing levels for the 222game
- * Provides a GUI for building a collection of trixels to define the physical layout of a level.
+ *
+ * Used for designing levels for the 222game.
+ * Starts with a flat plane of trixels, made with a floor object.
+ * This can be expanded on using any of the tools.
+ * View of the trixels can be rotated.
+ *
  * TODO: Save the level in a file for use in the game.
  */
 public class LevelMaker{
@@ -85,6 +89,9 @@ public class LevelMaker{
 	 */
 	private int randomColourDeviation;
 
+	/**
+	 * Initialises LevelMaker's fields
+	 */
 	public LevelMaker(){
 
 		// initialise trixels to make up a floor.
@@ -108,7 +115,13 @@ public class LevelMaker{
 		worldObjects = new HashSet<Drawable>();
 	}
 
-	void loadFloor(Floor floor){
+	/**
+	 * Loads a floor into this level maker
+	 * The floor is used to generate a starting set of trixels,
+	 * which is then expanded on using the tools of the level maker.
+	 * @param floor
+	 */
+	public void loadFloor(Floor floor){
 
 		// initilise trixels
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
@@ -123,7 +136,7 @@ public class LevelMaker{
 	 * @param rotateX : how much to rotate in x direction in radians
 	 * @param rotateY : ^ y direction...
 	 */
-	Vector3D changeRotateAmount(int rotateX, int rotateY) {
+	public Vector3D changeRotateAmount(int rotateX, int rotateY) {
 		float rotateSpeed = 0.01f;
 		return rotateAmounts.plus(
 				new Vector3D(rotateX*rotateSpeed, rotateY*rotateSpeed, 0)
@@ -133,7 +146,7 @@ public class LevelMaker{
 	/**
 	 * @return all trixels to be drawn
 	 */
-	Iterator<Trixel> getTrixels(){
+	public Iterator<Trixel> getTrixels(){
 		return trixels.iterator();
 	}
 
@@ -142,7 +155,7 @@ public class LevelMaker{
 	 * @param rotateX
 	 * @param rotateY
 	 */
-	void updateRotation(int rotateX, int rotateY){
+	public void updateRotation(int rotateX, int rotateY){
 
 		rotateAmounts = changeRotateAmount(rotateX, rotateY);
 		Transform trans = makeTransform(rotateAmounts);
@@ -170,7 +183,7 @@ public class LevelMaker{
 	 * @param x
 	 * @param y
 	 */
-	void makeSomethingAt(int x, int y) {
+	public void makeSomethingAt(int x, int y) {
 
 		y = flipY - y; // flip y value (so up is positive direction)
 
@@ -208,7 +221,7 @@ public class LevelMaker{
 		}
 
 		// sort in order of closest trixels
-		Collections.sort(rotatedFaces, new ZComparator());
+		Collections.sort(rotatedFaces, new DepthComparator());
 		Collections.reverse(rotatedFaces);
 	}
 
@@ -228,7 +241,7 @@ public class LevelMaker{
 	}
 
 	/**
-	 * The trixel will be made directly next to neighbourFace.
+	 * TODO: The trixel will be made directly in front of face
 	 *
 	 * @param face - the TrixelFace directly next to the trixel to be made
 	 */
@@ -250,14 +263,14 @@ public class LevelMaker{
 		return new Trixel(TrixelUtil.positionToTrixition(overTrixel), getTrixelColour());
 	}
 
-	Transform getLastTransform() {
+	public Transform getLastTransform() {
 		return lastTransform;
 	}
 
 	/**
 	 * writes all trixels to a file
 	 */
-	void writeTrixelsToFile(){
+	public void writeTrixelsToFile(){
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+Res.LEVELS_PATH);
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
@@ -285,14 +298,14 @@ public class LevelMaker{
 	 * sets the colour of the next trixel
 	 * @param colour
 	 */
-	void setColour(Color colour){
+	public void setColour(Color colour){
 		this.currentColour = colour;
 	}
 
 	/**
 	 * @return the next trixel colour
 	 */
-	Color getTrixelColour(){
+	public Color getTrixelColour(){
 		return Renderer.makeRandomColor(currentColour, randomColourDeviation);
 	}
 
@@ -300,7 +313,7 @@ public class LevelMaker{
 	 * Sets the drawing mode of the level maker
 	 * @param drawMode
 	 */
-	void setDrawMode(String drawMode) {
+	public void setDrawMode(String drawMode) {
 		this.drawMode  = drawMode;
 
 	}
@@ -310,7 +323,7 @@ public class LevelMaker{
 	 * @param x
 	 * @param y
 	 */
-	void deleteTrixelAt(int x, int y) {
+	public void deleteTrixelAt(int x, int y) {
 		y = flipY - y; // flip y value (so up is positive direction)
 
 		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
@@ -321,7 +334,7 @@ public class LevelMaker{
 		trixels.remove(trixel);
 	}
 
-	void setColourDeviation(int deviation) {
+	public void setColourDeviation(int deviation) {
 		randomColourDeviation = deviation;
 	}
 

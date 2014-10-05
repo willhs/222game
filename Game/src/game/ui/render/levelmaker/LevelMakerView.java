@@ -27,6 +27,15 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * @author hardwiwill
+ *
+ * The view/controller element of the Level maker.
+ * Deals with user-input like clicking, dragging, interacting with buttons and other GUI elements.
+ * Triggers methods in the levelMaker with this input.
+ * Draws the Level when it's updated.
+ *
+ */
 public class LevelMakerView extends JPanel{
 
 	private static final int ICON_SIZE = 30;
@@ -124,7 +133,7 @@ public class LevelMakerView extends JPanel{
 		chestButton.setActionCommand(LevelMaker.CHEST_MODE);
 		objectsPanel.add(chestButton);
 
-		// initiliase level maker
+		// initialise level maker
 		levelMaker = new LevelMaker();
 	}
 
