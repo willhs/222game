@@ -17,25 +17,25 @@ import game.world.model.Player;
  * @author Nicky van Hulst
  * */
 public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
-	
+
 	//text field fields
 	private Rectangle textFieldPort;
 	private boolean portSelected;
 	private Rectangle textFieldHostName;
 	private boolean hostSelected;
-	
+
 	//labels for text boxes
 	private String host = "Host Name :";
 	private String port = "Port Number :";
-	
+
 	//the strings the users have entered
 	private textBoxWrapper hostString = new textBoxWrapper("");
 	private textBoxWrapper portString = new textBoxWrapper("");
 
 	private int startX = 20;
 	private int startY = 70;
-	
-	
+
+
 	/**
 	 * The constructor for the multiplier selection menu
 	 * */
@@ -170,7 +170,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		}
 	}
 
-	
+
 	@Override
 	public void keyPressed(String keyEvent) {
 		KeyEvent e = keyInputManagment.getLastKeyEvent();
@@ -179,7 +179,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			handleTabPress();//tab pressed
 		}
 		if(super.nameBoxSelected){
-			handleNameBoxKeyPress(keyEvent);//the name text box needs to be updated 
+			handleNameBoxKeyPress(keyEvent);//the name text box needs to be updated
 		}
 		else if(hostSelected){
 			handleTextBoxKeyPress(keyEvent, hostString);//host text box  updated
@@ -202,7 +202,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		//grabs the last key event that occurred
 		String key = KeyEvent.getKeyText(e.getExtendedKeyCode());//TODO may need to fix
-		
+
 		//should make it a number or letter i think
 		if(key.length() == 1 ){
 			textBox = textBox.concat(key).toLowerCase();//add to the end of the string
@@ -218,12 +218,12 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	 * Switches which text box is selected depending on which one is currently selected
 	 * */
 	public void handleTabPress(){
-		//name text box is selected 
+		//name text box is selected
 		if(nameBoxSelected){
 			hostSelected = true;
 			nameBoxSelected = false;
 		}
-		//host text box is selected 
+		//host text box is selected
 		else if(hostSelected){
 			portSelected = true;
 			hostSelected = false;
@@ -241,7 +241,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	 * */
 	public void handleSpecialKeyPress(KeyEvent e, textBoxWrapper text){
 		String textBox = text.s;
-		
+
 		//if the key pressed is backspace remove char from the string
 		if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE){
 			if(textBox.length() == 0)return;//make sure we dont try and shorten an empty string
@@ -249,14 +249,14 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			text.s = textBox;
 			return;
 		}
-		
+
 		//if the key pressed is ' ' add to the string
 		if(e.getKeyCode() == KeyEvent.VK_SPACE){
 			textBox = textBox.concat(" ").toLowerCase();
 			text.s = textBox;
 			return;
 		}
-		
+
 		//if the key pressed is '-' add to the string
 		if(e.getKeyCode() == KeyEvent.VK_MINUS){
 			System.out.println("MINUS");
@@ -264,7 +264,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			text.s = textBox;
 			return;
 		}
-		 
+
 		//if the key pressed is '.' add to the string
 		if(e.getKeyCode() == KeyEvent.VK_PERIOD){
 			System.out.println("PERIOD");
@@ -272,7 +272,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			text.s = textBox;
 			return;
 		}
-		
+
 		//if the key pressed is '/' add to the string
 		if(e.getKeyCode() == KeyEvent.VK_SLASH){
 			System.out.println("Slash");

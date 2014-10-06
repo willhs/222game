@@ -194,6 +194,25 @@ public class GameScreen implements GraphicsPane  {
 		else if(keyEvent.equals("rotate left")){
 			rotateVector =  rotateVector.plus( new Vector3D(0f , -0.05f , 0f));
 		}
+
+		//set the item selected
+		updateSelectedItem();
+	}
+
+
+	/**
+	 * Sets the selected item to be selected
+	 * */
+	public void updateSelectedItem(){
+		for(int i = 0; i < items.length; i++){
+			if(items[i] != null && selectedButton !=-1 && selectedButton == i){
+				items[selectedButton].setSelected(true);
+				System.out.println(items[selectedButton].isSlelected());
+			}
+			else if(items[i] != null){
+				items[i].setSelected(false);
+			}
+		}
 	}
 
 
