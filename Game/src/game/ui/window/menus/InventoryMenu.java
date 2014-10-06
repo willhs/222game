@@ -370,8 +370,11 @@ public class InventoryMenu implements GraphicsPane {
 				//place the item on the game screen at the appropriate grid location
 				game.placeItemOnGrid(gridOnGameBar, selectedItem);
 				selectedItem = null;
-				items[selectItemOnGrid] = null;
-				selectItemOnGrid = -1;
+				if(selectedGrid != -1){
+					items[selectItemOnGrid] = null;
+					selectItemOnGrid = -1;
+				}
+
 				return;
 			}
 		}
