@@ -138,7 +138,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		//no errors at this point so create the game player and client and change menu
 		Player player = new Player(super.name);
-
+		player.setImageName("Char"+characterSelected);
 		Client client = new Client(hostString.s,portNumb,panel);
 		if(!client.addPlayerToWorld(player)){
 			//Player name was taken.
