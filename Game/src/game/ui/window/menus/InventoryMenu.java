@@ -21,10 +21,10 @@ import java.awt.image.BufferedImage;
  * @author Nicky van Hulst
  * */
 public class InventoryMenu implements GraphicsPane {
-	
+
 	//the game screen
 	private GameScreen game;
-	
+
 	//the panel to draw on
 	private BlankPanel panel;
 
@@ -41,29 +41,29 @@ public class InventoryMenu implements GraphicsPane {
 	private int gap = 20;
 	private int numbCol = 5;
 	private int numbRow = 3;
-	
+
 	//character fields
 	private Color backColor;
 	private BufferedImage characterImage;
 	private Rectangle characterFrame;
 	int selectedGrid = -1;
-	
+
 	//the number of squares in the grid
 	private int gridNumb = 15;
-		
+
 	//the items in the inventory
 	private Item[] items;
-	
+
 	//the selected item
 	private Item selectedItem;
-	
+
 	//the item that is selecteds number
 	private int selectItemOnGrid = -1;
-	
+
 	//the current mouse location
 	private int currMouseY;
 	private int currMouseX;
-	
+
 	private Player player;
 	private long prevTime;
 	private boolean displayingInfo;
@@ -87,7 +87,7 @@ public class InventoryMenu implements GraphicsPane {
 		setCharacterInventory();
 		setUpInventoryFromPlayer();
 	}
-	
+
 
 	/**
 	 *Gets the inventory from the player and places it in the inventory
@@ -102,28 +102,30 @@ public class InventoryMenu implements GraphicsPane {
 			i++;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Updates the inventory, if there is a new item it will place it in the first
 	 * empty location it comes across in the grid
 	 * */
 	public void updateInventory(){
-		
+
 		//first check if item already in inventory
 		boolean in = false;
-		
-		//iterate through the players inventory 
+
+		//iterate through the players inventory
 		for(Item item : player.getInventory()){
-			
+
 			//iterate through the current items already in the inventory
 			for(int i = 0; i < items.length; i++){
-				if(items[i] != null){//check if there is an item at this location 
+				if(items[i] != null){//check if there is an item at this location
+					if(player.getInventory().isIn(items[i]))items[i] = null;
+					
 					if(items[i].getName().equals(item.getName()) || game.inInventory(item)){
 						in = true;//the item is already in  the item array
-					} 
+					}
 				}
-				if( game.inInventory(item))in = true;//becuase if all empty needs to check the other inventory 
+				if( game.inInventory(item))in = true;//becuase if all empty needs to check the other inventory
 			}
 			if(!in){//the item is not in the items array so add it in
 				for(int j = 0; j < items.length; j++){
@@ -164,16 +166,16 @@ public class InventoryMenu implements GraphicsPane {
 				else{
 					g.setColor(backColor);
 				}
-				
+
 				//draw the current grid square
 				g.fillRect(x, y, gridSize, gridSize);
 				g.setColor(Color.black);
 				g.drawRect(x, y, gridSize, gridSize);
-				
+
 				if(items[curGrid] != null ){
 					if(selectItemOnGrid != curGrid)g.drawImage(Res.getImageFromName(items[curGrid].getImageName()), x, y,gridSize,gridSize, panel);
 				}
-				
+
 				x +=gridSize;
 				curGrid++;
 			}
@@ -198,11 +200,11 @@ public class InventoryMenu implements GraphicsPane {
 		//set the border size to 4
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setStroke(new BasicStroke(4));
-		
+
 		//gets the players image for Resources and scales it to the size of the frame
 		g.drawImage(MenuUtil.scale(Res.getImageFromName(player.getImageName()),(int)characterFrame.getWidth(),(int)characterFrame.getHeight()), characterFrame.x,characterFrame.y,panel);
 		g2d.draw(characterFrame);
-		
+
 		g.setColor(backColor);
 		g2d.fill(characterFrame);
 
@@ -233,7 +235,7 @@ public class InventoryMenu implements GraphicsPane {
 		g2d.setStroke(oldStroke);
 	}
 	/**
-	 *Sets up the characters inventory 
+	 *Sets up the characters inventory
 	 * */
 	private void setCharacterInventory(){
 		int width = 200;
@@ -294,9 +296,9 @@ public class InventoryMenu implements GraphicsPane {
 			}
 		}
 	}
-	
+
 	/**
-	 * The pop up menu for items 
+	 * The pop up menu for items
 	 * */
 	public void displayMenu(Graphics g){
 		if(selectedGrid != -1 && items[selectedGrid] != null){
@@ -334,7 +336,7 @@ public class InventoryMenu implements GraphicsPane {
 		}
 	}
 
-	
+
 	@Override
 	public void handleMousePressed(MouseEvent e) {
 
@@ -348,14 +350,14 @@ public class InventoryMenu implements GraphicsPane {
 				if(items[selectedGrid] == null && selectedGrid != selectItemOnGrid){
 					items[selectedGrid] = selectedItem;
 					if(selectItemOnGrid!=-1)items[selectItemOnGrid] = null;
-					selectedItem = null; 
+					selectedItem = null;
 					return;
-				}				
+				}
 
 				//check the selected grid is not the same as the one the image came from
 				if(selectedGrid == selectItemOnGrid){
 					selectItemOnGrid = -1;
-					selectedItem = null; 
+					selectedItem = null;
 					return;
 				}
 			}
@@ -379,14 +381,14 @@ public class InventoryMenu implements GraphicsPane {
 					selectItemOnGrid = selectedGrid;
 				}
 			}
-			
+
 			//at this point nothing is selected so we try grab something from the hot bar
 			if(game.isOnGrid((int)e.getX(),(int)e.getY()) != -1){
 				Item item = game.grabItemFromIventory(game.isOnGrid((int)e.getX(),(int)e.getY()));
 				if(item!=null){
 					selectedItem = item;
-					selectItemOnGrid = -1;//TODO fix the problem is the last place is on the hotbar			
-				}	
+					selectItemOnGrid = -1;//TODO fix the problem is the last place is on the hotbar
+				}
 			}
 		}
 	}

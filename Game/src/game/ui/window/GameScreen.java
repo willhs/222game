@@ -7,6 +7,7 @@ import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
 import game.world.dimensions.Vector3D;
+import game.world.model.Inventory;
 import game.world.model.Item;
 import game.world.model.Player;
 
@@ -55,6 +56,8 @@ public class GameScreen implements GraphicsPane  {
 	//the inventory menu
 	private InventoryMenu popUpInventory;
 
+	private Player player;
+
 
 	/**
 	 * Constructor for the game screen
@@ -66,6 +69,7 @@ public class GameScreen implements GraphicsPane  {
 		this.names = new String[numbofButtons];
 		this.panel = panel;
 		this.items = new Item[6];
+		this.player = player;
 		this.popUpInventory = new InventoryMenu(panel, this, player);
 
 		popUpInventory.updateInventory();
@@ -122,6 +126,7 @@ public class GameScreen implements GraphicsPane  {
 	public void render(Graphics g){
 		//render the star animation
 		starMation.render(g);
+		removeItems();
 
 		//render the game
 		if(GameWindow.currentRoom != null){
@@ -156,11 +161,13 @@ public class GameScreen implements GraphicsPane  {
 	@SuppressWarnings("static-access")
 	@Override
 	public void keyPressed(String keyEvent) {
+
 		if(currentMenu != null){
 			currentMenu.keyPressed(keyEvent);
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
 		else if(keyEvent.equals("inventory")){
+			removeItems();
 			popUpInventory.updateInventory();
 			currentMenu = popUpInventory;
 		}
@@ -197,6 +204,21 @@ public class GameScreen implements GraphicsPane  {
 
 		//set the item selected
 		updateSelectedItem();
+	}
+
+
+	/**
+	 * Removes any items from the inventory that have been dropped
+	 * */
+	public void removeItems(){
+		for(int i = 0; i < items.length; i++){
+			if(items[i] != null){
+				if(!(player.getInventory().isIn(items[i]))){
+					items[i] = null;
+				}
+			}
+
+		}
 	}
 
 

@@ -142,15 +142,17 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 		if(characterSelected == 1)g2d.setColor(Color.blue);
 		g2d.draw(character1);
+		g2d.drawRect((int)character1.getX()+20, (int)character1.getY()+10, (int)character1.getHeight()-20, (int)character1.getHeight()-20);
 		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char1"),(int)character1.getHeight()-20,(int)character1.getHeight()-20),(int)character1.getX()+20,(int)character1.getY()+10, panel);
 		g2d.setColor(Color.white);
 		if(characterSelected == 2)g2d.setColor(Color.blue);
 		g2d.draw(character2);
-		g2d.drawRect((int)character1.getX()+20, (int)character1.getY()+10, (int)character1.getHeight()-20, (int)character1.getHeight()-20);
+		g2d.drawRect((int)character2.getX()+20, (int)character2.getY()+10, (int)character2.getHeight()-20, (int)character2.getHeight()-20);
 		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char2"),(int)character2.getHeight()-20,(int)character2.getHeight()-20),(int)character2.getX()+20,(int)character2.getY()+5, panel);
 		g2d.setColor(Color.white);
 		if(characterSelected == 3)g2d.setColor(Color.blue);
 		g2d.draw(character3);
+		g2d.drawRect((int)character3.getX()+20, (int)character3.getY()+10, (int)character3.getHeight()-20, (int)character3.getHeight()-20);
 		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char3"),(int)character3.getHeight()-20,(int)character3.getHeight()-20),(int)character3.getX()+20,(int)character3.getY()+5, panel);
 		g2d.setColor(Color.white);
 	}
@@ -278,17 +280,12 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		Player player = new Player(name);
 		String imageName = "Char"+characterSelected;
 		player.setImageName(imageName);
-		player.addItem(new Key("Epic key of Awesome", new Point3D(0, 0, 0)));
-		player.addItem(new Key("Epic key of Awesome 2", new Point3D(0, 0, 0)));
 
 		Client client = new Client(panel);
 		client.addPlayerToWorld(player);
 		panel.setMenu(new GameScreen(panel, client,player));
 	}
 
-
 	@Override
-	public void handleMousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
+	public void handleMousePressed(MouseEvent e) {}
 }
