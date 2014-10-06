@@ -76,6 +76,7 @@ public class PauseMenu implements GraphicsPane {
 	public void render(Graphics g) {
 		if(currentMenu != null){
 			currentMenu.render(g);
+			return;
 		}
 
 		//draws the outside of the menu
