@@ -17,6 +17,9 @@ import java.util.Iterator;
  * 
  */
 public class ItemInteractionHandler {
+	
+	private static final float PLAYER_ITEM_DISTANCE = 5;
+	
 	/**
 	 * Used by the Game Event handler to have a Player pick up an item.
 	 * 
@@ -62,9 +65,9 @@ public class ItemInteractionHandler {
 	 */
 	public static boolean checkProximity(Point3D pointOne,
 			Rectangle3D boundingOne, Point3D pointTwo, Rectangle3D boundingTwo) {
-		if ((Math.abs(pointOne.x - pointTwo.x) <= 5 + (boundingOne.getWidth() + boundingTwo
+		if ((Math.abs(pointOne.x - pointTwo.x) <= PLAYER_ITEM_DISTANCE + (boundingOne.getWidth() + boundingTwo
 				.getWidth()) / 2)
-				&& (Math.abs(pointOne.z - pointTwo.z) <= 5 + (boundingOne
+				&& (Math.abs(pointOne.z - pointTwo.z) <= PLAYER_ITEM_DISTANCE + (boundingOne
 						.getLength() + boundingTwo.getLength()) / 2)) {
 			return true;
 		}
@@ -110,11 +113,11 @@ public class ItemInteractionHandler {
 	}
 
 	/**
-	 * 
-	 * @param player
-	 * @param item
-	 * @param place
-	 * @return
+	 * Handles the droping of items in the game world.
+	 * @param player - the player that is droping the item.
+	 * @param item - the item that is to be droped.
+	 * @param place - the place that it is to be droped in.
+	 * @return - true only if the item was droped propperly.
 	 */
 	public static boolean dropItem(Player player, Item item, Place place) {
 		if (!checkPlayers(place, player)) {
@@ -134,22 +137,20 @@ public class ItemInteractionHandler {
 	}
 
 	/**
-	 * Used to to get the drop point for an item using the players direction.
-	 * 
-	 * @param player
-	 *            - player dropping things.
-	 * @param item
-	 *            - item the player is droping.
-	 * @return
+	 * Sets the items drop point.
+	 * @param player - the player that is to drop the item.
+	 * @param item - the item that is to be droped.
+	 * @param place - the place that the item will be droped.
+	 * @return true if the item was droped there.
 	 */
 	private static boolean setItemDropPoint(Player player, Item item,
 			Place place) {
 		Rectangle3D rect = player.getBoundingBox().apply3Dpoint(
 				player.getPosition(place));
-		int x = (int) rect.x - 20;
-		int z = (int) rect.z - 20;
-		int maxX = (int) (rect.x + rect.width + 20);
-		int maxZ = (int) (rect.z + rect.length + 20);
+		int x = (int) (rect.x - PLAYER_ITEM_DISTANCE);
+		int z = (int) (rect.z - PLAYER_ITEM_DISTANCE);
+		int maxX = (int) (rect.x + rect.width + PLAYER_ITEM_DISTANCE);
+		int maxZ = (int) (rect.z + rect.length + PLAYER_ITEM_DISTANCE);
 		for (; x < maxX; x++) {
 			for (; z < maxZ; z++) {
 				Point3D position = new Point3D(x, 0, z);
@@ -162,6 +163,13 @@ public class ItemInteractionHandler {
 		return false;
 	}
 
+	/**
+	 * Checks if the placement at this position is ok.
+	 * @param currnetItem - the current item.
+	 * @param point - the point at which the item needs to be placed.
+	 * @param place - the place in which the item should be droped.
+	 * @return  true if van be droped here.
+	 */
 	private static boolean canItemBeHere(Item currnetItem, Point3D point,
 			Place place) {
 		Iterator<Item> items = place.getItems();
