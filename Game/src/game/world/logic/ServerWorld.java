@@ -34,6 +34,8 @@ public abstract class ServerWorld implements Serializable {
 				commands = serverExitInteraction(scan, command);
 			} else if (scan.hasNext("ItemPickUp")){
 				commands = serverItemPickUp(scan, command);
+			} else if (scan.hasNext("ItemDrop")){
+				commands = serverItemDrop(scan, command);
 			}
 		}
 		return commands;
@@ -230,6 +232,12 @@ public abstract class ServerWorld implements Serializable {
 		return commands;
 	}
 
+	/**
+	 * Checks for the the logic for item pickup.
+	 * @param scan - the scanner with the command it in.
+	 * @param command - the command that is to be parsed.
+	 * @return - returns a string that is the command for the client.
+	 */
 	private List<String> serverItemPickUp(Scanner scan, String command) {
 		List<String> commands = new ArrayList<String>();
 
@@ -251,9 +259,40 @@ public abstract class ServerWorld implements Serializable {
 			sc.next();
 			commands.add("Client "+ sc.nextLine());
 			sc.close();
-			System.out.println("Cleint has picked up the item.");
 		}
 		return commands;
 	}
+	
+	/**
+	 * Handles the servers item dropping logic makes a call to a handler.
+	 * @param scan - the scanner with command in it.
+	 * @param command -  the command.
+	 * @return - a string with a command in it or and empty string.
+	 */
+	private List<String> serverItemDrop(Scanner scan, String command){
+		List<String> commands = new ArrayList<String>();
+
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		
+		if (ItemInteractionHandler.dropItem(player, item, place)){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Client "+ sc.nextLine() + " Point " + item.getPosition());
+			sc.close();
+		}
+		return commands;
+	}
+	
 
 }

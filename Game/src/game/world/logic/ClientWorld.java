@@ -46,6 +46,7 @@ public abstract class ClientWorld extends ServerWorld {
 		// where action is like "up", "down", "right", etc
 		String command = "";
 		System.out.println(viewAngle);
+		System.out.println(action);
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
 
@@ -64,11 +65,15 @@ public abstract class ClientWorld extends ServerWorld {
 					+ " ) Point " + newPosition.toString() + " Name ( "
 					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
 		}
-		if (action.equals("Interact")) {
+		else if (action.equals("Interact")) {
 			command = getInteractionCommand();
 		}
-		if (action.equals("PickUp")){
+		else if (action.equals("PickUp")){
+			System.out.println("Um");
 			command = getItemPickUpCommand();
+		} 
+		else if (action.equals("Drop")){
+			command = getItemDropCommand();
 		}
 		// get the viewing direction from will's static stuff
 		// returns a single command like played.x += 10 or something
@@ -85,14 +90,17 @@ public abstract class ClientWorld extends ServerWorld {
 			if (scan.hasNext("PlayerPlacement")) {
 				setClientPlayer(scan);
 			}
-			if (scan.hasNext("Move")) {
+			else if (scan.hasNext("Move")) {
 				clientHandleMove(scan);
 			}
-			if (scan.hasNext("Exit")) {
+			else if (scan.hasNext("Exit")) {
 				clientHandleExiting(scan);
 			}
-			if (scan.hasNext("ItemPickUp")){
+			else if (scan.hasNext("ItemPickUp")){
 				clientHandleItemPickUp(scan);
+			}
+			else if (scan.hasNext("ItemDrop")){
+				clientHandleItemDrop(scan);
 			}
 		}
 
@@ -137,6 +145,10 @@ public abstract class ClientWorld extends ServerWorld {
 		}
 	}
 	
+	/**
+	 * Handles the item pick up on the client side.
+	 * @param scan - the scanner in the clinet.
+	 */
 	private void clientHandleItemPickUp(Scanner scan){
 		Parser.removeUnneedText("Name", scan);
 		String playerName = Parser.parseName(scan);
@@ -154,6 +166,31 @@ public abstract class ClientWorld extends ServerWorld {
 		place.removeItem(item);
 		player.getInventory().addItem(item);
 		item.setPosition(new Point3D(0, 0, 0));
+	}
+	
+	private void clientHandleItemDrop(Scanner scan){
+		List<String> commands = new ArrayList<String>();
+
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		
+		Parser.removeUnneedText("Point", scan);
+		Point3D position = Parser.parsePosition(scan);
+		
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		
+		item.setSelected(false);
+		player.getInventory().removeItem(item);
+		place.addItem(item);
+		item.setPosition(position);
 	}
 
 	/**
@@ -266,6 +303,10 @@ public abstract class ClientWorld extends ServerWorld {
 		return command;
 	}
 
+	/**
+	 * Gets the commands for picking up items.
+	 * @return - return a string for the pickup command if unable string will be empty.
+	 */
 	private String getItemPickUpCommand() {
 		Place place = getCurrentPlace();
 		Iterator<Item> items = place.getItems();
@@ -279,6 +320,22 @@ public abstract class ClientWorld extends ServerWorld {
 				command = "Server ItemPickUp Name ( " + clientsPlayer.getName()
 						+ " ) Name ( " + item.getName() + " ) Name ( "
 						+ place.getName() + " )";
+			}
+		}
+		return command;
+	}
+	
+	/**
+	 * Gets the command for droping an item
+	 * @return - returns the command for the server or an expty string.
+	 */
+	private String getItemDropCommand(){
+		String command = "";
+		Inventory inventory = clientsPlayer.getInventory();
+		for (Item item: inventory){
+			if (item.isSlelected()){
+				command = "Server ItemDrop Name ( "+ clientsPlayer.getName() +" ) Name ( " + item.getName() + " )  Name ( "
+						+ currentPlace.getName() + " )";
 			}
 		}
 		return command;
