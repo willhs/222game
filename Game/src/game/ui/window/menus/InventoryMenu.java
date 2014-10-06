@@ -57,7 +57,7 @@ public class InventoryMenu implements GraphicsPane {
 	//the selected item
 	private Item selectedItem;
 
-	//the item that is selecteds number
+	//the item that is selected number
 	private int selectItemOnGrid = -1;
 
 	//the current mouse location
@@ -109,7 +109,6 @@ public class InventoryMenu implements GraphicsPane {
 	 * empty location it comes across in the grid
 	 * */
 	public void updateInventory(){
-
 		//first check if item already in inventory
 		boolean in = false;
 
@@ -279,7 +278,7 @@ public class InventoryMenu implements GraphicsPane {
 			displayMenu(g);
 			displayingInfo = true;
 		}
-		//updateInventory();
+	//	updateInventory();
 
 		drawFrame(g);//draws the outside of the inventory
 		drawCharactrInventory(g);//draws the character part of the inventory
@@ -370,8 +369,10 @@ public class InventoryMenu implements GraphicsPane {
 				//place the item on the game screen at the appropriate grid location
 				game.placeItemOnGrid(gridOnGameBar, selectedItem);
 				selectedItem = null;
-				if(selectedGrid != -1){
+
+				if(selectItemOnGrid != -1){
 					items[selectItemOnGrid] = null;
+
 					selectItemOnGrid = -1;
 				}
 
