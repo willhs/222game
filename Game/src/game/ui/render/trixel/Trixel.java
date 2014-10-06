@@ -15,8 +15,9 @@ public class Trixel {
 	/**
 	 * value for trixel width, height and depth
 	 */
-	public static final int SIZE = 20;
+	public static final int DEFAULT_SIZE = 20;
 	private static final Color DEFAULT_COLOUR = Color.BLUE;
+	
 	/**
 	 * The trixel's position in the trixel grid (trid)!
 	 */

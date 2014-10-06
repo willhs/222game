@@ -85,15 +85,15 @@ public class Renderer {
 
 
 		// place all floorTrixels
-		int floorTrixelsY = -Trixel.SIZE; // the y position of all floor trixels
-		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, floorTrixelsY);
+		int floorTrixelsY = -Trixel.DEFAULT_SIZE; // the y position of all floor trixels
+		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, Trixel.DEFAULT_SIZE, floorTrixelsY);
 
 		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
 
 		// get everything ready to render
 
-		renderables.addAll(floorTrixelsToRenderables(floorTrixels.iterator(), transform));
+		renderables.addAll(floorTrixelsToRenderables(floorTrixels.iterator(), Trixel.DEFAULT_SIZE, transform));
 		renderables.addAll(drawablesToRenderables(place.getDrawable(), transform, place));
 
 		flipYAxis(renderables);
@@ -109,11 +109,12 @@ public class Renderer {
 	 * @param g
 	 * @param trixels
 	 * @param floorTrixels
+	 * @param trixelSize TODO
 	 * @param drawables
 	 * @param transform
 	 */
 	public static void renderLevel(Graphics g, Iterator<Trixel> trixels, Iterator<Trixel> floorTrixels,
-			Iterator<Drawable> drawables, Transform transform){
+			int trixelSize, Iterator<Drawable> drawables, Transform transform){
 
 		Graphics2D g2 = (Graphics2D) g;
 
@@ -123,8 +124,8 @@ public class Renderer {
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new DepthComparator());
 
-		toDraw.addAll(floorTrixelsToRenderables(floorTrixels, transform));
-		toDraw.addAll(trixelsToRenderables(trixels, transform));
+		toDraw.addAll(floorTrixelsToRenderables(floorTrixels, trixelSize, transform));
+		toDraw.addAll(trixelsToRenderables(trixels, trixelSize, transform));
 		toDraw.addAll(drawablesToRenderables(drawables, transform, null));
 
 		flipYAxis(toDraw);
@@ -138,19 +139,17 @@ public class Renderer {
 	 * @param transform
 	 * @return transform renderable trixels
 	 */
-	private static List<GamePolygon> trixelsToRenderables(Iterator<Trixel> trixels, Transform transform) {
+	private static List<GamePolygon> trixelsToRenderables(Iterator<Trixel> trixels, int trixelSize, Transform transform) {
 		List<GamePolygon> renderables = new ArrayList<GamePolygon>();
-		int trixelsNum=0;
 
 		while (trixels.hasNext()){
 			Trixel trixel = trixels.next();
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel, trixelSize)){
 				face.transform(transform);
 				if (face.isFacingViewer()){ // only draw faces which are facing the viewer
 					renderables.add(Renderer.makeGamePolygonFromTrixelFace(face));
 				}
 			}
-			trixelsNum ++;
 		}
 		return renderables;
 	}
@@ -194,10 +193,10 @@ public class Renderer {
 	 * @param transform
 	 * @return GamePolygons representing a floor
 	 */
-	private static List<GamePolygon> floorTrixelsToRenderables(Iterator<Trixel> floorTrixelsIterator, Transform transform) {
-		List<GamePolygon> floorTrixelFaces = trixelsToRenderables(floorTrixelsIterator, transform);
+	private static List<GamePolygon> floorTrixelsToRenderables(Iterator<Trixel> floorTrixelsIterator, int trixelSize, Transform transform) {
+		List<GamePolygon> floorTrixelFaces = trixelsToRenderables(floorTrixelsIterator, trixelSize, transform);
 		// push back all floor trixels (after transforming to view space).
-		float translateZ = -Trixel.SIZE; // push back by one trixel
+		float translateZ = -trixelSize; // push back by one trixel
 		for (GamePolygon face : floorTrixelFaces){
 			face.translateZ(translateZ);
 		}
@@ -214,7 +213,7 @@ public class Renderer {
 			shape.flipAroundY(FRAME_TOP);
 		}
 	}
-
+	
 	/**
 	 * DRAW ALL THE THINGS  ...in correct order
 	 * @param renderables
