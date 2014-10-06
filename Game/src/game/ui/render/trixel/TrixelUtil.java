@@ -204,7 +204,7 @@ public class TrixelUtil {
 	 * @return point in the center of a trixel's top face
 	 */
 	public static Point3D findTopCenterOfTrixel(Trixel trixel){
-		Vector3D translation = new Vector3D(0,1,0).makeScaled(Trixel.SIZE);
+		Vector3D translation = new Vector3D(0,0.5f,0).makeScaled(Trixel.SIZE);
 		Point3D faceRealPosition = TrixelUtil.findTrixelCentroid(trixel);
 		return faceRealPosition.getTranslatedPoint(translation);
 	}
