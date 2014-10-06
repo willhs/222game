@@ -18,30 +18,30 @@ public class TrixelUtilTests {
 
 	@Test public void positionToTrixitionTest(){
 		Point3D p1 = new Point3D(11,22,33); 
-		Trixition t1 = TrixelUtil.positionToTrixition(p1);
+		Trixition t1 = TrixelUtil.positionToTrixition(p1, Trixel.DEFAULT_SIZE);
 		
-		assertEquals(t1.x, 11/Trixel.SIZE);
-		assertEquals(t1.y, 22/Trixel.SIZE);
-		assertEquals(t1.z, 33/Trixel.SIZE);
+		assertEquals(t1.x, 11/Trixel.DEFAULT_SIZE);
+		assertEquals(t1.y, 22/Trixel.DEFAULT_SIZE);
+		assertEquals(t1.z, 33/Trixel.DEFAULT_SIZE);
 		
 		float x = 1084.5923f;
 		float y = 480123.523f;
 		float z = 907984.611112f;
 		Point3D p2 = new Point3D(x,y,z); 
-		Trixition t2 = TrixelUtil.positionToTrixition(p2);
+		Trixition t2 = TrixelUtil.positionToTrixition(p2, Trixel.DEFAULT_SIZE);
 		
-		assertEquals(t2.x, (int)(x/Trixel.SIZE));
-		assertEquals(t2.y, (int)(y/Trixel.SIZE));
-		assertEquals(t2.z, (int)(z/Trixel.SIZE));
+		assertEquals(t2.x, (int)(x/Trixel.DEFAULT_SIZE));
+		assertEquals(t2.y, (int)(y/Trixel.DEFAULT_SIZE));
+		assertEquals(t2.z, (int)(z/Trixel.DEFAULT_SIZE));
 	}
 	
 	@Test public void trixitionToPositionTest(){
 		Trixition t1 = new Trixition(4,5,6);
-		Point3D p1 = TrixelUtil.trixitionToPosition(t1);
+		Point3D p1 = TrixelUtil.trixitionToPosition(t1, Trixel.DEFAULT_SIZE);
 		
-		assertEquals((int)p1.getX(), 4*Trixel.SIZE);
-		assertEquals((int)p1.getY(), 5*Trixel.SIZE);
-		assertEquals((int)p1.getZ(), 6*Trixel.SIZE);
+		assertEquals((int)p1.getX(), 4*Trixel.DEFAULT_SIZE);
+		assertEquals((int)p1.getY(), 5*Trixel.DEFAULT_SIZE);
+		assertEquals((int)p1.getZ(), 6*Trixel.DEFAULT_SIZE);
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class TrixelUtilTests {
 			int y = (int)(Math.random()*1000);
 			int z = (int)(Math.random()*1000);
 			Trixel t = new Trixel(new Trixition(x,y,z), Color.BLACK);
-			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(t);
+			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(t, Trixel.DEFAULT_SIZE);
 			assertEquals(faces.length, 6);
 		}
 	}
@@ -68,7 +68,7 @@ public class TrixelUtilTests {
 			int bottom = (int)Math.random()*100;
 			int far = (int)Math.random()*100;
 			Trixel trixel = new Trixel(new Trixition(left,bottom,far), Color.green);
-			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(trixel);
+			TrixelFace[] faces = TrixelUtil.makeTrixelFaces(trixel, Trixel.DEFAULT_SIZE);
 			
 			// LEFT
 			TrixelFace leftFace = faces[0];
@@ -82,14 +82,14 @@ public class TrixelUtilTests {
 			
 			assertTrue(leftFaceVertices[1].getX() == left);
 			assertTrue(leftFaceVertices[1].getY() == bottom);
-			assertTrue(leftFaceVertices[1].getZ() == far+Trixel.SIZE);
+			assertTrue(leftFaceVertices[1].getZ() == far+Trixel.DEFAULT_SIZE);
 			
 			assertTrue(leftFaceVertices[2].getX() == left);
-			assertTrue(leftFaceVertices[2].getY() == bottom+Trixel.SIZE);
-			assertTrue(leftFaceVertices[2].getZ() == far+Trixel.SIZE);
+			assertTrue(leftFaceVertices[2].getY() == bottom+Trixel.DEFAULT_SIZE);
+			assertTrue(leftFaceVertices[2].getZ() == far+Trixel.DEFAULT_SIZE);
 			
 			assertTrue(leftFaceVertices[3].getX() == left);
-			assertTrue(leftFaceVertices[3].getY() == bottom+Trixel.SIZE);
+			assertTrue(leftFaceVertices[3].getY() == bottom+Trixel.DEFAULT_SIZE);
 			assertTrue(leftFaceVertices[3].getZ() == far);
 			
 			// BOTTOM
@@ -102,17 +102,17 @@ public class TrixelUtilTests {
 			assertTrue(bottomFaceVertices[0].getY() == bottom);
 			assertTrue(bottomFaceVertices[0].getZ() == far);
 			
-			assertTrue(bottomFaceVertices[1].getX() == left+Trixel.SIZE);
+			assertTrue(bottomFaceVertices[1].getX() == left+Trixel.DEFAULT_SIZE);
 			assertTrue(bottomFaceVertices[1].getY() == bottom);
 			assertTrue(bottomFaceVertices[1].getZ() == far);
 			
-			assertTrue(bottomFaceVertices[2].getX() == left+Trixel.SIZE);
+			assertTrue(bottomFaceVertices[2].getX() == left+Trixel.DEFAULT_SIZE);
 			assertTrue(bottomFaceVertices[2].getY() == bottom);
-			assertTrue(bottomFaceVertices[2].getZ() == far+Trixel.SIZE);
+			assertTrue(bottomFaceVertices[2].getZ() == far+Trixel.DEFAULT_SIZE);
 			
 			assertTrue(bottomFaceVertices[3].getX() == left);
 			assertTrue(bottomFaceVertices[3].getY() == bottom);
-			assertTrue(bottomFaceVertices[3].getZ() == far+Trixel.SIZE);
+			assertTrue(bottomFaceVertices[3].getZ() == far+Trixel.DEFAULT_SIZE);
 			
 			// FAR
 			TrixelFace farFace = faces[4];
@@ -124,16 +124,16 @@ public class TrixelUtilTests {
 			assertTrue(farFaceVertices[0].getY() == bottom);
 			assertTrue(farFaceVertices[0].getZ() == far);
 			
-			assertTrue(farFaceVertices[1].getX() == left+Trixel.SIZE);
+			assertTrue(farFaceVertices[1].getX() == left+Trixel.DEFAULT_SIZE);
 			assertTrue(farFaceVertices[1].getY() == bottom);
 			assertTrue(farFaceVertices[1].getZ() == far);
 			
-			assertTrue(farFaceVertices[2].getX() == left+Trixel.SIZE);
-			assertTrue(farFaceVertices[2].getY() == bottom+Trixel.SIZE);
+			assertTrue(farFaceVertices[2].getX() == left+Trixel.DEFAULT_SIZE);
+			assertTrue(farFaceVertices[2].getY() == bottom+Trixel.DEFAULT_SIZE);
 			assertTrue(farFaceVertices[2].getZ() == far);
 			
 			assertTrue(farFaceVertices[3].getX() == left);
-			assertTrue(farFaceVertices[3].getY() == bottom+Trixel.SIZE);
+			assertTrue(farFaceVertices[3].getY() == bottom+Trixel.DEFAULT_SIZE);
 			assertTrue(farFaceVertices[3].getZ() == far);
 		}
 	}
@@ -145,19 +145,19 @@ public class TrixelUtilTests {
 		int top = 100;
 		int left = 100;
 		int z = 0;
-		int[] xpoints = { left , left + Trixel.SIZE, left + Trixel.SIZE, left};
-		int[] ypoints = { top , top,  top + Trixel.SIZE, top + Trixel.SIZE};
+		int[] xpoints = { left , left + Trixel.DEFAULT_SIZE, left + Trixel.DEFAULT_SIZE, left};
+		int[] ypoints = { top , top,  top + Trixel.DEFAULT_SIZE, top + Trixel.DEFAULT_SIZE};
 		Polygon poly = new Polygon(xpoints, ypoints, xpoints.length);
-		List<Trixel> trixels = TrixelUtil.polygon2DToTrixels(poly, z);
+		List<Trixel> trixels = TrixelUtil.polygon2DToTrixels(poly, Trixel.DEFAULT_SIZE, z);
 		
 		assertEquals(1, trixels.size());
 		
 		Trixel t = trixels.get(0);
 		Trixition trix = t.getTrixition();
 		
-		assertEquals(trix.x, (int)(top/Trixel.SIZE));
-		assertEquals(trix.y, (int)(left/Trixel.SIZE));
-		assertEquals(trix.z, (int)(z/Trixel.SIZE));
+		assertEquals(trix.x, (int)(top/Trixel.DEFAULT_SIZE));
+		assertEquals(trix.y, (int)(left/Trixel.DEFAULT_SIZE));
+		assertEquals(trix.z, (int)(z/Trixel.DEFAULT_SIZE));
 	}
 	
 	@Test public void testTrixelCentroid(){
@@ -171,9 +171,9 @@ public class TrixelUtilTests {
 			
 			Trixition trix = new Trixition(x,y,z);
 			Trixel t = new Trixel(trix, Color.WHITE);
-			Point3D centroid = TrixelUtil.findTrixelCentroid(t);
+			Point3D centroid = TrixelUtil.findTrixelCentroid(t, Trixel.DEFAULT_SIZE);
 			
-			assertEquals(TrixelUtil.trixitionToPosition(trix), centroid);
+			assertEquals(TrixelUtil.trixitionToPosition(trix, Trixel.DEFAULT_SIZE), centroid);
 		}
 	}
 	

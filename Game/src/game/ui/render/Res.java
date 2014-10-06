@@ -48,6 +48,7 @@ public class Res {
 		addImage("Star1");
 		addImage("Door");
 		addImage("Chest");
+		addImage("OpenChest");
 		addImage("Tree");
 	}
 

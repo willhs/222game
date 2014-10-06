@@ -51,8 +51,9 @@ public class LevelMaker{
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;
 	public static final int START_COLOUR_DEVIATION = 20;
+	public static final int DEFAULT_TRIXEL_SIZE = Trixel.DEFAULT_SIZE;
 	/**
-	 * the amount in which to rotate all trixels (so that it can be updated)
+	 * the amount in which to rotate the level/place (so that it can be updated)
 	 */
 	private Vector3D rotateAmounts = new Vector3D(0,0,0);
 	/**
@@ -61,7 +62,7 @@ public class LevelMaker{
 	private List<TrixelFace> rotatedFaces;
 
 	/**
-	 * The last transform used to transform trixels.
+	 * The last transform used to transform the level/place.
 	 * It can be inverted to find the true location of something which has already been transformed.
 	 */
 	private Transform lastTransform;
@@ -73,9 +74,12 @@ public class LevelMaker{
 	 * all trixels which make up the floor.
 	 */
 	private Set<Trixel> floorTrixels;
+	/**
+	 * all non-trixel objects in the level.
+	 */
 	private Set<Drawable> worldObjects;
 	/**
-	 * the center of all trixels
+	 * the center of the floor
 	 */
 	private Point3D floorCentroid;
 	/**
@@ -89,9 +93,13 @@ public class LevelMaker{
 	 */
 	private String drawMode;
 	/**
-	 * how much to deviate when making the next colour
+	 * how much to deviate from the base colour when making the next colour
 	 */
 	private int randomColourDeviation;
+	/**
+	 * size of trixels to be made
+	 */
+	private int trixelSize;
 
 	/**
 	 * Initialises LevelMaker's fields
@@ -102,6 +110,7 @@ public class LevelMaker{
 		createdTrixels = new HashSet<Trixel>();
 		floorTrixels = new HashSet<Trixel>();
 		floorCentroid = new Point3D(0,0,0);
+		trixelSize = DEFAULT_TRIXEL_SIZE;
 
 		// intialise colour
 		currentColour = Renderer.makeRandomColour();
@@ -132,11 +141,11 @@ public class LevelMaker{
 
 		// initilise trixels
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
-			Renderer.floorToVerticalPolygon(floor), -Trixel.SIZE)){
+			Renderer.floorToVerticalPolygon(floor), trixelSize, -trixelSize)){
 			t.setColour(getTrixelColour());
 			floorTrixels.add(t);
 		}
-		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator());
+		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
 		updateTrixelFaces();
 	}
 
@@ -144,7 +153,7 @@ public class LevelMaker{
 	 * @param rotateX : how much to rotate in x direction in radians
 	 * @param rotateY : ^ y direction...
 	 */
-	public Vector3D changeRotateAmount(int rotateX, int rotateY) {
+	public Vector3D getNewRotateAmount(int rotateX, int rotateY) {
 		float rotateSpeed = 0.01f;
 		return rotateAmounts.plus(
 				new Vector3D(rotateX*rotateSpeed, rotateY*rotateSpeed, 0)
@@ -158,7 +167,7 @@ public class LevelMaker{
 	 */
 	public void updateRotation(int rotateX, int rotateY){
 
-		rotateAmounts = changeRotateAmount(rotateX, rotateY);
+		rotateAmounts = getNewRotateAmount(rotateX, rotateY);
 		Transform trans = makeTransform(rotateAmounts);
 
 		lastTransform = trans;
@@ -180,7 +189,8 @@ public class LevelMaker{
 
 	/**
 	 * Searches whether x,y is within a trixel face.
-	 * If x,y in a trixel face, make a new trixel next to that face and add it to the level.
+	 * If x,y in a trixel face, make a new thing next to that face and add it to the level.
+	 * The thing that is made is dependant on the drawMode (e.g. trixel, tree, table ...)
 	 * @param x
 	 * @param y
 	 */
@@ -194,7 +204,7 @@ public class LevelMaker{
 		Trixel trixel = face.getParentTrixel();
 
 		// make a new thing next to this trixel
-		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(trixel);
+		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(trixel, trixelSize);
 		//Point3D randomAboveTrixel = aboveTrixel.getTranslatedPoint(new Vector3D((float)Math.random()*Trixel.SIZE, 0, (float)Math.random()*Trixel.SIZE));
 
 	if (drawMode == TRIXEL_MODE){
@@ -210,26 +220,24 @@ public class LevelMaker{
 		updateTrixelFaces();
 	}
 
+	/**
+	 * Re-makes and orders a list of trixel faces from ordered by closest first
+	 */
 	private void updateTrixelFaces() {
 		// reset rotated trixels
 		rotatedFaces = new ArrayList<TrixelFace>();
 
-		for (Trixel trixel : createdTrixels){
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+		for (Iterator<Trixel> iter = getAllTrixels(); iter.hasNext();){
+			Trixel trixel = iter.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel, trixelSize)){
 				face.transform(lastTransform);
 				rotatedFaces.add(face);
 			}
 		}
 
-		for (Trixel trixel : floorTrixels){
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
-				face.transform(lastTransform);
-				rotatedFaces.add(face);
-			}
-		}
-
-		// sort in order of closest trixels
+		// sort in order of depth, farest first
 		Collections.sort(rotatedFaces, new DepthComparator());
+		// reverse so that closest trixels are first (so easy to obtain trixel clicked).
 		Collections.reverse(rotatedFaces);
 	}
 
@@ -266,9 +274,9 @@ public class LevelMaker{
 		Point3D newTrixelPosition = faceRealPosition.getTranslatedPoint(normal.makeScaled(Trixel.SIZE));
 		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);*/
 
-		Point3D overTrixel = TrixelUtil.findTopCenterOfTrixel(face.getParentTrixel());
+		Point3D overTrixel = TrixelUtil.findTopCenterOfTrixel(face.getParentTrixel(), trixelSize);
 
-		return new Trixel(TrixelUtil.positionToTrixition(overTrixel), getTrixelColour());
+		return new Trixel(TrixelUtil.positionToTrixition(overTrixel, trixelSize), getTrixelColour());
 	}
 
 	public Transform getLastTransform() {
@@ -277,9 +285,9 @@ public class LevelMaker{
 
 	/**
 	 * TODO
-	 * writes all trixels to a file
+	 * writes all level information to a file
 	 */
-	public void writeTrixelsToFile(){
+	public void writeLevelToFile(){
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+Res.LEVELS_PATH);
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
@@ -366,6 +374,14 @@ public class LevelMaker{
 
 	public Iterator<Trixel> getCreatedTrixels(){
 		return createdTrixels.iterator();
+	}
+
+	public void setTrixelSize(int trixelSize) {
+		this.trixelSize = trixelSize;
+		
+	}
+	public int getTrixelSize() {
+		return trixelSize;
 	}
 
 }

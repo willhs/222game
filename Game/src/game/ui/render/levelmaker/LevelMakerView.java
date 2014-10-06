@@ -24,6 +24,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -53,18 +54,14 @@ public class LevelMakerView extends JPanel{
 
 		// --------- main control panel
 
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout());
-		add(buttonPanel, BorderLayout.NORTH);
+		JPanel controlPanel = new JPanel();
+		controlPanel.setLayout(new FlowLayout());
+		add(controlPanel, BorderLayout.NORTH);
 
-		JButton saveButton = new JButton("Save");
-		saveButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				levelMaker.writeTrixelsToFile();
-			}
-		});
-		buttonPanel.add(saveButton);
-
+		final JTextField trixelSizeField = new JTextField(LevelMaker.DEFAULT_TRIXEL_SIZE);
+		trixelSizeField.setToolTipText("enter trixel size");
+		controlPanel.add(trixelSizeField);
+		
 		JButton loadButton = new JButton("Load");
 		loadButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -75,17 +72,28 @@ public class LevelMakerView extends JPanel{
 				} catch (NoFloorChosenException e1) {
 					return;
 				}
+				
+				levelMaker.setTrixelSize(parseTrixelSize(trixelSizeField.getText()));
+				
 				levelMaker.loadFloor(floor);
 				repaint();
 			}
 		});
-		buttonPanel.add(loadButton);
-
+		controlPanel.add(loadButton);
+		
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				levelMaker.writeLevelToFile();
+			}
+		});
+		controlPanel.add(saveButton);
+		
 		// ---------- colour panel
 
 		JPanel colourPanel = new JPanel();
 		colourPanel.setLayout(new FlowLayout());
-		buttonPanel.add(colourPanel);
+		controlPanel.add(colourPanel);
 
 		JButton chooseColourButton = new JButton("Colour");
 		chooseColourButton.addActionListener(new ActionListener(){
@@ -186,12 +194,29 @@ public class LevelMakerView extends JPanel{
 
 		return new Floor(points);
 	}
+	
+	/**
+	 * Parses text for trixel size.
+	 * If not valid trixel size, return default trixel size.
+	 * 
+	 * @param text
+	 * @return a trixel size parsed from text
+	 */
+	private int parseTrixelSize(String text) {
+		int size = 0;
+		try{
+			size = Integer.parseInt(text);
+		} catch (NumberFormatException e){
+			size = LevelMaker.DEFAULT_TRIXEL_SIZE;
+		} 
+		return size;
+	}
 
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Renderer.renderLevel(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
-				levelMaker.getWorldObjects(), levelMaker.getLastTransform());
+				levelMaker.getTrixelSize(), levelMaker.getWorldObjects(), levelMaker.getLastTransform());
 
 		// displays current colour
 		g.setColor(levelMaker.getTrixelColour());
