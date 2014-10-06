@@ -8,9 +8,10 @@ import game.ui.render.able.Renderable;
 import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
+import game.ui.render.util.DepthComparable;
+import game.ui.render.util.DepthComparator;
 import game.ui.render.util.LightSource;
 import game.ui.render.util.Transform;
-import game.ui.render.util.DepthComparator;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
@@ -26,6 +27,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -67,9 +69,6 @@ public class Renderer {
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
-
 		// convert floor into trixels and add those to toDraw
 		Floor floor = place.getFloor();
 		Polygon floorPolygon = floorToVerticalPolygon(floor);
@@ -85,10 +84,16 @@ public class Renderer {
 			);
 
 
-		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, -Trixel.SIZE);
+		// place all floorTrixels
+		int floorTrixelsY = -Trixel.SIZE; // the y position of all floor trixels
+		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, floorTrixelsY);
+
+		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
 
 		// get everything ready to render
-		renderables.addAll(trixelsToRenderables(floorTrixels.iterator(), transform));
+
+		renderables.addAll(floorTrixelsToRenderables(floorTrixels.iterator(), transform));
 		renderables.addAll(drawablesToRenderables(place.getDrawable(), transform, place));
 
 		flipYAxis(renderables);
@@ -97,24 +102,28 @@ public class Renderer {
 		drawThings(renderables, g2);
 
 	}
-
 	/**
 	 * Draws trixels and drawables using a graphics object
 	 * Currently used for the level maker
 	 *
 	 * @param g
 	 * @param trixels
-	 * @param iterator
+	 * @param floorTrixels
+	 * @param drawables
 	 * @param transform
 	 */
-	public static void renderLevel(Graphics g, Iterator<Trixel> trixels, Iterator<Drawable> drawables, Transform transform){
+	public static void renderLevel(Graphics g, Iterator<Trixel> trixels, Iterator<Trixel> floorTrixels,
+			Iterator<Drawable> drawables, Transform transform){
+
 		Graphics2D g2 = (Graphics2D) g;
+
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<Renderable> toDraw = new PriorityQueue<Renderable>(50, new DepthComparator());
 
+		toDraw.addAll(floorTrixelsToRenderables(floorTrixels, transform));
 		toDraw.addAll(trixelsToRenderables(trixels, transform));
 		toDraw.addAll(drawablesToRenderables(drawables, transform, null));
 
@@ -129,15 +138,19 @@ public class Renderer {
 	 * @param transform
 	 * @return transform renderable trixels
 	 */
-	private static List<Renderable> trixelsToRenderables(Iterator<Trixel> trixels, Transform transform) {
-		List<Renderable> renderables = new ArrayList<Renderable>();
+	private static List<GamePolygon> trixelsToRenderables(Iterator<Trixel> trixels, Transform transform) {
+		List<GamePolygon> renderables = new ArrayList<GamePolygon>();
+		int trixelsNum=0;
 
 		while (trixels.hasNext()){
 			Trixel trixel = trixels.next();
 			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
 				face.transform(transform);
-				renderables.add(Renderer.makeGamePolygonFromTrixelFace(face));
+				if (face.isFacingViewer()){ // only draw faces which are facing the viewer
+					renderables.add(Renderer.makeGamePolygonFromTrixelFace(face));
+				}
 			}
+			trixelsNum ++;
 		}
 		return renderables;
 	}
@@ -170,6 +183,25 @@ public class Renderer {
 			}
 		}
 		return renderables;
+	}
+
+	/**
+	 * Transforms and converts floor trixels to renderables, then translates the trixels
+	 * to be a little behind where they usually would be.
+	 * This avoids floor overlapping with objects on the floor.
+	 *
+	 * @param floorTrixelsIterator
+	 * @param transform
+	 * @return GamePolygons representing a floor
+	 */
+	private static List<GamePolygon> floorTrixelsToRenderables(Iterator<Trixel> floorTrixelsIterator, Transform transform) {
+		List<GamePolygon> floorTrixelFaces = trixelsToRenderables(floorTrixelsIterator, transform);
+		// push back all floor trixels (after transforming to view space).
+		float translateZ = -Trixel.SIZE; // push back by one trixel
+		for (GamePolygon face : floorTrixelFaces){
+			face.translateZ(translateZ);
+		}
+		return floorTrixelFaces;
 	}
 
 	/**

@@ -66,14 +66,18 @@ public class LevelMaker{
 	 */
 	private Transform lastTransform;
 	/**
-	 * all trixels in the level
+	 * all trixels in the level except the floor :(
 	 */
-	private Set<Trixel> trixels;
+	private Set<Trixel> createdTrixels;
+	/**
+	 * all trixels which make up the floor.
+	 */
+	private Set<Trixel> floorTrixels;
 	private Set<Drawable> worldObjects;
 	/**
 	 * the center of all trixels
 	 */
-	private Point3D trixelsCentroid;
+	private Point3D floorCentroid;
 	/**
 	 * the colour that will be used to make the next trixel
 	 */
@@ -94,8 +98,10 @@ public class LevelMaker{
 	 */
 	public LevelMaker(){
 
-		// initialise trixels to make up a floor.
-		trixels = new HashSet<Trixel>();
+		// initialise trixels
+		createdTrixels = new HashSet<Trixel>();
+		floorTrixels = new HashSet<Trixel>();
+		floorCentroid = new Point3D(0,0,0);
 
 		// intialise colour
 		currentColour = Renderer.makeRandomColour();
@@ -119,17 +125,19 @@ public class LevelMaker{
 	 * Loads a floor into this level maker
 	 * The floor is used to generate a starting set of trixels,
 	 * which is then expanded on using the tools of the level maker.
+	 *
 	 * @param floor
 	 */
 	public void loadFloor(Floor floor){
 
 		// initilise trixels
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
-			Renderer.floorToVerticalPolygon(floor), -1)){
+			Renderer.floorToVerticalPolygon(floor), -Trixel.SIZE)){
 			t.setColour(getTrixelColour());
-			trixels.add(t);
+			floorTrixels.add(t);
 		}
-
+		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator());
+		updateTrixelFaces();
 	}
 
 	/**
@@ -141,13 +149,6 @@ public class LevelMaker{
 		return rotateAmounts.plus(
 				new Vector3D(rotateX*rotateSpeed, rotateY*rotateSpeed, 0)
 		);
-	}
-
-	/**
-	 * @return all trixels to be drawn
-	 */
-	public Iterator<Trixel> getTrixels(){
-		return trixels.iterator();
 	}
 
 	/**
@@ -168,13 +169,13 @@ public class LevelMaker{
 
 	/**
 	 * Makes a combined transform matrix involving several factors including
-	 * @return
+	 * PRE: trixelCentroid, rotateAmounts, viewTranslation are not null.
+	 * @return a transform made by renderer.
 	 */
 	private Transform makeTransform(Vector3D rotateAmounts) {
 
-		trixelsCentroid  = TrixelUtil.findTrixelsCentroid(trixels.iterator());
 		Vector3D viewTranslation = Renderer.STANDARD_VIEW_TRANSLATION;
-		return Renderer.makeTransform(rotateAmounts, trixelsCentroid, viewTranslation);
+		return Renderer.makeTransform(rotateAmounts, floorCentroid, viewTranslation);
 	}
 
 	/**
@@ -194,9 +195,10 @@ public class LevelMaker{
 
 		// make a new thing next to this trixel
 		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(trixel);
+		//Point3D randomAboveTrixel = aboveTrixel.getTranslatedPoint(new Vector3D((float)Math.random()*Trixel.SIZE, 0, (float)Math.random()*Trixel.SIZE));
 
-		if (drawMode == TRIXEL_MODE){
-			trixels.add(makeTrixelNextToFace(face, currentColour));
+	if (drawMode == TRIXEL_MODE){
+			createdTrixels.add(makeTrixelNextToFace(face, currentColour));
 		}
 		if (drawMode == TREE_MODE){
 			// TODO: replace this table with tree once tree is drawable
@@ -212,7 +214,14 @@ public class LevelMaker{
 		// reset rotated trixels
 		rotatedFaces = new ArrayList<TrixelFace>();
 
-		for (Trixel trixel : trixels){
+		for (Trixel trixel : createdTrixels){
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
+				face.transform(lastTransform);
+				rotatedFaces.add(face);
+			}
+		}
+
+		for (Trixel trixel : floorTrixels){
 			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel)){
 				face.transform(lastTransform);
 				rotatedFaces.add(face);
@@ -267,6 +276,7 @@ public class LevelMaker{
 	}
 
 	/**
+	 * TODO
 	 * writes all trixels to a file
 	 */
 	public void writeTrixelsToFile(){
@@ -286,7 +296,7 @@ public class LevelMaker{
 			e.printStackTrace();
 		}
 
-		for (Trixel trixel : trixels){
+		for (Trixel trixel : createdTrixels){
 			writer.println(trixel);
 		}
 
@@ -330,7 +340,7 @@ public class LevelMaker{
 		if (face == null)	return;
 
 		Trixel trixel = face.getParentTrixel();
-		trixels.remove(trixel);
+		createdTrixels.remove(trixel);
 	}
 
 	public void setColourDeviation(int deviation) {
@@ -339,6 +349,23 @@ public class LevelMaker{
 
 	public Iterator<Drawable> getWorldObjects() {
 		return worldObjects.iterator();
+	}
+
+	/**
+	 * @return all trixels in level
+	 */
+	private Iterator<Trixel> getAllTrixels(){
+		Set<Trixel> allTrixels = new HashSet<Trixel>(floorTrixels);
+		allTrixels.addAll(createdTrixels);
+		return allTrixels.iterator();
+	}
+
+	public Iterator<Trixel> getFloorTrixels() {
+		return floorTrixels.iterator();
+	}
+
+	public Iterator<Trixel> getCreatedTrixels(){
+		return createdTrixels.iterator();
 	}
 
 }

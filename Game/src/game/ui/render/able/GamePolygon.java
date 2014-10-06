@@ -62,4 +62,12 @@ public class GamePolygon extends Polygon implements Renderable{
 		return new Point3D(xSum/npoints, ySum/npoints, z);
 	}
 
+	/**
+	 * Translates the z component.
+	 * @param translateZ
+	 */
+	public void translateZ(float translateZ) {
+		z += translateZ;
+	}
+
 }

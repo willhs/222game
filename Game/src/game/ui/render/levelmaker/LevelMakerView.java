@@ -190,7 +190,8 @@ public class LevelMakerView extends JPanel{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Renderer.renderLevel(g, levelMaker.getTrixels(), levelMaker.getWorldObjects(), levelMaker.getLastTransform());
+		Renderer.renderLevel(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
+				levelMaker.getWorldObjects(), levelMaker.getLastTransform());
 
 		// displays current colour
 		g.setColor(levelMaker.getTrixelColour());
