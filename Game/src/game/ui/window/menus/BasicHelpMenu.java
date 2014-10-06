@@ -1,6 +1,7 @@
 package game.ui.window.menus;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
@@ -28,6 +29,10 @@ public class BasicHelpMenu extends HelpMenu implements GraphicsPane{
 
 	@Override
 	public void render(Graphics g){
+		buttons[0] = new Rectangle(0,0,0,0);
+		buttonNames[0] = "";
+		MenuUtil.drawButtons(g, -1, buttons, buttonNames);
+		g.setFont(helpTextFont);
 		drawString(g,helpText, (int) (buttons[1].getX()+20),(int)( textBox.getY() + 20));//draws the string within the text box
 	}
 }

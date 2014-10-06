@@ -25,13 +25,13 @@ public class HelpMenu implements GraphicsPane, Animated{
 
 	//button fields
 	protected Rectangle[] buttons;
-	private String[] buttonNames;
+	protected String[] buttonNames;
 	private int numbOfButtons;
 	private int selectedButton;
 
 	//help text fields
 	protected String helpText;
-	private Font helpTextFont;
+	protected Font helpTextFont;
 	protected Rectangle textBox;
 
 	//animation fields
