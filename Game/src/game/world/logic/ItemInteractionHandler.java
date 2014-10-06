@@ -17,9 +17,9 @@ import java.util.Iterator;
  * 
  */
 public class ItemInteractionHandler {
-	
+
 	private static final float PLAYER_ITEM_DISTANCE = 5;
-	
+
 	/**
 	 * Used by the Game Event handler to have a Player pick up an item.
 	 * 
@@ -32,6 +32,9 @@ public class ItemInteractionHandler {
 	 * @return - true if and only if the the player now has the item.
 	 */
 	public static boolean pickupItem(Player player, Item item, Place place) {
+		if (player == null || item == null || place == null) {
+			return false;
+		}
 		if (!checkPlayers(place, player) && !checkItems(place, item)) {
 			return false;
 		}
@@ -65,10 +68,11 @@ public class ItemInteractionHandler {
 	 */
 	public static boolean checkProximity(Point3D pointOne,
 			Rectangle3D boundingOne, Point3D pointTwo, Rectangle3D boundingTwo) {
-		if ((Math.abs(pointOne.x - pointTwo.x) <= PLAYER_ITEM_DISTANCE + (boundingOne.getWidth() + boundingTwo
-				.getWidth()) / 2)
-				&& (Math.abs(pointOne.z - pointTwo.z) <= PLAYER_ITEM_DISTANCE + (boundingOne
-						.getLength() + boundingTwo.getLength()) / 2)) {
+		if ((Math.abs(pointOne.x - pointTwo.x) <= PLAYER_ITEM_DISTANCE
+				+ (boundingOne.getWidth() + boundingTwo.getWidth()) / 2)
+				&& (Math.abs(pointOne.z - pointTwo.z) <= PLAYER_ITEM_DISTANCE
+						+ (boundingOne.getLength() + boundingTwo.getLength())
+						/ 2)) {
 			return true;
 		}
 		return false;
@@ -114,12 +118,19 @@ public class ItemInteractionHandler {
 
 	/**
 	 * Handles the droping of items in the game world.
-	 * @param player - the player that is droping the item.
-	 * @param item - the item that is to be droped.
-	 * @param place - the place that it is to be droped in.
+	 * 
+	 * @param player
+	 *            - the player that is droping the item.
+	 * @param item
+	 *            - the item that is to be droped.
+	 * @param place
+	 *            - the place that it is to be droped in.
 	 * @return - true only if the item was droped propperly.
 	 */
 	public static boolean dropItem(Player player, Item item, Place place) {
+		if (player == null || item == null || place == null) {
+			return false;
+		}
 		if (!checkPlayers(place, player)) {
 			return false;
 		}
@@ -129,7 +140,7 @@ public class ItemInteractionHandler {
 		if (!player.getInventory().removeItem(item)) {
 			return false;
 		}
-		if (!setItemDropPoint(player, item, place)){
+		if (!setItemDropPoint(player, item, place)) {
 			return false;
 		}
 		place.addItem(item);
@@ -138,9 +149,13 @@ public class ItemInteractionHandler {
 
 	/**
 	 * Sets the items drop point.
-	 * @param player - the player that is to drop the item.
-	 * @param item - the item that is to be droped.
-	 * @param place - the place that the item will be droped.
+	 * 
+	 * @param player
+	 *            - the player that is to drop the item.
+	 * @param item
+	 *            - the item that is to be droped.
+	 * @param place
+	 *            - the place that the item will be droped.
 	 * @return true if the item was droped there.
 	 */
 	private static boolean setItemDropPoint(Player player, Item item,
@@ -165,10 +180,14 @@ public class ItemInteractionHandler {
 
 	/**
 	 * Checks if the placement at this position is ok.
-	 * @param currnetItem - the current item.
-	 * @param point - the point at which the item needs to be placed.
-	 * @param place - the place in which the item should be droped.
-	 * @return  true if van be droped here.
+	 * 
+	 * @param currnetItem
+	 *            - the current item.
+	 * @param point
+	 *            - the point at which the item needs to be placed.
+	 * @param place
+	 *            - the place in which the item should be droped.
+	 * @return true if van be droped here.
 	 */
 	private static boolean canItemBeHere(Item currnetItem, Point3D point,
 			Place place) {
@@ -182,7 +201,7 @@ public class ItemInteractionHandler {
 		}
 		Iterator<Exit> exits = place.getExits();
 		while (exits.hasNext()) {
-			Exit exit= exits.next();
+			Exit exit = exits.next();
 			if (exit.getBoundingBox().collisionDetection(exit.getPosition(),
 					currnetItem.getBoundingBox(), point)) {
 				return false;
@@ -199,8 +218,8 @@ public class ItemInteractionHandler {
 		Iterator<Player> players = place.getPlayers();
 		while (players.hasNext()) {
 			Player player = players.next();
-			if (player.getBoundingBox().collisionDetection(player.getPosition(),
-					currnetItem.getBoundingBox(), point)) {
+			if (player.getBoundingBox().collisionDetection(
+					player.getPosition(), currnetItem.getBoundingBox(), point)) {
 				return false;
 			}
 		}
