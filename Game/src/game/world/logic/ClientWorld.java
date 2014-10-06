@@ -45,8 +45,6 @@ public abstract class ClientWorld extends ServerWorld {
 	public String getCommand(String action, float viewAngle) {
 		// where action is like "up", "down", "right", etc
 		String command = "";
-		System.out.println(viewAngle);
-		System.out.println(action);
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
 
@@ -68,7 +66,6 @@ public abstract class ClientWorld extends ServerWorld {
 			command = getInteractionCommand();
 		} else if (action.equals("PickUp")) {
 			command = getContainerInteractCommand();
-			System.out.println(command);
 			if (command.equals("")){
 				command = getItemPickUpCommand();
 			}
@@ -203,7 +200,6 @@ public abstract class ClientWorld extends ServerWorld {
 		
 		Container container = (Container) item;
 		for (Item in: container.getContents()){
-			System.out.println(in.getName());
 			player.addItem(in);
 		}
 		for (Item in: player.getInventory()){
