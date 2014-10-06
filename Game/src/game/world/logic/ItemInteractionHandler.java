@@ -18,7 +18,7 @@ import java.util.Iterator;
  */
 public class ItemInteractionHandler {
 
-	private static final float PLAYER_ITEM_DISTANCE = 5;
+	private static final float PLAYER_ITEM_DISTANCE = 8;
 
 	/**
 	 * Used by the Game Event handler to have a Player pick up an item.
@@ -87,7 +87,7 @@ public class ItemInteractionHandler {
 	 *            - player to check.
 	 * @return - true only if player is in the room.
 	 */
-	private static boolean checkPlayers(Place place, Player player) {
+	protected static boolean checkPlayers(Place place, Player player) {
 		Iterator<Player> players = place.getPlayers();
 		while (players.hasNext()) {
 			if (players.next().equals(player)) {
@@ -106,7 +106,7 @@ public class ItemInteractionHandler {
 	 *            - item that should be in the room.
 	 * @return - true only if the item is in the room.
 	 */
-	private static boolean checkItems(Place place, Item item) {
+	protected static boolean checkItems(Place place, Item item) {
 		Iterator<Item> items = place.getItems();
 		while (items.hasNext()) {
 			if (items.next().equals(item)) {

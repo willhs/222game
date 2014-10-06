@@ -15,7 +15,7 @@ import java.util.*;
 public abstract class ServerWorld implements Serializable {
 
 	/**
-	 * applys commands that are sent by the client.
+	 * Applys commands that are sent by the client.
 	 * 
 	 * @param command
 	 *            - clients command.
@@ -36,6 +36,8 @@ public abstract class ServerWorld implements Serializable {
 				commands = serverItemPickUp(scan, command);
 			} else if (scan.hasNext("ItemDrop")){
 				commands = serverItemDrop(scan, command);
+			} else if (scan.hasNext("Container")){
+				commands = serverContainerInteraction(scan, command);
 			}
 		}
 		return commands;
@@ -294,5 +296,35 @@ public abstract class ServerWorld implements Serializable {
 		return commands;
 	}
 	
+	private List<String> serverContainerInteraction(Scanner scan, String command){
+		List<String> commands = new ArrayList<String>();
+
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		Container container;
+		if (item instanceof Container){
+			container = (Container)item;
+		}
+		else {
+			return commands;
+		}
+		if (ContainerInteractionHandler.getItemsFromContainer(player, container, place)){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Client "+ sc.nextLine());
+			sc.close();
+		}
+		return commands;
+	}
 
 }
