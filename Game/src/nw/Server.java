@@ -137,7 +137,7 @@ public class Server extends Thread{
 					time = System.currentTimeMillis();
 					//out.writeObject(world.getPlaces().next());
 				}
-				Thread.sleep(50);
+				Thread.sleep(10);
 			}
 		}catch(ClassNotFoundException e){
 			System.err.println("Server CNF " + e);

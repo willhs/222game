@@ -202,7 +202,7 @@ public class Client extends Thread{
 				}
 
 				frame.repaint();//Repaint the game
-				Thread.sleep(20);
+				Thread.sleep(10);
 			}
 
 		}catch(ClassNotFoundException e){
