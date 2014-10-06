@@ -37,15 +37,15 @@ public class MovementHandler {
 	 */
 	public static boolean playerMove(Player player, Point3D to, Place place,
 			Item... toIgnore) {
-//		if (!place.contains(to)) {
-//			return false;
-//		}
+		if (!place.contains(to)) {
+			return false;
+		}
 		if (player == null || to == null || place == null){
 			return false;
 		}
-		if (!place.contains(to, player.getBoundingBox())) {
-			return false;
-		}
+//		if (!place.contains(to, player.getBoundingBox())) {
+//			return false;
+//		}
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
 			return false;
 		}

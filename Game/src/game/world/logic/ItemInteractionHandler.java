@@ -162,14 +162,17 @@ public class ItemInteractionHandler {
 			Place place) {
 		Rectangle3D rect = player.getBoundingBox().apply3Dpoint(
 				player.getPosition(place));
-		int x = (int) (rect.x - PLAYER_ITEM_DISTANCE);
-		int z = (int) (rect.z - PLAYER_ITEM_DISTANCE);
-		int maxX = (int) (rect.x + rect.width + PLAYER_ITEM_DISTANCE);
-		int maxZ = (int) (rect.z + rect.length + PLAYER_ITEM_DISTANCE);
+		Rectangle3D itemRect = item.getBoundingBox().apply3Dpoint(
+				item.getPosition());
+		int x = (int) (rect.x - PLAYER_ITEM_DISTANCE - itemRect.width / 2);
+		int z = (int) (rect.z - PLAYER_ITEM_DISTANCE - itemRect.length / 2);
+		int maxX = (int) (rect.x + rect.width + PLAYER_ITEM_DISTANCE + itemRect.width / 2);
+		int maxZ = (int) (rect.z + rect.length + PLAYER_ITEM_DISTANCE + itemRect.length / 2);
 		for (; x < maxX; x++) {
 			for (; z < maxZ; z++) {
 				Point3D position = new Point3D(x, 0, z);
-				if (canItemBeHere(item, position, place)) {
+				if (canItemBeHere(item, position, place)
+						&& place.contains(position, item.getBoundingBox())) {
 					item.setPosition(position);
 					return true;
 				}

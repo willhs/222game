@@ -34,12 +34,12 @@ public class Table implements Item{
 
 	@Override
 	public boolean canPickUp() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean canDrop() {
-		return false;
+		return true;
 	}
 
 	@Override

@@ -11,10 +11,12 @@ public class WorldFactory {
 	
 	int counter = 0;
 	public World world;
+	int internalPlaceSize = 500;
+	int randomSize = 500;
 	
 	public WorldFactory(){
 		List<Place> places = new ArrayList<Place>();
-		places.add(makeRandomPlace());
+		places.add(makeRandomPlaceTwo());
 		places.add(makeRandomPlace());
 		world = new World(places);
 	}
@@ -22,35 +24,43 @@ public class WorldFactory {
 	private Place makeRandomPlace() {
 		List<Item> items = new ArrayList<Item>();;
 		List<Enviroment> enviroment = new ArrayList<Enviroment>();
-		int[] xpoints = new int[]{0, (int)(1000*Math.random()), (int)(1000*Math.random()), 0};
-		int[] ypoints = new int[]{0 ,0 , (int)(1000*Math.random()), (int)(1000*Math.random())};
+		int[] xpoints = new int[]{0, internalPlaceSize+(int)(randomSize*Math.random()), internalPlaceSize+(int)(randomSize*Math.random()), 0};
+		int[] ypoints = new int[]{0 ,0 , internalPlaceSize+(int)(randomSize*Math.random()), internalPlaceSize+(int)(randomSize*Math.random())};
 		Polygon poygon = new Polygon(xpoints, ypoints ,xpoints.length);
 		
 		Place place = new Room(items, enviroment, poygon, "Room"+getID());
 		 
-		float x = (float)(1000*Math.random());
-		float z = (float)(1000*Math.random());
-		Item i = new Key("Key"+getID(), new Point3D(x, 0, z));
-		while (!place.contains(i.getPosition(), i.getBoundingBox())
-				|| checkCollitions(i, items, enviroment)){
-			x = (float)(1000*Math.random());
-			z = (float)(1000*Math.random());
-			i = new Key("Key"+getID(), new Point3D(x, 0, z));
-		}
-		items.add(i);
-		
-		do{
-			x = (float)(1000*Math.random());
-			z = (float)(1000*Math.random());
-			i = new Table("Table"+getID(), new Point3D(x, 0, z));
-		}while (!place.contains(i.getPosition(), i.getBoundingBox())
-				|| checkCollitions(i, items, enviroment));
-		items.add(i);
-		
-		
-		items.add(new Table("Table"+getID(), new Point3D(400, 0, 30)));
+		items.add(makeKey(place, items, enviroment));
+		items.add(makeTable(place, items, enviroment));
 		
 		return place;
+	}
+	
+	private Place makeRandomPlaceTwo(){
+		List<Item> items = new ArrayList<Item>();;
+		List<Enviroment> enviroment = new ArrayList<Enviroment>();
+		int[] xpoints = new int[]{0, internalPlaceSize+(int)(randomSize*Math.random()), internalPlaceSize+(int)(randomSize*Math.random()),internalPlaceSize+(int)(randomSize*Math.random()), internalPlaceSize+(int)(randomSize*Math.random()), 0};
+		int[] ypoints = new int[]{0 ,0 , internalPlaceSize+(int)(randomSize*Math.random()), internalPlaceSize+(int)(randomSize*Math.random()),internalPlaceSize+(int)(randomSize*Math.random()), internalPlaceSize+(int)(randomSize*Math.random())};
+		Polygon poygon = new Polygon(xpoints, ypoints ,xpoints.length);
+		
+		Place place = new Room(items, enviroment, poygon, "Room"+getID());
+		 
+		items.add(makeKey(place, items, enviroment));
+		items.add(makeTable(place, items, enviroment));
+		
+		return place;
+	}
+
+	private Item makeTable(Place place, List<Item> items,
+			List<Enviroment> enviroment) {
+		Table i = null;
+		do{
+			float x = (float)(1000*Math.random());
+			float z = (float)(1000*Math.random());
+			i = new Table("Key"+getID(), new Point3D(x, 0, z));
+		}while (!place.contains(i.getPosition(), i.getBoundingBox())
+				|| checkCollitions(i, items, enviroment));
+		return i;
 	}
 
 	public Place makeStartPlace(){
@@ -84,4 +94,15 @@ public class WorldFactory {
 		return counter++;
 	}
 	
+	
+	private Key makeKey(Place place, List<Item> items, List<Enviroment> enviroment){
+		Key i = null;
+		do{
+			float x = (float)(1000*Math.random());
+			float z = (float)(1000*Math.random());
+			i = new Key("Key"+getID(), new Point3D(x, 0, z));
+		}while (!place.contains(i.getPosition(), i.getBoundingBox())
+				|| checkCollitions(i, items, enviroment));
+		return i;
+	}
 }
