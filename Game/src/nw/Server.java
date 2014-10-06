@@ -42,7 +42,9 @@ public class Server extends Thread{
 		Polygon firstFloor = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> firstItems = new ArrayList<Item>();
 		firstItems.add(new Key("KeyFlyer", new Point3D(300, 0, 300)));
-		Room firstRoom = new Room(firstItems, new ArrayList<Enviroment>(), firstFloor, "Room1");
+		List<Enviroment> enviro = new ArrayList<Enviroment>();
+		enviro.add(new Tree("Tree", new Point3D(400, 0, 700)));
+		Room firstRoom = new Room(firstItems, enviro, firstFloor, "Room1");
 		Polygon secontFloor = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> secondItems = new ArrayList<Item>();
 		Container c = new Chest("Chest1", new Inventory(), new Point3D(700, 0, 700));
@@ -54,7 +56,7 @@ public class Server extends Thread{
 		places.add(firstRoom);
 		places.add(secondRoom);
 		
-		Exit exit = new Door("Door1", firstRoom, new Point3D(400, 0, 400),
+		Exit exit = new LockedDoor("Door1", firstRoom, new Point3D(400, 0, 400),
 		                secondRoom, new Point3D(400, 0, 500));
 		firstRoom.addExit(exit);
 		secondRoom.addExit(exit);
@@ -110,17 +112,17 @@ public class Server extends Thread{
 					received = in.readObject();//Get one
 					if(received instanceof String){//If it's a string, it's a command, let's process it
 						recStr = ((String)received);
-						System.out.println("[Server] Got: " + recStr);
+//						System.out.println("[Server] Got: " + recStr);
 						if(recStr.equals("Quit")){
 							throw new IOException();
 						}
 						
 						for(String cmd : world.applyCommand((String)received)){//Apply the command and
-							System.out.println("[Server] Returning: " + cmd);	
+//							System.out.println("[Server] Returning: " + cmd);	
 							Server.send(cmd);//Send each resulting command to all clients.
 						}
 					}else{
-						System.out.println("[Server] No idea what this is: " + received);
+//						System.out.println("[Server] No idea what this is: " + received);
 					}
 				}
 
@@ -140,11 +142,11 @@ public class Server extends Thread{
 		}finally{
 			outStreams.remove(id);
 
-			System.out.print("Player left.  Remaining IDs: ");
+//			System.out.print("Player left.  Remaining IDs: ");
 			for(Integer cid : outStreams.keySet()){
-				System.out.print(cid + ", ");
+//				System.out.print(cid + ", ");
 			}
-			System.out.println();
+//			System.out.println();
 
 			try{
 				in.close();

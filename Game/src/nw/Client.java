@@ -172,19 +172,19 @@ public class Client extends Thread{
 					received = in.readObject();//Read it in
 
 					if(received instanceof String){//If it's a string, it's a command
-						System.out.println("[Client] Got: " + (String)received);
+//						System.out.println("[Client] Got: " + (String)received);
 						world.applyCommand((String)received);//So run it on the world
 						GameWindow.setRoom((Room)world.getCurrentPlace());
 					}
 					else if(received instanceof World){//If we got a world, then
-						System.out.println("[Client] Got world!: " + received);
+//						System.out.println("[Client] Got world!: " + received);
 						world = (World)received;//Save it
 
 						//Set the room as the player's current place
 						Room cp = (Room)world.getCurrentPlace();
 						GameWindow.setRoom((Room)(cp != null ? cp : world.getPlaces().next()));
 					}else{
-						System.out.println("[Client] No idea what this is: " + received);
+//						System.out.println("[Client] No idea what this is: " + received);
 					}
 				}
 
