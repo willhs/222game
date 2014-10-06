@@ -103,7 +103,7 @@ public class Point3D implements Serializable{
 		return new Vector3D(one.x - two.x, one.y - two.y, one.z - two.z);
 	}
 
-	public static Point3D addDirectiong(Point3D currentPlace, Vector3D direction) {
+	public static Point3D addDirection(Point3D currentPlace, Vector3D direction) {
 		return new Point3D(currentPlace.x + direction.x, currentPlace.y
 				+ direction.y, currentPlace.z + direction.z);
 	}
