@@ -27,6 +27,8 @@ public class Server extends Thread{
 	//The single server world.  Should probably synchronize this, lest wrath we face.
 	private static ServerWorld world;
 
+	private static boolean printing = false;
+
 	public Server(InputStream inStream, OutputStream outStream, int id){
 		this.inStream = inStream;
 		this.outStream = outStream;
@@ -73,6 +75,12 @@ public class Server extends Thread{
 		}
 	}
 
+	public static void print(String msg){
+		if(printing){
+			System.out.println(msg);
+		}
+	}
+
 	/*
 	 * The main loop.  This function is running once for each player in the game concurrently.
 	 * It:
@@ -92,7 +100,7 @@ public class Server extends Thread{
 			//Wrap the output stream in an ObjectOutputStream, for sending whole objects
 			out = new ObjectOutputStream(outStream);
 			out.flush();
-			System.out.println("adding broadcast id " + id);
+			print("adding broadcast id " + id);
 			outStreams.put(id, out);//Add the output stream to the list of broadcast streams
 
 			//Wrap the input stream in a buffer, so we don't block waiting for the client to send
@@ -110,17 +118,17 @@ public class Server extends Thread{
 					received = in.readObject();//Get one
 					if(received instanceof String){//If it's a string, it's a command, let's process it
 						recStr = ((String)received);
-						System.out.println("[Server] Got: " + recStr);
+						print("[Server] Got: " + recStr);
 						if(recStr.equals("Quit")){
 							throw new IOException();
 						}
 						
 						for(String cmd : world.applyCommand((String)received)){//Apply the command and
-							System.out.println("[Server] Returning: " + cmd);	
+							print("[Server] Returning: " + cmd);	
 							Server.send(cmd);//Send each resulting command to all clients.
 						}
 					}else{
-						System.out.println("[Server] No idea what this is: " + received);
+						print("[Server] No idea what this is: " + received);
 					}
 				}
 
@@ -144,7 +152,7 @@ public class Server extends Thread{
 			for(Integer cid : outStreams.keySet()){
 				System.out.print(cid + ", ");
 			}
-			System.out.println();
+			print("");
 
 			try{
 				in.close();

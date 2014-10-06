@@ -6,10 +6,7 @@ import game.world.logic.*;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 import java.awt.Component;
 
 public class Client extends Thread{
@@ -30,6 +27,8 @@ public class Client extends Thread{
 	//Outgoing command queue.  Key events are not actually accepted by the server, they have to be translated.
 	//We translate them, then add them to this queue which is polled and added to by the main loop.
 	private static Queue<String> commandQueue = new LinkedList<String>();
+
+	private static boolean printing = false;
 
 	/*
 	 * Instantiate Client in multiplayer mode, join a remote game
@@ -144,6 +143,12 @@ public class Client extends Thread{
 		}
 	}
 
+	public static void print(String msg){
+		if(printing){
+			System.out.println(msg);
+		}
+	}
+
 	/*
 	 * The full client loop.  Creates connections to server, then runs the main loop which
 	 * reads one item from the incoming queue and processes it, then sends one item
@@ -172,19 +177,19 @@ public class Client extends Thread{
 					received = in.readObject();//Read it in
 
 					if(received instanceof String){//If it's a string, it's a command
-						System.out.println("[Client] Got: " + (String)received);
+						print("[Client] Got: " + (String)received);
 						world.applyCommand((String)received);//So run it on the world
 						GameWindow.setRoom((Room)world.getCurrentPlace());
 					}
 					else if(received instanceof World){//If we got a world, then
-						System.out.println("[Client] Got world!: " + received);
+						print("[Client] Got world!: " + received);
 						world = (World)received;//Save it
 
 						//Set the room as the player's current place
 						Room cp = (Room)world.getCurrentPlace();
 						GameWindow.setRoom((Room)(cp != null ? cp : world.getPlaces().next()));
 					}else{
-						System.out.println("[Client] No idea what this is: " + received);
+						print("[Client] No idea what this is: " + received);
 					}
 				}
 
