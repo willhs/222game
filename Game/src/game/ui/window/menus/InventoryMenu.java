@@ -115,12 +115,11 @@ public class InventoryMenu implements GraphicsPane {
 
 		//iterate through the players inventory
 		for(Item item : player.getInventory()){
-
 			//iterate through the current items already in the inventory
 			for(int i = 0; i < items.length; i++){
 				if(items[i] != null){//check if there is an item at this location
-					if(player.getInventory().isIn(items[i]))items[i] = null;
-					
+					if(!(player.getInventory().isIn(items[i])))items[i] = null;
+					System.out.println("Name of Item : = " +items[i].getName());
 					if(items[i].getName().equals(item.getName()) || game.inInventory(item)){
 						in = true;//the item is already in  the item array
 					}
@@ -175,6 +174,7 @@ public class InventoryMenu implements GraphicsPane {
 				if(items[curGrid] != null ){
 					if(selectItemOnGrid != curGrid)g.drawImage(Res.getImageFromName(items[curGrid].getImageName()), x, y,gridSize,gridSize, panel);
 				}
+
 
 				x +=gridSize;
 				curGrid++;
@@ -279,6 +279,7 @@ public class InventoryMenu implements GraphicsPane {
 			displayMenu(g);
 			displayingInfo = true;
 		}
+		//updateInventory();
 
 		drawFrame(g);//draws the outside of the inventory
 		drawCharactrInventory(g);//draws the character part of the inventory
@@ -370,6 +371,7 @@ public class InventoryMenu implements GraphicsPane {
 				game.placeItemOnGrid(gridOnGameBar, selectedItem);
 				selectedItem = null;
 				items[selectItemOnGrid] = null;
+				selectItemOnGrid = -1;
 				return;
 			}
 		}
@@ -387,7 +389,7 @@ public class InventoryMenu implements GraphicsPane {
 				Item item = game.grabItemFromIventory(game.isOnGrid((int)e.getX(),(int)e.getY()));
 				if(item!=null){
 					selectedItem = item;
-					selectItemOnGrid = -1;//TODO fix the problem is the last place is on the hotbar
+					selectItemOnGrid = -1;
 				}
 			}
 		}

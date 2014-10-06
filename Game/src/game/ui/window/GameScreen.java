@@ -75,7 +75,7 @@ public class GameScreen implements GraphicsPane  {
 		popUpInventory.updateInventory();
 		releventQueKeypress = createKeylist();
 		rotateVector = new Vector3D(0f, 0f, 0f);
-
+		
 		setUpInventoryBarButtons();
 	}
 
