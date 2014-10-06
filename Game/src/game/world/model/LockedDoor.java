@@ -8,7 +8,7 @@ public class LockedDoor extends Exit{
 	private final String name;
 	private final String imageName;
 	private boolean isLocked = true;
-	private int keysToOpen = 1;
+	private int keysToOpen;
 	private static final Rectangle3D boundingBox = new Rectangle3D(30, 60, 30);
 
 	public LockedDoor(String name, Place placeOne, Point3D positionInPlaceOne,
@@ -16,6 +16,15 @@ public class LockedDoor extends Exit{
 		super(placeOne, positionInPlaceOne, placeTwo, positionInPlaceTwo);
 		this.name = name;
 		this.imageName = "Door";
+		keysToOpen = 1;
+	}
+	
+	public LockedDoor(String name, Place placeOne, Point3D positionInPlaceOne,
+			Place placeTwo, Point3D positionInPlaceTwo, int keyAmount) {
+			super(placeOne, positionInPlaceOne, placeTwo, positionInPlaceTwo);
+			this.name = name;
+			this.imageName = "Door";
+			keysToOpen = keyAmount;
 	}
 
 	@Override
