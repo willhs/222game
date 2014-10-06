@@ -15,6 +15,12 @@ public class Table implements Item{
 		this.position = posistion;
 		this.boundingBox = size;
 	}
+	
+	public Table(String name, Point3D position){
+		this.name = name;
+		this.position = position;
+		this.boundingBox = new Rectangle3D(50, 50, 50);
+	}
 
 	@Override
 	public String getName() {
