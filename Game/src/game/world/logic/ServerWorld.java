@@ -159,9 +159,12 @@ public abstract class ServerWorld implements Serializable {
 		List<String> commands = new ArrayList<String>();
 		scan.next();
 		Player player = Parser.parsePlayer(scan);
+		Parser.removeUnneedText("Image", scan);
+		String imageName = Parser.parseName(scan);
+		player.setImageName(imageName);
 		if (addPlayerToGameWorld(player)) {
 			String newCommand = "Client PlayerPlacement Name ( "
-					+ player.getName() + " ) Position ( "
+					+ player.getName() + " ) Image ( " +imageName+" ) Position ( "
 					+ player.getPosition().toString() + " )";
 			commands.add(newCommand);
 		}

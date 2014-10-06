@@ -263,7 +263,9 @@ public abstract class ClientWorld extends ServerWorld {
 		if (getPlayerByName(player.getName()) != null) {
 			return "";
 		}
-		return "Server PlayerPlacement Name ( " + player.name + " )";
+		String command = "Server PlayerPlacement Name ( " + player.name + " ) Image ( " +player.getImageName()+" ) ";
+		
+		return command;
 	}
 
 	/**
@@ -277,6 +279,9 @@ public abstract class ClientWorld extends ServerWorld {
 
 		Parser.removeUnneedText("Name", scan);
 		String name = Parser.parseName(scan);
+		
+		Parser.removeUnneedText("Image", scan);
+		String imageName = Parser.parseName(scan);
 
 		Parser.removeUnneedText("Position", scan);
 		Point3D position = Parser.parsePosition(scan);
@@ -292,6 +297,7 @@ public abstract class ClientWorld extends ServerWorld {
 			this.addPlayer(player);
 			getPlayerByName(name).move(position);
 			place.addPlayer(player);
+			player.setImageName(imageName);
 		}
 		return true;
 	}
