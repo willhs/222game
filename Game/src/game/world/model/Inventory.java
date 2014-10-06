@@ -48,4 +48,8 @@ public class Inventory implements Iterable<Item>, Serializable{
 		return items.iterator();
 	}
 	
+	public boolean isIn(Item item){
+		return items.contains(item);
+	}
+	
 }
