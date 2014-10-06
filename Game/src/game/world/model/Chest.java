@@ -29,7 +29,7 @@ public class Chest extends Container{
 
 	@Override
 	public String getImageName() {
-		return "Chest";
+		return getContents().isEmpty() ? "OpenChest" : "Chest";
 	}
 
 	@Override

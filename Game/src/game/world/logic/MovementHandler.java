@@ -195,7 +195,9 @@ public class MovementHandler {
 			return false;
 		}
 		if (exit.isLocked()) {
+			System.out.println("Um is it here");
 			if (!exit.unlock(player.getInventory())) {
+				System.out.println("Should make it here.");
 				return false;
 			}
 		}
