@@ -19,6 +19,7 @@ import java.util.Iterator;
 public class MovementHandler {
 
 	private static final float PLAYER_EXIT_DISTANCE = 10;
+	
 	/**
 	 * This will move the player from its old position to the new one This
 	 * method will handle all the rules for movement.
