@@ -19,6 +19,7 @@ import java.util.Iterator;
 public class MovementHandler {
 
 	private static final float PLAYER_EXIT_DISTANCE = 10;
+	private static final float EXITING_DISTANCE = 20;
 	
 	/**
 	 * This will move the player from its old position to the new one This
@@ -232,10 +233,10 @@ public class MovementHandler {
 	 */
 	private static boolean setPlayerExitPosition(Player player, Exit exit, Place place){
 		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
-		int x = (int)rect.x-20;
-		int z = (int)rect.z-20;
-		int maxX = (int)(rect.x+rect.width+20);
-		int maxZ = (int)(rect.z+rect.length+20);
+		int x = (int)(rect.x-EXITING_DISTANCE);
+		int z = (int)(rect.z-EXITING_DISTANCE);
+		int maxX = (int)(rect.x+rect.width+EXITING_DISTANCE);
+		int maxZ = (int)(rect.z+rect.length+EXITING_DISTANCE);
 		for (;x < maxX; x++){
 			for (;z < maxZ; z++){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
