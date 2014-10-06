@@ -93,6 +93,9 @@ public class World extends ClientWorld implements Serializable{
 	public boolean addPlayerToGameWorld(Player player){
 		players.add(player);
 		allPlayers.put(player.getName(), player);
+		for (Item item: player.getInventory()){
+			allItems.put(item.getName(), item);
+		}
 		return startPlace.setStartPoint(player);
 	}
 
@@ -104,6 +107,9 @@ public class World extends ClientWorld implements Serializable{
 	@Override
 	protected void addPlayer(Player player) {
 		allPlayers.put(player.getName(), player);
+		for (Item item: player.getInventory()){
+			allItems.put(item.getName(), item);
+		}
 		players.add(player);
 	}
 

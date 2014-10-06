@@ -18,6 +18,8 @@ import java.util.Iterator;
  */
 public class MovementHandler {
 
+	private static final float PLAYER_EXIT_DISTANCE = 10;
+	
 	/**
 	 * This will move the player from its old position to the new one This
 	 * method will handle all the rules for movement.
@@ -212,9 +214,9 @@ public class MovementHandler {
 	 */
 	public static boolean checkProximity(Point3D pointOne,
 			Rectangle3D boundingOne, Point3D pointTwo, Rectangle3D boundingTwo) {
-		if ((Math.abs(pointOne.x - pointTwo.x) <= 10 + (boundingOne.getWidth() + boundingTwo
+		if ((Math.abs(pointOne.x - pointTwo.x) <= PLAYER_EXIT_DISTANCE + (boundingOne.getWidth() + boundingTwo
 				.getWidth()) / 2)
-				&& (Math.abs(pointOne.z - pointTwo.z) <= 10 + (boundingOne
+				&& (Math.abs(pointOne.z - pointTwo.z) <= PLAYER_EXIT_DISTANCE + (boundingOne
 						.getLength() + boundingTwo.getLength()) / 2)) {
 			return true;
 		}
