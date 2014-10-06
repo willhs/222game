@@ -40,6 +40,9 @@ public class MovementHandler {
 //		if (!place.contains(to)) {
 //			return false;
 //		}
+		if (player == null || to == null || place == null){
+			return false;
+		}
 		if (!place.contains(to, player.getBoundingBox())) {
 			return false;
 		}
@@ -184,6 +187,9 @@ public class MovementHandler {
 	 * @return - returns true if the player exited correctly.
 	 */
 	public static boolean exitPlace(Player player, Place place, Exit exit) {
+		if (player == null || exit == null || place == null){
+			return false;
+		}
 		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
 				exit.getPosition(place), exit.getBoundingBox())) {
 			return false;

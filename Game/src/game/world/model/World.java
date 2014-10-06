@@ -54,7 +54,14 @@ public class World extends ClientWorld implements Serializable{
 			while (it.hasNext()){
 				Item i = it.next();
 				allItems.put(i.getName(), i);
+				if (i instanceof Container){
+					Container con = (Container)i;
+					for (Item consItem: con.getContents()){
+						allItems.put(consItem.getName(), consItem);
+					}
+				}
 			}
+			
 		}
 
 	}

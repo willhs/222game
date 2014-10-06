@@ -5,7 +5,7 @@ import game.world.dimensions.Rectangle3D;
 
 public class Key implements Item {
 
-	private static final Rectangle3D boundingBox = new Rectangle3D(5f, 5f, 5f);
+	private static final Rectangle3D boundingBox = new Rectangle3D(10f, 10f, 10f);
 	private final String name;
 	private final String imageName;
 	private Point3D position;
