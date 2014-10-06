@@ -19,7 +19,7 @@ public class Player implements Character, Serializable{
 	public final String name;
 	private final Inventory inventory;
 	private Point3D position;
-	private static final Rectangle3D boundngBox = new Rectangle3D(20, 20, 20);
+	private static final Rectangle3D boundngBox = new Rectangle3D(30, 50, 30);
 	private Vector3D direction = new Vector3D(1,0,1);
 	private String imageName = "Player";
 
