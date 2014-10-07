@@ -73,7 +73,7 @@ public class Server extends Thread{
 	 * Broadcast an object to all clients.
 	 * @param o Object to send to all clients.
 	 */
-	public static void send(Object o) throws IOException{
+	 synchronized public static void send(Object o) throws IOException{
 		for(ObjectOutputStream os : outStreams.values()){
 			os.writeObject(o);
 		}
