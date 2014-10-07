@@ -28,7 +28,12 @@ public class Client extends Thread{
 	//We translate them, then add them to this queue which is polled and added to by the main loop.
 	private static Queue<String> commandQueue = new LinkedList<String>();
 
+	//Flag for printing debug messages
 	private static boolean printing = false;
+
+	//The number of remaining seconds in the game.  Updated by server.
+	private static int remainingSecondsFromServer = 0;
+	private static int lastTimeUpdate = 0;
 
 	/*
 	 * Instantiate Client in multiplayer mode, join a remote game
@@ -149,6 +154,10 @@ public class Client extends Thread{
 		}
 	}
 
+	private static int getSecondsRemaining(){
+		return remainingSecondsFromServer - ((((int)System.currentTimeMillis())/1000)-lastTimeUpdate);
+	}
+
 	/*
 	 * The full client loop.  Creates connections to server, then runs the main loop which
 	 * reads one item from the incoming queue and processes it, then sends one item
@@ -188,6 +197,10 @@ public class Client extends Thread{
 						//Set the room as the player's current place
 						Room cp = (Room)world.getCurrentPlace();
 						GameWindow.setRoom((Room)(cp != null ? cp : world.getPlaces().next()));
+					}
+					else if(received instanceof Integer){//If it's an integer, the server is telling us the remaining time
+						remainingSecondsFromServer = ((Integer)received).intValue();
+						lastTimeUpdate = (int)System.currentTimeMillis() / 1000;
 					}else{
 						print("[Client] No idea what this is: " + received);
 					}
@@ -199,6 +212,7 @@ public class Client extends Thread{
 					if(cmd.equals("Quit")){
 						throw new IOException();
 					}
+					print("[Client]: " + getSecondsRemaining());
 				}
 
 				frame.repaint();//Repaint the game

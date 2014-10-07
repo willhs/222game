@@ -19,6 +19,9 @@ public class Server extends Thread{
 	private OutputStream outStream;
 	private int id;
 
+	private static int startTime = 0;
+	private static int timeLimit = 50;
+
 	//One hashmap of output streams shared by all connections.  Every time something needs to be sent out
 	//to all clients (almost everything), it is sent out on each stream in this hashmap.
 	//Neds to be a hashmap so we can remove the right stream on exit.
@@ -63,6 +66,7 @@ public class Server extends Thread{
 
 		world = new World(places);
 		world.addExit(exit);
+		startTime = (int)System.currentTimeMillis();
 	}
 
 	/*
@@ -79,6 +83,13 @@ public class Server extends Thread{
 		if(printing){
 			System.out.println(msg);
 		}
+	}
+
+	public static int getRemainingSeconds(){
+		return timeLimit - getTimeElapsed();
+	}
+	private static int getTimeElapsed(){
+		return (((int)System.currentTimeMillis()) - startTime)/1000;
 	}
 
 	/*
@@ -111,6 +122,7 @@ public class Server extends Thread{
 
 			synchronized(world){
 				out.writeObject(world);//Send the whole world to the client
+				out.writeObject(new Integer(getRemainingSeconds()));//Send the number of seconds remaining in the game
 			}
 			while(true){//Forever:
 	
@@ -122,6 +134,7 @@ public class Server extends Thread{
 						if(recStr.equals("Quit")){
 							throw new IOException();
 						}
+						//System.out.println(getRemainingSeconds() + " remaining");
 						
 						for(String cmd : world.applyCommand((String)received)){//Apply the command and
 							print("[Server] Returning: " + cmd);	
@@ -132,11 +145,6 @@ public class Server extends Thread{
 					}
 				}
 
-				//We might choose to intermittently send the current room to deal with losses, but not at the moment.
-				if((System.currentTimeMillis()-time)/1000 >= 2){
-					time = System.currentTimeMillis();
-					//out.writeObject(world.getPlaces().next());
-				}
 				Thread.sleep(10);
 			}
 		}catch(ClassNotFoundException e){
