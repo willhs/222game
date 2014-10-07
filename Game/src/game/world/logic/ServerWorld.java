@@ -42,6 +42,210 @@ public abstract class ServerWorld implements Serializable {
 		}
 		return commands;
 	}
+	
+	/**
+	 * Handles the player placement at the start of the game.
+	 * 
+	 * @param scan
+	 *            - scanner that has the command in it.
+	 * @param command
+	 *            - the command that is used later.
+	 * @return - return the client vertion of the command for all clients to
+	 *         user.
+	 */
+	private List<String> serverPlayerPlacement(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+		scan.next();
+		Player player = Parser.parsePlayer(scan);
+		Parser.removeUnneedText("Image", scan);
+		String imageName = Parser.parseName(scan);
+		player.setImageName(imageName);
+		if (addPlayerToGameWorld(player)) {
+			String newCommand = "Client PlayerPlacement Name ( "
+					+ player.getName() + " ) Image ( " +imageName+" ) Position ( "
+					+ player.getPosition().toString() + " )";
+			commands.add(newCommand);
+		}
+		return commands;
+	}
+
+	/**
+	 * server handling of the handle move checks if the player can move and
+	 * moves them if they can.
+	 * 
+	 * @param scan
+	 *            - scanner with the command in it.
+	 * @param command
+	 *            - the command for later use.
+	 * @return - a list of commands could have the sucsessful command in it.
+	 */
+	private List<String> serverHandleMove(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+		// Gets the players name
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+		// Gets the point the player is to move to.
+		Parser.removeUnneedText("Point", scan);
+		Point3D playerPosition = Parser.parsePosition(scan);
+		// get the place which the player is to move in.
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+
+		// Checks the logic to sort all of the players movement.
+		if (MovementHandler.playerMove(getPlayerByName(playerName),
+				playerPosition, getPlaceByName(placeName))) {
+			// Makes the command for the client.
+			Scanner sc = new Scanner(command);
+			sc.next();
+			String newCommand = "Client " + sc.nextLine();
+			commands.add(newCommand);
+			sc.close();
+		}
+		
+		// Returns the new command.
+		return commands;
+	}
+
+	/**
+	 * Handles the server checking for the exit interaction
+	 * 
+	 * @param scan
+	 *            - scanner with the command in it.
+	 * @param command
+	 *            - the command needed for concatatantion to make a new command.
+	 * @return - a list of commands that are to be returns will have one of none
+	 *         in it.
+	 */
+	private List<String> serverExitInteraction(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String exitName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		if (MovementHandler.exitPlace(getPlayerByName(playerName),
+				getPlaceByName(placeName), getExitByName(exitName))) {
+			Scanner sc = new Scanner(command);
+			sc.next();
+			Player player = getPlayerByName(playerName);
+			commands.add("Client " + sc.nextLine() + " Position ( "
+					+ player.getPosition() + " )");
+			sc.close();
+		}
+		return commands;
+	}
+
+	/**
+	 * Checks for the the logic for item pickup.
+	 * @param scan - the scanner with the command it in.
+	 * @param command - the command that is to be parsed.
+	 * @return - returns a string that is the command for the client.
+	 */
+	private List<String> serverItemPickUp(Scanner scan, String command) {
+		List<String> commands = new ArrayList<String>();
+
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		
+		if (ItemInteractionHandler.pickupItem(player, item, place)){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Client "+ sc.nextLine());
+			sc.close();
+		}
+		return commands;
+	}
+	
+	/**
+	 * Handles the servers item dropping logic makes a call to a handler.
+	 * @param scan - the scanner with command in it.
+	 * @param command -  the command.
+	 * @return - a string with a command in it or and empty string.
+	 */
+	private List<String> serverItemDrop(Scanner scan, String command){
+		List<String> commands = new ArrayList<String>();
+
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		
+		if (ItemInteractionHandler.dropItem(player, item, place)){
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Client "+ sc.nextLine() + " Point " + item.getPosition());
+			sc.close();
+		}
+		return commands;
+	}
+	
+	/**
+	 * Logic for containers
+	 * @param scan - scanner with the container command in it.
+	 * @param command - the command it self.
+	 * @return - returns a new command to.
+	 */
+	private List<String> serverContainerInteraction(Scanner scan, String command){
+		List<String> commands = new ArrayList<String>();
+		// Get the player name.
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+		// get the item name.
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+		// get the place name.
+		Parser.removeUnneedText("Name", scan);
+		String placeName = Parser.parseName(scan);
+		
+		// Get the player , item and Place.
+		Player player = getPlayerByName(playerName);
+		Item item = getItemByName(itemName);
+		Place place = getPlaceByName(placeName);
+		Container container;
+		
+		// Checks if the item is a container if not returns the empty command.
+		if (item instanceof Container){
+			container = (Container)item;
+		}
+		else {
+			return commands;
+		}
+		
+		// Make a request of the container handler to check logic
+		if (ContainerInteractionHandler.getItemsFromContainer(player, container, place)){
+			// if true then make the client command.
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Client "+ sc.nextLine());
+			sc.close();
+		}
+		// returns the command for the client to do.
+		return commands;
+	}
+
+
 
 	/**
 	 * getPlaces method returns all the places in the form of a iterator
@@ -145,189 +349,4 @@ public abstract class ServerWorld implements Serializable {
 	 */
 	public abstract void addExit(Exit exit);
 
-	/**
-	 * Handles the player placement at the start of the game.
-	 * 
-	 * @param scan
-	 *            - scanner that has the command in it.
-	 * @param command
-	 *            - the command that is used later.
-	 * @return - return the client vertion of the command for all clients to
-	 *         user.
-	 */
-	private List<String> serverPlayerPlacement(Scanner scan, String command) {
-		List<String> commands = new ArrayList<String>();
-		scan.next();
-		Player player = Parser.parsePlayer(scan);
-		Parser.removeUnneedText("Image", scan);
-		String imageName = Parser.parseName(scan);
-		player.setImageName(imageName);
-		if (addPlayerToGameWorld(player)) {
-			String newCommand = "Client PlayerPlacement Name ( "
-					+ player.getName() + " ) Image ( " +imageName+" ) Position ( "
-					+ player.getPosition().toString() + " )";
-			commands.add(newCommand);
-		}
-		return commands;
 	}
-
-	/**
-	 * server handling of the handle move checks if the player can move and
-	 * moves them if they can.
-	 * 
-	 * @param scan
-	 *            - scanner with the command in it.
-	 * @param command
-	 *            - the command for later use.
-	 * @return - a list of commands could have the sucsessful command in it.
-	 */
-	private List<String> serverHandleMove(Scanner scan, String command) {
-		List<String> commands = new ArrayList<String>();
-
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Point", scan);
-		Point3D playerPosition = Parser.parsePosition(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-
-		if (MovementHandler.playerMove(getPlayerByName(playerName),
-				playerPosition, getPlaceByName(placeName))) {
-			Scanner sc = new Scanner(command);
-			sc.next();
-			String newCommand = "Client " + sc.nextLine();
-			commands.add(newCommand);
-			sc.close();
-		}
-		return commands;
-	}
-
-	/**
-	 * Handles the server checking for the exit interaction
-	 * 
-	 * @param scan
-	 *            - scanner with the command in it.
-	 * @param command
-	 *            - the command needed for concatatantion to make a new command.
-	 * @return - a list of commands that are to be returns will have one of none
-	 *         in it.
-	 */
-	private List<String> serverExitInteraction(Scanner scan, String command) {
-		List<String> commands = new ArrayList<String>();
-
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String exitName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-		if (MovementHandler.exitPlace(getPlayerByName(playerName),
-				getPlaceByName(placeName), getExitByName(exitName))) {
-			Scanner sc = new Scanner(command);
-			sc.next();
-			Player player = getPlayerByName(playerName);
-			commands.add("Client " + sc.nextLine() + " Position ( "
-					+ player.getPosition() + " )");
-			sc.close();
-		}
-		return commands;
-	}
-
-	/**
-	 * Checks for the the logic for item pickup.
-	 * @param scan - the scanner with the command it in.
-	 * @param command - the command that is to be parsed.
-	 * @return - returns a string that is the command for the client.
-	 */
-	private List<String> serverItemPickUp(Scanner scan, String command) {
-		List<String> commands = new ArrayList<String>();
-
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String itemName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-
-		Player player = getPlayerByName(playerName);
-		Item item = getItemByName(itemName);
-		Place place = getPlaceByName(placeName);
-		
-		if (ItemInteractionHandler.pickupItem(player, item, place)){
-			Scanner sc = new Scanner(command);
-			sc.next();
-			commands.add("Client "+ sc.nextLine());
-			sc.close();
-		}
-		return commands;
-	}
-	
-	/**
-	 * Handles the servers item dropping logic makes a call to a handler.
-	 * @param scan - the scanner with command in it.
-	 * @param command -  the command.
-	 * @return - a string with a command in it or and empty string.
-	 */
-	private List<String> serverItemDrop(Scanner scan, String command){
-		List<String> commands = new ArrayList<String>();
-
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String itemName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-		
-		Player player = getPlayerByName(playerName);
-		Item item = getItemByName(itemName);
-		Place place = getPlaceByName(placeName);
-		
-		if (ItemInteractionHandler.dropItem(player, item, place)){
-			Scanner sc = new Scanner(command);
-			sc.next();
-			commands.add("Client "+ sc.nextLine() + " Point " + item.getPosition());
-			sc.close();
-		}
-		return commands;
-	}
-	
-	private List<String> serverContainerInteraction(Scanner scan, String command){
-		List<String> commands = new ArrayList<String>();
-
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String itemName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-		
-		Player player = getPlayerByName(playerName);
-		Item item = getItemByName(itemName);
-		Place place = getPlaceByName(placeName);
-		Container container;
-		if (item instanceof Container){
-			container = (Container)item;
-		}
-		else {
-			return commands;
-		}
-		if (ContainerInteractionHandler.getItemsFromContainer(player, container, place)){
-			Scanner sc = new Scanner(command);
-			sc.next();
-			commands.add("Client "+ sc.nextLine());
-			sc.close();
-		}
-		return commands;
-	}
-
-}
