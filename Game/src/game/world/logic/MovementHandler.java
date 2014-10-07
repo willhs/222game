@@ -20,7 +20,7 @@ public class MovementHandler {
 
 	private static final float PLAYER_EXIT_DISTANCE = 10;
 	private static final float EXITING_DISTANCE = 20;
-	
+
 	/**
 	 * This will move the player from its old position to the new one This
 	 * method will handle all the rules for movement.
@@ -195,9 +195,7 @@ public class MovementHandler {
 			return false;
 		}
 		if (exit.isLocked()) {
-			System.out.println("Um is it here");
 			if (!exit.unlock(player.getInventory())) {
-				System.out.println("Should make it here.");
 				return false;
 			}
 		}

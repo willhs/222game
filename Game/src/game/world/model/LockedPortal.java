@@ -3,27 +3,24 @@ package game.world.model;
 
 import game.world.dimensions.*;
 
-public class LockedDoor extends Exit{
-	
+public class LockedPortal extends Exit{
+
 	private final String name;
-	private final String imageName;
 	private boolean isLocked = true;
 	private int keysToOpen;
 	private static final Rectangle3D boundingBox = new Rectangle3D(30, 60, 30);
 
-	public LockedDoor(String name, Place placeOne, Point3D positionInPlaceOne,
+	public LockedPortal(String name, Place placeOne, Point3D positionInPlaceOne,
 		Place placeTwo, Point3D positionInPlaceTwo) {
 		super(placeOne, positionInPlaceOne, placeTwo, positionInPlaceTwo);
 		this.name = name;
-		this.imageName = "Door";
 		keysToOpen = 1;
 	}
-	
-	public LockedDoor(String name, Place placeOne, Point3D positionInPlaceOne,
+
+	public LockedPortal(String name, Place placeOne, Point3D positionInPlaceOne,
 			Place placeTwo, Point3D positionInPlaceTwo, int keyAmount) {
 			super(placeOne, positionInPlaceOne, placeTwo, positionInPlaceTwo);
 			this.name = name;
-			this.imageName = "Door";
 			keysToOpen = keyAmount;
 	}
 
@@ -39,7 +36,7 @@ public class LockedDoor extends Exit{
 
 	@Override
 	public String getImageName() {
-		return imageName;
+		return isLocked() ? "ClosedPortal" : "OpenPortal";
 	}
 
 	@Override
@@ -51,7 +48,7 @@ public class LockedDoor extends Exit{
 	public boolean unlock(Inventory inventory) {
 		int count = keysToOpen;
 		for(Item i: inventory){
-			if (i instanceof Key){
+			if (i instanceof Crystal){
 				System.out.println(count);
 				count--;
 			}

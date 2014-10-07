@@ -10,4 +10,7 @@ public class Cube extends Enviroment{
         super(name, poisition, new Rectangle3D(20, 20, 20));
     }
 
+    public Cube(String name, Point3D poisition, float size) {
+        super(name, poisition, new Rectangle3D(size, size, size));
+    }
 }

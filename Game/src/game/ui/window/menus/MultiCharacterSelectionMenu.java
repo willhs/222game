@@ -233,6 +233,9 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			nameBoxSelected = true;
 			portSelected = false;
 		}
+		else{
+			nameBoxSelected = true;
+		}
 	}
 
 

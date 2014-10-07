@@ -46,12 +46,12 @@ public class Server extends Thread{
 		int[] ypoints = new int[] { 200, 200, 800, 800 };
 		Polygon firstFloor = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> firstItems = new ArrayList<Item>();
-		firstItems.add(new Key("KeyFlyer", new Point3D(300, 0, 300)));
+		firstItems.add(new Crystal("KeyFlyer", new Point3D(300, 0, 300)));
 		Room firstRoom = new Room(firstItems, new ArrayList<Enviroment>(), firstFloor, "Room1");
 		Polygon secontFloor = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> secondItems = new ArrayList<Item>();
 		Container c = new Chest("Chest1", new Inventory(), new Point3D(700, 0, 700));
-		c.getContents().addItem(new Key("FlappyBird", new Point3D(0, 0, 0)));
+		c.getContents().addItem(new Crystal("FlappyBird", new Point3D(0, 0, 0)));
 		secondItems.add(c);
 		Room secondRoom = new Room(secondItems, new ArrayList<Enviroment>(), secontFloor, "Room2");
 		
@@ -59,7 +59,7 @@ public class Server extends Thread{
 		places.add(firstRoom);
 		places.add(secondRoom);
 		
-		Exit exit = new Door("Door1", firstRoom, new Point3D(400, 0, 400),
+		Exit exit = new Portal("Door1", firstRoom, new Point3D(400, 0, 400),
 		                secondRoom, new Point3D(400, 0, 500));
 		firstRoom.addExit(exit);
 		secondRoom.addExit(exit);

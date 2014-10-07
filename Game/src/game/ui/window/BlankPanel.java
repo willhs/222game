@@ -18,8 +18,8 @@ public class BlankPanel extends JPanel{
 
 	//the menu the panel is rendering at the moment
 	private GraphicsPane currentMenu;
-	
-	
+
+
 	/**
 	 * Constructor for the blank panel sets up the panel
 	 * with the current menu being the main menu
@@ -46,7 +46,7 @@ public class BlankPanel extends JPanel{
 		if(currentMenu instanceof Animated){
 			if(((Animated) currentMenu).isAnimating())((Animated) currentMenu).animate();
 		}
-		
+
 		//make the current menu draw itself on the graphics object
 		currentMenu.render(g);
 	}

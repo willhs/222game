@@ -32,6 +32,7 @@ public class PauseMenu implements GraphicsPane {
 	private GraphicsPane currentMenu;
 	private StarMation starmation ;
 
+
 	/**
 	 * The constructor for the pause menu sets up the pause menu to be rendered
 	 * on the screen.
@@ -128,11 +129,15 @@ public class PauseMenu implements GraphicsPane {
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
+		if(currentMenu !=null){
+			currentMenu.handleMouseReleased(e);
+			return;
+		}
 		if(selectedButton == 0){//resume game button
 			game.setMenu(null);//set to null so no menu shows up on the game screen
 		}
 		else if(selectedButton == 1){//options button
-			currentMenu = new BasicHelpMenu(panel, starmation, game);
+			currentMenu = new BasicHelpMenu(panel, starmation, game, this);
 		}
 		else if(selectedButton == 2){//main menu button
 			game.getClient().quit();
@@ -159,6 +164,11 @@ public class PauseMenu implements GraphicsPane {
 		else if(keyEvent.equals("up") || keyEvent.equals("move up")){
 			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
+	}
+
+	public void setMenu(GraphicsPane menu){
+		System.out.println("Setting menu");
+		this.currentMenu = menu;
 	}
 
 

@@ -6,20 +6,24 @@ import game.ui.render.able.GamePolygon;
 import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
-import game.ui.render.util.Transform;
 import game.ui.render.util.DepthComparator;
+import game.ui.render.util.Transform;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.Chest;
+import game.world.model.Cube;
 import game.world.model.Inventory;
+import game.world.model.Place;
 import game.world.model.Table;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -52,6 +56,7 @@ public class LevelMaker{
 	public static final int MAX_COLOUR_DEVIATION = 100;
 	public static final int START_COLOUR_DEVIATION = 20;
 	public static final int DEFAULT_TRIXEL_SIZE = Trixel.DEFAULT_SIZE;
+	private static final float VERSION_NUMBER = 1.0f;
 	/**
 	 * the amount in which to rotate the level/place (so that it can be updated)
 	 */
@@ -77,7 +82,7 @@ public class LevelMaker{
 	/**
 	 * all non-trixel objects in the level.
 	 */
-	private Set<Drawable> worldObjects;
+	private Set<Drawable> drawables;
 	/**
 	 * the center of the floor
 	 */
@@ -127,7 +132,7 @@ public class LevelMaker{
 		updateRotation(0, 0);
 
 		// initialise worldObjects
-		worldObjects = new HashSet<Drawable>();
+		drawables = new HashSet<Drawable>();
 	}
 
 	/**
@@ -212,10 +217,10 @@ public class LevelMaker{
 		}
 		if (drawMode == TREE_MODE){
 			// TODO: replace this table with tree once tree is drawable
-			worldObjects.add(new Table("Tree", aboveTrixel, new Rectangle3D(40,40,40)));
+			drawables.add(new Table("Tree", aboveTrixel, new Rectangle3D(40,40,40)));
 		}
 		if (drawMode == CHEST_MODE){
-			worldObjects.add(new Chest("Chest", new Inventory(), aboveTrixel));
+			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
 		}
 		updateTrixelFaces();
 	}
@@ -288,6 +293,7 @@ public class LevelMaker{
 	 * writes all level information to a file
 	 */
 	public void writeLevelToFile(){
+		// Choose file
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+Res.LEVELS_PATH);
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
@@ -297,6 +303,7 @@ public class LevelMaker{
 			fileToSave =  chooser.getSelectedFile();
 		} else return;
 
+		// Set up file writer
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(fileToSave, "UTF-8");
@@ -304,11 +311,87 @@ public class LevelMaker{
 			e.printStackTrace();
 		}
 
-		for (Trixel trixel : createdTrixels){
-			writer.println(trixel);
+		// WRITE EVERYTHING
+		writer.println("222game level");
+		writer.println(VERSION_NUMBER);
+		writer.println();
+		writer.println("Floor trixels");
+		writer.println(floorTrixels.size());
+		writer.println("Trixition\tColour");
+		writer.println();
+
+		for (Trixel floorTrixel : floorTrixels){
+			writer.println(floorTrixel);
+		}
+
+		writer.println();
+		writer.println("Created trixels");
+		writer.println(createdTrixels.size());
+		writer.println("Trixition\tColour");
+		writer.println();
+
+		for (Trixel createdTrixel : createdTrixels){
+			writer.println(createdTrixel);
+		}
+
+		writer.println();
+		writer.println("Drawable objects");
+		writer.println(drawables.size());
+		writer.println("Classname\tImageName\tPosition\tBoundingBox\tSpecificInfo");
+		writer.println();
+
+		for (Drawable drawable : drawables){
+			writer.println(drawable); // TODO sort this part out
 		}
 
 		writer.close();
+	}
+
+	public static Place makePlaceFromFile(File placeFile){
+		String title = "222game level";
+		String floorTrixelsHeader = "Floor trixels";
+
+		Set<Cube> floorCubes = new HashSet<Cube>();
+		Set<Cube> createdCubes = new HashSet<Cube>();
+		Set<Drawable> drawables = new HashSet<Drawable>();
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(placeFile));
+
+			ensureMatch(reader.readLine(), title); // skip title line
+			float version = Float.parseFloat(reader.readLine()); // version number of level maker
+			reader.readLine(); // blank line
+
+			ensureMatch(reader.readLine(), floorTrixelsHeader); // declaration that next tokens = floor trixels
+			int floorTrixelsNum = Integer.parseInt(reader.readLine()); // number of floor trixels
+			reader.readLine(); // details next tokens
+			reader.readLine(); // blank
+
+			for (int f = 0; f < floorTrixelsNum; f++){
+				String[] trixelInfo = reader.readLine().split("\t");
+				//floorCubes.add(new Cube())
+			}
+
+			reader.close();
+
+		} catch (IOException e) {
+			failParsing("Some IO problem");
+			e.printStackTrace();
+		}
+
+		return null; // TODO finish
+
+	}
+
+	public static void failParsing(String reason){
+		System.err.println("************\nError reading place file\n***************");
+		System.err.println(reason);
+	}
+
+	public static void ensureMatch(String toMatch, String token){
+		if (!toMatch.equals(token)){
+			failParsing(toMatch + " didn't match: '"+token+"'");
+		}
 	}
 
 	/**
@@ -356,7 +439,7 @@ public class LevelMaker{
 	}
 
 	public Iterator<Drawable> getWorldObjects() {
-		return worldObjects.iterator();
+		return drawables.iterator();
 	}
 
 	/**
@@ -378,7 +461,7 @@ public class LevelMaker{
 
 	public void setTrixelSize(int trixelSize) {
 		this.trixelSize = trixelSize;
-		
+
 	}
 	public int getTrixelSize() {
 		return trixelSize;

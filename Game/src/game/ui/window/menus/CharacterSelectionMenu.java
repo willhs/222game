@@ -8,7 +8,7 @@ import game.ui.window.GraphicsPane;
 import game.ui.window.StarMation;
 import game.ui.window.keyInputManagment;
 import game.world.dimensions.Point3D;
-import game.world.model.Key;
+import game.world.model.Crystal;
 import game.world.model.Player;
 
 import java.awt.Color;
@@ -140,20 +140,22 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		//Displays the name being typed on the screen
 		g2d.drawString(name, startX + g.getFontMetrics(myFont).stringWidth(label) + 5,(int) ((nameBox.y + nameBox.getHeight() - (g.getFontMetrics(myFont).getHeight()/2)) ));
 
-		if(characterSelected == 1)g2d.setColor(Color.blue);
-		g2d.draw(character1);
-		g2d.drawRect((int)character1.getX()+20, (int)character1.getY()+10, (int)character1.getHeight()-20, (int)character1.getHeight()-20);
-		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char1"),(int)character1.getHeight()-20,(int)character1.getHeight()-20),(int)character1.getX()+20,(int)character1.getY()+10, panel);
-		g2d.setColor(Color.white);
-		if(characterSelected == 2)g2d.setColor(Color.blue);
-		g2d.draw(character2);
-		g2d.drawRect((int)character2.getX()+20, (int)character2.getY()+10, (int)character2.getHeight()-20, (int)character2.getHeight()-20);
-		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char2"),(int)character2.getHeight()-20,(int)character2.getHeight()-20),(int)character2.getX()+20,(int)character2.getY()+5, panel);
-		g2d.setColor(Color.white);
-		if(characterSelected == 3)g2d.setColor(Color.blue);
-		g2d.draw(character3);
-		g2d.drawRect((int)character3.getX()+20, (int)character3.getY()+10, (int)character3.getHeight()-20, (int)character3.getHeight()-20);
-		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char3"),(int)character3.getHeight()-20,(int)character3.getHeight()-20),(int)character3.getX()+20,(int)character3.getY()+5, panel);
+		drawCharacter(1, character1, g2d);
+		drawCharacter(2, character2, g2d);
+		drawCharacter(3, character3, g2d);
+	}
+
+
+	/**
+	 * Draws one of the character selection boxes on the screen
+	 * */
+	public void drawCharacter(int charNum, Rectangle character,Graphics  g){
+		Graphics2D g2d = (Graphics2D)g;
+
+		if(charNum == characterSelected)g.setColor(Color.blue);
+		g2d.draw(character);
+		g2d.drawRect((int)character.getX()+20, (int)character.getY()+10, (int)character.getHeight()-20, (int)character.getHeight()-20);
+		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char"+charNum),(int)character.getHeight()-20,(int)character.getHeight()-20),(int)character.getX()+20,(int)character.getY()+5, panel);
 		g2d.setColor(Color.white);
 	}
 
@@ -206,6 +208,9 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		}
 		else if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
 			panel.setMenu(new MainMenu(panel));
+		}
+		else if(keyInputManagment.getLastKeyEvent().getKeyCode()  == KeyEvent.VK_TAB && !nameBoxSelected){
+			nameBoxSelected = true;
 		}
 	}
 
