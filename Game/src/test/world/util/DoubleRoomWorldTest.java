@@ -24,7 +24,7 @@ public class DoubleRoomWorldTest {
 		places.add(firstRoom);
 		places.add(secondRoom);
 
-		Exit exit = new Door("Door1", firstRoom, new Point3D(400, 0, 400),
+		Exit exit = new Portal("Door1", firstRoom, new Point3D(400, 0, 400),
 				secondRoom, new Point3D(400, 0, 500));
 		World world = new World(places);
 		world.addExit(exit);

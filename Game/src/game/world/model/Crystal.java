@@ -3,7 +3,7 @@ package game.world.model;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 
-public class Key implements Item {
+public class Crystal implements Item {
 
 	private static final Rectangle3D boundingBox = new Rectangle3D(10f, 10f, 10f);
 	private final String name;
@@ -12,7 +12,7 @@ public class Key implements Item {
 	private boolean selected;
 
 	//==================Constructor=================//
-	public Key(String name,
+	public Crystal(String name,
 			Point3D position) {
 		super();
 		this.name = name;

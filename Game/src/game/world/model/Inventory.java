@@ -52,4 +52,8 @@ public class Inventory implements Iterable<Item>, Serializable{
 		return items.contains(item);
 	}
 	
+	public boolean isEmpty(){
+		return items.isEmpty();
+	}
+	
 }

@@ -2,6 +2,11 @@ package game.world.logic;
 
 import game.world.model.*;
 
+/**
+ * 
+ * @author Shane Brewer
+ *
+ */
 public class ContainerInteractionHandler {
 
 	public static boolean getItemsFromContainer(Player player,

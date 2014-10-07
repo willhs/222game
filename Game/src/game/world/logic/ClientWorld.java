@@ -9,13 +9,13 @@ import java.util.*;
 
 /**
  * Handles all the client side modeling and some interation.
- * 
+ *
  * @author Shane Brewer.
- * 
+ *
  */
 public abstract class ClientWorld extends ServerWorld {
 
-	private float movmentScaler = 10.0f;
+	private float movmentScaler = 8.0f;
 	private HashMap<String, Transform> keyPressToDirection;
 	private Player clientsPlayer;
 	private Place currentPlace;
@@ -37,7 +37,7 @@ public abstract class ClientWorld extends ServerWorld {
 	/**
 	 * Takes a commands form the client and returns a command intended for the
 	 * server World.
-	 * 
+	 *
 	 * @param action
 	 *            - the action the client wishes to do.
 	 * @return - a string the represents a command or the empty string.
@@ -45,8 +45,6 @@ public abstract class ClientWorld extends ServerWorld {
 	public String getCommand(String action, float viewAngle) {
 		// where action is like "up", "down", "right", etc
 		String command = "";
-		System.out.println(viewAngle);
-		System.out.println(action);
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
 
@@ -68,7 +66,6 @@ public abstract class ClientWorld extends ServerWorld {
 			command = getInteractionCommand();
 		} else if (action.equals("PickUp")) {
 			command = getContainerInteractCommand();
-			System.out.println(command);
 			if (command.equals("")){
 				command = getItemPickUpCommand();
 			}
@@ -107,7 +104,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Handles the server commands for exiting a room.
-	 * 
+	 *
 	 * @param scan
 	 *            - scanner that has the command in it.
 	 */
@@ -145,7 +142,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Handles the item pick up on the client side.
-	 * 
+	 *
 	 * @param scan
 	 *            - the scanner in the clinet.
 	 */
@@ -190,20 +187,19 @@ public abstract class ClientWorld extends ServerWorld {
 		place.addItem(item);
 		item.setPosition(position);
 	}
-	
+
 	private void clientHandleContainer(Scanner scan){
 		Parser.removeUnneedText("Name", scan);
 		String playerName = Parser.parseName(scan);
 
 		Parser.removeUnneedText("Name", scan);
 		String itemName = Parser.parseName(scan);
-		
+
 		Player player = getPlayerByName(playerName);
 		Item item = getItemByName(itemName);
-		
+
 		Container container = (Container) item;
 		for (Item in: container.getContents()){
-			System.out.println(in.getName());
 			player.addItem(in);
 		}
 		for (Item in: player.getInventory()){
@@ -213,7 +209,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Handles a server request to move a player in the client world.
-	 * 
+	 *
 	 * @param scan
 	 *            - scanner with the command in it.
 	 */
@@ -232,7 +228,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Gets the cunnrent place the player is in.
-	 * 
+	 *
 	 * @return - reutns the current place .. might be null.
 	 */
 	public Place getCurrentPlace() {
@@ -241,7 +237,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * replaces the current place with a new one.
-	 * 
+	 *
 	 * @param place
 	 *            - the place that this current player should be in.
 	 */
@@ -253,7 +249,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Makes the first player.
-	 * 
+	 *
 	 * @param player
 	 *            - player that is to be the player of this client.
 	 * @return - a string only ment to be parsed by the server.
@@ -263,12 +259,14 @@ public abstract class ClientWorld extends ServerWorld {
 		if (getPlayerByName(player.getName()) != null) {
 			return "";
 		}
-		return "Server PlayerPlacement Name ( " + player.name + " )";
+		String command = "Server PlayerPlacement Name ( " + player.name + " ) Image ( " +player.getImageName()+" ) ";
+
+		return command;
 	}
 
 	/**
 	 * Sets the client player.
-	 * 
+	 *
 	 * @param scan
 	 *            - used to scan the text to get the player out.
 	 * @return - return true if the player was moved.
@@ -277,6 +275,9 @@ public abstract class ClientWorld extends ServerWorld {
 
 		Parser.removeUnneedText("Name", scan);
 		String name = Parser.parseName(scan);
+
+		Parser.removeUnneedText("Image", scan);
+		String imageName = Parser.parseName(scan);
 
 		Parser.removeUnneedText("Position", scan);
 		Point3D position = Parser.parsePosition(scan);
@@ -292,6 +293,7 @@ public abstract class ClientWorld extends ServerWorld {
 			this.addPlayer(player);
 			getPlayerByName(name).move(position);
 			place.addPlayer(player);
+			player.setImageName(imageName);
 		}
 		return true;
 	}
@@ -299,7 +301,7 @@ public abstract class ClientWorld extends ServerWorld {
 	/**
 	 * Gets the Interaction command from the exit. This one dose some
 	 * computation to find a exit nere the player that they can interact with.
-	 * 
+	 *
 	 * @return - returns the string intended for the server world to handle.
 	 */
 	private String getInteractionCommand() {
@@ -323,7 +325,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Gets the commands for picking up items.
-	 * 
+	 *
 	 * @return - return a string for the pickup command if unable string will be
 	 *         empty.
 	 */
@@ -347,7 +349,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	/**
 	 * Gets the command for droping an item
-	 * 
+	 *
 	 * @return - returns the command for the server or an expty string.
 	 */
 	private String getItemDropCommand() {

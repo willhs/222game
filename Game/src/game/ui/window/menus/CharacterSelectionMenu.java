@@ -8,7 +8,7 @@ import game.ui.window.GraphicsPane;
 import game.ui.window.StarMation;
 import game.ui.window.keyInputManagment;
 import game.world.dimensions.Point3D;
-import game.world.model.Key;
+import game.world.model.Crystal;
 import game.world.model.Player;
 
 import java.awt.Color;
