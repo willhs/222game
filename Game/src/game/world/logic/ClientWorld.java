@@ -47,7 +47,7 @@ public abstract class ClientWorld extends ServerWorld {
 		String command = "";
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
-			command = getMoveCommand();
+			command = getMoveCommand(action, viewAngle);
 		} else if (action.equals("Interact")) {
 			command = getInteractionCommand();
 		} else if (action.equals("PickUp")) {
@@ -251,7 +251,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	//====================================Getters======================================//
 	
-	public String getMoveCommand(){
+	public String getMoveCommand(String action, float viewAngle){
 		String command = "";
 		Vector3D newDirection = keyPressToDirection.get(action)
 				.multiply(clientsPlayer.getDirection()).unitVector();
