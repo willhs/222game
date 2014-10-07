@@ -2,7 +2,7 @@
 package game.world.util;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
-import game.world.model.*;
+import game.world.model.Place;
 
 /**
  * @author hardwiwill & Shane Brewer

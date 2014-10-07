@@ -11,16 +11,16 @@ import java.util.List;
  * @author Shane Brewer
  *
  */
-public class Door extends Exit {
+public class Portal extends Exit {
 
 	private final String name;
 	private final String imageName;
 	private static final Rectangle3D boundingBox = new Rectangle3D(30, 60, 30);
 
-	public Door(String name, Place placeOne, Point3D positionOne, Place placeTwo, Point3D positionTwo) {
+	public Portal(String name, Place placeOne, Point3D positionOne, Place placeTwo, Point3D positionTwo) {
 		super(placeOne, positionOne, placeTwo, positionTwo);
 		this.name = name;
-		this.imageName = "Door";
+		this.imageName = "OpenPortal";
 	}
 
 	@Override

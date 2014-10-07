@@ -1,7 +1,6 @@
 package game.world.util;
 
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
+import game.world.dimensions.*;
 import game.world.model.*;
 
 import java.awt.Polygon;
@@ -36,11 +35,13 @@ public class WorldFactory {
 
 		Place place = new Room(items, enviroment, poygon, "Room" + getID());
 
+
 		items.add(makeKey(place, items, enviroment));
 		items.add(makeTable(place, items, enviroment));
 
 		return place;
 	}
+
 
 	private Place makeRandomPlaceTwo() {
 		List<Item> items = new ArrayList<Item>();
@@ -80,7 +81,7 @@ public class WorldFactory {
 
 	public Place makeStartPlace() {
 		List<Item> items = new ArrayList<Item>();
-		;
+		
 		List<Enviroment> enviroment = new ArrayList<Enviroment>();
 
 		int[] xpoints = new int[] { 0, 500, 500, 0 };
@@ -92,11 +93,10 @@ public class WorldFactory {
 		return new Room(items, enviroment, poygon, "Room" + getID());
 	}
 
-	public boolean checkCollitions(Item item, List<Item> items,
-			List<Enviroment> enviroment) {
-		for (Item i : items) {
-			if (i.getBoundingBox().collisionDetection(i.getPosition(),
-					item.getBoundingBox(), item.getPosition())) {
+	public boolean checkCollitions(Item item, List<Item> items, List<Enviroment> enviroment){
+		for (Item i: items){
+			if(i.getBoundingBox().collisionDetection(i.getPosition(), item.getBoundingBox(), item.getPosition())){
+
 				return true;
 			}
 		}
@@ -109,22 +109,24 @@ public class WorldFactory {
 		return false;
 	}
 
-	private int getID() {
-		return counter++;
-	}
-	
+
 	private int getLocksize(){
 		return lockSize++;
 	}
 
-	private Key makeKey(Place place, List<Item> items,
-			List<Enviroment> enviroment) {
-		Key i = null;
-		do {
-			float x = (float) (1000 * Math.random());
-			float z = (float) (1000 * Math.random());
-			i = new Key("Key" + getID(), new Point3D(x, 0, z));
-		} while (!place.contains(i.getPosition(), i.getBoundingBox())
+
+	private int getID(){
+		return counter++;
+	}
+
+
+	private Crystal makeKey(Place place, List<Item> items, List<Enviroment> enviroment){
+		Crystal i = null;
+		do{
+			float x = (float)(1000*Math.random());
+			float z = (float)(1000*Math.random());
+			i = new Crystal("Key"+getID(), new Point3D(x, 0, z));
+		}while (!place.contains(i.getPosition(), i.getBoundingBox())
 				|| checkCollitions(i, items, enviroment));
 		return i;
 	}
