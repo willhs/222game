@@ -81,7 +81,7 @@ public class WorldFactory {
 
 	public Place makeStartPlace() {
 		List<Item> items = new ArrayList<Item>();
-		
+
 		List<Enviroment> enviroment = new ArrayList<Enviroment>();
 
 		int[] xpoints = new int[] { 0, 500, 500, 0 };
@@ -130,7 +130,7 @@ public class WorldFactory {
 				|| checkCollitions(i, items, enviroment));
 		return i;
 	}
-	
+
 	private Exit makeExit(Place placeOne, Place placeTwo){
 //		do{}while();
 		return null;
