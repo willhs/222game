@@ -47,21 +47,7 @@ public abstract class ClientWorld extends ServerWorld {
 		String command = "";
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
-
-			Vector3D newDirection = keyPressToDirection.get(action)
-					.multiply(clientsPlayer.getDirection()).unitVector();
-
-			newDirection = Transform.newYRotation(-viewAngle)
-					.multiply(newDirection).unitVector();
-
-			Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
-					newDirection.y * movmentScaler, newDirection.z
-							* movmentScaler);
-			Point3D newPosition = clientsPlayer.getPosition()
-					.getTranslatedPoint(newMove);
-			command = "Server Move Name ( " + clientsPlayer.getName()
-					+ " ) Point " + newPosition.toString() + " Name ( "
-					+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
+			command = getMoveCommand();
 		} else if (action.equals("Interact")) {
 			command = getInteractionCommand();
 		} else if (action.equals("PickUp")) {
@@ -72,9 +58,6 @@ public abstract class ClientWorld extends ServerWorld {
 		} else if (action.equals("Drop")) {
 			command = getItemDropCommand();
 		}
-		// get the viewing direction from will's static stuff
-		// returns a single command like played.x += 10 or something
-		// or move player 10 or whatever
 		return command;
 	}
 
@@ -101,6 +84,8 @@ public abstract class ClientWorld extends ServerWorld {
 
 		return commandList;
 	}
+
+	//=================================Setters===================================//
 
 	/**
 	 * Handles the server commands for exiting a room.
@@ -226,43 +211,7 @@ public abstract class ClientWorld extends ServerWorld {
 		player.move(playerPosition);
 	}
 
-	/**
-	 * Gets the cunnrent place the player is in.
-	 *
-	 * @return - reutns the current place .. might be null.
-	 */
-	public Place getCurrentPlace() {
-		return currentPlace;
-	}
-
-	/**
-	 * replaces the current place with a new one.
-	 *
-	 * @param place
-	 *            - the place that this current player should be in.
-	 */
-	public void replaceCurrentPlace(Place place) {
-		place.removePlayer(clientsPlayer);
-		place.addPlayer(clientsPlayer);
-		currentPlace = place;
-	}
-
-	/**
-	 * Makes the first player.
-	 *
-	 * @param player
-	 *            - player that is to be the player of this client.
-	 * @return - a string only ment to be parsed by the server.
-	 */
-	public String getSetClientPlayer(Player player) {
-		clientsPlayer = player;
-		if (getPlayerByName(player.getName()) != null) {
-			return "";
-		}
-		String command = "Server PlayerPlacement Name ( " + player.name + " ) Image ( " +player.getImageName()+" ) ";
-
-		return command;
-	}
+	
 
 	/**
 	 * Sets the client player.
@@ -296,6 +245,46 @@ public abstract class ClientWorld extends ServerWorld {
 			player.setImageName(imageName);
 		}
 		return true;
+	}
+	
+	//===================================Setters End===================================//
+
+	//====================================Getters======================================//
+	
+	public String getMoveCommand(){
+		String command = "";
+		Vector3D newDirection = keyPressToDirection.get(action)
+				.multiply(clientsPlayer.getDirection()).unitVector();
+
+		newDirection = Transform.newYRotation(-viewAngle)
+				.multiply(newDirection).unitVector();
+
+		Vector3D newMove = new Vector3D(newDirection.x * movmentScaler,
+				newDirection.y * movmentScaler, newDirection.z
+						* movmentScaler);
+		Point3D newPosition = clientsPlayer.getPosition()
+				.getTranslatedPoint(newMove);
+		command = "Server Move Name ( " + clientsPlayer.getName()
+				+ " ) Point " + newPosition.toString() + " Name ( "
+				+ getPlaceOfPlayer(clientsPlayer).getName() + " ) ";
+		return command;
+	}
+
+	/**
+	 * Makes the first player.
+	 *
+	 * @param player
+	 *            - player that is to be the player of this client.
+	 * @return - a string only ment to be parsed by the server.
+	 */
+	public String getSetClientPlayer(Player player) {
+		clientsPlayer = player;
+		if (getPlayerByName(player.getName()) != null) {
+			return "";
+		}
+		String command = "Server PlayerPlacement Name ( " + player.name + " ) Image ( " +player.getImageName()+" ) ";
+
+		return command;
 	}
 
 	/**
@@ -382,4 +371,33 @@ public abstract class ClientWorld extends ServerWorld {
 		}
 		return command;
 	}
+
+	/**
+	 * Gets the cunnrent place the player is in.
+	 *
+	 * @return - reutns the current place .. might be null.
+	 */
+	public Place getCurrentPlace() {
+		return currentPlace;
+	}
+
+
+
+	//=============================================Getters End===================================//
+
+
+
+	/**
+	 * replaces the current place with a new one.
+	 *
+	 * @param place
+	 *            - the place that this current player should be in.
+	 */
+	public void replaceCurrentPlace(Place place) {
+		place.removePlayer(clientsPlayer);
+		place.addPlayer(clientsPlayer);
+		currentPlace = place;
+	}
+
+	
 }
