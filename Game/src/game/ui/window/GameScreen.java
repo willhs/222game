@@ -75,7 +75,7 @@ public class GameScreen implements GraphicsPane  {
 		popUpInventory.updateInventory();
 		releventQueKeypress = createKeylist();
 		rotateVector = new Vector3D(0f, 0f, 0f);
-		
+
 		setUpInventoryBarButtons();
 	}
 
@@ -133,14 +133,16 @@ public class GameScreen implements GraphicsPane  {
 			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector);
 		}
 
+		//draws the selected inventory bar
+		drawInventorybar(g);
+		drawInventory(g);
+
 		//render the current menu over top of the game
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}
 
-		//draws the selected inventory bar
-		drawInventorybar(g);
-		drawInventory(g);
+
 	}
 
 	@Override
@@ -175,6 +177,7 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu = new PauseMenu(panel, this, starMation);
 		}
 		else if(releventQueKeypress.contains(keyEvent)){
+			System.out.println("Event" + keyEvent);
 			client.makeMove(keyEvent, rotateVector.getY());
 		}
 		else if(keyEvent.equals("1")){

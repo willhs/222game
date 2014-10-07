@@ -209,6 +209,9 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		else if(keyEvent.equals("escape") || keyEvent.equals("backspace")){
 			panel.setMenu(new MainMenu(panel));
 		}
+		else if(keyInputManagment.getLastKeyEvent().getKeyCode()  == KeyEvent.VK_TAB && !nameBoxSelected){
+			nameBoxSelected = true;
+		}
 	}
 
 
