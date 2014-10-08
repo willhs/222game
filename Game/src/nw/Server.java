@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
+class QuitException extends Exception{
+	public QuitException(){super();}
+}
+
 public class Server extends Thread{
 	//This server is instantiated once for each connection, so static fields are shared across connections,
 	//while non-static fields are duplicated for each connection.
@@ -85,11 +89,13 @@ public class Server extends Thread{
 		}
 	}
 
+	/*
+	 * Get the number of seconds remaining in the game.
+	 * @return number of seconds remaining
+	 */
 	public static int getRemainingSeconds(){
-		return timeLimit - getTimeElapsed();
-	}
-	private static int getTimeElapsed(){
-		return (((int)System.currentTimeMillis()) - startTime)/1000;
+		int timeElapsed = (((int)System.currentTimeMillis()) - startTime)/1000;
+		return timeLimit - timeElapsed;
 	}
 
 	/*
@@ -132,7 +138,7 @@ public class Server extends Thread{
 						recStr = ((String)received);
 						print("[Server] Got: " + recStr);
 						if(recStr.equals("Quit")){
-							throw new IOException();
+							throw new QuitException();
 						}
 						//System.out.println(getRemainingSeconds() + " remaining");
 						
@@ -148,15 +154,17 @@ public class Server extends Thread{
 				Thread.sleep(10);
 			}
 		}catch(ClassNotFoundException e){
-			System.err.println("Server CNF " + e);
+			System.err.println("Server CNF: " + e);
 		}catch(IOException e){
-			System.err.println("Server IO " + e);
+			System.err.println("Server IO: " + e);
 		}catch(InterruptedException e){
-			System.err.println("Server IE " + e);
+			System.err.println("Server IE: " + e);
+		}catch(QuitException e){
+			System.out.println("Player Quit");
 		}finally{
 			outStreams.remove(id);
 
-			System.out.print("Player left.  Remaining IDs: ");
+			System.out.print(" Remaining IDs: ");
 			for(Integer cid : outStreams.keySet()){
 				System.out.print(cid + ", ");
 			}

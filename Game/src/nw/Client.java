@@ -148,13 +148,21 @@ public class Client extends Thread{
 		}
 	}
 
+	/*
+	 * Print debug message if printing is enabled
+	 */
 	public static void print(String msg){
 		if(printing){
 			System.out.println(msg);
 		}
 	}
 
-	private static int getSecondsRemaining(){
+	/*
+	 * Get the number of seconds remaining.  This is calculated based on remaining seconds integer
+	 * sent by the server along with the world when we connect.
+	 * @return number of seconds remaining in the game
+	 */
+	public static int getSecondsRemaining(){
 		return remainingSecondsFromServer - ((((int)System.currentTimeMillis())/1000)-lastTimeUpdate);
 	}
 
@@ -199,6 +207,8 @@ public class Client extends Thread{
 						GameWindow.setRoom((Room)(cp != null ? cp : world.getPlaces().next()));
 					}
 					else if(received instanceof Integer){//If it's an integer, the server is telling us the remaining time
+						//So save the value the server sends and keep the time it was sent at, so we can calculate the number
+						//of seconds remaining at any time.
 						remainingSecondsFromServer = ((Integer)received).intValue();
 						lastTimeUpdate = (int)System.currentTimeMillis() / 1000;
 					}else{
@@ -210,7 +220,7 @@ public class Client extends Thread{
 					cmd = commandQueue.poll();
 					out.writeObject(cmd);
 					if(cmd.equals("Quit")){
-						throw new IOException();
+						throw new QuitException();
 					}
 					print("[Client]: " + getSecondsRemaining());
 				}
@@ -220,11 +230,13 @@ public class Client extends Thread{
 			}
 
 		}catch(ClassNotFoundException e){
-			System.err.println("Client CNF" + e);
+			System.err.println("Client CNF: " + e);
 		}catch(IOException e){
-			System.err.println("Client IO" + e);
+			System.err.println("Client IO: " + e);
 		}catch(InterruptedException e){
-			System.err.println("Client IE" + e);
+			System.err.println("Client IE: " + e);
+		}catch(QuitException e){
+			System.out.println("Quit");
 		}finally{
 			world=null;
 			try{

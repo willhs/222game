@@ -35,6 +35,8 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	private int startX = 20;
 	private int startY = 70;
 
+	private boolean connected;
+	private Client client;
 
 	/**
 	 * The constructor for the multiplier selection menu
@@ -138,8 +140,17 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		//no errors at this point so create the game player and client and change menu
 		Player player = new Player(super.name);
+
+
 		player.setImageName("Char"+characterSelected);
-		Client client = new Client(hostString.s,portNumb,panel);
+
+
+		if(!connected){
+			client = new Client(hostString.s,portNumb,panel);
+			connected = true;
+		}
+
+
 		if(!client.addPlayerToWorld(player)){
 			//Player name was taken.
 			error = "Name already taken please enter another";

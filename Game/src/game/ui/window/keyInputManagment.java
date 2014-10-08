@@ -118,6 +118,7 @@ public class keyInputManagment implements KeyEventDispatcher{
 		tempKeyMap.put("rotate left", KeyEvent.VK_LEFT);//f
 		tempKeyMap.put("Drop", KeyEvent.VK_E);
 		tempKeyMap.put("PickUp", KeyEvent.VK_Q);
+		
 
 		return tempKeyMap;
 	}
