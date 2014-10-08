@@ -162,7 +162,7 @@ public class Client extends Thread{
 	 * sent by the server along with the world when we connect.
 	 * @return number of seconds remaining in the game
 	 */
-	private static int getSecondsRemaining(){
+	public static int getSecondsRemaining(){
 		return remainingSecondsFromServer - ((((int)System.currentTimeMillis())/1000)-lastTimeUpdate);
 	}
 

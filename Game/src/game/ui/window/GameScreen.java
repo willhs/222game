@@ -7,12 +7,12 @@ import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
 import game.ui.window.menus.PauseMenu;
 import game.world.dimensions.Vector3D;
-import game.world.model.Inventory;
 import game.world.model.Item;
 import game.world.model.Player;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -57,6 +57,8 @@ public class GameScreen implements GraphicsPane  {
 	private InventoryMenu popUpInventory;
 
 	private Player player;
+
+	private boolean gameOver;
 
 
 	/**
@@ -124,6 +126,7 @@ public class GameScreen implements GraphicsPane  {
 
 	@Override
 	public void render(Graphics g){
+		Graphics2D g2d = (Graphics2D)g;
 		//render the star animation
 		starMation.render(g);
 		removeItems();
@@ -141,6 +144,25 @@ public class GameScreen implements GraphicsPane  {
 		if(currentMenu != null){
 			currentMenu.render(g);
 		}
+
+		//seconds stuff
+
+		int seconds = client.getSecondsRemaining();
+		Font myFont = new Font("Tunga",0,50);
+		g.setFont(myFont);
+
+		g.drawString(seconds+"", 50, 100);
+		if(seconds >= 100){
+
+			myFont = new Font("Tunga",0,30);
+			g.setFont(myFont);
+			g.setColor(Color.BLACK);
+			g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_WIDTH);
+			g.setColor(Color.white);
+			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
+			gameOver = true;
+		}
+
 
 	}
 
@@ -166,6 +188,9 @@ public class GameScreen implements GraphicsPane  {
 		if(currentMenu != null){
 			currentMenu.keyPressed(keyEvent);
 			return;//no need to do anything with the game as the current menu is the pause menu
+		}
+		else if(gameOver){
+			panel.setMenu(new MainMenu(panel));
 		}
 		else if(keyEvent.equals("inventory")){
 			removeItems();
@@ -256,7 +281,7 @@ public class GameScreen implements GraphicsPane  {
 			g.setColor(Color.blue);
 			g.drawRect((int)inventoryButtons[selectedButton].getX(), (int)inventoryButtons[selectedButton].getY(), boxSize, boxSize);
 		}
-		g2d.setStroke(oldStroke);//reset the font
+		g2d.setStroke(oldStroke);//reset the bar line widht
 	}
 
 
