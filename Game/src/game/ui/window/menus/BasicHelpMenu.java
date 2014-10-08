@@ -33,15 +33,15 @@ public class BasicHelpMenu extends HelpMenu implements GraphicsPane{
 
 	@Override
 	public void render(Graphics g){
+		g.setColor(new Color(0,0,0,0.5f));
 		g.fillRect(buttons[1].x, buttons[1].y, (int)buttons[1].getWidth(), (int)buttons[1].getHeight());
 		g.setFont(helpTextFont);
 		g.setColor(Color.white);
 
 		buttons[0] = new Rectangle(0,0,0,0);
 		buttonNames[0] = "";
-		MenuUtil.drawButtons(g, -1, buttons, buttonNames);
-		g.setColor(new Color(0,0,0,0.9f));
 
+		MenuUtil.drawButtons(g, -1, buttons, buttonNames);
 		drawString(g,helpText, (int) (buttons[1].getX()+20),(int)( textBox.getY() + 20));//draws the string within the text box
 	}
 

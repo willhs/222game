@@ -142,7 +142,6 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu.render(g);
 		}
 
-
 	}
 
 	@Override
