@@ -128,4 +128,18 @@ public class TrixelFace implements DepthComparable, Transformable{
 		return Arrays.toString(vertices);
 	}
 
+	/**
+	 * @return center point of the face
+	 */
+	public Point3D findCenterPoint(){
+
+		int x=0,y=0,z=0;
+
+		for (Point3D vertex : vertices){
+			x += vertex.x;
+			y += vertex.y;
+			z += vertex.z;
+		}
+		return new Point3D(x/vertices.length, y/vertices.length, z/vertices.length);
+	}
 }

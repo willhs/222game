@@ -1,7 +1,7 @@
 package game.ui.window;
 
 import game.ui.render.Renderer;
-import game.ui.render.Res;
+import game.ui.render.ImageStorage;
 import game.ui.window.menus.InventoryMenu;
 import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
@@ -333,7 +333,7 @@ public class GameScreen implements GraphicsPane  {
 	public void drawInventory(Graphics g){
 		for(int i = 0; i < items.length; i++){
 			if(items[i] != null){
-				g.drawImage(Res.getImageFromName(items[i].getImageName()), (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(),boxSize-5,boxSize-5, panel);
+				g.drawImage(ImageStorage.getImageFromName(items[i].getImageName()), (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(),boxSize-5,boxSize-5, panel);
 			}
 		}
 	}

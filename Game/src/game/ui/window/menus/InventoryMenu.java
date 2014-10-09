@@ -1,6 +1,6 @@
 package game.ui.window.menus;
 
-import game.ui.render.Res;
+import game.ui.render.ImageStorage;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
@@ -171,7 +171,7 @@ public class InventoryMenu implements GraphicsPane {
 				g.drawRect(x, y, gridSize, gridSize);
 
 				if(items[curGrid] != null ){
-					if(selectItemOnGrid != curGrid)g.drawImage(Res.getImageFromName(items[curGrid].getImageName()), x, y,gridSize,gridSize, panel);
+					if(selectItemOnGrid != curGrid)g.drawImage(ImageStorage.getImageFromName(items[curGrid].getImageName()), x, y,gridSize,gridSize, panel);
 				}
 
 
@@ -183,7 +183,7 @@ public class InventoryMenu implements GraphicsPane {
 		}
 
 		if(selectedItem !=null){
-			g.drawImage(Res.getImageFromName(selectedItem.getImageName()), currMouseX, currMouseY,gridSize,gridSize,panel);
+			g.drawImage(ImageStorage.getImageFromName(selectedItem.getImageName()), currMouseX, currMouseY,gridSize,gridSize,panel);
 		}
 		g2d.setStroke(oldStroke);
 	}
@@ -201,7 +201,7 @@ public class InventoryMenu implements GraphicsPane {
 		g2d.setStroke(new BasicStroke(4));
 
 		//gets the players image for Resources and scales it to the size of the frame
-		g.drawImage(MenuUtil.scale(Res.getImageFromName(player.getImageName()),(int)characterFrame.getWidth(),(int)characterFrame.getHeight()), characterFrame.x,characterFrame.y,panel);
+		g.drawImage(MenuUtil.scale(ImageStorage.getImageFromName(player.getImageName()),(int)characterFrame.getWidth(),(int)characterFrame.getHeight()), characterFrame.x,characterFrame.y,panel);
 		g2d.draw(characterFrame);
 
 		g.setColor(backColor);
