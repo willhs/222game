@@ -26,7 +26,6 @@ class ServerPlayerPlacementStratagy implements ServerCommandStratagy{
 	@Override
 	public List<String> handleCommand(Scanner scan, String command, ServerWorld world){
 		List<String> commands = new ArrayList<String>();
-		scan.next();
 		Player player = Parser.parsePlayer(scan);
 		Parser.removeUnneedText("Image", scan);
 		String imageName = Parser.parseName(scan);

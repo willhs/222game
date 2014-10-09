@@ -40,7 +40,7 @@ public abstract class ServerWorld implements Serializable {
 
 
 		if (scan.hasNext("Server")) {
-			scan.next();
+			System.out.println(scan.next());
 	 		System.out.println("Should make it here.");
 	 		ServerCommandStratagy stratagy = serverCommands.get(scan.next());
 			if (stratagy == null) return commands;

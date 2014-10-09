@@ -17,6 +17,7 @@ public abstract class ClientWorld extends ServerWorld {
 
 	private float movmentScaler = 8.0f;
 	private HashMap<String, Transform> keyPressToDirection;
+	private Map<String, ClientCommandStratagy> clientCommands;
 	private Player clientsPlayer;
 	private Place currentPlace;
 
@@ -24,6 +25,9 @@ public abstract class ClientWorld extends ServerWorld {
 	 * Used to set up all the key to transform mappings.
 	 */
 	public ClientWorld() {
+		super();
+		// Adds all posible player move directions to hashmap for ease
+		// of getting.
 		keyPressToDirection = new HashMap<String, Transform>();
 		keyPressToDirection.put("Up",
 				Transform.newYRotation((float) (Math.PI / 2.0f)));
@@ -32,6 +36,15 @@ public abstract class ClientWorld extends ServerWorld {
 				Transform.newYRotation((float) -(Math.PI / 2.0f)));
 		keyPressToDirection.put("Left",
 				Transform.newYRotation((float) (Math.PI)));
+
+		// Adds all the stratagys to  a hashmap for ease of getting.
+		clientCommands = new HashMap<String, ClientCommandStratagy>();
+		clientCommands.put("PlayerPlacement", new ClientAddPlayerStratagy());
+		clientCommands.put("Move", new ClientMoveStratagy());
+		clientCommands.put("Exit", new ClientExitStratagy());
+		clientCommands.put("ItemPickUp", new ClientItemPickupStratagy());
+		clientCommands.put("ItemDrop", new ClientItemDropStratagy());
+		clientCommands.put("Container", new ClientContainerStratagy());
 	}
 
 	/**
@@ -67,190 +80,16 @@ public abstract class ClientWorld extends ServerWorld {
 		Scanner scan = new Scanner(command);
 		if (scan.hasNext("Client")) {
 			scan.next();
-			if (scan.hasNext("PlayerPlacement")) {
-				setClientPlayer(scan);
-			} else if (scan.hasNext("Move")) {
-				clientHandleMove(scan);
-			} else if (scan.hasNext("Exit")) {
-				clientHandleExiting(scan);
-			} else if (scan.hasNext("ItemPickUp")) {
-				clientHandleItemPickUp(scan);
-			} else if (scan.hasNext("ItemDrop")) {
-				clientHandleItemDrop(scan);
-			} else if (scan.hasNext("Container")){
-				clientHandleContainer(scan);
-			}
+			ClientCommandStratagy cmd = clientCommands.get(scan.next());
+			if(cmd == null) return commandList;
+			cmd.clientSetCommand(scan, this);
 		}
 
 		return commandList;
 	}
 
-	//=================================Setters===================================//
-
-	/**
-	 * Handles the server commands for exiting a room.
-	 *
-	 * @param scan
-	 *            - scanner that has the command in it.
-	 */
-	private void clientHandleExiting(Scanner scan) {
-		// gets the name of the player that is to be moved.
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-		// gets the name of the exit the player moved through
-		Parser.removeUnneedText("Name", scan);
-		String exitName = Parser.parseName(scan);
-		// gets the name of the place that the player will be in.
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-		// gets the new position in the new room.
-		Parser.removeUnneedText("Position", scan);
-		Point3D playerPosition = Parser.parsePosition(scan);
-		// gets the all from the world.
-		Player player = getPlayerByName(playerName);
-		Place place = getPlaceByName(placeName);
-		Exit exit = getExitByName(exitName);
-
-		// removes the player form his old place.
-		place.removePlayer(player);
-		// adds him to the new one.
-		Place otherPlace = exit.getOtherPlace(place);
-		otherPlace.addPlayer(player);
-		// and moves him to his new position.
-		player.move(playerPosition);
-		// and if the players that moved is the clients on then the new current
-		// place is the other place
-		if (player.name.equals(clientsPlayer.name)) {
-			currentPlace = otherPlace;
-		}
-	}
-
-	/**
-	 * Handles the item pick up on the client side.
-	 *
-	 * @param scan
-	 *            - the scanner in the clinet.
-	 */
-	private void clientHandleItemPickUp(Scanner scan) {
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String itemName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-
-		Player player = getPlayerByName(playerName);
-		Item item = getItemByName(itemName);
-		Place place = getPlaceByName(placeName);
-
-		place.removeItem(item);
-		player.getInventory().addItem(item);
-		item.setPosition(new Point3D(0, 0, 0));
-	}
-
-	private void clientHandleItemDrop(Scanner scan) {
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String itemName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String placeName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Point", scan);
-		Point3D position = Parser.parsePosition(scan);
-
-		Player player = getPlayerByName(playerName);
-		Item item = getItemByName(itemName);
-		Place place = getPlaceByName(placeName);
-
-		item.setSelected(false);
-		player.getInventory().removeItem(item);
-		place.addItem(item);
-		item.setPosition(position);
-	}
-
-	private void clientHandleContainer(Scanner scan){
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		String itemName = Parser.parseName(scan);
-
-		Player player = getPlayerByName(playerName);
-		Item item = getItemByName(itemName);
-
-		Container container = (Container) item;
-		for (Item in: container.getContents()){
-			player.addItem(in);
-		}
-		for (Item in: player.getInventory()){
-			container.getContents().removeItem(in);
-		}
-	}
-
-	/**
-	 * Handles a server request to move a player in the client world.
-	 *
-	 * @param scan
-	 *            - scanner with the command in it.
-	 */
-	private void clientHandleMove(Scanner scan) {
-		Parser.removeUnneedText("Name", scan);
-		String playerName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Point", scan);
-		Point3D playerPosition = Parser.parsePosition(scan);
-
-		Parser.removeUnneedText("Name", scan);
-		// moves the player to the new position.
-		Player player = getPlayerByName(playerName);
-		player.move(playerPosition);
-	}
-
-	
-
-	/**
-	 * Sets the client player.
-	 *
-	 * @param scan
-	 *            - used to scan the text to get the player out.
-	 * @return - return true if the player was moved.
-	 */
-	private boolean setClientPlayer(Scanner scan) {
-
-		Parser.removeUnneedText("Name", scan);
-		String name = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Image", scan);
-		String imageName = Parser.parseName(scan);
-
-		Parser.removeUnneedText("Position", scan);
-		Point3D position = Parser.parsePosition(scan);
-
-		Place place = getStartPlace();
-		if (name.equals(clientsPlayer.name)) {
-			currentPlace = place;
-			this.addPlayer(clientsPlayer);
-			clientsPlayer.move(position);
-			place.addPlayer(clientsPlayer);
-		} else {
-			Player player = new Player(name);
-			this.addPlayer(player);
-			getPlayerByName(name).move(position);
-			place.addPlayer(player);
-			player.setImageName(imageName);
-		}
-		return true;
-	}
-	
-	//===================================Setters End===================================//
-
 	//====================================Getters======================================//
-	
+
 	public String getMoveCommand(String action, float viewAngle){
 		String command = "";
 		Vector3D newDirection = keyPressToDirection.get(action)
@@ -399,5 +238,12 @@ public abstract class ClientWorld extends ServerWorld {
 		currentPlace = place;
 	}
 
-	
+	protected void setCurrentPlace(Place place){
+		currentPlace = place;
+	}
+
+	protected Player getClientsPlayer(){
+		return clientsPlayer;
+	}
+
 }
