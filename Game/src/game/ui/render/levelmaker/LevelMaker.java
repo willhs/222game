@@ -1,7 +1,7 @@
 package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
-import game.ui.render.Res;
+import game.ui.render.ImageStorage;
 import game.ui.render.able.GamePolygon;
 import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
@@ -21,6 +21,7 @@ import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
+import java.awt.Polygon;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -90,7 +91,7 @@ public class LevelMaker{
 	/**
 	 * the colour that will be used to make the next trixel
 	 */
-	private Color currentColour;
+	private Color baseColour;
 
 	private int flipY = GameWindow.FRAME_HEIGHT;
 	/**
@@ -118,7 +119,7 @@ public class LevelMaker{
 		trixelSize = DEFAULT_TRIXEL_SIZE;
 
 		// intialise colour
-		currentColour = Renderer.makeRandomColour();
+		randomiseBaseColour();
 		randomColourDeviation = START_COLOUR_DEVIATION;
 
 		// initialise draw mode
@@ -143,6 +144,7 @@ public class LevelMaker{
 	 * @param floor
 	 */
 	public void loadFloor(Floor floor){
+		clearLevel();
 
 		// initilise trixels
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
@@ -151,7 +153,7 @@ public class LevelMaker{
 			floorTrixels.add(t);
 		}
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
-		updateTrixelFaces();
+		updateFaces();
 	}
 
 	/**
@@ -213,7 +215,7 @@ public class LevelMaker{
 		//Point3D randomAboveTrixel = aboveTrixel.getTranslatedPoint(new Vector3D((float)Math.random()*Trixel.SIZE, 0, (float)Math.random()*Trixel.SIZE));
 
 	if (drawMode == TRIXEL_MODE){
-			createdTrixels.add(makeTrixelNextToFace(face, currentColour));
+			createdTrixels.add(makeTrixelNextToFace(face, baseColour));
 		}
 		if (drawMode == TREE_MODE){
 			// TODO: replace this table with tree once tree is drawable
@@ -228,7 +230,7 @@ public class LevelMaker{
 	/**
 	 * Re-makes and orders a list of trixel faces from ordered by closest first
 	 */
-	private void updateTrixelFaces() {
+	public void updateTrixelFaces() {
 		// reset rotated trixels
 		rotatedFaces = new ArrayList<TrixelFace>();
 
@@ -268,18 +270,14 @@ public class LevelMaker{
 	 */
 	private Trixel makeTrixelNextToFace(TrixelFace face, Color colour) {
 
+		Trixel parentTrixel = face.getParentTrixel();
 		/*
 		// find the true (unrotated) normal vector of the face by reversing the transform that was applied
-		face.transform(lastTransform.inverse());
-		//Vector3D normal = neighbourFace.calculateNormal().unitVector();
-		Vector3D normal = new Vector3D(0,1,0); // temp normal vector
-		Trixition faceTrixition = face.getParentTrixel().getTrixition();
-		Point3D faceRealPosition = TrixelUtil.trixitionToPosition(faceTrixition);
-		// shift position by normal direction * trixel size, this will be at the position of a new trixel
-		Point3D newTrixelPosition = faceRealPosition.getTranslatedPoint(normal.makeScaled(Trixel.SIZE));
-		Trixition newTrixition = TrixelUtil.positionToTrixition(newTrixelPosition);*/
+		Point3D trixelCenter = TrixelUtil.findTrixelCentroid(parentTrixel, trixelSize);
+		Point3D faceCenter = face.findCenterPoint();
+		Vector3D newTrixelDir = trixelCenter.distanceTo(faceCenter);*/
 
-		Point3D overTrixel = TrixelUtil.findTopCenterOfTrixel(face.getParentTrixel(), trixelSize);
+		Point3D overTrixel = TrixelUtil.findTopCenterOfTrixel(parentTrixel, trixelSize);
 
 		return new Trixel(TrixelUtil.positionToTrixition(overTrixel, trixelSize), getTrixelColour());
 	}
@@ -288,65 +286,55 @@ public class LevelMaker{
 		return lastTransform;
 	}
 
-	/**
-	 * TODO
-	 * writes all level information to a file
-	 */
-	public void writeLevelToFile(){
-		// Choose file
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+Res.LEVELS_PATH);
-		final int USER_SELECTION = chooser.showSaveDialog(null);
 
-		File fileToSave;
+	private final static String SEPARATOR = "\t";
 
-		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
-			fileToSave =  chooser.getSelectedFile();
-		} else return;
+	@Override
+	public String toString(){
 
-		// Set up file writer
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(fileToSave, "UTF-8");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		StringBuilder levelString = new StringBuilder();
 
 		// WRITE EVERYTHING
-		writer.println("222game level");
-		writer.println(VERSION_NUMBER);
-		writer.println();
-		writer.println("Floor trixels");
-		writer.println(floorTrixels.size());
-		writer.println("Trixition\tColour");
-		writer.println();
+		levelString.append("222game level");
+		levelString.append(VERSION_NUMBER);
+		levelString.append("\n");
+		levelString.append("Floor trixels");
+		levelString.append(floorTrixels.size());
+		levelString.append("Trixition"+SEPARATOR+"Colour");
+		levelString.append("\n");
 
 		for (Trixel floorTrixel : floorTrixels){
-			writer.println(floorTrixel);
+			levelString.append(floorTrixel);
 		}
 
-		writer.println();
-		writer.println("Created trixels");
-		writer.println(createdTrixels.size());
-		writer.println("Trixition\tColour");
-		writer.println();
+		levelString.append("\n");
+		levelString.append("Created trixels");
+		levelString.append(createdTrixels.size());
+		levelString.append("Trixition"+SEPARATOR+"Colour");
+		levelString.append("\n");
 
 		for (Trixel createdTrixel : createdTrixels){
-			writer.println(createdTrixel);
+			levelString.append(createdTrixel);
 		}
 
-		writer.println();
-		writer.println("Drawable objects");
-		writer.println(drawables.size());
-		writer.println("Classname\tImageName\tPosition\tBoundingBox\tSpecificInfo");
-		writer.println();
+		levelString.append("\n");
+		levelString.append("Drawable objects");
+		levelString.append(drawables.size());
+		levelString.append("Classname"+SEPARATOR+"ImageName"+SEPARATOR+"Position"+SEPARATOR+"BoundingBox"+SEPARATOR+"SpecificInfo");
+		levelString.append("\n");
 
 		for (Drawable drawable : drawables){
-			writer.println(drawable); // TODO sort this part out
+			levelString.append(drawable); // TODO sort this part out
 		}
 
-		writer.close();
+		return levelString.toString();
 	}
 
+	/**
+	 * Reads a place file and makes us
+	 * @param placeFile
+	 * @return
+	 */
 	public static Place makePlaceFromFile(File placeFile){
 		String title = "222game level";
 		String floorTrixelsHeader = "Floor trixels";
@@ -368,7 +356,7 @@ public class LevelMaker{
 			reader.readLine(); // blank
 
 			for (int f = 0; f < floorTrixelsNum; f++){
-				String[] trixelInfo = reader.readLine().split("\t");
+				String[] trixelInfo = reader.readLine().split(SEPARATOR);
 				//floorCubes.add(new Cube())
 			}
 
@@ -398,15 +386,15 @@ public class LevelMaker{
 	 * sets the colour of the next trixel
 	 * @param colour
 	 */
-	public void setColour(Color colour){
-		this.currentColour = colour;
+	public void setBaseColour(Color colour){
+		this.baseColour = colour;
 	}
 
 	/**
 	 * @return the next trixel colour
 	 */
 	public Color getTrixelColour(){
-		return Renderer.makeRandomColor(currentColour, randomColourDeviation);
+		return Renderer.makeRandomColor(baseColour, randomColourDeviation);
 	}
 
 	/**
@@ -465,6 +453,48 @@ public class LevelMaker{
 	}
 	public int getTrixelSize() {
 		return trixelSize;
+	}
+
+	/**
+	 * Makes a floor with a random shape.
+	 * @return a floor
+	 */
+	public Floor makeRandomFloor(){
+		int minPoints = 4;
+		int maxPoints = 10;
+		int y = -trixelSize;
+		int numPoints = (int)(Math.random()*(maxPoints-minPoints)+minPoints);
+		int maxXValue = 1000;
+		int maxYValue = 800;
+
+		Point3D[] vertices = new Point3D[numPoints];
+
+		for (int i = 0; i < numPoints; i++){
+			int x = (int)(Math.random()*maxXValue);
+			int z = (int)(Math.random()*maxYValue);
+			vertices[i] = new Point3D(x, y, z);
+		}
+		return new Floor(vertices);
+	}
+
+	/**
+	 * sets the base colour to be a totally random colour
+	 */
+	public void randomiseBaseColour() {
+		setBaseColour(Renderer.makeRandomColour());
+	}
+
+	private void clearLevel() {
+		floorTrixels.clear();
+		createdTrixels.clear();
+		drawables.clear();
+	}
+
+	/**
+	 * updates trixel faces and the current rotation.
+	 */
+	private void updateFaces() {
+		updateRotation(0,0);
 	}
 
 }

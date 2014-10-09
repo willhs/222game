@@ -165,7 +165,7 @@ public class Renderer {
 		while (drawables.hasNext()){
 			Drawable drawable = drawables.next();
 			// drawable is an image
-			GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
+			GameImage image = new GameImage(ImageStorage.getImageFromName(drawable.getImageName()),
 					drawable.getPosition(place),
 					drawable.getBoundingBox());
 
@@ -329,7 +329,7 @@ public class Renderer {
 		 * @return whether a Drawable object should be represented as an image.
 		 */
 		private static boolean isImage(Drawable drawable) {
-			return Res.isImage(drawable.getImageName());
+			return ImageStorage.isImage(drawable.getImageName());
 		}
 
 
@@ -461,7 +461,7 @@ public class Renderer {
 
 				int size = randomGen.nextInt(maxSize-minSize)+minSize;
 
-				stars.add(new GameImage(Res.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
+				stars.add(new GameImage(ImageStorage.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
 			}
 			return stars;
 		}
