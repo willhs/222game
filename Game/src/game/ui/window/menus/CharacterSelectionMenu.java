@@ -7,10 +7,7 @@ import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 import game.ui.window.StarMation;
 import game.ui.window.keyInputManagment;
-import game.world.dimensions.Point3D;
-import game.world.model.Crystal;
 import game.world.model.Player;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -100,7 +97,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	 * */
 	public void setUpCharacterBoxes(){
 		int y = startY;
-		nameBox = new Rectangle(startX,y,boxWidth,40);
+		nameBox = new Rectangle(startX,y,boxWidth-120,40);
 
 		y+=gap+50;
 		character1 = new Rectangle(startX,y,boxWidth,height);
@@ -259,7 +256,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		switch(selectedButton){
 		case 0: panel.setMenu(new MainMenu(panel));
 			return;
-		case 1: okPressed();;
+		case 1: okPressed();
 			return;
 		}
 	}

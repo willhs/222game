@@ -1,9 +1,7 @@
 
+	The aim of the game is to do something and win the game
 
-       w
-       			To move
-   A - S - d
-
+   	W - A - S - D to move around
 
     E to pick up an item
 

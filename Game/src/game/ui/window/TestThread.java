@@ -1,6 +1,8 @@
 package game.ui.window;
 
-
+/**
+ * @Stolen from packman
+ * */
 public class TestThread extends Thread {
 	private final int delay; // delay between pulses in us
 	private final GameWindow display;
