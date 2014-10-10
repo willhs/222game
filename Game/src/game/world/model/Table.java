@@ -72,5 +72,10 @@ public class Table implements Item{
 		selected = change;
 	}
 
+	@Override
+	public boolean canUse(){
+		return false;
+	}
+
 
 }

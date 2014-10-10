@@ -57,4 +57,9 @@ public class Chest extends Container{
 		
 	}
 
+	@Override
+	public boolean canUse(){
+		return false;
+	}
+
 }
