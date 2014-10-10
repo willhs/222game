@@ -48,10 +48,11 @@ import javax.swing.JFileChooser;
  */
 public class LevelMaker{
 
-	public static final String TREE_MODE = "tree";
-	public static final String DOOR_MODE = "door";
-	public static final String CHEST_MODE = "chest";
-	public static final String TRIXEL_MODE = "trixel";
+	public static final String TREE_MODE = "Tree";
+	public static final String DOOR_MODE = "Door";
+	public static final String CHEST_MODE = "Chest";
+	public static final String TRIXEL_MODE = "Trixel";
+	public static final String[] MODES = {TREE_MODE, DOOR_MODE, CHEST_MODE, TRIXEL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;

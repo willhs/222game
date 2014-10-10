@@ -156,22 +156,18 @@ public class LevelMakerView extends JPanel{
 
 		ModeButtonListener modeButtonListener = new ModeButtonListener();
 
-		JButton trixelButton = new JButton("Trixel");
-		trixelButton.addActionListener(modeButtonListener);
-		trixelButton.setActionCommand(LevelMaker.TRIXEL_MODE);
-		drawablesPanel.add(trixelButton);
-
-		JButton treeButton = new JButton(new ImageIcon(
-				MenuUtil.scale(ImageStorage.getImageFromName("Tree"), ICON_SIZE, ICON_SIZE)));
-		treeButton.addActionListener(modeButtonListener);
-		treeButton.setActionCommand(LevelMaker.TREE_MODE);
-		drawablesPanel.add(treeButton);
-
-		JButton chestButton = new JButton(new ImageIcon(
-				MenuUtil.scale(ImageStorage.getImageFromName("Chest"), ICON_SIZE, ICON_SIZE)));
-		chestButton.addActionListener(modeButtonListener);
-		chestButton.setActionCommand(LevelMaker.CHEST_MODE);
-		drawablesPanel.add(chestButton);
+		for(String mode : LevelMaker.MODES){
+			JButton button;
+			if(mode == LevelMaker.TRIXEL_MODE){
+				button = new JButton(mode);
+			}else{
+				button = new JButton(new ImageIcon(
+					MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
+			}
+			button.addActionListener(modeButtonListener);
+			button.setActionCommand(mode);
+			drawablesPanel.add(button);
+		}
 
 		levelTabsPane = new JTabbedPane();
 		String name = "Room 1";
