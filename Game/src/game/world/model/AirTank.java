@@ -17,7 +17,7 @@ public class AirTank extends UsableItem{
 	public AirTank(String name, Point3D position){
 		this.name = name;
 		this.position = position;
-		imageName = "AirTank";
+		imageName = "oxygen_tank_labelled";
 	}
 
 	@Override
