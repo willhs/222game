@@ -1,9 +1,11 @@
 package game.world.model;
 
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
+import game.world.dimensions.*;
 import game.world.util.*;
 
+/**
+ * @author Shane Brewer 300289850
+ */
 public class Crystal extends Item {
 
 	private static final Rectangle3D boundingBox = new Rectangle3D(20f, 20f, 20f);

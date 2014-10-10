@@ -3,7 +3,7 @@ package game.world.model;
 import game.world.dimensions.*;
 
 /**
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  */
 public class AirTank extends UsableItem{
 

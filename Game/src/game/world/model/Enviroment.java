@@ -8,7 +8,7 @@ import game.world.util.Drawable;
 
 /**
  * Used for adding enviromental elements to the game world.
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public  abstract class Enviroment implements Serializable{

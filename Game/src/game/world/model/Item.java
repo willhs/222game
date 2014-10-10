@@ -10,7 +10,7 @@ import java.io.Serializable;
  * All items need to be some where eather in a place or a container or a
  * inventory
  *
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public abstract class Item implements Drawable, Serializable{

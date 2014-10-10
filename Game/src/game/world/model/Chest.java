@@ -3,9 +3,11 @@ package game.world.model;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 
+
+/**
+ * @author Shane Brewer 300289850
+ */
 public class Chest extends Container{
-	
-	
 	
 	/**
 	 * Constrcts the Chest.

@@ -7,7 +7,7 @@ import game.world.dimensions.Rectangle3D;
 /**
  * Container
  * defines what it is to be a container in this game.
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public abstract class Container extends Item{

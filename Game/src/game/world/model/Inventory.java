@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Inventory of a player 
  * All player should have a inventory
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public class Inventory implements Iterable<Item>, Serializable{
