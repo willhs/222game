@@ -437,35 +437,6 @@ public class Renderer {
 			return new Point3D(xSum/vertices.length, ySum/vertices.length, zSum/vertices.length);
 		}
 
-		/**
-		 * Testing making many stars
-		 * @return
-		 */
-		private static List<GameImage> makeStars(){
-			List<GameImage> stars = new ArrayList<GameImage>();
-
-			Random ran = new Random(RANDOM_SEED);
-
-			int maxX = 500;
-			int maxY = 500;
-			int maxZ = 500;
-
-			int minSize = 1;
-			int maxSize = 20;
-
-			int starCount = 1000;
-			for (int starNum = 0; starNum < starCount; starNum++){
-				float x = ran.nextInt(maxX*2)-maxZ;
-				float y = ran.nextInt(maxY*2)-maxZ;
-				float z = ran.nextInt(maxZ*2)-maxZ;
-
-				int size = randomGen.nextInt(maxSize-minSize)+minSize;
-
-				stars.add(new GameImage(ImageStorage.getImageFromName("Star1"), new Point3D(x,y,z), new Rectangle3D(size, size, size)));
-			}
-			return stars;
-		}
-
 		public static void resetColour(){
 			randomGen = new Random(RANDOM_SEED);
 		}

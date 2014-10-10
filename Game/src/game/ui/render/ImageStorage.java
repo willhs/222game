@@ -55,6 +55,7 @@ public class ImageStorage {
 		addImagesFromDir("crystal");
 		addImagesFromDir("teleporter");
 		addImage("oxygen_tank_labelled");
+		addImage("Trixel");
 	}
 
 

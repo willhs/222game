@@ -158,12 +158,8 @@ public class LevelMakerView extends JPanel{
 
 		for(String mode : LevelMaker.MODES){
 			JButton button;
-			if(mode == LevelMaker.TRIXEL_MODE){
-				button = new JButton(mode);
-			}else{
-				button = new JButton(new ImageIcon(
-					MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
-			}
+			button = new JButton(new ImageIcon(
+				MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
 			button.addActionListener(modeButtonListener);
 			button.setActionCommand(mode);
 			drawablesPanel.add(button);
@@ -186,7 +182,7 @@ public class LevelMakerView extends JPanel{
 		mainControls.add(newLevelButton);
 	}
 
-	/*
+	/**
 	 * Get the level maker of the currently selected tab.
 	 * @return The LevelMaker object associated with the current tab.
 	 */
@@ -194,7 +190,7 @@ public class LevelMakerView extends JPanel{
 		return ((LevelPanel)getCurrentDrawing()).getLevelMaker();
 	}
 
-	/*
+	/**
 	 * Get the JPanel object associated with the current tab
 	 * @return The JPanel of the current tab
 	 */
@@ -202,9 +198,9 @@ public class LevelMakerView extends JPanel{
 		return (JPanel)(levelTabsPane.getSelectedComponent());
 	}
 
-	/*
+	/**
 	 * Make a new JPanel with a LevelMaker for a new tab.
-	 * @return the new JPanel ready to be added to a new tab. 
+	 * @return the new JPanel ready to be added to a new tab.
 	 */
 	private JPanel makeNewDrawPanel(){
 		JPanel draw = new LevelPanel(){
@@ -219,10 +215,10 @@ public class LevelMakerView extends JPanel{
 				super.paintComponent(g);
 				Renderer.renderLevel(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
 						levelMaker.getTrixelSize(), levelMaker.getWorldObjects(), levelMaker.getLastTransform());
-		
+
 				// displays current colour
 				g.setColor(levelMaker.getTrixelColour());
-				g.fillRect(0, 50, 20, 20);
+				g.fillRect(0, 0, 20, 20);
 			}
 		};
 
