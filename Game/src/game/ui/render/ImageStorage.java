@@ -57,7 +57,7 @@ public class ImageStorage {
 
 		addImagesFromDir("crystal");
 		addImagesFromDir("teleporter");
-		addImagesFromDir("background");
+//		addImagesFromDir("background");
 	}
 
 

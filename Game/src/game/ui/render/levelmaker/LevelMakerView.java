@@ -32,6 +32,8 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JTabbedPane;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 
 abstract class LevelPanel extends JPanel{
 	private LevelMaker levelMaker;
@@ -50,8 +52,11 @@ abstract class LevelPanel extends JPanel{
 public class LevelMakerView extends JPanel{
 
 	private static final int ICON_SIZE = 30;
+	private static final int TEXT_FIELD_SIZE = 20; 
 	private JTabbedPane levelTabsPane;
 	private int numTabs = 1;
+	private JTextField roomNameField;
+	private JTextField portalNameField;
 
 	public LevelMakerView(){
 
@@ -70,7 +75,7 @@ public class LevelMakerView extends JPanel{
 		mainControls.setLayout(new FlowLayout());
 		controlPanel.add(mainControls, BorderLayout.NORTH);
 
-		final JTextField trixelSizeField = new JTextField(LevelMaker.DEFAULT_TRIXEL_SIZE);
+		final JTextField trixelSizeField = new JTextField(TEXT_FIELD_SIZE);
 		trixelSizeField.setToolTipText("enter trixel size");
 		trixelSizeField.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -154,16 +159,32 @@ public class LevelMakerView extends JPanel{
 		drawablesPanel.setLayout(new FlowLayout());
 		add(drawablesPanel, BorderLayout.SOUTH);
 
-		ModeButtonListener modeButtonListener = new ModeButtonListener();
-
-		for(String mode : LevelMaker.MODES){
-			JButton button;
-			button = new JButton(new ImageIcon(
-				MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
-			button.addActionListener(modeButtonListener);
-			button.setActionCommand(mode);
-			drawablesPanel.add(button);
+		ModeButtonListener mbl = new ModeButtonListener();
+		String[] modes = new String[]{LevelMaker.TREE_MODE, LevelMaker.CHEST_MODE, LevelMaker.TRIXEL_MODE};
+		for(String mode : modes){
+			drawablesPanel.add(makeDrawButton(mode, mbl));
 		}
+
+		JPanel portalStuff = new JPanel();
+		portalStuff.setLayout(new BoxLayout(portalStuff, BoxLayout.X_AXIS));
+
+		JPanel portalTextBoxes = new JPanel();
+		portalTextBoxes.setLayout(new BoxLayout(portalTextBoxes, BoxLayout.Y_AXIS));
+		roomNameField = new JTextField(TEXT_FIELD_SIZE);
+		portalNameField = new JTextField(TEXT_FIELD_SIZE);
+		portalTextBoxes.add(roomNameField);
+		portalTextBoxes.add(portalNameField);
+
+		JPanel portalLabels = new JPanel();
+		portalLabels.setLayout(new BoxLayout(portalLabels, BoxLayout.Y_AXIS));
+		portalLabels.add(new JLabel("Room Name"));
+		portalLabels.add(new JLabel("Portal Name"));
+		
+		portalStuff.add(makeDrawButton(LevelMaker.DOOR_MODE, mbl));
+		portalStuff.add(portalLabels);
+		portalStuff.add(portalTextBoxes);
+
+		drawablesPanel.add(portalStuff);
 
 		levelTabsPane = new JTabbedPane();
 		String name = "Room 1";
@@ -180,6 +201,18 @@ public class LevelMakerView extends JPanel{
 			}
 		});
 		mainControls.add(newLevelButton);
+	}
+
+	/*
+	 * Make a JButton with the given mode, its associated image as an icon, and the given listener linked.
+	 * @return JButton for the given mode.
+	 */
+	private JButton makeDrawButton(String mode, ModeButtonListener mbl){
+		JButton button = new JButton(new ImageIcon(
+			MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
+		button.addActionListener(mbl);
+		button.setActionCommand(mode);
+		return button;
 	}
 
 	/**
