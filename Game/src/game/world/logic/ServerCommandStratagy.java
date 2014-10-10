@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Stratagy for player commands being prossesed.
- * @author brewershan
+ * @author brewershan 300289850
  *
  */
 public interface ServerCommandStratagy extends Serializable{

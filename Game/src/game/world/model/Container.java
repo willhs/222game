@@ -7,21 +7,18 @@ import game.world.dimensions.Rectangle3D;
 /**
  * Container
  * defines what it is to be a container in this game.
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
-public abstract class Container implements Item{
+public abstract class Container extends Item{
 	
 	private final Inventory contents;
-	private final String name;
 	private final Rectangle3D boundingBox;
-	private Point3D position;
 	protected boolean isLocked;
 	
 	public Container (String name, Inventory contents, Rectangle3D boundingBox, Point3D position){
+		super(name, position);
 		this.contents = contents;
-		this.name = name;
-		this.position = position;
 		this.boundingBox = boundingBox;
 	}
 	/**
@@ -44,21 +41,6 @@ public abstract class Container implements Item{
 	 * @return - true if the container is unlocked or was unlocked.
 	 */
 	public abstract boolean unlock(Inventory playersInventory);
-	
-	@Override
-	public Point3D getPosition() {
-		return position;
-	}
-	
-	@Override
-	public void  setPosition(Point3D point) {
-		position = point;
-	}
-	
-	@Override
-	public String getName() {
-		return name;
-	}
 	
 	@Override
 	public Rectangle3D getBoundingBox(){

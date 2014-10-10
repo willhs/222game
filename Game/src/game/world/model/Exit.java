@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Exit
  * Defines what it is to be an exit in the game.
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public abstract class Exit implements Drawable, Serializable{

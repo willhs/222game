@@ -13,7 +13,7 @@ import java.util.Iterator;
 
 /**
  * 
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  * 
  */
 public class ItemInteractionHandler {

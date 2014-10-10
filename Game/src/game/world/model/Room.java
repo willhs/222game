@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Room Class This class defines every thing to do with a room.
  *
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public class Room implements Place, Serializable {

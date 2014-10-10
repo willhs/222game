@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Door. Is a way to exit a place should always have two exits.
  *
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public class Portal extends Exit {

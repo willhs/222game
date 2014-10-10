@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public class Player implements Character, Serializable{

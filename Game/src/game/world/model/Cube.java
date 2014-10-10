@@ -4,6 +4,9 @@ import java.awt.Rectangle;
 
 import game.world.dimensions.*;
 
+/**
+ * @author Shane Brewer 300289850
+ */
 public class Cube extends Enviroment{
 
     public Cube(String name, Point3D poisition) {

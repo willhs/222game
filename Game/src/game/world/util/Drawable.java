@@ -5,7 +5,7 @@ import game.world.dimensions.Rectangle3D;
 import game.world.model.Place;
 
 /**
- * @author hardwiwill & Shane Brewer
+ * @author hardwiwill and Shane Brewer 300289850
  *
  */
 public interface Drawable {

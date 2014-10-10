@@ -7,7 +7,18 @@ import game.world.util.Parser;
 import java.io.Serializable;
 import java.util.*;
 
+
+/**
+ * @author Shane Brewer 300289850
+ */
 public interface ClientCommandStratagy extends Serializable{
+	/**
+	 * Used to set values in the world depending on if the server 
+	 *
+	 * @param scan - has the command in it.
+	 *
+	 * @param world - the current world that is to be modifyed by the setters.
+	 */
 	public void clientSetCommand(Scanner scan, ClientWorld world);
 }
 

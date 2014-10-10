@@ -1,6 +1,15 @@
 package game.world.model;
 
-public abstract class UsableItem implements Item{
+import game.world.dimensions.Point3D;
+
+/**
+ * @author Shane Brewer 300289850
+ */
+public abstract class UsableItem extends Item{
+
+	public UsableItem(String name, Point3D position){
+		super(name, position);
+	}
 
 	@Override
 	public boolean canUse(){
