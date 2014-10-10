@@ -52,8 +52,24 @@ public interface Item extends Drawable, Serializable{
 	 */
 	public void setPosition(Point3D point);
 	
+	/**
+	 * Check if an item is selected.
+	 *
+	 * @return - returns true if the item is selected.
+	 */
 	public boolean isSlelected();
 	
+	/**
+	 * Changes the value in the selected field.
+	 *
+	 * @param change - the value to change the field to.
+	 */
 	public void setSelected(boolean change);
+
+	/**
+	 *Uses an item.
+	 * @return - returns true if the item was used.
+	 */
+	public boolean canUse();
 
 }

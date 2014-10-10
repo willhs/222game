@@ -67,4 +67,9 @@ public class Crystal implements Item {
 		selected = change;
 	}
 
+	@Override
+	public boolean canUse(){
+		return false;
+	}
+
 }

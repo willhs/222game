@@ -64,5 +64,10 @@ public class Sword implements Item{
 	public void setSelected(boolean change) {
 		selected = change;
 	}
+
+	@Override
+	public boolean canUse(){
+		return false;
+	}
 	
 }

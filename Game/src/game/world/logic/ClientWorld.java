@@ -47,6 +47,12 @@ public abstract class ClientWorld extends ServerWorld {
 		clientCommands.put("Container", new ClientContainerStratagy());
 	}
 
+	public void tick(){
+		if(clientsPlayer != null){
+			clientsPlayer.tickAirLevel();
+		}
+	}
+
 	/**
 	 * Takes a commands form the client and returns a command intended for the
 	 * server World.
