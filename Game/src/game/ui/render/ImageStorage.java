@@ -39,6 +39,7 @@ public class ImageStorage {
 	 */
 	public static void readInAllCommonImages(){
 
+		addImage("space_ship");
 		addImage("Char3");
 		addImage("Char2");
 		addImage("Char1");

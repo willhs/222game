@@ -82,7 +82,7 @@ public class GameWindow extends JFrame{
 		//read in the resources
 		ImageStorage.readInAllCommonImages();
 		GameWindow window = new GameWindow();
-		thread = new TestThread(30, window);
+		thread = new TestThread(20, window);
 		thread.start();//start the thread
 	}
 }

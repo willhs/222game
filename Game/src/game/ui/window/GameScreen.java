@@ -157,6 +157,7 @@ public class GameScreen implements GraphicsPane  {
 
 	public void drawOxygen(Graphics2D g){
 		int airLevel = player.getAirLevel();
+
 		g.setColor(new Color(0,191,255));
 		g.fillRect(100, 50, airLevel*2, 50);
 
@@ -170,6 +171,27 @@ public class GameScreen implements GraphicsPane  {
 
 		g.setColor(Color.red);
 		g.drawRect(100, 50, 200, 50);
+
+		Font myFont = new Font("Tunga",0,20);
+		g.setFont(myFont);
+		g.setColor(Color.white);
+
+		g.drawString(airLevel+"", 100 + 100 - g.getFontMetrics(myFont).stringWidth(""+airLevel)/2, (int) ((50 + 50 - (g.getFontMetrics(myFont).getHeight()/2)))-3);
+
+		if(airLevel >=190)gameOver(g);
+	}
+
+	public void gameOver(Graphics g){
+			Graphics2D g2d = (Graphics2D)g;
+
+			Font myFont = new Font("Tunga",0,30);
+			g.setFont(myFont);
+			g.setColor(Color.BLACK);
+			g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_WIDTH);
+			g.setColor(Color.white);
+			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
+			gameOver = true;
+
 	}
 
 	public void drawTime(Graphics g){

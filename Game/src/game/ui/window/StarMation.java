@@ -105,6 +105,11 @@ public class StarMation {
 			 this.x = x;
 			 this.y = y;
 			 this.image = image;
+			 if((int)(Math.random()*100) > 50){
+
+				 System.out.println("SPACE SHIT");
+				// this.image = ImageStorage.getImageFromName("space_ship");
+			 }
 			 this.speed = (int)(Math.random()*speedRange);
 			 if(speed < 1)speed = 1;
 		}

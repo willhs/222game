@@ -68,6 +68,9 @@ public class InventoryMenu implements GraphicsPane {
 	private long prevTime;
 	private boolean displayingInfo;
 
+	private int origClickX;
+	private int origClickY;
+
 
 	/**
 	 *The constructor for the InventoryMenu
@@ -144,7 +147,7 @@ public class InventoryMenu implements GraphicsPane {
 		}
 	}
 
-
+	
 	/**
 	 * draws the grid on the screen representing the inventory
 	 * changes the grid color if one of the squares is selected
@@ -159,19 +162,22 @@ public class InventoryMenu implements GraphicsPane {
 		int x = gridX;
 		int y = gridY;
 
+		//for the offset
+		int selectedX = 0;
+		int selectedY = 0;
+
 		int curGrid = 0;//the number value of the grid square that is currently being drawn
 
 		for(int i = 0; i < numbRow; i++ ){
 			for(int j = 0; j < numbCol; j++){
 
-				//if the current grid square is selected change the color
-				if(curGrid == selectedGrid){
-					//g.setColor(Color.BLUE);
-				}
-				else{
-					g.setColor(backColor);
+				//used for the offset calculation
+				if(curGrid == selectItemOnGrid){
+					selectedX = x;
+					selectedY = y;
 				}
 
+					g.setColor(backColor);
 				//draw the current grid square
 				g.fillRect(x, y, gridSize, gridSize);
 				g.setColor(Color.black);
@@ -180,8 +186,6 @@ public class InventoryMenu implements GraphicsPane {
 				if(items[curGrid] != null ){
 					if(selectItemOnGrid != curGrid)g.drawImage(ImageStorage.getImageFromName(items[curGrid].getImageName()), x, y,gridSize,gridSize, panel);
 				}
-
-
 				x +=gridSize;
 				curGrid++;
 			}
@@ -190,7 +194,16 @@ public class InventoryMenu implements GraphicsPane {
 		}
 
 		if(selectedItem !=null){
-			g.drawImage(ImageStorage.getImageFromName(selectedItem.getImageName()), currMouseX, currMouseY,gridSize,gridSize,panel);
+			//ofset so the image is drawn in the centre of where the mouse is clicked
+			int xOffset = origClickX - selectedX;
+			int yOffset = origClickY - selectedY;
+
+			//cheap fix for the smaller inventory
+			if(selectItemOnGrid == -1){
+				xOffset = 50;
+				yOffset = 50;
+			}
+			g.drawImage(ImageStorage.getImageFromName(selectedItem.getImageName()), currMouseX-xOffset, currMouseY-yOffset,gridSize,gridSize,panel);
 		}
 		g2d.setStroke(oldStroke);
 	}
@@ -285,7 +298,6 @@ public class InventoryMenu implements GraphicsPane {
 			displayMenu(g);
 			displayingInfo = true;
 		}
-	//	updateInventory();
 
 		drawFrame(g);//draws the outside of the inventory
 		drawCharactrInventory(g);//draws the character part of the inventory
@@ -330,6 +342,9 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
+		origClickX = e.getX();
+		origClickY = e.getY();
+
 		if(selectedGrid != -1 && selectedItem !=null && items[selectedGrid] == null){
 			items[selectedGrid] = selectedItem;
 		}
@@ -346,6 +361,8 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void handleMousePressed(MouseEvent e) {
+		origClickX = e.getX();
+		origClickY = e.getY();
 
 		//first check if there is is a selected image
 		if(selectedItem != null){
