@@ -13,14 +13,25 @@ import java.io.Serializable;
  * @author Shane Brewer
  *
  */
-public interface Item extends Drawable, Serializable{
+public abstract class Item implements Drawable, Serializable{
+
+	private final String name;
+	private Point3D position;
+	private boolean isSlelected;
+
+	public Item (String name, Point3D position){
+		this.name = name;
+		this.position = position;
+	}
 
 	/**
 	 * All items have names and you need to be able to get them.
 	 *
 	 * @return - returns the name of the item.
 	 */
-	public String getName();
+	public String getName(){
+		return name;
+	}
 
 	/**
 	 * Gets the position of the item in a 3D space. if the items is in a
@@ -30,46 +41,61 @@ public interface Item extends Drawable, Serializable{
 	 * @return Point3D - returns the items position is 3D space if it is in an
 	 *         container or inventory null will be returned..
 	 */
-	public Point3D getPosition();
+	public Point3D getPosition(){
+		return position;
+	}
 
 	/**
 	 * Tells you if the item can be picked up.
 	 *
 	 * @return - returns true if the items can be picked up.
 	 */
-	public boolean canPickUp();
+	public abstract boolean canPickUp();
 
 	/**
 	 * Tells if the item can be droped.
 	 *
 	 * @return - returns true if the item can be droped.
 	 */
-	public boolean canDrop();
+	public abstract boolean canDrop();
 
 	/**
 	 * Used to se the new point off the item.
 	 * @param point3d  the point that is to be set
 	 */
-	public void setPosition(Point3D point);
-	
+	public void setPosition(Point3D point){
+		position = point;
+	}
+
 	/**
 	 * Check if an item is selected.
 	 *
 	 * @return - returns true if the item is selected.
 	 */
-	public boolean isSlelected();
-	
+	public boolean isSlelected(){
+		return isSlelected;
+	}
+
 	/**
 	 * Changes the value in the selected field.
 	 *
 	 * @param change - the value to change the field to.
 	 */
-	public void setSelected(boolean change);
+	public void setSelected(boolean change){
+		isSlelected = change;
+	}
 
 	/**
 	 *Uses an item.
 	 * @return - returns true if the item was used.
 	 */
-	public boolean canUse();
+	public boolean canUse(){
+		return false;
+	}
+
+	@Override
+	public Point3D getPosition(Place place){
+		return position;
+	}
 
 }

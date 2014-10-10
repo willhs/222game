@@ -33,11 +33,6 @@ public class Chest extends Container{
 	}
 
 	@Override
-	public Point3D getPosition(Place place) {
-		return getPosition();
-	}
-
-	@Override
 	public boolean isLocaked() {
 		return isLocked;
 	}
@@ -45,21 +40,6 @@ public class Chest extends Container{
 	@Override
 	public boolean unlock(Inventory playersInventory) {
 		return true;
-	}
-
-	@Override
-	public boolean isSlelected() {
-		return false;
-	}
-
-	@Override
-	public void setSelected(boolean change) {
-		
-	}
-
-	@Override
-	public boolean canUse(){
-		return false;
 	}
 
 }
