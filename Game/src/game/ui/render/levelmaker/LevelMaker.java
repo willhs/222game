@@ -16,6 +16,7 @@ import game.world.model.Chest;
 import game.world.model.Cube;
 import game.world.model.Inventory;
 import game.world.model.Place;
+import game.world.model.Portal;
 import game.world.model.Table;
 import game.world.util.Drawable;
 import game.world.util.Floor;
@@ -35,6 +36,15 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
+
+class SimplePortal extends Portal{
+	public SimplePortal(Point3D location){
+		super("Portal", null, location, null, null);
+	}
+	public Point3D getPosition(Place place){
+		return getPosition();
+	}
+}
 
 /**
  * @author hardwiwill
@@ -225,6 +235,9 @@ public class LevelMaker{
 		if (drawMode == CHEST_MODE){
 			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
 		}
+		if (drawMode == DOOR_MODE){
+			drawables.add(new SimplePortal(aboveTrixel)); 
+		}
 		updateTrixelFaces();
 	}
 
@@ -405,6 +418,10 @@ public class LevelMaker{
 	public void setDrawMode(String drawMode) {
 		this.drawMode  = drawMode;
 
+	}
+
+	public String getDrawMode(){
+		return drawMode;
 	}
 
 	/**
