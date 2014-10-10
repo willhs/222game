@@ -7,7 +7,9 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -17,11 +19,10 @@ import javax.imageio.ImageIO;
  *
  * Contains references to all resources (e.g. images)
  */
-public class Res {
+public class ImageStorage {
 
 	public static final char SEP = File.separatorChar;
 	public static final String RES_PATH = "res"+SEP;
-	public static final String TEST_PATH = RES_PATH + "test" + SEP;
 	public static final String IMG_PATH = RES_PATH + "img" + SEP;
 	public static final String LEVEL_PATH = RES_PATH + "level" + SEP;
 	public static final String FLOOR_PATH = LEVEL_PATH + "floor" + SEP;
@@ -50,7 +51,9 @@ public class Res {
 		addImage("Chest");
 		addImage("OpenChest");
 		addImage("Tree");
+		addImagesFromDir("crystal");
 	}
+
 
 	/**
 	 * Adds an image to the local image storage
@@ -64,7 +67,7 @@ public class Res {
 		// try to find image from the name (test name with all supported file extensions)
 		for (String supportedImageType : SUPPORTED_IMAGE_TYPES){
 			try {
-				image = readImage(TEST_PATH + name + "." + supportedImageType);
+				image = readImage(IMG_PATH + name + "." + supportedImageType);
 			} catch (IOException e) {
 				continue; //try another image type
 			}
@@ -83,17 +86,49 @@ public class Res {
 	}
 
 	/**
+	 * Adds all images at the given directory path
+	 * @param imagePath
+	 */
+	private static void addImagesFromDir(String imagePath) {
+
+		File file = new File(IMG_PATH+imagePath);
+		if (!file.isDirectory()){
+			throw new IllegalArgumentException("imagePath should be a directory");
+		}
+		// goes through all files in dir, if there is a problem reading a file
+		// input a UNKNOWN_IMAGE in place of the intended image.
+		for (File imageFile : file.listFiles()){
+			String imageName = imageFile.getName();
+			String shortImageName = imageName.substring(0, imageName.length()-4); // omitting file extension.
+			try {
+				images.put(shortImageName, readImage(imageFile));
+			} catch (IOException e) {
+				System.err.println("Failed reading a file from dir");
+				try {
+					images.put(shortImageName, readImage(UNKNOWN_IMAGE_PATH));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/**
 	 * if no image found, return 'unknown image' image
 	 * if unknown image isn't found, throw error
 	 * @param fileName
 	 * @return
 	 */
-	public static BufferedImage readImage(String fileName) throws IOException{
+	private static BufferedImage readImage(String fileName) throws IOException {
+		return readImage(new File(fileName));
+	}
 
-		BufferedImage image = ImageIO.read(new File(fileName));
+	private static BufferedImage readImage(File imageFile) throws IOException {
+		BufferedImage image = ImageIO.read(imageFile);
 		image = createCompatibleImage(image);
 		return image;
 	}
+
 
 	/**
 	 * I believe this does:

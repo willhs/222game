@@ -1,6 +1,7 @@
 package game.ui.render.levelmaker;
 
-import game.ui.render.Res;
+import game.ui.render.ImageStorage;
+import game.ui.window.GameWindow;
 
 import java.awt.Dimension;
 
@@ -17,9 +18,9 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args){
-		Res.readInAllCommonImages();
+		ImageStorage.readInAllCommonImages();
 		JFrame frame = new JFrame("Level maker");
-		Dimension SCREEN_SIZE = new Dimension(800,800);
+		Dimension SCREEN_SIZE = new Dimension(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT);
 		frame.setSize(SCREEN_SIZE );
 		frame.add(new LevelMakerView());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

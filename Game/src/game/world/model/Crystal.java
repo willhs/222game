@@ -2,6 +2,7 @@ package game.world.model;
 
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
+import game.world.util.*;
 
 public class Crystal implements Item {
 
@@ -16,7 +17,7 @@ public class Crystal implements Item {
 			Point3D position) {
 		super();
 		this.name = name;
-		this.imageName = "Key";
+		this.imageName = ItemImageNames.crystalNames[(int)(ItemImageNames.crystalNames.length*Math.random())];
 		this.position = position;
 	}
 	//====================End=======================//
