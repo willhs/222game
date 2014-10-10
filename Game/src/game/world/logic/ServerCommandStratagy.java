@@ -224,3 +224,29 @@ class ServerContainerStratagy implements ServerCommandStratagy{
 	}
 }
 
+class ServerUseStratagy implements ServerCommandStratagy{
+	public List<String> handleCommand(Scanner scan, String command, ServerWorld world){
+		List<String> commands = new ArrayList<String>();
+		// Gets the player name.
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+		// Gets the item of the player.
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Player player = world.getPlayerByName(playerName);
+		Item item = world.getItemByName(itemName);
+
+		if (item.canUse() && item instanceof UsableItem){
+			UsableItem usable = (UsableItem) item;
+			usable.use(player);
+			player.getInventory().removeItem(item);
+			Scanner sc = new Scanner(command);
+			sc.next();
+			commands.add("Server "+sc.nextLine());
+			sc.close();
+		}
+		return commands;
+	}
+}
+
