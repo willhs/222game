@@ -18,6 +18,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 
 import nw.Client;
@@ -147,10 +148,29 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu.render(g);
 		}
 
+		//draws the payers remaining oxygen
+		drawOxygen(g2d);
+
 		//seconds stuff
-		drawTime(g2d);
+		//drawTime(g2d);
 	}
 
+	public void drawOxygen(Graphics2D g){
+		int airLevel = player.getAirLevel();
+		g.setColor(new Color(0,191,255));
+		g.fillRect(100, 50, airLevel*2, 50);
+
+		g.setColor(Color.red);
+		g.fill(new Arc2D.Double(75, 50, 50, 50, 90, 90, Arc2D.PIE));
+		Arc2D arc =  new Arc2D.Double(75, 50, 50, 50, 180, 90, Arc2D.PIE);
+
+		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 0, 90, Arc2D.PIE));
+		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 270, 90, Arc2D.PIE));
+		g.fill(arc);
+
+		g.setColor(Color.red);
+		g.drawRect(100, 50, 200, 50);
+	}
 
 	public void drawTime(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;

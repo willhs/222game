@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class StarMation {
 	ArrayList<Star> stars;
 
-	private int numbofStars = 300;
+	private int numbofStars = 200;
 	private int maxWidth;
 	private int maxHeight;
 	private int size = 60;
@@ -65,13 +65,8 @@ public class StarMation {
 
 		//make sure the size is at least 1
 		if(randomSize < 1)randomSize = 1;
-<<<<<<< HEAD
 
-		return new Star( MenuUtil.scale(Res.getImageFromName("Star1"), randomSize, randomSize),randomX,randomY);
-=======
-		
 		return new Star( MenuUtil.scale(ImageStorage.getImageFromName("Star1"), randomSize, randomSize),randomX,randomY);
->>>>>>> 818c36ab38f13713776e341fbc8131422b1fc602
 	}
 
 
