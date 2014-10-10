@@ -14,6 +14,10 @@ import java.io.Serializable;
  *
  */
 public class Player implements Character, Serializable{
+	
+	/**
+	 * Generic id.
+	 */
 	private static final long serialVersionUID = 1L;
 
 	public final String name;
@@ -114,6 +118,10 @@ public class Player implements Character, Serializable{
 
 	public void tickAirLevel(){
 		airLevel--;
+	}
+
+	public void addAir(){
+		airLevel = 100;
 	}
 
 }

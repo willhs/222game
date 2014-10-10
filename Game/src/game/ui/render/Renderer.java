@@ -176,7 +176,7 @@ public class Renderer {
 			if (drawable instanceof Player){
 				GameText text = new GameText(drawable.getName(),
 						image.getPosition().getTranslatedPoint(
-								new Vector3D(-drawable.getBoundingBox().width/2, 10, 0)));
+								new Vector3D(-drawable.getBoundingBox().width/2, (drawable.getBoundingBox().height/4)*3, 0)));
 
 				renderables.add(text);
 			}
@@ -213,7 +213,7 @@ public class Renderer {
 			shape.flipAroundY(FRAME_TOP);
 		}
 	}
-	
+
 	/**
 	 * DRAW ALL THE THINGS  ...in correct order
 	 * @param renderables

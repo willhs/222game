@@ -25,6 +25,7 @@ public abstract class ServerWorld implements Serializable {
 		serverCommands.put("ItemPickUp", new ServerItemPickupStratagy());
 		serverCommands.put("ItemDrop", new ServerItemDropStratagy());
 		serverCommands.put("Container", new ServerContainerStratagy());
+		serverCommands.put("Use", new ServerUseStratagy());
 	}
 
 	/**

@@ -164,3 +164,23 @@ class ClientAddPlayerStratagy implements ClientCommandStratagy{
 		}
 	}
 }
+
+class ClientUseStratagy implements ClientCommandStratagy{
+	public void clientSetCommand(Scanner scan, ClientWorld world){
+		// Gets the player name.
+		Parser.removeUnneedText("Name", scan);
+		String playerName = Parser.parseName(scan);
+		// Gets the item of the player.
+		Parser.removeUnneedText("Name", scan);
+		String itemName = Parser.parseName(scan);
+
+		Player player = world.getPlayerByName(playerName);
+		Item item = world.getItemByName(itemName);
+
+		if (item.canUse() && item instanceof UsableItem){
+			UsableItem usable = (UsableItem) item;
+			usable.use(player);
+			player.getInventory().removeItem(item);
+		}
+	}
+}

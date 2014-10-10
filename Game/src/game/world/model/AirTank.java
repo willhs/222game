@@ -5,11 +5,13 @@ import game.world.dimensions.*;
 /**
  * @author Shane Brewer
  */
-public class AirTank implements UsableItem{
+public class AirTank extends UsableItem{
 
 	private final String name;
 	private Point3D position;
 	private final String imageName;
+	private boolean isSelected;
+	private final Rectangle3D boundingBox = new Rectangle3D(20, 20 , 20);
 
 
 	public AirTank(String name, Point3D position){
@@ -39,18 +41,8 @@ public class AirTank implements UsableItem{
 	}
 
 	@Override
-	public boolean isSelected(){
-		return isSelected;
-	}
-
-	@Override
 	public void setSelected(boolean change){
 		isSelected = change;
-	}
-
-	@Override
-	public Point3D getPosition(){
-		return position;
 	}
 
 	@Override
@@ -65,6 +57,22 @@ public class AirTank implements UsableItem{
 
 	@Override
 	public boolean use(Player player){
+		player.addAir();
+		return true;
+	}
 
+	@Override
+	public boolean canDrop() {
+		return false;
+	}
+
+	@Override
+	public boolean isSlelected() {
+		return isSelected;
+	}
+
+	@Override
+	public Rectangle3D getBoundingBox() {
+		return boundingBox;
 	}
 }

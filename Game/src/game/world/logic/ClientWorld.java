@@ -45,6 +45,7 @@ public abstract class ClientWorld extends ServerWorld {
 		clientCommands.put("ItemPickUp", new ClientItemPickupStratagy());
 		clientCommands.put("ItemDrop", new ClientItemDropStratagy());
 		clientCommands.put("Container", new ClientContainerStratagy());
+		clientCommands.put("Use", new ClientUseStratagy());
 	}
 
 	public void tick(){
@@ -153,6 +154,14 @@ public abstract class ClientWorld extends ServerWorld {
 						+ place.getName() + " )";
 			}
 
+		}
+		if (command.equals("")){
+			for (Item item : clientsPlayer.getInventory()){
+				if(item.isSlelected() && item.canUse()){
+					command = "Server Use Name ( " + clientsPlayer.getName()
+						+ " ) Name ( " + item.getName() +" ) ";
+				}
+			}
 		}
 		return command;
 	}
