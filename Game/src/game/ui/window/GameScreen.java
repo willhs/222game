@@ -18,6 +18,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 
 import nw.Client;
@@ -77,7 +78,6 @@ public class GameScreen implements GraphicsPane  {
 		popUpInventory.updateInventory();
 		releventQueKeypress = createKeylist();
 		rotateVector = new Vector3D(0f, 0f, 0f);
-
 		setUpInventoryBarButtons();
 	}
 
@@ -127,6 +127,9 @@ public class GameScreen implements GraphicsPane  {
 	@Override
 	public void render(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
+
+		popUpInventory.updateInventory();
+
 		//render the star animation
 		starMation.render(g);
 		removeItems();
@@ -145,12 +148,37 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu.render(g);
 		}
 
+		//draws the payers remaining oxygen
+		drawOxygen(g2d);
+
 		//seconds stuff
+		//drawTime(g2d);
+	}
+
+	public void drawOxygen(Graphics2D g){
+		int airLevel = player.getAirLevel();
+		g.setColor(new Color(0,191,255));
+		g.fillRect(100, 50, airLevel*2, 50);
+
+		g.setColor(Color.red);
+		g.fill(new Arc2D.Double(75, 50, 50, 50, 90, 90, Arc2D.PIE));
+		Arc2D arc =  new Arc2D.Double(75, 50, 50, 50, 180, 90, Arc2D.PIE);
+
+		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 0, 90, Arc2D.PIE));
+		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 270, 90, Arc2D.PIE));
+		g.fill(arc);
+
+		g.setColor(Color.red);
+		g.drawRect(100, 50, 200, 50);
+	}
+
+	public void drawTime(Graphics g){
+		Graphics2D g2d = (Graphics2D)g;
 
 		int seconds = client.getSecondsRemaining();
 		Font myFont = new Font("Tunga",0,50);
 		g.setFont(myFont);
-
+		g.setColor(Color.white);
 		g.drawString(seconds+"", 50, 100);
 		if(seconds >= 100){
 
@@ -162,8 +190,6 @@ public class GameScreen implements GraphicsPane  {
 			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
 			gameOver = true;
 		}
-
-
 	}
 
 	@Override
@@ -184,12 +210,12 @@ public class GameScreen implements GraphicsPane  {
 	@SuppressWarnings("static-access")
 	@Override
 	public void keyPressed(String keyEvent) {
-
 		if(currentMenu != null){
 			currentMenu.keyPressed(keyEvent);
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
 		else if(gameOver){
+			client.quit();
 			panel.setMenu(new MainMenu(panel));
 		}
 		else if(keyEvent.equals("inventory")){
@@ -231,37 +257,6 @@ public class GameScreen implements GraphicsPane  {
 
 		//set the item selected
 		updateSelectedItem();
-	}
-
-
-	/**
-	 * Removes any items from the inventory that have been dropped
-	 * */
-	public void removeItems(){
-		for(int i = 0; i < items.length; i++){
-			if(items[i] != null){
-				if(!(player.getInventory().isIn(items[i]))){
-					items[i] = null;
-				}
-			}
-
-		}
-	}
-
-
-	/**
-	 * Sets the selected item to be selected
-	 * */
-	public void updateSelectedItem(){
-		for(int i = 0; i < items.length; i++){
-			if(items[i] != null && selectedButton !=-1 && selectedButton == i){
-				items[selectedButton].setSelected(true);
-				System.out.println(items[selectedButton].isSlelected());
-			}
-			else if(items[i] != null){
-				items[i].setSelected(false);
-			}
-		}
 	}
 
 
@@ -310,6 +305,7 @@ public class GameScreen implements GraphicsPane  {
 	 * Returns whether or not the there is an item at this location
 	 * */
 	public boolean containsItem(int gridNumb){
+		if(gridNumb < 1 || gridNumb >= items.length)return false;
 		if(items[gridNumb] != null)return true;
 		return false;
 	}
@@ -318,7 +314,7 @@ public class GameScreen implements GraphicsPane  {
 	/**
 	 *Places the item on the grid at the selected location
 	 * */
-	public void placeItemOnGrid(int gridNumb, Item item){//TODO will most likely change to an item instead of an image but just to test for now
+	public void placeItemOnGrid(int gridNumb, Item item){
 		if(gridNumb < 0 || gridNumb >= items.length)return;//error
 		if(items[gridNumb] == null){
 			items[gridNumb] = item;
@@ -350,6 +346,35 @@ public class GameScreen implements GraphicsPane  {
 		return false;//not in the inventory
 	}
 
+	/**
+	 * Removes any items from the inventory that have been dropped
+	 * */
+	public void removeItems(){
+		for(int i = 0; i < items.length; i++){
+			if(items[i] != null){
+				if(!(player.getInventory().isIn(items[i]))){
+					items[i] = null;
+				}
+			}
+
+		}
+	}
+
+
+	/**
+	 * Sets the selected item to be selected
+	 * */
+	public void updateSelectedItem(){
+		for(int i = 0; i < items.length; i++){
+			if(items[i] != null && selectedButton !=-1 && selectedButton == i){
+				items[selectedButton].setSelected(true);
+			}
+			else if(items[i] != null){
+				items[i].setSelected(false);
+			}
+		}
+	}
+
 
 	/**
 	 *Draws the images of the inventory in the bar
@@ -379,4 +404,9 @@ public class GameScreen implements GraphicsPane  {
 	 * Set the current menu in focus on the screen
 	 * */
 	public void setMenu(GraphicsPane menu){this.currentMenu = menu;}
+
+	/**
+	 * Returns the selectted inventory button
+	 * */
+	public int getSelectedButton(){return this.selectedButton;}
 }

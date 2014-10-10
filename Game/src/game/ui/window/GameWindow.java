@@ -12,12 +12,12 @@ import javax.swing.JFrame;
  * */
 public class GameWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
-	
-	//panel to that is drawn on 
+
+	//panel to that is drawn on
 	private BlankPanel blankPanel;
 
 	private static final String title = "Game";
-	
+
 	//size fields
 	private static final int WINDOW_SIZE = 90;
 	public static final int FRAME_HEIGHT = WINDOW_SIZE*9;
@@ -25,10 +25,10 @@ public class GameWindow extends JFrame{
 
 	//the map containing the key combinations
 	public static HashMap<String , Integer> keyMap;
-	
-	public static Room currentRoom;
 
-	
+	public static Room currentRoom;
+	public static Thread thread;
+
 	/**
 	 * Constructor for the GameFrame
 	 * */
@@ -36,7 +36,7 @@ public class GameWindow extends JFrame{
 		super(title);
 
 		this.blankPanel = new BlankPanel();
-		
+
 		//set up the globalKey listener
 		setUpKeyListner();
 
@@ -67,20 +67,22 @@ public class GameWindow extends JFrame{
 		manager.addKeyEventDispatcher( new keyInputManagment(blankPanel));
 	}
 
-	
+
 	/**
 	 * Sets the room
 	 * */
 	public static void setRoom(Room currentRoom){
 		GameWindow.currentRoom = currentRoom;
 	}
-	
-	
+
+
 	public static void main(String[] args){
-		//read in the resources 
+		//read in the resources
+		ImageStorage.readInAllCommonImages();
+		//read in the resources
 		ImageStorage.readInAllCommonImages();
 		GameWindow window = new GameWindow();
-		TestThread t = new TestThread(20, window);
-		t.start();//start the thread
-	}	
+		thread = new TestThread(30, window);
+		thread.start();//start the thread
+	}
 }
