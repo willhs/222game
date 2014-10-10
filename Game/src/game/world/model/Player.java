@@ -22,6 +22,7 @@ public class Player implements Character, Serializable{
 	private static final Rectangle3D boundngBox = new Rectangle3D(30, 50, 30);
 	private Vector3D direction = new Vector3D(1,0,1);
 	private String imageName = "Player";
+	private int airLevel = 100;
 
 	public Player(String name){
 		this.name = name;
@@ -105,6 +106,14 @@ public class Player implements Character, Serializable{
 	@Override
 	public Point3D getPosition(Place place) {
 		return getPosition();
+	}
+
+	public int getAirLevel(){
+		return airLevel;
+	}
+
+	public void tickAirLevel(){
+		airLevel--;
 	}
 
 }
