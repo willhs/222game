@@ -53,6 +53,7 @@ public class ImageStorage {
 		addImage("Tree");
 		addImagesFromDir("crystal");
 		addImagesFromDir("teleporter");
+		addImage("oxygen_tank_labelled");
 	}
 
 
