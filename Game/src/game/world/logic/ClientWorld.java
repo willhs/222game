@@ -154,6 +154,14 @@ public abstract class ClientWorld extends ServerWorld {
 			}
 
 		}
+		if (command.equals("")){
+			for (Item item : clientsPlayer.getInventory()){
+				if(item.isSlelected() && item.canUse()){
+					command = "Server Use Name ( " + clientsPlayer.getName()
+						+ " ) Name ( " + item.getName() +" ) ";
+				}
+			}
+		}
 		return command;
 	}
 
