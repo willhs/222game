@@ -100,12 +100,13 @@ public class ImageStorage {
 		// goes through all files in dir, if there is a problem reading a file
 		// input a UNKNOWN_IMAGE in place of the intended image.
 		for (File imageFile : file.listFiles()){
-			String imageName = imageFile.getName();
-			String shortImageName = imageName.substring(0, imageName.length()-4); // omitting file extension.
+			String fullImageName = imageFile.getName();
+			String shortImageName = fullImageName.substring(0, fullImageName.length()-4); // omitting file extension.
 			try {
 				images.put(shortImageName, readImage(imageFile));
 			} catch (IOException e) {
-				System.err.println("Failed reading a file from dir");
+				// incompatible image (such as .directory file).
+				//System.err.println("Failed reading image \""+fullImageName+"\" from dir");
 				try {
 					images.put(shortImageName, readImage(UNKNOWN_IMAGE_PATH));
 				} catch (IOException e1) {
@@ -127,6 +128,10 @@ public class ImageStorage {
 
 	private static BufferedImage readImage(File imageFile) throws IOException {
 		BufferedImage image = ImageIO.read(imageFile);
+		if (image == null){
+			// file wasn't an image.
+			throw new IOException();
+		}
 		image = createCompatibleImage(image);
 		return image;
 	}
