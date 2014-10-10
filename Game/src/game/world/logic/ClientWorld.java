@@ -45,6 +45,7 @@ public abstract class ClientWorld extends ServerWorld {
 		clientCommands.put("ItemPickUp", new ClientItemPickupStratagy());
 		clientCommands.put("ItemDrop", new ClientItemDropStratagy());
 		clientCommands.put("Container", new ClientContainerStratagy());
+		clientCommands.put("Use", new ClientUseStratagy());
 	}
 
 	public void tick(){

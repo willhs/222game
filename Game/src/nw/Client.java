@@ -34,6 +34,7 @@ public class Client extends Thread{
 	//The number of remaining seconds in the game.  Updated by server.
 	private static int remainingSecondsFromServer = 0;
 	private static int lastTimeUpdate = 0;
+	private static long timeAtLastTick = 0L;
 
 	/*
 	 * Instantiate Client in multiplayer mode, join a remote game
@@ -223,6 +224,12 @@ public class Client extends Thread{
 						throw new QuitException();
 					}
 					print("[Client]: " + getSecondsRemaining());
+				}
+
+				long currentTime = System.currentTimeMillis();
+				if(currentTime - timeAtLastTick >= 1000L && world != null){
+					timeAtLastTick = currentTime;
+					world.tick();
 				}
 
 				frame.repaint();//Repaint the game
