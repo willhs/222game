@@ -497,5 +497,9 @@ public class LevelMaker{
 	private void updateFaces() {
 		updateRotation(0,0);
 	}
+	
+	private void generateRandomBackGround(){
+		
+	}
 
 }

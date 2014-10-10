@@ -51,8 +51,10 @@ public class Renderer {
 	private static final int FRAME_TOP = GameWindow.FRAME_HEIGHT;
 
 	public static final long RANDOM_SEED = 15274910874912L;
-	private static final Color DEFAULT_AMBIENT_LIGHT = new Color(100, 100, 100);
+	private static final Color DEFAULT_AMBIENT_LIGHT = new Color(50, 50, 50);
 	public static Random randomGen;
+
+	private static final float viewerDepth = -100;
 
 	/**
 	 * Draws a place using Graphics object, viewer direction and place
@@ -233,6 +235,7 @@ public class Renderer {
 						(int)boundingBox.width, (int)boundingBox.height, null);
 			}
 			else if (renderObject instanceof GameText){
+				System.out.println(renderObject.getDepth());
 				GameText text = (GameText) renderObject;
 				Point3D position = text.getPosition();
 				g2.setColor(Color.RED);

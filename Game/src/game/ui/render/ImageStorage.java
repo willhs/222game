@@ -52,10 +52,12 @@ public class ImageStorage {
 		addImage("Chest");
 		addImage("OpenChest");
 		addImage("Tree");
-		addImagesFromDir("crystal");
-		addImagesFromDir("teleporter");
 		addImage("oxygen_tank_labelled");
 		addImage("Trixel");
+
+		addImagesFromDir("crystal");
+		addImagesFromDir("teleporter");
+		addImagesFromDir("background");
 	}
 
 
