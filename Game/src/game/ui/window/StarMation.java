@@ -1,6 +1,6 @@
 package game.ui.window;
 
-import game.ui.render.Res;
+import game.ui.render.ImageStorage;
 import game.ui.window.menus.MenuUtil;
 
 import java.awt.Color;
@@ -65,8 +65,13 @@ public class StarMation {
 
 		//make sure the size is at least 1
 		if(randomSize < 1)randomSize = 1;
+<<<<<<< HEAD
 
 		return new Star( MenuUtil.scale(Res.getImageFromName("Star1"), randomSize, randomSize),randomX,randomY);
+=======
+		
+		return new Star( MenuUtil.scale(ImageStorage.getImageFromName("Star1"), randomSize, randomSize),randomX,randomY);
+>>>>>>> 818c36ab38f13713776e341fbc8131422b1fc602
 	}
 
 

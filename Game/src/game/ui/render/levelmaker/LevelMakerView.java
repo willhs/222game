@@ -1,7 +1,7 @@
 package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
-import game.ui.render.Res;
+import game.ui.render.ImageStorage;
 import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
 import game.world.util.Floor;
@@ -16,7 +16,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,7 +44,9 @@ import javax.swing.event.ChangeListener;
 public class LevelMakerView extends JPanel{
 
 	private static final int ICON_SIZE = 30;
-	private LevelMaker levelMaker;
+	private LevelMaker currentLevel;
+	private List<LevelMaker> levels = new ArrayList<LevelMaker>();
+	private int levelIndex = 0;
 
 	public LevelMakerView(){
 
@@ -55,13 +61,23 @@ public class LevelMakerView extends JPanel{
 		// --------- main control panel
 
 		JPanel controlPanel = new JPanel();
-		controlPanel.setLayout(new FlowLayout());
+		controlPanel.setLayout(new BorderLayout());
 		add(controlPanel, BorderLayout.NORTH);
+
+		// --------- main controls
+		JPanel mainControls = new JPanel();
+		mainControls.setLayout(new FlowLayout());
+		controlPanel.add(mainControls, BorderLayout.NORTH);
 
 		final JTextField trixelSizeField = new JTextField(LevelMaker.DEFAULT_TRIXEL_SIZE);
 		trixelSizeField.setToolTipText("enter trixel size");
-		controlPanel.add(trixelSizeField);
-		
+		trixelSizeField.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				currentLevel.setTrixelSize(parseTrixelSize(trixelSizeField.getText()));
+			}
+		});
+		mainControls.add(trixelSizeField);
+
 		JButton loadButton = new JButton("Load");
 		loadButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -72,34 +88,41 @@ public class LevelMakerView extends JPanel{
 				} catch (NoFloorChosenException e1) {
 					return;
 				}
-				
-				levelMaker.setTrixelSize(parseTrixelSize(trixelSizeField.getText()));
-				
-				levelMaker.loadFloor(floor);
+
+				currentLevel.loadFloor(floor);
 				repaint();
 			}
 		});
-		controlPanel.add(loadButton);
-		
+		mainControls.add(loadButton);
+
+		JButton loadRandomPolygonButton = new JButton("Load random");
+		loadRandomPolygonButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				currentLevel.loadFloor(currentLevel.makeRandomFloor());
+				repaint();
+			}
+		});
+		mainControls.add(loadRandomPolygonButton);
+
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				levelMaker.writeLevelToFile();
+				writeToFile(currentLevel);
 			}
 		});
-		controlPanel.add(saveButton);
-		
+		mainControls.add(saveButton);
+
 		// ---------- colour panel
 
 		JPanel colourPanel = new JPanel();
 		colourPanel.setLayout(new FlowLayout());
-		controlPanel.add(colourPanel);
+		controlPanel.add(colourPanel, BorderLayout.SOUTH);
 
 		JButton chooseColourButton = new JButton("Colour");
 		chooseColourButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				levelMaker.setColour(JColorChooser.showDialog(null, "choose colour", Color.WHITE));
+				currentLevel.setBaseColour(JColorChooser.showDialog(null, "choose colour", Color.WHITE));
 				repaint();
 			}
 		});
@@ -111,38 +134,76 @@ public class LevelMakerView extends JPanel{
 		colourRandomLevel.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				levelMaker.setColourDeviation(colourRandomLevel.getValue());
+				currentLevel.setColourDeviation(colourRandomLevel.getValue());
 			}
 		});
 		colourPanel.add(colourRandomLevel);
 
-		// -------- objects panel
+		JButton randomiseBaseColourButton = new JButton("Randomise base colour");
+		randomiseBaseColourButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				currentLevel.randomiseBaseColour();
+			}
+		});
+		colourPanel.add(randomiseBaseColourButton);
 
-		JPanel objectsPanel = new JPanel();
-		objectsPanel.setLayout(new FlowLayout());
-		add(objectsPanel, BorderLayout.SOUTH);
+		// -------- drawables panel
+
+		JPanel drawablesPanel = new JPanel();
+		drawablesPanel.setLayout(new FlowLayout());
+		add(drawablesPanel, BorderLayout.SOUTH);
 
 		ModeButtonListener modeButtonListener = new ModeButtonListener();
 
 		JButton trixelButton = new JButton("Trixel");
 		trixelButton.addActionListener(modeButtonListener);
 		trixelButton.setActionCommand(LevelMaker.TRIXEL_MODE);
-		objectsPanel.add(trixelButton);
+		drawablesPanel.add(trixelButton);
 
 		JButton treeButton = new JButton(new ImageIcon(
-				MenuUtil.scale(Res.getImageFromName("Tree"), ICON_SIZE, ICON_SIZE)));
+				MenuUtil.scale(ImageStorage.getImageFromName("Tree"), ICON_SIZE, ICON_SIZE)));
 		treeButton.addActionListener(modeButtonListener);
 		treeButton.setActionCommand(LevelMaker.TREE_MODE);
-		objectsPanel.add(treeButton);
+		drawablesPanel.add(treeButton);
 
 		JButton chestButton = new JButton(new ImageIcon(
-				MenuUtil.scale(Res.getImageFromName("Chest"), ICON_SIZE, ICON_SIZE)));
+				MenuUtil.scale(ImageStorage.getImageFromName("Chest"), ICON_SIZE, ICON_SIZE)));
 		chestButton.addActionListener(modeButtonListener);
 		chestButton.setActionCommand(LevelMaker.CHEST_MODE);
-		objectsPanel.add(chestButton);
+		drawablesPanel.add(chestButton);
 
-		// initialise level maker
-		levelMaker = new LevelMaker();
+		JPanel levelPanel = new JPanel();
+		levelPanel.setLayout(new FlowLayout());
+		add(levelPanel, BorderLayout.WEST);
+
+		JButton newLevelButton = new JButton("New Level");
+		newLevelButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LevelMaker lm = new LevelMaker();
+				levels.add(lm);
+				currentLevel = lm;
+				repaint();
+			}
+		});
+		levelPanel.add(newLevelButton);
+
+		JButton switchLevelButton = new JButton("Switch Level");
+		switchLevelButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(levelIndex >= levels.size()-1){
+					levelIndex = 0;
+				}else{levelIndex++;}
+				currentLevel = levels.get(levelIndex);
+				repaint();
+			}
+		});
+		levelPanel.add(switchLevelButton);
+
+		LevelMaker lm = new LevelMaker();
+		levels.add(lm);
+		currentLevel = lm;
 	}
 
 	/**
@@ -150,7 +211,7 @@ public class LevelMakerView extends JPanel{
 	 * @throws NoFloorChosenException
 	 */
 	private Floor getFloorPolygon() throws NoFloorChosenException {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+ImageStorage.FLOOR_PATH);
 		final int USER_SELECTION = chooser.showOpenDialog(null);
 
 		File floorFile;
@@ -194,11 +255,11 @@ public class LevelMakerView extends JPanel{
 
 		return new Floor(points);
 	}
-	
+
 	/**
 	 * Parses text for trixel size.
 	 * If not valid trixel size, return default trixel size.
-	 * 
+	 *
 	 * @param text
 	 * @return a trixel size parsed from text
 	 */
@@ -208,20 +269,46 @@ public class LevelMakerView extends JPanel{
 			size = Integer.parseInt(text);
 		} catch (NumberFormatException e){
 			size = LevelMaker.DEFAULT_TRIXEL_SIZE;
-		} 
+		}
 		return size;
 	}
 
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Renderer.renderLevel(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
-				levelMaker.getTrixelSize(), levelMaker.getWorldObjects(), levelMaker.getLastTransform());
+		Renderer.renderLevel(g, currentLevel.getCreatedTrixels(), currentLevel.getFloorTrixels(),
+				currentLevel.getTrixelSize(), currentLevel.getWorldObjects(), currentLevel.getLastTransform());
 
 		// displays current colour
-		g.setColor(levelMaker.getTrixelColour());
+		g.setColor(currentLevel.getTrixelColour());
 		g.fillRect(0, 50, 20, 20);
 
+	}
+
+	/**
+	 * Writes a level to a file.
+	 * @param levelMaker
+	 */
+	private void writeToFile(LevelMaker levelMaker) {
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+ImageStorage.LEVELS_PATH);
+		final int USER_SELECTION = chooser.showSaveDialog(null);
+
+		File fileToSave;
+
+		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
+			fileToSave =  chooser.getSelectedFile();
+		} else return;
+
+		// Set up file writer
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(fileToSave, "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		writer.println(levelMaker);
+		writer.close();
 	}
 
 	public class WillMouseMotionListener extends MouseAdapter{
@@ -234,7 +321,7 @@ public class LevelMakerView extends JPanel{
 			int dx = e.getX()-mouseX;
 			int dy = e.getY()-mouseY;
 
-			levelMaker.updateRotation(0, dx);
+			currentLevel.updateRotation(0, dx);
 			repaint();
 
 			mouseX = e.getX();
@@ -252,10 +339,10 @@ public class LevelMakerView extends JPanel{
 
 			// if right-click, delete trixel at this point
 			if (e.getButton() == MouseEvent.BUTTON3) {
-	            levelMaker.deleteTrixelAt(e.getX(), e.getY());
+	            currentLevel.deleteTrixelAt(e.getX(), e.getY());
 	        }
 			else { // else, draw something
-				levelMaker.makeSomethingAt(e.getX(), e.getY());
+				currentLevel.makeSomethingAt(e.getX(), e.getY());
 			}
 			repaint();
 		}
@@ -270,7 +357,7 @@ public class LevelMakerView extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			levelMaker.setDrawMode(e.getActionCommand());
+			currentLevel.setDrawMode(e.getActionCommand());
 		}
 	}
 

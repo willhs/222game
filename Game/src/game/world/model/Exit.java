@@ -38,7 +38,7 @@ public abstract class Exit implements Drawable, Serializable{
 	}
 
 	/**
-	 * Gets the name f the exit should be unique.
+	 * Gets the name of the exit should be unique.
 	 */
 	public abstract String getName();
 
@@ -90,7 +90,7 @@ public abstract class Exit implements Drawable, Serializable{
 	}
 
 	/**
-	 * 	Storage cless.
+	 * 	Storage class.
 	 *  @author Shane Brewer
 	 *
 	 */
