@@ -20,7 +20,7 @@ public class Portal extends Exit {
 	public Portal(String name, Place placeOne, Point3D positionOne, Place placeTwo, Point3D positionTwo) {
 		super(placeOne, positionOne, placeTwo, positionTwo);
 		this.name = name;
-		this.imageName = "OpenPortal";
+		this.imageName = "teleporter_on";
 	}
 
 	@Override
