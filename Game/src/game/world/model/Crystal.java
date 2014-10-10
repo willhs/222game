@@ -6,7 +6,7 @@ import game.world.util.*;
 
 public class Crystal implements Item {
 
-	private static final Rectangle3D boundingBox = new Rectangle3D(10f, 10f, 10f);
+	private static final Rectangle3D boundingBox = new Rectangle3D(20f, 20f, 20f);
 	private final String name;
 	private final String imageName;
 	private Point3D position;
