@@ -353,7 +353,7 @@ public class LevelMakerView extends JPanel{
 
 			// if right-click, delete trixel at this point
 			if (e.getButton() == MouseEvent.BUTTON3) {
-	            getCurrentLevelMaker().deleteTrixelAt(e.getX(), e.getY());
+	            getCurrentLevelMaker().deleteSomethingAt(e.getX(), e.getY());
 	        }
 			else { // else, draw something
 				getCurrentLevelMaker().makeSomethingAt(e.getX(), e.getY());

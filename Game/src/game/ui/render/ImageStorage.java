@@ -6,10 +6,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -52,10 +51,12 @@ public class ImageStorage {
 		addImage("Chest");
 		addImage("OpenChest");
 		addImage("Tree");
-		addImagesFromDir("crystal");
-		addImagesFromDir("teleporter");
 		addImage("oxygen_tank_labelled");
 		addImage("Trixel");
+
+		addImagesFromDir("crystal");
+		addImagesFromDir("teleporter");
+		addImagesFromDir("background");
 	}
 
 
@@ -91,6 +92,8 @@ public class ImageStorage {
 
 	/**
 	 * Adds all images at the given directory path
+	 * If an image file can't be found, replace that image with a question-mark image
+	 * If an image is incompatible, don't add to the map
 	 * @param imagePath
 	 */
 	private static void addImagesFromDir(String imagePath) {
@@ -105,15 +108,17 @@ public class ImageStorage {
 			String fullImageName = imageFile.getName();
 			String shortImageName = fullImageName.substring(0, fullImageName.length()-4); // omitting file extension.
 			try {
-				images.put(shortImageName, readImage(imageFile));
-			} catch (IOException e) {
-				// incompatible image (such as .directory file).
-				//System.err.println("Failed reading image \""+fullImageName+"\" from dir");
+				BufferedImage image = readImage(imageFile);
+				images.put(shortImageName, image); // will only be put in if no IOExceptions thrown reading the file
+			} catch (FileNotFoundException e) {
 				try {
 					images.put(shortImageName, readImage(UNKNOWN_IMAGE_PATH));
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				} catch (IOException io) {
+					System.err.println("Can't find question mark image");
 				}
+			} catch (IOException e1) {
+				//incompatible image (such as .directory file). Don't make issue
+				//System.err.println("Failed reading image \""+fullImageName+"\" from dir");
 			}
 		}
 	}

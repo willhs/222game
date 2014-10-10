@@ -45,14 +45,16 @@ public class Renderer {
 
 	// TEMPORARY
 
-	private static final Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
+	public static final Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
 	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,500,0);
 
 	private static final int FRAME_TOP = GameWindow.FRAME_HEIGHT;
 
 	public static final long RANDOM_SEED = 15274910874912L;
-	private static final Color DEFAULT_AMBIENT_LIGHT = new Color(100, 100, 100);
+	private static final Color DEFAULT_AMBIENT_LIGHT = new Color(50, 50, 50);
 	public static Random randomGen;
+
+	private static final float viewerDepth = -100;
 
 	/**
 	 * Draws a place using Graphics object, viewer direction and place
@@ -99,7 +101,7 @@ public class Renderer {
 		flipYAxis(renderables);
 
 		// draw everything
-		drawThings(renderables, g2);
+		drawRenderables(renderables, g2);
 
 	}
 	/**
@@ -130,7 +132,7 @@ public class Renderer {
 
 		flipYAxis(toDraw);
 
-		drawThings(toDraw, g2);
+		drawRenderables(toDraw, g2);
 	}
 
 	/**
@@ -164,6 +166,9 @@ public class Renderer {
 		List<Renderable> renderables = new ArrayList<Renderable>();
 		while (drawables.hasNext()){
 			Drawable drawable = drawables.next();
+
+			//System.out.println("drawable image name: "+drawable.getImageName());
+
 			// drawable is an image
 			GameImage image = new GameImage(ImageStorage.getImageFromName(drawable.getImageName()),
 					drawable.getPosition(place),
@@ -172,11 +177,14 @@ public class Renderer {
 			image.transform(transform);
 			renderables.add(image);
 
+			//System.out.println("drawable position: "+image.getPosition());
+
 			// if it's player, put name above head
 			if (drawable instanceof Player){
 				GameText text = new GameText(drawable.getName(),
 						image.getPosition().getTranslatedPoint(
-								new Vector3D(-drawable.getBoundingBox().width/2, (drawable.getBoundingBox().height/4)*3, 0)));
+								new Vector3D(-drawable.getBoundingBox().width/2,
+										(drawable.getBoundingBox().height/4)*3, 0)));
 
 				renderables.add(text);
 			}
@@ -219,7 +227,7 @@ public class Renderer {
 	 * @param renderables
 	 * @param g2
 	 */
-	private static void drawThings(Queue<Renderable> renderables, Graphics2D g2){
+	private static void drawRenderables(Queue<Renderable> renderables, Graphics2D g2){
 		while (!renderables.isEmpty()){
 			Renderable renderObject = renderables.poll();
 			if (renderObject instanceof GameImage){
@@ -323,6 +331,36 @@ public class Renderer {
 					translateToOrigin
 			))));
 		}
+
+		/**
+		 * ************ TEMP for level maker background images
+		 * @param object
+		 * @param viewerDirection
+		 */
+		public static Transform makeReverseTransform(Vector3D rotateAmount, Point3D pivotPoint, Vector3D viewSpaceTranslateDist) {
+
+			Transform translateToOrigin = Transform.newTranslation(new Vector3D(pivotPoint.negate()));
+			Transform translateBack = Transform.newTranslation(new Vector3D(pivotPoint));
+
+			Transform REVERSE_ISOMETRIC_ROTATION = Transform.newXRotation((float)(-Math.PI/4)).compose(Transform.newYRotation((float)(-Math.PI/4)));
+
+			Transform rotate =
+					Transform.newZRotation(rotateAmount.z).compose(
+					Transform.newYRotation(rotateAmount.y).compose(
+					Transform.newXRotation(rotateAmount.x)
+			));
+
+			Transform viewSpaceTranslation =
+					Transform.newTranslation(viewSpaceTranslateDist);
+
+			return 	viewSpaceTranslation.compose(
+					REVERSE_ISOMETRIC_ROTATION.compose(
+					translateBack.compose(
+					rotate.compose(
+					translateToOrigin
+			))));
+		}
+
 
 		/**
 		 * @param drawable

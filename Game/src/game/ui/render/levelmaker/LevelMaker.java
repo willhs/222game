@@ -1,11 +1,11 @@
 package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
-import game.ui.render.ImageStorage;
 import game.ui.render.able.GamePolygon;
 import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
+import game.ui.render.util.DepthComparable;
 import game.ui.render.util.DepthComparator;
 import game.ui.render.util.Transform;
 import game.ui.window.GameWindow;
@@ -21,20 +21,17 @@ import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
-import java.awt.Polygon;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
-
-import javax.swing.JFileChooser;
 
 /**
  * @author hardwiwill
@@ -66,7 +63,7 @@ public class LevelMaker{
 	/**
 	 * all faces which have been rotated
 	 */
-	private List<TrixelFace> rotatedFaces;
+	private List<DepthComparable> rotatedObjects;
 
 	/**
 	 * The last transform used to transform the level/place.
@@ -119,6 +116,9 @@ public class LevelMaker{
 		floorCentroid = new Point3D(0,0,0);
 		trixelSize = DEFAULT_TRIXEL_SIZE;
 
+		// initialise drawables
+		drawables = new HashSet<Drawable>();
+
 		// intialise colour
 		randomiseBaseColour();
 		randomColourDeviation = START_COLOUR_DEVIATION;
@@ -130,11 +130,8 @@ public class LevelMaker{
 		lastTransform = makeTransform(new Vector3D(0,0,0));
 
 		//intilise rotatedFaces
-		rotatedFaces = new ArrayList<TrixelFace>();
+		rotatedObjects = new ArrayList<DepthComparable>();
 		updateRotation(0, 0);
-
-		// initialise worldObjects
-		drawables = new HashSet<Drawable>();
 	}
 
 	/**
@@ -154,18 +151,8 @@ public class LevelMaker{
 			floorTrixels.add(t);
 		}
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
+		//drawables.addAll(generateRandomBackgroundObjects());
 		updateFaces();
-	}
-
-	/**
-	 * @param rotateX : how much to rotate in x direction in radians
-	 * @param rotateY : ^ y direction...
-	 */
-	public Vector3D getNewRotateAmount(int rotateX, int rotateY) {
-		float rotateSpeed = 0.01f;
-		return rotateAmounts.plus(
-				new Vector3D(rotateX*rotateSpeed, rotateY*rotateSpeed, 0)
-		);
 	}
 
 	/**
@@ -180,9 +167,36 @@ public class LevelMaker{
 
 		lastTransform = trans;
 
-		updateTrixelFaces();
+		updateTransformedObjects();
 	}
 
+	/**
+	 * Re-makes and orders a list of trixel faces from ordered by closest first
+	 */
+	public void updateTransformedObjects() {
+		// reset rotated trixels
+		rotatedObjects = new ArrayList<DepthComparable>();
+
+		for (Iterator<Trixel> iter = getAllTrixels(); iter.hasNext();){
+			Trixel trixel = iter.next();
+			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel, trixelSize)){
+				face.transform(lastTransform);
+				rotatedObjects.add(face);
+			}
+		}
+
+		for (Drawable drawable : drawables){
+			DrawablePlaceHolder placeHolder = new DrawablePlaceHolder(drawable, drawable.getPosition());
+			placeHolder.transform(lastTransform);
+			rotatedObjects.add(placeHolder);
+		}
+
+		// sort in order of depth, farest first
+		Collections.sort(rotatedObjects, new DepthComparator());
+		// reverse so that closest trixels are first (so easy to obtain trixel clicked).
+		Collections.reverse(rotatedObjects);
+		//System.out.println();
+	}
 
 	/**
 	 * Makes a combined transform matrix involving several factors including
@@ -206,7 +220,7 @@ public class LevelMaker{
 
 		y = flipY - y; // flip y value (so up is positive direction)
 
-		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
+		TrixelFace face = getTrixelFaceAt(x, y);
 		if (face == null)	return;
 
 		Trixel trixel = face.getParentTrixel();
@@ -215,7 +229,7 @@ public class LevelMaker{
 		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(trixel, trixelSize);
 		//Point3D randomAboveTrixel = aboveTrixel.getTranslatedPoint(new Vector3D((float)Math.random()*Trixel.SIZE, 0, (float)Math.random()*Trixel.SIZE));
 
-	if (drawMode == TRIXEL_MODE){
+		if (drawMode == TRIXEL_MODE){
 			createdTrixels.add(makeTrixelNextToFace(face, baseColour));
 		}
 		if (drawMode == TREE_MODE){
@@ -225,28 +239,47 @@ public class LevelMaker{
 		if (drawMode == CHEST_MODE){
 			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
 		}
-		updateTrixelFaces();
+		updateTransformedObjects();
 	}
 
 	/**
-	 * Re-makes and orders a list of trixel faces from ordered by closest first
+	 * deletes a trixel at this x, y location
+	 * @param x
+	 * @param y
 	 */
-	public void updateTrixelFaces() {
-		// reset rotated trixels
-		rotatedFaces = new ArrayList<TrixelFace>();
+	public void deleteSomethingAt(int x, int y) {
+		y = flipY - y; // flip y value (so up is positive direction)
 
-		for (Iterator<Trixel> iter = getAllTrixels(); iter.hasNext();){
-			Trixel trixel = iter.next();
-			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel, trixelSize)){
-				face.transform(lastTransform);
-				rotatedFaces.add(face);
-			}
+		DepthComparable something = findSomethingAtPoint(x,y);
+
+		System.out.println(something);
+		if (something == null)	return;
+
+		if (something instanceof TrixelFace){
+			TrixelFace face = (TrixelFace) something;
+			Trixel trixel = face.getParentTrixel();
+			// could be either a floor or created trixel.
+			createdTrixels.remove(trixel);
+			floorTrixels.remove(trixel);
+		}
+		else if (something instanceof DrawablePlaceHolder){
+			DrawablePlaceHolder placeHolder = (DrawablePlaceHolder) something;
+			Drawable drawable = placeHolder.getDrawable();
+			drawables.remove(drawable);
 		}
 
-		// sort in order of depth, farest first
-		Collections.sort(rotatedFaces, new DepthComparator());
-		// reverse so that closest trixels are first (so easy to obtain trixel clicked).
-		Collections.reverse(rotatedFaces);
+		updateTransformedObjects();
+	}
+
+	/**
+	 * @param rotateX : how much to rotate in x direction in radians
+	 * @param rotateY : ^ y direction...
+	 */
+	public Vector3D getNewRotateAmount(int rotateX, int rotateY) {
+		float rotateSpeed = 0.01f;
+		return rotateAmounts.plus(
+				new Vector3D(rotateX*rotateSpeed, rotateY*rotateSpeed, 0)
+		);
 	}
 
 	/**
@@ -254,11 +287,33 @@ public class LevelMaker{
 	 * @param y
 	 * @return the closest trixel face at the x,y position in view space
 	 */
-	private TrixelFace getTrixelFaceAtViewPoint(int x, int y){
-		for (TrixelFace face : rotatedFaces){
+	private TrixelFace getTrixelFaceAt(int x, int y){
+		for (DepthComparable object : rotatedObjects){
+			if (!(object instanceof TrixelFace)) continue;
+			TrixelFace face = (TrixelFace) object;
 			GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(face);
 			if (facePoly.contains(x, y)){
 				return face;
+			}
+		}
+		return null;
+	}
+
+	private DepthComparable findSomethingAtPoint(int x, int y){
+		for (DepthComparable object : rotatedObjects){
+			if (object instanceof TrixelFace){
+				TrixelFace face = (TrixelFace) object;
+				GamePolygon facePoly = Renderer.makeGamePolygonFromTrixelFace(face);
+				if (facePoly.contains(x, y)){
+					return face;
+				}
+			}
+			else if (object instanceof DrawablePlaceHolder){
+				DrawablePlaceHolder temp = (DrawablePlaceHolder) object;
+
+				if (temp.pointIsIn(x, y)){
+					return temp;
+				}
 			}
 		}
 		return null;
@@ -404,23 +459,6 @@ public class LevelMaker{
 	 */
 	public void setDrawMode(String drawMode) {
 		this.drawMode  = drawMode;
-
-	}
-
-	/**
-	 * deletes a trixel at this x, y location
-	 * @param x
-	 * @param y
-	 */
-	public void deleteTrixelAt(int x, int y) {
-		y = flipY - y; // flip y value (so up is positive direction)
-
-		TrixelFace face = getTrixelFaceAtViewPoint(x, y);
-
-		if (face == null)	return;
-
-		Trixel trixel = face.getParentTrixel();
-		createdTrixels.remove(trixel);
 	}
 
 	public void setColourDeviation(int deviation) {
@@ -496,6 +534,46 @@ public class LevelMaker{
 	 */
 	private void updateFaces() {
 		updateRotation(0,0);
+	}
+
+	/**
+	 * Test method for generating random background objects.
+	 *
+	 */
+	private List<BackgroundObject> generateRandomBackgroundObjects(){
+		int maxObjectsCount = 20;
+		int minObjectsCount = 10;
+		int minSize = 10;
+		int maxSize = 100;
+		int minYDist = -1000;
+		int maxYDist = 1000;
+		int minXZ = 100;// the min x or z value.
+		int maxXZ = 1000;
+
+		Random r = new Random();
+
+		int objectsCount = r.nextInt(maxObjectsCount-minObjectsCount) + minObjectsCount;
+		List<BackgroundObject> background = new ArrayList<BackgroundObject>();
+
+		for (int i = 0; i < objectsCount; i++){
+			int size = r.nextInt(maxSize-minSize) + minSize;
+
+			int xPos = r.nextInt(maxXZ-minXZ) + (minXZ * (r.nextInt(2) == 0 ? 1 : -1)); // 50/50 of being pos or neg
+			// y is more constrained, because the game is currently seen from a constant y-axis angle
+			int yPos = (int) (floorCentroid.y + r.nextInt(maxYDist-minYDist) + minYDist);
+			int zPos = r.nextInt(maxXZ-minXZ) + (minXZ * (r.nextInt(2) == 0 ? 1 : -1));
+
+			//System.out.println("background object: "+xPos + " " + yPos + " " + zPos);
+
+			Point3D pos = new Point3D(xPos, yPos, zPos);
+
+			// rotate
+			pos = Renderer.makeReverseTransform(rotateAmounts, floorCentroid, Renderer.STANDARD_VIEW_TRANSLATION).multiply(pos);
+
+			background.add(new BackgroundObject(pos, size));
+		}
+
+		return background;
 	}
 
 }
