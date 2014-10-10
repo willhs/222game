@@ -8,7 +8,7 @@ import game.world.dimensions.*;
 public class AirTank extends UsableItem{
 
 	private final String imageName;
-	private final Rectangle3D boundingBox = new Rectangle3D(20, 20 , 20);
+	private final Rectangle3D boundingBox = new Rectangle3D(20, 80, 20);
 
 
 	public AirTank(String name, Point3D position){
@@ -34,7 +34,7 @@ public class AirTank extends UsableItem{
 
 	@Override
 	public boolean canDrop() {
-		return false;
+		return true;
 	}
 
 	@Override
