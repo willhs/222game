@@ -8,6 +8,13 @@ import java.io.Serializable;
 import java.util.*;
 
 public interface ClientCommandStratagy extends Serializable{
+	/**
+	 * Used to set values in the world depending on if the server 
+	 *
+	 * @param scan - has the command in it.
+	 *
+	 * @param world - the current world that is to be modifyed by the setters.
+	 */
 	public void clientSetCommand(Scanner scan, ClientWorld world);
 }
 
