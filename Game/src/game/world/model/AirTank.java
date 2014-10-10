@@ -11,6 +11,7 @@ public class AirTank extends UsableItem{
 	private Point3D position;
 	private final String imageName;
 	private boolean isSelected;
+	private final Rectangle3D boundingBox = new Rectangle3D(20, 20 , 20);
 
 
 	public AirTank(String name, Point3D position){
@@ -61,7 +62,8 @@ public class AirTank extends UsableItem{
 
 	@Override
 	public boolean use(Player player){
-
+		player.addAir();
+		return true;
 	}
 
 	@Override
@@ -76,6 +78,6 @@ public class AirTank extends UsableItem{
 
 	@Override
 	public Rectangle3D getBoundingBox() {
-		return null;
+		return boundingBox;
 	}
 }
