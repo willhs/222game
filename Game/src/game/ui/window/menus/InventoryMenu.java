@@ -46,7 +46,7 @@ public class InventoryMenu implements GraphicsPane {
 	private Color backColor;
 	private BufferedImage characterImage;
 	private Rectangle characterFrame;
-	int selectedGrid = -1;
+	private int selectedGrid = -1;
 
 	//the number of squares in the grid
 	private int gridNumb = 15;
@@ -109,6 +109,7 @@ public class InventoryMenu implements GraphicsPane {
 	 * empty location it comes across in the grid
 	 * */
 	public void updateInventory(){
+		if(selectedItem != null)return;
 		//first check if item already in inventory
 		boolean in = false;
 
@@ -118,7 +119,6 @@ public class InventoryMenu implements GraphicsPane {
 			for(int i = 0; i < items.length; i++){
 				if(items[i] != null){//check if there is an item at this location
 					if(!(player.getInventory().isIn(items[i])))items[i] = null;
-					System.out.println("Name of Item : = " +items[i].getName());
 					if(items[i].getName().equals(item.getName()) || game.inInventory(item)){
 						in = true;//the item is already in  the item array
 					}
@@ -126,10 +126,17 @@ public class InventoryMenu implements GraphicsPane {
 				if( game.inInventory(item))in = true;//becuase if all empty needs to check the other inventory
 			}
 			if(!in){//the item is not in the items array so add it in
-				for(int j = 0; j < items.length; j++){
-					if(items[j] == null){
-						items[j] = item;//nothing in this location so add the new item
-						return;
+
+				//first try add it to the small bar inventory
+				if((!(game.containsItem(game.getSelectedButton()))) && game.getSelectedButton() != -1){// check if grid is selected
+					game.placeItemOnGrid(game.getSelectedButton(), item);
+				}
+				else{
+					for(int j = 0; j < items.length; j++){
+						if(items[j] == null){
+							items[j] = item;//nothing in this location so add the new item
+							return;
+						}
 					}
 				}
 			}
