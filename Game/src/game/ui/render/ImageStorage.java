@@ -52,6 +52,7 @@ public class ImageStorage {
 		addImage("OpenChest");
 		addImage("Tree");
 		addImagesFromDir("crystal");
+		addImagesFromDir("teleporter");
 	}
 
 
