@@ -46,11 +46,6 @@ public class AirTank extends UsableItem{
 	}
 
 	@Override
-	public Point3D getPosition(){
-		return position;
-	}
-
-	@Override
 	public Point3D getPosition(Place place){
 		return position;
 	}
