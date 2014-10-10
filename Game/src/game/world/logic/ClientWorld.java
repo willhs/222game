@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Handles all the client side modeling and some interation.
  *
- * @author Shane Brewer.
+ * @author Shane Brewer 300289850
  *
  */
 public abstract class ClientWorld extends ServerWorld {
@@ -65,6 +65,8 @@ public abstract class ClientWorld extends ServerWorld {
 	public String getCommand(String action, float viewAngle) {
 		// where action is like "up", "down", "right", etc
 		String command = "";
+		// If the clients player doesent exsist.
+		if (clientsPlayer == null || getPlayerByName(clientsPlayer.name) == null) return command;
 		if (action.equals("Up") || action.equals("Down")
 				|| action.equals("Right") || action.equals("Left")) {
 			command = getMoveCommand(action, viewAngle);

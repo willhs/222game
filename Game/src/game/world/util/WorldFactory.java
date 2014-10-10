@@ -6,6 +6,9 @@ import game.world.model.*;
 import java.awt.Polygon;
 import java.util.*;
 
+/**
+ * @author Shane Brewer 300289850
+ */
 public class WorldFactory {
 
 	int counter = 0;
@@ -21,6 +24,9 @@ public class WorldFactory {
 		world = new World(places);
 	}
 
+	/**
+ 	 * Makes a rendom place with some set items in it.
+	 */
 	private Place makeRandomPlace() {
 		List<Item> items = new ArrayList<Item>();
 		;
@@ -43,6 +49,9 @@ public class WorldFactory {
 	}
 
 
+	/**
+ 	 * Makes a rendom place with more random points with some set items in it.
+	 */
 	private Place makeRandomPlaceTwo() {
 		List<Item> items = new ArrayList<Item>();
 		;
@@ -67,6 +76,10 @@ public class WorldFactory {
 		return place;
 	}
 
+
+	/**
+ 	 * Makes a table at a random point in the place.
+	 */
 	private Item makeTable(Place place, List<Item> items,
 			List<Enviroment> enviroment) {
 		Table i = null;
@@ -79,6 +92,10 @@ public class WorldFactory {
 		return i;
 	}
 
+
+	/**
+ 	 * Makes randoms a set sized start place.
+	 */
 	public Place makeStartPlace() {
 		List<Item> items = new ArrayList<Item>();
 
@@ -93,6 +110,10 @@ public class WorldFactory {
 		return new Room(items, enviroment, poygon, "Room" + getID());
 	}
 
+
+	/**
+ 	 * Checks for collistions a item and other things in a level.
+	 */
 	public boolean checkCollitions(Item item, List<Item> items, List<Enviroment> enviroment){
 		for (Item i: items){
 			if(i.getBoundingBox().collisionDetection(i.getPosition(), item.getBoundingBox(), item.getPosition())){
@@ -110,16 +131,25 @@ public class WorldFactory {
 	}
 
 
+	/**
+ 	 * A way of always incresing lock size
+	 */
 	private int getLocksize(){
 		return lockSize++;
 	}
 
 
+	/**
+ 	 * a way of always increasing the id atached to a name.
+	 */
 	private int getID(){
 		return counter++;
 	}
 
 
+	/**
+ 	 * Makes a randomly place crystal in game.
+	 */
 	private Crystal makeKey(Place place, List<Item> items, List<Enviroment> enviroment){
 		Crystal i = null;
 		do{
@@ -131,6 +161,10 @@ public class WorldFactory {
 		return i;
 	}
 
+
+	/**
+ 	 * Todo 
+	 */
 	private Exit makeExit(Place placeOne, Place placeTwo){
 //		do{}while();
 		return null;

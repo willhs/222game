@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 
 /**
- * @author pondy & will. pondy wrote most of this class.
+ * @author pondy and will. pondy wrote most of this class.
  * Represents NOW IMMUTABLE a vector with 3d
  */
 public class Vector3D implements Serializable{

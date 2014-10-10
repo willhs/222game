@@ -91,7 +91,7 @@ public class Point3D implements Serializable{
 	}
 
 	/**
-	 * Made by Shane Brewer
+	 * Made by Shane Brewer 300289850
 	 *
 	 * @param one
 	 *            - point to be minusd from.
@@ -109,6 +109,7 @@ public class Point3D implements Serializable{
 	}
 
 	/**
+	 * Made by Shane Brewer 300289850
 	 * Gets the point obtained by translated this point by the translation vector
 	 * @param translation -amount to be translated by in each dimension
 	 * @return a point translated from this point by translation
@@ -117,6 +118,10 @@ public class Point3D implements Serializable{
 		return new Point3D(x + translation.x, y + translation.y, z + translation.z);
 	}
 
+
+	/**
+ 	 * Made by Shane Brewer 300289850
+	 */
 	public Vector3D getVector3DFromPoint(){
 		return new Vector3D(x, y, z);
 	}

@@ -39,7 +39,7 @@ public class LockedPortal extends Exit{
 
 	@Override
 	public String getImageName() {
-		return isLocked() ? "teleporter_off" : "teleported_on";
+		return isLocked() ? "teleport_off" : "teleporter_on";
 	}
 
 	@Override

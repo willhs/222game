@@ -13,7 +13,7 @@ import java.util.Iterator;
 /**
  * Handles all player movement at the moment.
  *
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public class MovementHandler {

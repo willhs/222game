@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * Used for defining bounding boxes for items and characters.
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public class Rectangle3D implements Serializable{
