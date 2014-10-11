@@ -16,6 +16,7 @@ import game.world.model.Chest;
 import game.world.model.Cube;
 import game.world.model.Inventory;
 import game.world.model.Place;
+import game.world.model.Portal;
 import game.world.model.Table;
 import game.world.util.Drawable;
 import game.world.util.Floor;
@@ -32,6 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import javax.swing.JFileChooser;
 
 /**
  * @author hardwiwill
@@ -240,6 +243,9 @@ public class LevelMaker{
 			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
 		}
 		updateTransformedObjects();
+		if (drawMode == DOOR_MODE){
+			drawables.add(new SimplePortal(aboveTrixel));
+		}
 	}
 
 	/**
@@ -252,7 +258,6 @@ public class LevelMaker{
 
 		DepthComparable something = findSomethingAtPoint(x,y);
 
-		System.out.println(something);
 		if (something == null)	return;
 
 		if (something instanceof TrixelFace){
@@ -461,6 +466,10 @@ public class LevelMaker{
 		this.drawMode  = drawMode;
 	}
 
+	public String getDrawMode(){
+		return drawMode;
+	}
+
 	public void setColourDeviation(int deviation) {
 		randomColourDeviation = deviation;
 	}
@@ -575,5 +584,15 @@ public class LevelMaker{
 
 		return background;
 	}
+
+	private class SimplePortal extends Portal{
+		public SimplePortal(Point3D location){
+			super("Portal", null, location, null, null);
+		}
+		public Point3D getPosition(Place place){
+			return getPosition();
+		}
+	}
+
 
 }

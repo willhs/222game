@@ -241,6 +241,7 @@ public class Renderer {
 						(int)boundingBox.width, (int)boundingBox.height, null);
 			}
 			else if (renderObject instanceof GameText){
+				System.out.println(renderObject.getDepth());
 				GameText text = (GameText) renderObject;
 				Point3D position = text.getPosition();
 				g2.setColor(Color.RED);

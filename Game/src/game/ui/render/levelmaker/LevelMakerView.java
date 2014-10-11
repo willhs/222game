@@ -32,11 +32,8 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JTabbedPane;
-
-abstract class LevelPanel extends JPanel{
-	private LevelMaker levelMaker;
-	public abstract LevelMaker getLevelMaker();
-}
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 
 /**
  * @author hardwiwill
@@ -50,8 +47,11 @@ abstract class LevelPanel extends JPanel{
 public class LevelMakerView extends JPanel{
 
 	private static final int ICON_SIZE = 30;
+	private static final int TEXT_FIELD_SIZE = 20;
 	private JTabbedPane levelTabsPane;
 	private int numTabs = 1;
+	private JTextField roomNameField;
+	private JTextField portalNameField;
 
 	public LevelMakerView(){
 
@@ -70,7 +70,7 @@ public class LevelMakerView extends JPanel{
 		mainControls.setLayout(new FlowLayout());
 		controlPanel.add(mainControls, BorderLayout.NORTH);
 
-		final JTextField trixelSizeField = new JTextField(LevelMaker.DEFAULT_TRIXEL_SIZE);
+		final JTextField trixelSizeField = new JTextField(TEXT_FIELD_SIZE);
 		trixelSizeField.setToolTipText("enter trixel size");
 		trixelSizeField.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -108,7 +108,11 @@ public class LevelMakerView extends JPanel{
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				writeToFile(getCurrentLevelMaker());
+				List<LevelPanel> lps = new ArrayList<LevelPanel>();
+				for(int i = 0; i<numTabs; i++){
+					lps.add((LevelPanel)levelTabsPane.getTabComponentAt(i));
+				}
+				writeToFile(lps);
 			}
 		});
 		mainControls.add(saveButton);
@@ -154,20 +158,36 @@ public class LevelMakerView extends JPanel{
 		drawablesPanel.setLayout(new FlowLayout());
 		add(drawablesPanel, BorderLayout.SOUTH);
 
-		ModeButtonListener modeButtonListener = new ModeButtonListener();
-
-		for(String mode : LevelMaker.MODES){
-			JButton button;
-			button = new JButton(new ImageIcon(
-				MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
-			button.addActionListener(modeButtonListener);
-			button.setActionCommand(mode);
-			drawablesPanel.add(button);
+		ModeButtonListener mbl = new ModeButtonListener();
+		String[] modes = new String[]{LevelMaker.TREE_MODE, LevelMaker.CHEST_MODE, LevelMaker.TRIXEL_MODE};
+		for(String mode : modes){
+			drawablesPanel.add(makeDrawButton(mode, mbl));
 		}
+
+		JPanel portalStuff = new JPanel();
+		portalStuff.setLayout(new BoxLayout(portalStuff, BoxLayout.X_AXIS));
+
+		JPanel portalTextBoxes = new JPanel();
+		portalTextBoxes.setLayout(new BoxLayout(portalTextBoxes, BoxLayout.Y_AXIS));
+		roomNameField = new JTextField(TEXT_FIELD_SIZE);
+		portalNameField = new JTextField(TEXT_FIELD_SIZE);
+		portalTextBoxes.add(roomNameField);
+		portalTextBoxes.add(portalNameField);
+
+		JPanel portalLabels = new JPanel();
+		portalLabels.setLayout(new BoxLayout(portalLabels, BoxLayout.Y_AXIS));
+		portalLabels.add(new JLabel("Room Name"));
+		portalLabels.add(new JLabel("Portal Name"));
+
+		portalStuff.add(makeDrawButton(LevelMaker.DOOR_MODE, mbl));
+		portalStuff.add(portalLabels);
+		portalStuff.add(portalTextBoxes);
+
+		drawablesPanel.add(portalStuff);
 
 		levelTabsPane = new JTabbedPane();
 		String name = "Room 1";
-		levelTabsPane.addTab(name, null, makeNewDrawPanel(), name);
+		levelTabsPane.addTab(name, null, makeNewDrawPanel(name), name);
 		add(levelTabsPane, BorderLayout.CENTER);
 
 		JButton newLevelButton = new JButton("New Level");
@@ -175,11 +195,23 @@ public class LevelMakerView extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = "Room " + ++numTabs;
-				levelTabsPane.addTab(name, null, makeNewDrawPanel(), name);
+				levelTabsPane.addTab(name, null, makeNewDrawPanel(name), name);
 				getCurrentDrawing().repaint();
 			}
 		});
 		mainControls.add(newLevelButton);
+	}
+
+	/*
+	 * Make a JButton with the given mode, its associated image as an icon, and the given listener linked.
+	 * @return JButton for the given mode.
+	 */
+	private JButton makeDrawButton(String mode, ModeButtonListener mbl){
+		JButton button = new JButton(new ImageIcon(
+			MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
+		button.addActionListener(mbl);
+		button.setActionCommand(mode);
+		return button;
 	}
 
 	/**
@@ -194,22 +226,16 @@ public class LevelMakerView extends JPanel{
 	 * Get the JPanel object associated with the current tab
 	 * @return The JPanel of the current tab
 	 */
-	private JPanel getCurrentDrawing(){
-		return (JPanel)(levelTabsPane.getSelectedComponent());
+	private LevelPanel getCurrentDrawing(){
+		return (LevelPanel)(levelTabsPane.getSelectedComponent());
 	}
 
 	/**
 	 * Make a new JPanel with a LevelMaker for a new tab.
 	 * @return the new JPanel ready to be added to a new tab.
 	 */
-	private JPanel makeNewDrawPanel(){
+	private JPanel makeNewDrawPanel(String name){
 		JPanel draw = new LevelPanel(){
-			LevelMaker levelMaker = new LevelMaker();
-
-			public LevelMaker getLevelMaker(){
-				return levelMaker;
-			}
-
 			@Override
 			public void paintComponent(Graphics g){
 				super.paintComponent(g);
@@ -226,6 +252,7 @@ public class LevelMakerView extends JPanel{
 		draw.addMouseListener(listener);
 		draw.addMouseMotionListener(listener);
 		draw.setBackground(Color.BLACK);
+		draw.setName(name);
 
 		return draw;
 	}
@@ -303,7 +330,7 @@ public class LevelMakerView extends JPanel{
 	 * Writes a level to a file.
 	 * @param levelMaker
 	 */
-	private void writeToFile(LevelMaker levelMaker) {
+	private void writeToFile(List<LevelPanel> lps) {
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+ImageStorage.LEVELS_PATH);
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
@@ -321,7 +348,16 @@ public class LevelMakerView extends JPanel{
 			e.printStackTrace();
 		}
 
-		writer.println(levelMaker);
+		for(LevelPanel lp : lps){
+			//This is where we do literally everything
+			//1. Make levels from the LevelPanels, not including the portals
+			//2. Make Point3D object out of the x and y coords stored in the PortalDescriptors
+			//3. Make Portal objects using the places and Point3Ds
+			//4. Somehow add the portals to the new places
+			//5. Write all places to file.
+		}
+
+		//writer.println(levelMaker);
 		writer.close();
 	}
 
@@ -350,15 +386,27 @@ public class LevelMakerView extends JPanel{
 
 		@Override
 		public void mouseClicked(MouseEvent e){
+			LevelMaker lm = getCurrentLevelMaker();
+			LevelPanel lp = getCurrentDrawing();
 
 			// if right-click, delete trixel at this point
 			if (e.getButton() == MouseEvent.BUTTON3) {
-	            getCurrentLevelMaker().deleteSomethingAt(e.getX(), e.getY());
+	            lm.deleteSomethingAt(e.getX(), e.getY());
 	        }
 			else { // else, draw something
-				getCurrentLevelMaker().makeSomethingAt(e.getX(), e.getY());
+				lm.makeSomethingAt(e.getX(), e.getY());
 			}
-			getCurrentDrawing().repaint();
+
+			if (lm.getDrawMode() == LevelMaker.DOOR_MODE){
+				lp.getPortalDescriptors().add(new PortalDescriptor("Portal " + (lp.getPortalDescriptors().size() + 1),
+																	portalNameField.getText(),
+																	roomNameField.getText(),
+																	e.getX(),
+																	e.getY()));
+			}
+
+			System.out.println(lp);
+			lp.repaint();
 		}
 	}
 
@@ -372,6 +420,55 @@ public class LevelMakerView extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			getCurrentLevelMaker().setDrawMode(e.getActionCommand());
+		}
+	}
+
+	class PortalDescriptor{
+		public String portalName;
+		public String destPortalName;
+		public String destRoomName;
+		public int x, y;
+
+		public PortalDescriptor(String portalName, String destPortalName, String destRoomName, int x, int y){
+			this.portalName = portalName;
+			this.destPortalName = destPortalName;
+			this.destRoomName = destRoomName;
+			this.x = x;
+			this.y = y;
+		}
+
+		public String toString(){
+			return portalName + " : " + destPortalName + " : " + destRoomName + " : " + x + ", " + y;
+		}
+	}
+
+	class LevelPanel extends JPanel{
+		protected LevelMaker levelMaker = new LevelMaker();
+		private String tabName;
+		private List<PortalDescriptor> portalDescriptors = new ArrayList<PortalDescriptor>();
+
+		public LevelMaker getLevelMaker(){
+			return levelMaker;
+		}
+
+		public String getName(){
+			return tabName;
+		}
+
+		public void setName(String name){
+			this.tabName = name;
+		}
+
+		public List<PortalDescriptor> getPortalDescriptors(){
+			return portalDescriptors;
+		}
+
+		public String toString(){
+			String rval = tabName + "\n";
+			for(PortalDescriptor pd : portalDescriptors){
+				rval += "\t" + pd + "\n";
+			}
+			return rval;
 		}
 	}
 

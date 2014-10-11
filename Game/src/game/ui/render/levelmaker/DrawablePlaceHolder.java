@@ -53,7 +53,7 @@ public class DrawablePlaceHolder implements Drawable, DepthComparable, Transform
 
 	@Override
 	public float getDepth() {
-		return link.getPosition().getZ();
+		return getPosition().getZ();
 	}
 
 	public Drawable getDrawable(){
@@ -83,8 +83,6 @@ public class DrawablePlaceHolder implements Drawable, DepthComparable, Transform
 				(int)(pos.y + box.length/2 - box.height),
 				(int)(pos.y + box.length/2),
 				(int)(pos.y + box.length/2)};
-
-		System.out.println(Arrays.toString(xpoints)+"\n"+Arrays.toString(ypoints));
 
 		return new Polygon(xpoints, ypoints, xpoints.length).contains(x, y);
 	}

@@ -25,7 +25,7 @@ public class BackgroundObject implements Drawable{
 	}
 
 	/**
-	 * @return an random background of
+	 * @return an random background image
 	 */
 	private String selectRandomImage() {
 		return "background_" + (int)(Math.random()*numImages);
