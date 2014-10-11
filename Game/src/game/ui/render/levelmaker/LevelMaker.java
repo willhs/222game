@@ -2,6 +2,7 @@ package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.able.GamePolygon;
+import game.ui.render.texture.Vine;
 import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
@@ -33,8 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import javax.swing.JFileChooser;
 
 /**
  * @author hardwiwill
@@ -233,7 +232,9 @@ public class LevelMaker{
 		//Point3D randomAboveTrixel = aboveTrixel.getTranslatedPoint(new Vector3D((float)Math.random()*Trixel.SIZE, 0, (float)Math.random()*Trixel.SIZE));
 
 		if (drawMode == TRIXEL_MODE){
-			createdTrixels.add(makeTrixelNextToFace(face, baseColour));
+			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
+			createdTrixels.add(newTrixel);
+			drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
 		if (drawMode == TREE_MODE){
 			// TODO: replace this table with tree once tree is drawable
@@ -347,6 +348,45 @@ public class LevelMaker{
 		return lastTransform;
 	}
 
+	private List<Vine> makeVinesAroundTrixel(Trixel newTrixel) {
+		float minHeight = trixelSize/2;
+		float maxHeight = trixelSize;
+		TrixelFace[] faces = TrixelUtil.makeTrixelFaces(newTrixel, trixelSize);
+		// the faces around the side of the trixel (all but top and bottom).
+		TrixelFace[] vineFaces = new TrixelFace[] { faces[0], faces[1], faces[4], faces[5] };
+		List<Vine> vines = new ArrayList<Vine>();
+
+		for (TrixelFace vineFace : vineFaces){
+
+			int numVines = (int)(Math.random()*3);
+			Vector3D topLineGradient = vineFace.findTopLineGradient();
+
+			for (int v = 0; v < numVines; v++){
+				Point3D center = vineFace.findCenterPoint();
+
+				float dist = (float)(Math.random()*trixelSize - (trixelSize/2)); // travel to random x,z pos within trixel face
+				// translation from center to random top point
+				Vector3D translateFromCenter = new Vector3D((dist*topLineGradient.x),
+						trixelSize/2,
+						dist*topLineGradient.z);
+				Point3D randomTopPoint = center.getTranslatedPoint(translateFromCenter);
+				float height = (float)((Math.random()*(maxHeight-minHeight))+minHeight);
+				Point3D vinePosition = randomTopPoint.getTranslatedPoint(new Vector3D(0,-height, 0));
+
+				vines.add(new Vine(vinePosition, height));
+
+				System.out.println("center:\t" + center);
+				System.out.println("top line gradient:\t"+topLineGradient);
+				System.out.println("dist:\t"+dist);
+				System.out.println("trans from center:\t"+translateFromCenter);
+				System.out.println("randomTop:\t"+randomTopPoint);
+				System.out.println("height:\t"+height);
+				System.out.println("vinePosition:\t"+vinePosition);
+			}
+		}
+		return vines;
+	}
+
 
 	private final static String SEPARATOR = "\t";
 
@@ -431,6 +471,7 @@ public class LevelMaker{
 		return null; // TODO finish
 
 	}
+
 
 	public static void failParsing(String reason){
 		System.err.println("************\nError reading place file\n***************");

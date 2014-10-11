@@ -27,8 +27,8 @@ public class Point3D implements Serializable{
 
 	/** Returns the distance to another point. */
 	public Vector3D distanceTo(Point3D other) {
-		return new Vector3D(getX() - other.getX(), getY() - other.getY(),
-				getZ() - other.getZ());
+		return new Vector3D(other.getX()-getX(), other.getY() - getY(),
+				other.getZ() - getZ());
 	}
 
 	public String toString() {

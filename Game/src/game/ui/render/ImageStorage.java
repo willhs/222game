@@ -56,8 +56,8 @@ public class ImageStorage {
 
 		addImagesFromDir("crystal");
 		addImagesFromDir("teleporter");
+		addImagesFromDir("vine");
 	}
-
 
 	/**
 	 * Adds an image to the local image storage

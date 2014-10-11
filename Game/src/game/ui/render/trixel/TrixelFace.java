@@ -1,15 +1,19 @@
 package game.ui.render.trixel;
 
+import game.ui.render.util.DepthComparable;
 import game.ui.render.util.LightSource;
 import game.ui.render.util.Transform;
 import game.ui.render.util.Transformable;
-import game.ui.render.util.DepthComparable;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author will
@@ -22,7 +26,7 @@ public class TrixelFace implements DepthComparable, Transformable{
 	private final Point3D[] vertices;
 
 	/**
-	 * The trixel which this face is representing.
+	 * The trixel which this face is partly representing.
 	 */
 	private Trixel parent;
 	/**
@@ -49,6 +53,9 @@ public class TrixelFace implements DepthComparable, Transformable{
 		return z/vertices.length;
 	}
 
+	/**
+	 * @return the colour of the trixel (without shading)
+	 */
 	public Color getBaseColour(){
 		return parent.getColor();
 	}
@@ -65,8 +72,8 @@ public class TrixelFace implements DepthComparable, Transformable{
 	 * @return the normal (perpendicular) vector of this face
 	 */
 	public Vector3D calculateNormal(){
-		Vector3D edge1 = vertices[1].distanceTo(vertices[0]);
-		Vector3D edge2 = vertices[1].distanceTo(vertices[2]);
+		Vector3D edge1 = vertices[0].distanceTo(vertices[1]);
+		Vector3D edge2 = vertices[2].distanceTo(vertices[1]);
 
 		return edge1.crossProduct(edge2);
 	}
@@ -142,4 +149,22 @@ public class TrixelFace implements DepthComparable, Transformable{
 		}
 		return new Point3D(x/vertices.length, y/vertices.length, z/vertices.length);
 	}
+
+	/**
+	 * @return the gradient of the line between the two highest vertices.
+	 */
+	public Vector3D findTopLineGradient(){
+		List<Point3D> highestVertices = new ArrayList<Point3D>(Arrays.asList(vertices));
+		Collections.sort(highestVertices, new Comparator<Point3D>(){
+			@Override
+			public int compare(Point3D p1, Point3D p2){
+				return -Float.compare(p1.y, p2.y);
+			}
+		});
+		Point3D v1 = highestVertices.get(0);
+		Point3D v2 = highestVertices.get(1);
+
+		return (v1.x < v2.x ? v1.distanceTo(v2) : v2.distanceTo(v1)).unitVector();
+	}
+
 }
