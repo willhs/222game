@@ -51,7 +51,7 @@ import org.omg.CORBA.Environment;
  *
  * TODO: Save the level in a file for use in the game.
  */
-public class LevelMaker{
+public class RoomMaker{
 
 	public static final String TREE_MODE = "Tree";
 	public static final String DOOR_MODE = "Door";
@@ -133,7 +133,7 @@ public class LevelMaker{
 	/**
 	 * Initialises LevelMaker's fields
 	 */
-	public LevelMaker(){
+	public RoomMaker(){
 
 		// initialise trixels
 		createdTrixels = new HashSet<Trixel>();
@@ -544,7 +544,7 @@ public class LevelMaker{
 	 * @param drawMode
 	 */
 	public static void setDrawMode(String drawMode) {
-		LevelMaker.drawMode  = drawMode;
+		RoomMaker.drawMode  = drawMode;
 	}
 
 	public String getDrawMode(){
@@ -667,11 +667,11 @@ public class LevelMaker{
 	}
 
 	private class SimplePortal extends Portal{
-		public LevelMaker lm;
+		public RoomMaker lm;
 		public Point3D location;
 		public SimplePortal toPortal;
 
-		public SimplePortal(LevelMaker lm, Point3D location, SimplePortal toPortal){
+		public SimplePortal(RoomMaker lm, Point3D location, SimplePortal toPortal){
 			super("Portal", null, location, null, null);
 			this.lm = lm;
 			this.location = location;

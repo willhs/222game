@@ -44,7 +44,7 @@ import javax.swing.JLabel;
  * Draws the Level when it's updated.
  *
  */
-public class LevelMakerView extends JPanel{
+public class WorldMaker extends JPanel{
 
 	private static final int ICON_SIZE = 30;
 	private static final int TEXT_FIELD_SIZE = 20;
@@ -53,7 +53,7 @@ public class LevelMakerView extends JPanel{
 	private JTextField roomNameField;
 	private JTextField portalNameField;
 
-	public LevelMakerView(){
+	public WorldMaker(){
 
 		// initialise GUI stuff
 
@@ -133,9 +133,9 @@ public class LevelMakerView extends JPanel{
 		});
 		colourPanel.add(chooseColourButton);
 
-		final JSlider colourRandomLevel = new JSlider(LevelMaker.MIN_COLOUR_DEVIATION,
-				LevelMaker.MAX_COLOUR_DEVIATION,
-				LevelMaker.START_COLOUR_DEVIATION);
+		final JSlider colourRandomLevel = new JSlider(RoomMaker.MIN_COLOUR_DEVIATION,
+				RoomMaker.MAX_COLOUR_DEVIATION,
+				RoomMaker.START_COLOUR_DEVIATION);
 		colourRandomLevel.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -159,7 +159,7 @@ public class LevelMakerView extends JPanel{
 		add(drawablesPanel, BorderLayout.SOUTH);
 
 		ModeButtonListener mbl = new ModeButtonListener();
-		for(String mode : LevelMaker.MODES){
+		for(String mode : RoomMaker.MODES){
 			drawablesPanel.add(makeDrawButton(mode, mbl));
 		}
 
@@ -196,7 +196,7 @@ public class LevelMakerView extends JPanel{
 	 * Get the level maker of the currently selected tab.
 	 * @return The LevelMaker object associated with the current tab.
 	 */
-	private LevelMaker getCurrentLevelMaker(){
+	private RoomMaker getCurrentLevelMaker(){
 		return ((LevelPanel)getCurrentDrawing()).getLevelMaker();
 	}
 
@@ -297,7 +297,7 @@ public class LevelMakerView extends JPanel{
 		try{
 			size = Integer.parseInt(text);
 		} catch (NumberFormatException e){
-			size = LevelMaker.DEFAULT_TRIXEL_SIZE;
+			size = RoomMaker.DEFAULT_TRIXEL_SIZE;
 		}
 		return size;
 	}
@@ -363,7 +363,7 @@ public class LevelMakerView extends JPanel{
 
 		@Override
 		public void mouseClicked(MouseEvent e){
-			LevelMaker lm = getCurrentLevelMaker();
+			RoomMaker lm = getCurrentLevelMaker();
 			LevelPanel lp = getCurrentDrawing();
 
 			// if right-click, delete trixel at this point
@@ -387,14 +387,14 @@ public class LevelMakerView extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			LevelMaker.setDrawMode(e.getActionCommand());
+			RoomMaker.setDrawMode(e.getActionCommand());
 		}
 	}
 
 	class LevelPanel extends JPanel{
-		protected LevelMaker levelMaker = new LevelMaker();
+		protected RoomMaker levelMaker = new RoomMaker();
 
-		public LevelMaker getLevelMaker(){
+		public RoomMaker getLevelMaker(){
 			return levelMaker;
 		}
 	}

@@ -22,7 +22,7 @@ public class Main {
 		JFrame frame = new JFrame("Level maker");
 		Dimension SCREEN_SIZE = new Dimension(GameWindow.FRAME_WIDTH, GameWindow.FRAME_HEIGHT);
 		frame.setSize(SCREEN_SIZE );
-		frame.add(new LevelMakerView());
+		frame.add(new WorldMaker());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
