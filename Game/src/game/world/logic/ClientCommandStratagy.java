@@ -13,7 +13,7 @@ import java.util.*;
  */
 public interface ClientCommandStratagy extends Serializable{
 	/**
-	 * Used to set values in the world depending on if the server 
+	 * Used to set values in the world depending on if the server
 	 *
 	 * @param scan - has the command in it.
 	 *
@@ -40,7 +40,7 @@ class ClientExitStratagy implements ClientCommandStratagy{
 		Player player = world.getPlayerByName(playerName);
 		Place place = world.getPlaceByName(placeName);
 		Exit exit = world.getExitByName(exitName);
-
+		exit.setLocked(false);
 		// removes the player form his old place.
 		place.removePlayer(player);
 		// adds him to the new one.
@@ -99,7 +99,7 @@ class ClientItemDropStratagy implements ClientCommandStratagy{
 		Player player = world.getPlayerByName(playerName);
 		Item item = world.getItemByName(itemName);
 		Place place = world.getPlaceByName(placeName);
-		// handles all mnoving and setting logic that 
+		// handles all mnoving and setting logic that
 		// comes with droping and item.
 		item.setSelected(false); // items that are nolonger in the inventory cant be selected.
 		player.getInventory().removeItem(item);

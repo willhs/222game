@@ -38,4 +38,14 @@ public class Cube extends Enviroment{
     public Trixition getTrixition(){
     	return trixition;
     }
+
+	@Override
+	public String getImageName() {
+		return "Cube";
+	}
+
+	@Override
+	public Point3D getPosition(Place place) {
+		return getPosition();
+	}
 }

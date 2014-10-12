@@ -11,7 +11,7 @@ import game.world.util.Drawable;
  * @author Shane Brewer 300289850
  *
  */
-public  abstract class Enviroment implements Serializable{
+public  abstract class Enviroment implements Serializable, Drawable{
 
 	private String name;
 	private Point3D position;
