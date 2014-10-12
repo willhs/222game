@@ -85,6 +85,18 @@ public class LevelMaker{
 	 */
 	private Set<Drawable> drawables;
 	/**
+	 * portals
+	 */
+	private Set<SimplePortal> portals;
+	/**
+	 * a temporary variable for when portals are being placed
+	 */
+	private static SimplePortal tempPortal;
+	/**
+	 * name of the level
+	 */
+	public String name;
+	/**
 	 * the center of the floor
 	 */
 	private Point3D floorCentroid;
@@ -97,7 +109,7 @@ public class LevelMaker{
 	/**
 	 * the drawing mode. Can be TRIXEL_MODE, TREE_MODE, CHEST_MODE
 	 */
-	private String drawMode;
+	private static String drawMode;
 	/**
 	 * how much to deviate from the base colour when making the next colour
 	 */
@@ -118,8 +130,9 @@ public class LevelMaker{
 		floorCentroid = new Point3D(0,0,0);
 		trixelSize = DEFAULT_TRIXEL_SIZE;
 
-		// initialise drawables
+		// initialise drawables, portals
 		drawables = new HashSet<Drawable>();
+		portals = new HashSet<SimplePortal>();
 
 		// intialise colour
 		randomiseBaseColour();
@@ -243,10 +256,24 @@ public class LevelMaker{
 		if (drawMode == CHEST_MODE){
 			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
 		}
-		updateTransformedObjects();
 		if (drawMode == DOOR_MODE){
-			drawables.add(new SimplePortal(aboveTrixel));
+			if(tempPortal == null){
+				tempPortal = new SimplePortal(this, aboveTrixel, null);
+				drawables.add(tempPortal);
+				portals.add(tempPortal);
+				System.out.println("Made start portal at " + aboveTrixel + " in room " + name);
+			}else{
+				if(tempPortal.lm != this){
+					SimplePortal newSP = new SimplePortal(this, aboveTrixel, tempPortal);
+					tempPortal.toPortal = newSP;
+					drawables.add(newSP);
+					portals.add(newSP);
+					tempPortal = null;
+					System.out.println("Made portal link from " + aboveTrixel + " in " + name + " to " + newSP.toPortal.location + " in " + newSP.toPortal.lm.name);
+				}
+			}
 		}
+		updateTransformedObjects();
 	}
 
 	/**
@@ -503,8 +530,8 @@ public class LevelMaker{
 	 * Sets the drawing mode of the level maker
 	 * @param drawMode
 	 */
-	public void setDrawMode(String drawMode) {
-		this.drawMode  = drawMode;
+	public static void setDrawMode(String drawMode) {
+		LevelMaker.drawMode  = drawMode;
 	}
 
 	public String getDrawMode(){
@@ -627,8 +654,15 @@ public class LevelMaker{
 	}
 
 	private class SimplePortal extends Portal{
-		public SimplePortal(Point3D location){
+		public LevelMaker lm;
+		public Point3D location;
+		public SimplePortal toPortal;
+
+		public SimplePortal(LevelMaker lm, Point3D location, SimplePortal toPortal){
 			super("Portal", null, location, null, null);
+			this.lm = lm;
+			this.location = location;
+			this.toPortal = toPortal;
 		}
 		public Point3D getPosition(Place place){
 			return getPosition();
