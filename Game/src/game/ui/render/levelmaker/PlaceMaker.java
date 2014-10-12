@@ -15,14 +15,18 @@ import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.Chest;
 import game.world.model.Cube;
+import game.world.model.Enviroment;
 import game.world.model.Inventory;
+import game.world.model.Item;
 import game.world.model.Place;
 import game.world.model.Portal;
+import game.world.model.Room;
 import game.world.model.Table;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
+import java.awt.Polygon;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -35,6 +39,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.omg.CORBA.Environment;
+
 /**
  * @author hardwiwill
  *
@@ -45,7 +51,7 @@ import java.util.Set;
  *
  * TODO: Save the level in a file for use in the game.
  */
-public class LevelMaker{
+public class PlaceMaker{
 
 	public static final String TREE_MODE = "Tree";
 	public static final String DOOR_MODE = "Door";
@@ -85,6 +91,18 @@ public class LevelMaker{
 	 */
 	private Set<Drawable> drawables;
 	/**
+	 * portals
+	 */
+	public static Set<SimplePortal> portals;
+	/**
+	 * a temporary variable for when portals are being placed
+	 */
+	private static SimplePortal tempPortal;
+	/**
+	 * name of the level
+	 */
+	public String name;
+	/**
 	 * the center of the floor
 	 */
 	private Point3D floorCentroid;
@@ -97,7 +115,7 @@ public class LevelMaker{
 	/**
 	 * the drawing mode. Can be TRIXEL_MODE, TREE_MODE, CHEST_MODE
 	 */
-	private String drawMode;
+	private static String drawMode;
 	/**
 	 * how much to deviate from the base colour when making the next colour
 	 */
@@ -105,21 +123,26 @@ public class LevelMaker{
 	/**
 	 * size of trixels to be made
 	 */
-	private int trixelSize;
+	private int trixelSize = DEFAULT_TRIXEL_SIZE;
+
+	/**
+	 * For use when making a Place object for the level
+	 */
+	private Floor floor;
 
 	/**
 	 * Initialises LevelMaker's fields
 	 */
-	public LevelMaker(){
+	public PlaceMaker(){
 
 		// initialise trixels
 		createdTrixels = new HashSet<Trixel>();
 		floorTrixels = new HashSet<Trixel>();
 		floorCentroid = new Point3D(0,0,0);
-		trixelSize = DEFAULT_TRIXEL_SIZE;
 
-		// initialise drawables
+		// initialise drawables, portals
 		drawables = new HashSet<Drawable>();
+		portals = new HashSet<SimplePortal>();
 
 		// intialise colour
 		randomiseBaseColour();
@@ -146,15 +169,39 @@ public class LevelMaker{
 	public void loadFloor(Floor floor){
 		clearLevel();
 
-		// initilise trixels
+		// initialise trixels
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
 			Renderer.floorToVerticalPolygon(floor), trixelSize, -trixelSize)){
 			t.setColour(getTrixelColour());
 			floorTrixels.add(t);
 		}
+
+		this.floor = floor;
+
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
-		//drawables.addAll(generateRandomBackgroundObjects());
+
+		// move level to the center of the screen
+		Point3D idealCentroid = new Point3D(GameWindow.FRAME_WIDTH/2, floorCentroid.y, floorCentroid.z);
+		Vector3D distToScreenCenter = floorCentroid.distanceTo(idealCentroid);
+		transformFloor(Transform.newTranslation(distToScreenCenter));
+
 		updateFaces();
+	}
+
+	/**
+	 * Transforms the floor object and floor trixels.
+	 * @param transform
+	 */
+	private void transformFloor(Transform transform) {
+		for (Trixel floorTrixel : floorTrixels){
+			// longest line ever
+			//System.out.println("trixition before: "+floorTrixel.getTrixition());
+			Point3D newPosition = transform.multiply(TrixelUtil.trixitionToPosition(floorTrixel.getTrixition(), trixelSize));
+			floorTrixel.setTrixition(TrixelUtil.positionToTrixition(newPosition, trixelSize));
+			//System.out.println("trixition after: "+floorTrixel.getTrixition());
+		}
+		floor.transform(transform);
+		floorCentroid = transform.multiply(floorCentroid);
 	}
 
 	/**
@@ -195,9 +242,8 @@ public class LevelMaker{
 
 		// sort in order of depth, farest first
 		Collections.sort(rotatedObjects, new DepthComparator());
-		// reverse so that closest trixels are first (so easy to obtain trixel clicked).
+		// reverse so that closest trixels are first (so easy to obtain what is clicked).
 		Collections.reverse(rotatedObjects);
-		//System.out.println();
 	}
 
 	/**
@@ -207,7 +253,7 @@ public class LevelMaker{
 	 */
 	private Transform makeTransform(Vector3D rotateAmounts) {
 
-		Vector3D viewTranslation = Renderer.STANDARD_VIEW_TRANSLATION;
+		Vector3D viewTranslation = new Vector3D(0,Renderer.STANDARD_VIEW_TRANSLATION.y-150, 0);//new Vector3D(0,0,0);
 		return Renderer.makeTransform(rotateAmounts, floorCentroid, viewTranslation);
 	}
 
@@ -234,7 +280,7 @@ public class LevelMaker{
 		if (drawMode == TRIXEL_MODE){
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
-			drawables.addAll(makeVinesAroundTrixel(newTrixel));
+		//	drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
 		if (drawMode == TREE_MODE){
 			// TODO: replace this table with tree once tree is drawable
@@ -243,10 +289,24 @@ public class LevelMaker{
 		if (drawMode == CHEST_MODE){
 			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
 		}
-		updateTransformedObjects();
 		if (drawMode == DOOR_MODE){
-			drawables.add(new SimplePortal(aboveTrixel));
+			if(tempPortal == null){
+				tempPortal = new SimplePortal(this, aboveTrixel, null);
+				drawables.add(tempPortal);
+				portals.add(tempPortal);
+				System.out.println("Made start portal at " + aboveTrixel + " in room " + getName());
+			}else{
+				if(tempPortal.lm != this){
+					SimplePortal newSP = new SimplePortal(this, aboveTrixel, tempPortal);
+					tempPortal.toPortal = newSP;
+					drawables.add(newSP);
+					portals.add(newSP);
+					tempPortal = null;
+					System.out.println("Made portal link from " + aboveTrixel + " in " + getName() + " to " + newSP.toPortal.location + " in " + newSP.toPortal.lm.getName());
+				}
+			}
 		}
+		updateTransformedObjects();
 	}
 
 	/**
@@ -375,13 +435,13 @@ public class LevelMaker{
 
 				vines.add(new Vine(vinePosition, height));
 
-				System.out.println("center:\t" + center);
+				/*System.out.println("center:\t" + center);
 				System.out.println("top line gradient:\t"+topLineGradient);
 				System.out.println("dist:\t"+dist);
 				System.out.println("trans from center:\t"+translateFromCenter);
 				System.out.println("randomTop:\t"+randomTopPoint);
 				System.out.println("height:\t"+height);
-				System.out.println("vinePosition:\t"+vinePosition);
+				System.out.println("vinePosition:\t"+vinePosition);*/
 			}
 		}
 		return vines;
@@ -389,89 +449,6 @@ public class LevelMaker{
 
 
 	private final static String SEPARATOR = "\t";
-
-	@Override
-	public String toString(){
-
-		StringBuilder levelString = new StringBuilder();
-
-		// WRITE EVERYTHING
-		levelString.append("222game level");
-		levelString.append(VERSION_NUMBER);
-		levelString.append("\n");
-		levelString.append("Floor trixels");
-		levelString.append(floorTrixels.size());
-		levelString.append("Trixition"+SEPARATOR+"Colour");
-		levelString.append("\n");
-
-		for (Trixel floorTrixel : floorTrixels){
-			levelString.append(floorTrixel);
-		}
-
-		levelString.append("\n");
-		levelString.append("Created trixels");
-		levelString.append(createdTrixels.size());
-		levelString.append("Trixition"+SEPARATOR+"Colour");
-		levelString.append("\n");
-
-		for (Trixel createdTrixel : createdTrixels){
-			levelString.append(createdTrixel);
-		}
-
-		levelString.append("\n");
-		levelString.append("Drawable objects");
-		levelString.append(drawables.size());
-		levelString.append("Classname"+SEPARATOR+"ImageName"+SEPARATOR+"Position"+SEPARATOR+"BoundingBox"+SEPARATOR+"SpecificInfo");
-		levelString.append("\n");
-
-		for (Drawable drawable : drawables){
-			levelString.append(drawable); // TODO sort this part out
-		}
-
-		return levelString.toString();
-	}
-
-	/**
-	 * Reads a place file and makes us
-	 * @param placeFile
-	 * @return
-	 */
-	public static Place makePlaceFromFile(File placeFile){
-		String title = "222game level";
-		String floorTrixelsHeader = "Floor trixels";
-
-		Set<Cube> floorCubes = new HashSet<Cube>();
-		Set<Cube> createdCubes = new HashSet<Cube>();
-		Set<Drawable> drawables = new HashSet<Drawable>();
-
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(placeFile));
-
-			ensureMatch(reader.readLine(), title); // skip title line
-			float version = Float.parseFloat(reader.readLine()); // version number of level maker
-			reader.readLine(); // blank line
-
-			ensureMatch(reader.readLine(), floorTrixelsHeader); // declaration that next tokens = floor trixels
-			int floorTrixelsNum = Integer.parseInt(reader.readLine()); // number of floor trixels
-			reader.readLine(); // details next tokens
-			reader.readLine(); // blank
-
-			for (int f = 0; f < floorTrixelsNum; f++){
-				String[] trixelInfo = reader.readLine().split(SEPARATOR);
-				//floorCubes.add(new Cube())
-			}
-
-			reader.close();
-
-		} catch (IOException e) {
-			failParsing("Some IO problem");
-			e.printStackTrace();
-		}
-
-		return null; // TODO finish
-
-	}
-
 
 	public static void failParsing(String reason){
 		System.err.println("************\nError reading place file\n***************");
@@ -503,8 +480,8 @@ public class LevelMaker{
 	 * Sets the drawing mode of the level maker
 	 * @param drawMode
 	 */
-	public void setDrawMode(String drawMode) {
-		this.drawMode  = drawMode;
+	public static void setDrawMode(String drawMode) {
+		PlaceMaker.drawMode  = drawMode;
 	}
 
 	public String getDrawMode(){
@@ -573,10 +550,43 @@ public class LevelMaker{
 		setBaseColour(Renderer.makeRandomColour());
 	}
 
+	/**
+	 * Resets level to its default state
+	 */
 	private void clearLevel() {
 		floorTrixels.clear();
 		createdTrixels.clear();
 		drawables.clear();
+	}
+
+	/**
+	 * Makes a place object using the information in
+	 * @return
+	 */
+	public Place makePlace(){
+
+		List<Item> items = new ArrayList<Item>();
+		List<Enviroment> environment = new ArrayList<Enviroment>();
+
+		for (Drawable drawable : drawables){
+			if (drawable instanceof Item){
+				items.add((Item) drawable);
+			}
+			if (drawable instanceof Enviroment){
+				environment.add((Enviroment) drawable);
+			}
+		}
+
+		for (Trixel floorTrixel : floorTrixels){
+			environment.add(new Cube("floor", floorTrixel, trixelSize));
+		}
+		for (Trixel createdTrixel : createdTrixels){
+			environment.add(new Cube("non-floor", createdTrixel, trixelSize));
+		}
+
+		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
+
+		return new Room(items, environment, floorPolygon, getName());
 	}
 
 	/**
@@ -626,14 +636,57 @@ public class LevelMaker{
 		return background;
 	}
 
-	private class SimplePortal extends Portal{
-		public SimplePortal(Point3D location){
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public class SimplePortal extends Portal{
+		public PlaceMaker lm;
+		public Point3D location;
+		public SimplePortal toPortal;
+
+		public SimplePortal(PlaceMaker lm, Point3D location, SimplePortal toPortal){
 			super("Portal", null, location, null, null);
+			this.lm = lm;
+			this.location = location;
+			this.toPortal = toPortal;
 		}
 		public Point3D getPosition(Place place){
 			return getPosition();
 		}
 	}
 
+	public void loadPlace(Place place){
+		createdTrixels.clear();
+		floorTrixels.clear();
+		drawables.clear();
+		portals.clear();
+		tempPortal = null;
 
+		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
+			Drawable d = placeDrawables.next();
+			drawables.add(d);
+			if(d instanceof SimplePortal){
+				portals.add((SimplePortal)d);
+			}
+		}
+		for (Iterator<Enviroment> placeEnvironments = place.getEnviroment(); placeEnvironments.hasNext();){
+			Enviroment env = placeEnvironments.next();
+			if(env instanceof Cube){
+				Cube c = (Cube)env;
+				Trixel t = new Trixel(c.getTrixition());
+				if(c.getName().equals("floor")){
+					floorTrixels.add(t);
+				}else if(c.getName().equals("non-floor")){
+					createdTrixels.add(t);
+				}
+			}
+		}
+		name = place.getName();
+		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
+	}
 }

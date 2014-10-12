@@ -1,20 +1,46 @@
 package game.world.model;
 
-import java.awt.Rectangle;
+import game.ui.render.trixel.Trixel;
+import game.ui.render.trixel.TrixelUtil;
+import game.ui.render.trixel.Trixition;
+import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 
-import game.world.dimensions.*;
+import java.awt.Color;
 
 /**
  * @author Shane Brewer 300289850
+ * 			& Will
  */
 public class Cube extends Enviroment{
 
-    public Cube(String name, Point3D poisition) {
-        super(name, poisition, new Rectangle3D(20, 20, 20));
+	/**
+	 * So it's easier to convert between Cube and Trixel.
+	 */
+	private Trixition trixition;
+	private Color colour;
+
+    public Cube(String name, Point3D position) {
+        super(name, position, new Rectangle3D(20, 20, 20));
     }
 
-    public Cube(String name, Point3D poisition, float size) {
-        super(name, poisition, new Rectangle3D(size, size, size));
+    /**
+     * The LevelMaker will use this constructor
+     * so it's easier to convert between Cube and Trixel.
+     *
+     * @param name
+     * @param position
+     * @param size
+     * @param trixition
+     */
+    public Cube(String name, Trixel trixel, int size) {
+        super(name, TrixelUtil.trixitionToPosition(trixel.getTrixition(), size), new Rectangle3D(size, size, size));
+        this.trixition = trixel.getTrixition();
+        this.colour = trixel.getColor();
+    }
+
+    public Trixition getTrixition(){
+    	return trixition;
     }
 
 	@Override
@@ -25,5 +51,9 @@ public class Cube extends Enviroment{
 	@Override
 	public Point3D getPosition(Place place) {
 		return getPosition();
+	}
+
+	public Color getColor(){
+		return colour;
 	}
 }

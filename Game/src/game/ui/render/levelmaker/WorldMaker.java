@@ -2,9 +2,13 @@ package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.ImageStorage;
+import game.ui.window.GameWindow;
 import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
 import game.world.util.Floor;
+import game.world.model.World;
+import game.world.model.Place;
+import game.world.model.Portal;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -21,6 +25,10 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,7 +52,7 @@ import javax.swing.JLabel;
  * Draws the Level when it's updated.
  *
  */
-public class LevelMakerView extends JPanel{
+public class WorldMaker extends JPanel{
 
 	private static final int ICON_SIZE = 30;
 	private static final int TEXT_FIELD_SIZE = 20;
@@ -53,7 +61,7 @@ public class LevelMakerView extends JPanel{
 	private JTextField roomNameField;
 	private JTextField portalNameField;
 
-	public LevelMakerView(){
+	public WorldMaker(){
 
 		// initialise GUI stuff
 
@@ -82,16 +90,26 @@ public class LevelMakerView extends JPanel{
 		JButton loadButton = new JButton("Load");
 		loadButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				// initilise level maker
-				Floor floor = null;
+				World world = null;
 				try {
-					floor = getFloorPolygon();
+					world = browseForWorld();
 				} catch (NoFloorChosenException e1) {
 					return;
 				}
 
-				getCurrentLevelMaker().loadFloor(floor);
-				getCurrentDrawing().repaint();
+				for(int i=0; i<numTabs; i++){
+					levelTabsPane.remove(0);
+				}
+				numTabs = 0;
+				Place place;
+				for(Iterator<Place> places = world.getPlaces(); places.hasNext();){
+					numTabs++;
+					place = places.next();
+					String name = "Room " + (numTabs);
+					LevelPanel lp = makeNewDrawPanel(name);
+					levelTabsPane.addTab(name, null, lp, name);
+					lp.levelMaker.loadPlace(place);
+				}
 			}
 		});
 		mainControls.add(loadButton);
@@ -110,7 +128,8 @@ public class LevelMakerView extends JPanel{
 			public void actionPerformed(ActionEvent e){
 				List<LevelPanel> lps = new ArrayList<LevelPanel>();
 				for(int i = 0; i<numTabs; i++){
-					lps.add((LevelPanel)levelTabsPane.getTabComponentAt(i));
+					lps.add((LevelPanel)levelTabsPane.getComponentAt(i));
+					System.out.println(levelTabsPane.getComponentAt(i));
 				}
 				writeToFile(lps);
 			}
@@ -133,9 +152,9 @@ public class LevelMakerView extends JPanel{
 		});
 		colourPanel.add(chooseColourButton);
 
-		final JSlider colourRandomLevel = new JSlider(LevelMaker.MIN_COLOUR_DEVIATION,
-				LevelMaker.MAX_COLOUR_DEVIATION,
-				LevelMaker.START_COLOUR_DEVIATION);
+		final JSlider colourRandomLevel = new JSlider(PlaceMaker.MIN_COLOUR_DEVIATION,
+				PlaceMaker.MAX_COLOUR_DEVIATION,
+				PlaceMaker.START_COLOUR_DEVIATION);
 		colourRandomLevel.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -159,31 +178,9 @@ public class LevelMakerView extends JPanel{
 		add(drawablesPanel, BorderLayout.SOUTH);
 
 		ModeButtonListener mbl = new ModeButtonListener();
-		String[] modes = new String[]{LevelMaker.TREE_MODE, LevelMaker.CHEST_MODE, LevelMaker.TRIXEL_MODE};
-		for(String mode : modes){
+		for(String mode : PlaceMaker.MODES){
 			drawablesPanel.add(makeDrawButton(mode, mbl));
 		}
-
-		JPanel portalStuff = new JPanel();
-		portalStuff.setLayout(new BoxLayout(portalStuff, BoxLayout.X_AXIS));
-
-		JPanel portalTextBoxes = new JPanel();
-		portalTextBoxes.setLayout(new BoxLayout(portalTextBoxes, BoxLayout.Y_AXIS));
-		roomNameField = new JTextField(TEXT_FIELD_SIZE);
-		portalNameField = new JTextField(TEXT_FIELD_SIZE);
-		portalTextBoxes.add(roomNameField);
-		portalTextBoxes.add(portalNameField);
-
-		JPanel portalLabels = new JPanel();
-		portalLabels.setLayout(new BoxLayout(portalLabels, BoxLayout.Y_AXIS));
-		portalLabels.add(new JLabel("Room Name"));
-		portalLabels.add(new JLabel("Portal Name"));
-
-		portalStuff.add(makeDrawButton(LevelMaker.DOOR_MODE, mbl));
-		portalStuff.add(portalLabels);
-		portalStuff.add(portalTextBoxes);
-
-		drawablesPanel.add(portalStuff);
 
 		levelTabsPane = new JTabbedPane();
 		String name = "Room 1";
@@ -218,7 +215,7 @@ public class LevelMakerView extends JPanel{
 	 * Get the level maker of the currently selected tab.
 	 * @return The LevelMaker object associated with the current tab.
 	 */
-	private LevelMaker getCurrentLevelMaker(){
+	private PlaceMaker getCurrentLevelMaker(){
 		return ((LevelPanel)getCurrentDrawing()).getLevelMaker();
 	}
 
@@ -234,12 +231,12 @@ public class LevelMakerView extends JPanel{
 	 * Make a new JPanel with a LevelMaker for a new tab.
 	 * @return the new JPanel ready to be added to a new tab.
 	 */
-	private JPanel makeNewDrawPanel(String name){
-		JPanel draw = new LevelPanel(){
+	private LevelPanel makeNewDrawPanel(String name){
+		LevelPanel draw = new LevelPanel(){
 			@Override
 			public void paintComponent(Graphics g){
 				super.paintComponent(g);
-				Renderer.renderLevel(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
+				Renderer.renderPlace(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
 						levelMaker.getTrixelSize(), levelMaker.getWorldObjects(), levelMaker.getLastTransform());
 
 				// displays current colour
@@ -252,7 +249,7 @@ public class LevelMakerView extends JPanel{
 		draw.addMouseListener(listener);
 		draw.addMouseMotionListener(listener);
 		draw.setBackground(Color.BLACK);
-		draw.setName(name);
+		draw.getLevelMaker().setName(name);
 
 		return draw;
 	}
@@ -261,50 +258,31 @@ public class LevelMakerView extends JPanel{
 	 * @return gets a floor polygon for the level maker to use
 	 * @throws NoFloorChosenException
 	 */
-	private Floor getFloorPolygon() throws NoFloorChosenException {
+	private World browseForWorld() throws NoFloorChosenException {
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+ImageStorage.FLOOR_PATH);
 		final int USER_SELECTION = chooser.showOpenDialog(null);
 
-		File floorFile;
+		File worldFile;
 
 		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
-			floorFile =  chooser.getSelectedFile();
+			worldFile =  chooser.getSelectedFile();
 		}
 		else throw new NoFloorChosenException();
 
-		return parseFloorFile(floorFile);
+		return parseWorld(worldFile);
 	}
 
-	/**
-	 * PRE: floorFile must be a valid floor file: 2 lines with equal number of integer tokens
-	 * @param floorFile
-	 * @return a polygon obtained from the floorFile
-	 */
-	private Floor parseFloorFile(File floorFile) {
-
-		Scanner floorFileScanner = null;
-		try {
-			floorFileScanner = new Scanner(floorFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+	private World parseWorld(File worldFile){
+		World world = null;
+		try{
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(worldFile)));
+			world = (World)ois.readObject();
+		}catch(ClassNotFoundException e){
+			System.err.println(e);
+		}catch(IOException e){
+			System.err.println(e);
 		}
-		floorFileScanner.nextLine(); // skip first line
-
-		String[] xpointStrings = floorFileScanner.nextLine().split("\t");
-		String[] ypointStrings = floorFileScanner.nextLine().split("\t");
-		floorFileScanner.close();
-
-		int numPoints = xpointStrings.length;
-
-		Point3D[] points = new Point3D[numPoints];
-
-		for (int i = 0; i < numPoints; i++){
-			int x = Integer.parseInt(xpointStrings[i]);
-			int z = Integer.parseInt(ypointStrings[i]);
-			points[i] = new Point3D(x,0,z);
-		}
-
-		return new Floor(points);
+		return world;
 	}
 
 	/**
@@ -319,7 +297,7 @@ public class LevelMakerView extends JPanel{
 		try{
 			size = Integer.parseInt(text);
 		} catch (NumberFormatException e){
-			size = LevelMaker.DEFAULT_TRIXEL_SIZE;
+			size = PlaceMaker.DEFAULT_TRIXEL_SIZE;
 		}
 		return size;
 	}
@@ -341,24 +319,41 @@ public class LevelMakerView extends JPanel{
 		} else return;
 
 		// Set up file writer
-		PrintWriter writer = null;
+		ObjectOutputStream oos = null;
 		try {
-			writer = new PrintWriter(fileToSave, "UTF-8");
+			oos = new ObjectOutputStream(new FileOutputStream(fileToSave));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+		HashMap<String, Place> places = new HashMap<String, Place>();
 		for(LevelPanel lp : lps){
-			//This is where we do literally everything
-			//1. Make levels from the LevelPanels, not including the portals
-			//2. Make Point3D object out of the x and y coords stored in the PortalDescriptors
-			//3. Make Portal objects using the places and Point3Ds
-			//4. Somehow add the portals to the new places
-			//5. Write all places to file.
+			places.put(lp.levelMaker.name, lp.levelMaker.makePlace());
+		}
+		for(Map.Entry<String, Place> m : places.entrySet()){
+			System.out.println(m.getKey() + " ::: " + m.getValue());
 		}
 
-		//writer.println(levelMaker);
-		writer.close();
+		for(PlaceMaker.SimplePortal sp : PlaceMaker.portals){
+			Place p = places.get(sp.lm.name);
+			System.out.println("From room " + sp.lm.name + " result " + places.get(sp.lm.name) + " loc " + sp.location);
+			System.out.println("to room " + sp.toPortal.lm.name + " result " + places.get(sp.toPortal.lm.name) + " loc " + sp.toPortal.location);
+			Portal portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
+                                                 places.get(sp.toPortal.lm.name), sp.toPortal.location);
+			p.addExit(portal);
+		}	
+
+		List<Place> placesList = new ArrayList<Place>();
+		for(Map.Entry<String, Place> m : places.entrySet()){
+			placesList.add(m.getValue());
+		}
+
+		try{
+			oos.writeObject(new World(placesList));
+			oos.close();
+		}catch(IOException e){
+			System.err.println("Writing failed.  Exception was : " + e);
+		}
 	}
 
 	public class WillMouseMotionListener extends MouseAdapter{
@@ -386,7 +381,7 @@ public class LevelMakerView extends JPanel{
 
 		@Override
 		public void mouseClicked(MouseEvent e){
-			LevelMaker lm = getCurrentLevelMaker();
+			PlaceMaker lm = getCurrentLevelMaker();
 			LevelPanel lp = getCurrentDrawing();
 
 			// if right-click, delete trixel at this point
@@ -397,15 +392,6 @@ public class LevelMakerView extends JPanel{
 				lm.makeSomethingAt(e.getX(), e.getY());
 			}
 
-			if (lm.getDrawMode() == LevelMaker.DOOR_MODE){
-				lp.getPortalDescriptors().add(new PortalDescriptor("Portal " + (lp.getPortalDescriptors().size() + 1),
-																	portalNameField.getText(),
-																	roomNameField.getText(),
-																	e.getX(),
-																	e.getY()));
-			}
-
-			System.out.println(lp);
 			lp.repaint();
 		}
 	}
@@ -419,56 +405,15 @@ public class LevelMakerView extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			getCurrentLevelMaker().setDrawMode(e.getActionCommand());
-		}
-	}
-
-	class PortalDescriptor{
-		public String portalName;
-		public String destPortalName;
-		public String destRoomName;
-		public int x, y;
-
-		public PortalDescriptor(String portalName, String destPortalName, String destRoomName, int x, int y){
-			this.portalName = portalName;
-			this.destPortalName = destPortalName;
-			this.destRoomName = destRoomName;
-			this.x = x;
-			this.y = y;
-		}
-
-		public String toString(){
-			return portalName + " : " + destPortalName + " : " + destRoomName + " : " + x + ", " + y;
+			PlaceMaker.setDrawMode(e.getActionCommand());
 		}
 	}
 
 	class LevelPanel extends JPanel{
-		protected LevelMaker levelMaker = new LevelMaker();
-		private String tabName;
-		private List<PortalDescriptor> portalDescriptors = new ArrayList<PortalDescriptor>();
+		protected PlaceMaker levelMaker = new PlaceMaker();
 
-		public LevelMaker getLevelMaker(){
+		public PlaceMaker getLevelMaker(){
 			return levelMaker;
-		}
-
-		public String getName(){
-			return tabName;
-		}
-
-		public void setName(String name){
-			this.tabName = name;
-		}
-
-		public List<PortalDescriptor> getPortalDescriptors(){
-			return portalDescriptors;
-		}
-
-		public String toString(){
-			String rval = tabName + "\n";
-			for(PortalDescriptor pd : portalDescriptors){
-				rval += "\t" + pd + "\n";
-			}
-			return rval;
 		}
 	}
 
