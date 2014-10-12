@@ -93,7 +93,7 @@ public class RoomMaker{
 	/**
 	 * portals
 	 */
-	private Set<SimplePortal> portals;
+	public static Set<SimplePortal> portals;
 	/**
 	 * a temporary variable for when portals are being placed
 	 */
@@ -666,7 +666,7 @@ public class RoomMaker{
 		return background;
 	}
 
-	private class SimplePortal extends Portal{
+	public class SimplePortal extends Portal{
 		public RoomMaker lm;
 		public Point3D location;
 		public SimplePortal toPortal;
@@ -706,5 +706,35 @@ public class RoomMaker{
 		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
 
 		return new Room(items, environment, floorPolygon, name);
+	}
+
+	public void loadPlace(Place place){
+		createdTrixels.clear();
+		floorTrixels.clear();
+		drawables.clear();
+		portals.clear();
+		tempPortal = null;
+
+		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
+			Drawable d = placeDrawables.next();
+			drawables.add(d);
+			if(d instanceof SimplePortal){
+				portals.add((SimplePortal)d);
+			}
+		}
+		for (Iterator<Enviroment> placeEnvironments = place.getEnviroment(); placeEnvironments.hasNext();){
+			Enviroment env = placeEnvironments.next();
+			if(env instanceof Cube){
+				Cube c = (Cube)env;
+				Trixel t = new Trixel(c.getTrixition());
+				if(c.getName().equals("floor")){
+					floorTrixels.add(t);
+				}else if(c.getName().equals("non-floor")){
+					createdTrixels.add(t);
+				}
+			}
+		}
+		name = place.getName();
+		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
 	}
 }
