@@ -51,7 +51,7 @@ import org.omg.CORBA.Environment;
  *
  * TODO: Save the level in a file for use in the game.
  */
-public class RoomMaker{
+public class PlaceMaker{
 
 	public static final String TREE_MODE = "Tree";
 	public static final String DOOR_MODE = "Door";
@@ -123,7 +123,7 @@ public class RoomMaker{
 	/**
 	 * size of trixels to be made
 	 */
-	private int trixelSize;
+	private int trixelSize = DEFAULT_TRIXEL_SIZE;
 
 	/**
 	 * For use when making a Place object for the level
@@ -133,13 +133,12 @@ public class RoomMaker{
 	/**
 	 * Initialises LevelMaker's fields
 	 */
-	public RoomMaker(){
+	public PlaceMaker(){
 
 		// initialise trixels
 		createdTrixels = new HashSet<Trixel>();
 		floorTrixels = new HashSet<Trixel>();
 		floorCentroid = new Point3D(0,0,0);
-		trixelSize = DEFAULT_TRIXEL_SIZE;
 
 		// initialise drawables, portals
 		drawables = new HashSet<Drawable>();
@@ -170,17 +169,39 @@ public class RoomMaker{
 	public void loadFloor(Floor floor){
 		clearLevel();
 
-		// initilise trixels
+		// initialise trixels
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
 			Renderer.floorToVerticalPolygon(floor), trixelSize, -trixelSize)){
 			t.setColour(getTrixelColour());
 			floorTrixels.add(t);
 		}
-		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
-		//drawables.addAll(generateRandomBackgroundObjects());
-		updateFaces();
 
 		this.floor = floor;
+
+		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
+
+		// move level to the center of the screen
+		Point3D idealCentroid = new Point3D(GameWindow.FRAME_WIDTH/2, floorCentroid.y, floorCentroid.z);
+		Vector3D distToScreenCenter = floorCentroid.distanceTo(idealCentroid);
+		transformFloor(Transform.newTranslation(distToScreenCenter));
+
+		updateFaces();
+	}
+
+	/**
+	 * Transforms the floor object and floor trixels.
+	 * @param transform
+	 */
+	private void transformFloor(Transform transform) {
+		for (Trixel floorTrixel : floorTrixels){
+			// longest line ever
+			//System.out.println("trixition before: "+floorTrixel.getTrixition());
+			Point3D newPosition = transform.multiply(TrixelUtil.trixitionToPosition(floorTrixel.getTrixition(), trixelSize));
+			floorTrixel.setTrixition(TrixelUtil.positionToTrixition(newPosition, trixelSize));
+			//System.out.println("trixition after: "+floorTrixel.getTrixition());
+		}
+		floor.transform(transform);
+		floorCentroid = transform.multiply(floorCentroid);
 	}
 
 	/**
@@ -221,9 +242,8 @@ public class RoomMaker{
 
 		// sort in order of depth, farest first
 		Collections.sort(rotatedObjects, new DepthComparator());
-		// reverse so that closest trixels are first (so easy to obtain trixel clicked).
+		// reverse so that closest trixels are first (so easy to obtain what is clicked).
 		Collections.reverse(rotatedObjects);
-		//System.out.println();
 	}
 
 	/**
@@ -233,7 +253,7 @@ public class RoomMaker{
 	 */
 	private Transform makeTransform(Vector3D rotateAmounts) {
 
-		Vector3D viewTranslation = Renderer.STANDARD_VIEW_TRANSLATION;
+		Vector3D viewTranslation = new Vector3D(0,Renderer.STANDARD_VIEW_TRANSLATION.y-150, 0);//new Vector3D(0,0,0);
 		return Renderer.makeTransform(rotateAmounts, floorCentroid, viewTranslation);
 	}
 
@@ -260,7 +280,7 @@ public class RoomMaker{
 		if (drawMode == TRIXEL_MODE){
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
-			drawables.addAll(makeVinesAroundTrixel(newTrixel));
+		//	drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
 		if (drawMode == TREE_MODE){
 			// TODO: replace this table with tree once tree is drawable
@@ -274,7 +294,7 @@ public class RoomMaker{
 				tempPortal = new SimplePortal(this, aboveTrixel, null);
 				drawables.add(tempPortal);
 				portals.add(tempPortal);
-				System.out.println("Made start portal at " + aboveTrixel + " in room " + name);
+				System.out.println("Made start portal at " + aboveTrixel + " in room " + getName());
 			}else{
 				if(tempPortal.lm != this){
 					SimplePortal newSP = new SimplePortal(this, aboveTrixel, tempPortal);
@@ -282,7 +302,7 @@ public class RoomMaker{
 					drawables.add(newSP);
 					portals.add(newSP);
 					tempPortal = null;
-					System.out.println("Made portal link from " + aboveTrixel + " in " + name + " to " + newSP.toPortal.location + " in " + newSP.toPortal.lm.name);
+					System.out.println("Made portal link from " + aboveTrixel + " in " + getName() + " to " + newSP.toPortal.location + " in " + newSP.toPortal.lm.getName());
 				}
 			}
 		}
@@ -544,7 +564,7 @@ public class RoomMaker{
 	 * @param drawMode
 	 */
 	public static void setDrawMode(String drawMode) {
-		RoomMaker.drawMode  = drawMode;
+		PlaceMaker.drawMode  = drawMode;
 	}
 
 	public String getDrawMode(){
@@ -613,10 +633,43 @@ public class RoomMaker{
 		setBaseColour(Renderer.makeRandomColour());
 	}
 
+	/**
+	 * Resets level to its default state
+	 */
 	private void clearLevel() {
 		floorTrixels.clear();
 		createdTrixels.clear();
 		drawables.clear();
+	}
+
+	/**
+	 * Makes a place object using the information in
+	 * @return
+	 */
+	public Place makePlace(){
+
+		List<Item> items = new ArrayList<Item>();
+		List<Enviroment> environment = new ArrayList<Enviroment>();
+
+		for (Drawable drawable : drawables){
+			if (drawable instanceof Item){
+				items.add((Item) drawable);
+			}
+			if (drawable instanceof Enviroment){
+				environment.add((Enviroment) drawable);
+			}
+		}
+
+		for (Trixel floorTrixel : floorTrixels){
+			environment.add(new Cube("floor", floorTrixel, trixelSize));
+		}
+		for (Trixel createdTrixel : createdTrixels){
+			environment.add(new Cube("non-floor", createdTrixel, trixelSize));
+		}
+
+		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
+
+		return new Room(items, environment, floorPolygon, getName());
 	}
 
 	/**
@@ -666,12 +719,20 @@ public class RoomMaker{
 		return background;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public class SimplePortal extends Portal{
-		public RoomMaker lm;
+		public PlaceMaker lm;
 		public Point3D location;
 		public SimplePortal toPortal;
 
-		public SimplePortal(RoomMaker lm, Point3D location, SimplePortal toPortal){
+		public SimplePortal(PlaceMaker lm, Point3D location, SimplePortal toPortal){
 			super("Portal", null, location, null, null);
 			this.lm = lm;
 			this.location = location;
@@ -680,32 +741,6 @@ public class RoomMaker{
 		public Point3D getPosition(Place place){
 			return getPosition();
 		}
-	}
-
-	public Place makePlace(){
-
-		List<Item> items = new ArrayList<Item>();
-		List<Enviroment> environment = new ArrayList<Enviroment>();
-
-		for (Drawable drawable : drawables){
-			if (drawable instanceof Item){
-				items.add((Item) drawable);
-			}
-			if (drawable instanceof Enviroment){
-				environment.add((Enviroment) drawable);
-			}
-		}
-
-		for (Trixel floorTrixel : floorTrixels){
-			environment.add(new Cube("floor", floorTrixel, trixelSize));
-		}
-		for (Trixel createdTrixel : createdTrixels){
-			environment.add(new Cube("non-floor", createdTrixel, trixelSize));
-		}
-
-		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
-
-		return new Room(items, environment, floorPolygon, name);
 	}
 
 	public void loadPlace(Place place){

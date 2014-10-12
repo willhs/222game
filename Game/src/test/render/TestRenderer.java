@@ -30,7 +30,7 @@ public class TestRenderer extends JPanel{
 	@Override
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		Renderer.renderPlace(g, testPlace, rotateAmounts);
+		//Renderer.renderPlace(g, testPlace, rotateAmounts, );
 	}
 
 	/**
