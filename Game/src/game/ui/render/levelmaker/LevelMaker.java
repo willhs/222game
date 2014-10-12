@@ -15,14 +15,18 @@ import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.Chest;
 import game.world.model.Cube;
+import game.world.model.Enviroment;
 import game.world.model.Inventory;
+import game.world.model.Item;
 import game.world.model.Place;
 import game.world.model.Portal;
+import game.world.model.Room;
 import game.world.model.Table;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
+import java.awt.Polygon;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -34,6 +38,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import org.omg.CORBA.Environment;
 
 /**
  * @author hardwiwill
@@ -108,6 +114,11 @@ public class LevelMaker{
 	private int trixelSize;
 
 	/**
+	 * For use when making a Place object for the level
+	 */
+	private Floor floor;
+
+	/**
 	 * Initialises LevelMaker's fields
 	 */
 	public LevelMaker(){
@@ -155,6 +166,8 @@ public class LevelMaker{
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
 		//drawables.addAll(generateRandomBackgroundObjects());
 		updateFaces();
+
+		this.floor = floor;
 	}
 
 	/**
@@ -375,13 +388,13 @@ public class LevelMaker{
 
 				vines.add(new Vine(vinePosition, height));
 
-				System.out.println("center:\t" + center);
+				/*System.out.println("center:\t" + center);
 				System.out.println("top line gradient:\t"+topLineGradient);
 				System.out.println("dist:\t"+dist);
 				System.out.println("trans from center:\t"+translateFromCenter);
 				System.out.println("randomTop:\t"+randomTopPoint);
 				System.out.println("height:\t"+height);
-				System.out.println("vinePosition:\t"+vinePosition);
+				System.out.println("vinePosition:\t"+vinePosition);*/
 			}
 		}
 		return vines;
@@ -635,5 +648,29 @@ public class LevelMaker{
 		}
 	}
 
+	public Place makePlace(){
 
+		List<Item> items = new ArrayList<Item>();
+		List<Enviroment> environment = new ArrayList<Enviroment>();
+
+		for (Drawable drawable : drawables){
+			if (drawable instanceof Item){
+				items.add((Item) drawable);
+			}
+			if (drawable instanceof Enviroment){
+				environment.add((Enviroment) drawable);
+			}
+		}
+
+		for (Trixel floorTrixel : floorTrixels){
+			environment.add(new Cube("floor", floorTrixel, trixelSize));
+		}
+		for (Trixel createdTrixel : createdTrixels){
+			environment.add(new Cube("non-floor", createdTrixel, trixelSize));
+		}
+
+		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
+
+		return new Room(items, environment, floorPolygon, name);
+	}
 }

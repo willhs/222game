@@ -116,7 +116,7 @@ public class ImageStorage {
 					System.err.println("Can't find question mark image");
 				}
 			} catch (IOException e1) {
-				//incompatible image (such as .directory file). Don't make issue
+				//incompatible image (such as .directory file). Don't take issue
 				//System.err.println("Failed reading image \""+fullImageName+"\" from dir");
 			}
 		}
