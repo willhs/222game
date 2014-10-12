@@ -280,7 +280,7 @@ public class PlaceMaker{
 		if (drawMode == TRIXEL_MODE){
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
-			drawables.addAll(makeVinesAroundTrixel(newTrixel));
+		//	drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
 		if (drawMode == TREE_MODE){
 			// TODO: replace this table with tree once tree is drawable
