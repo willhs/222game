@@ -139,8 +139,6 @@ public class GameScreen implements GraphicsPane  {
 			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector, player);
 		}
 
-		System.out.println("rotate: "+rotateVector);
-
 		//draws the selected inventory bar
 		drawInventorybar(g);
 		drawInventory(g);

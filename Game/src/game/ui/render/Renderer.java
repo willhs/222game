@@ -88,8 +88,6 @@ public class Renderer {
 				viewTranslation
 			);
 
-		lightDir = transform.multiply(lightDir);
-
 		//Point3D transformedPlayerPos = transform.multiply(playerPos);
 		//transform = transform.compose(Transform.newTranslation(SCREEN_CENTER.distanceTo(transformedPlayerPos)));
 
