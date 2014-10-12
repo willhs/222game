@@ -286,38 +286,6 @@ public class WorldMaker extends JPanel{
 	}
 
 	/**
-	 * PRE: floorFile must be a valid floor file: 2 lines with equal number of integer tokens
-	 * @param floorFile
-	 * @return a polygon obtained from the floorFile
-	 */
-	private Floor parseFloorFile(File floorFile) {
-
-		Scanner floorFileScanner = null;
-		try {
-			floorFileScanner = new Scanner(floorFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		floorFileScanner.nextLine(); // skip first line
-
-		String[] xpointStrings = floorFileScanner.nextLine().split("\t");
-		String[] ypointStrings = floorFileScanner.nextLine().split("\t");
-		floorFileScanner.close();
-
-		int numPoints = xpointStrings.length;
-
-		Point3D[] points = new Point3D[numPoints];
-
-		for (int i = 0; i < numPoints; i++){
-			int x = Integer.parseInt(xpointStrings[i]);
-			int z = Integer.parseInt(ypointStrings[i]);
-			points[i] = new Point3D(x,0,z);
-		}
-
-		return new Floor(points);
-	}
-
-	/**
 	 * Parses text for trixel size.
 	 * If not valid trixel size, return default trixel size.
 	 *
