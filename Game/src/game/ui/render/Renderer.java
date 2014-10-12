@@ -53,8 +53,7 @@ public class Renderer {
 	public static final long RANDOM_SEED = 15274910874912L;
 	private static final Color DEFAULT_AMBIENT_LIGHT = new Color(50, 50, 50);
 	public static Random randomGen;
-
-	private static final float viewerDepth = -100;
+	public static Vector3D lightDir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
 
 	/**
 	 * Draws a place using Graphics object, viewer direction and place
@@ -64,7 +63,7 @@ public class Renderer {
 	 * @param g
 	 * @param place
 	 */
-	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
+	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount, Player currentPlayer){
 		resetColour(); //  TODO: replace this random colour implementation
 
 		Graphics2D g2 = (Graphics2D) g;
@@ -75,16 +74,24 @@ public class Renderer {
 		Floor floor = place.getFloor();
 		Polygon floorPolygon = floorToVerticalPolygon(floor);
 		Point3D floorCentroid = getFloorCentroid(floor);
+		Point3D playerPos = currentPlayer.getPosition();
+		Point3D pivotPoint = floorCentroid;//new Point3D(playerPos.x, playerPos.y, playerPos.z);
 
-		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;
+		Point3D SCREEN_CENTER = new Point3D(GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2, 0);
+
+		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;//playerPos.distanceTo(SCREEN_CENTER);
 
 		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
 				rotateAmount,
-				floorCentroid,
+				pivotPoint,
 				viewTranslation
 			);
 
+		lightDir = transform.multiply(lightDir);
+
+		//Point3D transformedPlayerPos = transform.multiply(playerPos);
+		//transform = transform.compose(Transform.newTranslation(SCREEN_CENTER.distanceTo(transformedPlayerPos)));
 
 		// place all floorTrixels
 		int floorTrixelsY = -Trixel.DEFAULT_SIZE; // the y position of all floor trixels
@@ -115,10 +122,13 @@ public class Renderer {
 	 * @param drawables
 	 * @param transform
 	 */
-	public static void renderLevel(Graphics g, Iterator<Trixel> trixels, Iterator<Trixel> floorTrixels,
+	public static void renderPlace(Graphics g, Iterator<Trixel> trixels, Iterator<Trixel> floorTrixels,
 			int trixelSize, Iterator<Drawable> drawables, Transform transform){
 
 		Graphics2D g2 = (Graphics2D) g;
+
+		//lightDir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
+		//lightDir = transform.multiply(lightDir);
 
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -174,6 +184,7 @@ public class Renderer {
 					drawable.getPosition(place),
 					drawable.getBoundingBox());
 
+
 			image.transform(transform);
 			renderables.add(image);
 
@@ -185,6 +196,7 @@ public class Renderer {
 						image.getPosition().getTranslatedPoint(
 								new Vector3D(-drawable.getBoundingBox().width/2,
 										(drawable.getBoundingBox().height/4)*3, 0)));
+
 
 				renderables.add(text);
 			}
@@ -241,7 +253,6 @@ public class Renderer {
 						(int)boundingBox.width, (int)boundingBox.height, null);
 			}
 			else if (renderObject instanceof GameText){
-				System.out.println(renderObject.getDepth());
 				GameText text = (GameText) renderObject;
 				Point3D position = text.getPosition();
 				g2.setColor(Color.RED);
@@ -302,8 +313,7 @@ public class Renderer {
 		 */
 		private static Iterator<LightSource> getTestLightSources() {
 			List<LightSource> lights = new ArrayList<LightSource>();
-			Vector3D dir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
-			lights.add(new LightSource(0.8f, dir, new Color(150, 150, 150)));
+			lights.add(new LightSource(0.8f, lightDir, new Color(150, 150, 150)));
 			return lights.iterator();
 		}
 		/**

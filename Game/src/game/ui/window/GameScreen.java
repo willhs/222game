@@ -136,8 +136,10 @@ public class GameScreen implements GraphicsPane  {
 
 		//render the game
 		if(GameWindow.currentRoom != null){
-			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector);
+			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector, player);
 		}
+
+		System.out.println("rotate: "+rotateVector);
 
 		//draws the selected inventory bar
 		drawInventorybar(g);
@@ -197,7 +199,7 @@ public class GameScreen implements GraphicsPane  {
 	public void drawTime(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
-		int seconds = client.getSecondsRemaining();
+		int seconds = Client.getSecondsRemaining();
 		Font myFont = new Font("Tunga",0,50);
 		g.setFont(myFont);
 		g.setColor(Color.white);

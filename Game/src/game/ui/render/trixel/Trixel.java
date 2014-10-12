@@ -17,7 +17,7 @@ public class Trixel {
 	 */
 	public static final int DEFAULT_SIZE = 20;
 	private static final Color DEFAULT_COLOUR = Color.BLUE;
-	
+
 	/**
 	 * The trixel's position in the trixel grid (trid)!
 	 */
@@ -41,6 +41,10 @@ public class Trixel {
 
 	public Trixition getTrixition(){
 		return trixition;
+	}
+
+	public void setTrixition(Trixition trixition){
+		this.trixition = trixition;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.ImageStorage;
+import game.ui.window.GameWindow;
 import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
 import game.world.util.Floor;
@@ -133,9 +134,9 @@ public class WorldMaker extends JPanel{
 		});
 		colourPanel.add(chooseColourButton);
 
-		final JSlider colourRandomLevel = new JSlider(RoomMaker.MIN_COLOUR_DEVIATION,
-				RoomMaker.MAX_COLOUR_DEVIATION,
-				RoomMaker.START_COLOUR_DEVIATION);
+		final JSlider colourRandomLevel = new JSlider(PlaceMaker.MIN_COLOUR_DEVIATION,
+				PlaceMaker.MAX_COLOUR_DEVIATION,
+				PlaceMaker.START_COLOUR_DEVIATION);
 		colourRandomLevel.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -159,7 +160,7 @@ public class WorldMaker extends JPanel{
 		add(drawablesPanel, BorderLayout.SOUTH);
 
 		ModeButtonListener mbl = new ModeButtonListener();
-		for(String mode : RoomMaker.MODES){
+		for(String mode : PlaceMaker.MODES){
 			drawablesPanel.add(makeDrawButton(mode, mbl));
 		}
 
@@ -196,7 +197,7 @@ public class WorldMaker extends JPanel{
 	 * Get the level maker of the currently selected tab.
 	 * @return The LevelMaker object associated with the current tab.
 	 */
-	private RoomMaker getCurrentLevelMaker(){
+	private PlaceMaker getCurrentLevelMaker(){
 		return ((LevelPanel)getCurrentDrawing()).getLevelMaker();
 	}
 
@@ -217,7 +218,7 @@ public class WorldMaker extends JPanel{
 			@Override
 			public void paintComponent(Graphics g){
 				super.paintComponent(g);
-				Renderer.renderLevel(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
+				Renderer.renderPlace(g, levelMaker.getCreatedTrixels(), levelMaker.getFloorTrixels(),
 						levelMaker.getTrixelSize(), levelMaker.getWorldObjects(), levelMaker.getLastTransform());
 
 				// displays current colour
@@ -230,7 +231,7 @@ public class WorldMaker extends JPanel{
 		draw.addMouseListener(listener);
 		draw.addMouseMotionListener(listener);
 		draw.setBackground(Color.BLACK);
-		draw.getLevelMaker().name = name;
+		draw.getLevelMaker().setName(name);
 
 		return draw;
 	}
@@ -297,7 +298,7 @@ public class WorldMaker extends JPanel{
 		try{
 			size = Integer.parseInt(text);
 		} catch (NumberFormatException e){
-			size = RoomMaker.DEFAULT_TRIXEL_SIZE;
+			size = PlaceMaker.DEFAULT_TRIXEL_SIZE;
 		}
 		return size;
 	}
@@ -363,7 +364,7 @@ public class WorldMaker extends JPanel{
 
 		@Override
 		public void mouseClicked(MouseEvent e){
-			RoomMaker lm = getCurrentLevelMaker();
+			PlaceMaker lm = getCurrentLevelMaker();
 			LevelPanel lp = getCurrentDrawing();
 
 			// if right-click, delete trixel at this point
@@ -387,14 +388,14 @@ public class WorldMaker extends JPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			RoomMaker.setDrawMode(e.getActionCommand());
+			PlaceMaker.setDrawMode(e.getActionCommand());
 		}
 	}
 
 	class LevelPanel extends JPanel{
-		protected RoomMaker levelMaker = new RoomMaker();
+		protected PlaceMaker levelMaker = new PlaceMaker();
 
-		public RoomMaker getLevelMaker(){
+		public PlaceMaker getLevelMaker(){
 			return levelMaker;
 		}
 	}
