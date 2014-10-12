@@ -16,4 +16,14 @@ public class Cube extends Enviroment{
     public Cube(String name, Point3D poisition, float size) {
         super(name, poisition, new Rectangle3D(size, size, size));
     }
+
+	@Override
+	public String getImageName() {
+		return "Cube";
+	}
+
+	@Override
+	public Point3D getPosition(Place place) {
+		return getPosition();
+	}
 }

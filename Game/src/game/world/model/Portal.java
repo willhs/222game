@@ -48,4 +48,8 @@ public class Portal extends Exit {
 		return false;
 	}
 
+	@Override
+	public void setLocked(boolean change) {
+	}
+
 }

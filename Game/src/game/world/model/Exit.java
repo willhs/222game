@@ -105,4 +105,6 @@ public abstract class Exit implements Drawable, Serializable{
 			this.position = position;
 		}
 	}
+
+	public abstract void setLocked(boolean change);
 }

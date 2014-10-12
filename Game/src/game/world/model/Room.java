@@ -57,6 +57,7 @@ public class Room implements Place, Serializable {
 		List<Drawable> drawables = new ArrayList<Drawable>(exits);
 		drawables.addAll(players);
 		drawables.addAll(items);
+		drawables.addAll(enviroment);
 		return drawables.iterator();
 	}
 

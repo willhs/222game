@@ -9,7 +9,7 @@ import game.world.dimensions.*;
 public class LockedPortal extends Exit{
 
 	private final String name;
-	private boolean isLocked = true;
+	private boolean isLocked;
 	private int keysToOpen;
 	private static final Rectangle3D boundingBox = new Rectangle3D(30, 60, 30);
 
@@ -17,6 +17,7 @@ public class LockedPortal extends Exit{
 		Place placeTwo, Point3D positionInPlaceTwo) {
 		super(placeOne, positionInPlaceOne, placeTwo, positionInPlaceTwo);
 		this.name = name;
+		isLocked = true;
 		keysToOpen = 1;
 	}
 
@@ -24,6 +25,7 @@ public class LockedPortal extends Exit{
 			Place placeTwo, Point3D positionInPlaceTwo, int keyAmount) {
 			super(placeOne, positionInPlaceOne, placeTwo, positionInPlaceTwo);
 			this.name = name;
+			isLocked = true;
 			keysToOpen = keyAmount;
 	}
 
@@ -39,7 +41,7 @@ public class LockedPortal extends Exit{
 
 	@Override
 	public String getImageName() {
-		return isLocked() ? "teleport_off" : "teleporter_on";
+		return isLocked ? "teleport_off":"teleporter_on";
 	}
 
 	@Override
@@ -47,17 +49,23 @@ public class LockedPortal extends Exit{
 		return isLocked;
 	}
 
+
 	@Override
 	public boolean unlock(Inventory inventory) {
 		int count = keysToOpen;
 		for(Item i: inventory){
 			if (i instanceof Crystal){
-				System.out.println(count);
 				count--;
 			}
 		}
 		isLocked = !(count <= 0);
+		System.out.println(getImageName());
 		return count <= 0;
+	}
+
+	@Override
+	public void setLocked(boolean change) {
+		isLocked = change;
 	}
 
 }

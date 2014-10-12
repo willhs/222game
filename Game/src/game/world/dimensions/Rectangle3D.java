@@ -33,6 +33,21 @@ public class Rectangle3D implements Serializable{
 	}
 
 	/**
+	 * Constructer for the Rectangle3D class
+	 * Only takes width height and length.
+	 * x y and z are set to zero.
+	 * @param size - the width, height and length of the rectangle.
+	 */
+	public Rectangle3D(float size){
+		x = 0;
+		y = 0;
+		z = 0;
+		width = size;
+		length = size;
+		height = size;
+	}
+
+	/**
 	 * Private constrcuter to make rectangles form other rectangles.
 	 * @param rectangle3d - takes a rectangle and a point
 	 * @param point - point 3d that is used to give the rectangle its x z and y.
