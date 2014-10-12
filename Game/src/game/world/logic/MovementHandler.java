@@ -241,12 +241,12 @@ public class MovementHandler {
 		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
 		System.out.println("Should make it here.");
 		Rectangle3D playerRect = player.getBoundingBox();
-		int x = (int)(rect.x-EXITING_DISTANCE-playerRect.width/2);
-		int z = (int)(rect.z-EXITING_DISTANCE-playerRect.length/2);
-		int maxX = (int)(rect.x+rect.width+EXITING_DISTANCE+playerRect.width/2);
-		int maxZ = (int)(rect.z+rect.length+EXITING_DISTANCE+playerRect.length/2);
-		for (;x < maxX; x++){
-			for (;z < maxZ; z++){
+		float x = (float)(rect.x-EXITING_DISTANCE);
+		float z = (int)(rect.z-EXITING_DISTANCE);
+		float maxX = (int)(rect.x+rect.width+EXITING_DISTANCE);
+		float maxZ = (int)(rect.z+rect.length+EXITING_DISTANCE);
+		for (;x < maxX; x+=0.1f){
+			for (;z < maxZ; z+=0.1f){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
 					System.out.println("Should make it here.");
 					return true;
