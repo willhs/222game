@@ -89,12 +89,16 @@ public abstract class Exit implements Drawable, Serializable{
 		return null;
 	}
 
+	public List<PlaceAndPosition> getConnectedPlaces(){
+		return contectedPlaces;
+	}
+
 	/**
 	 * 	Storage class.
 	 *  @author Shane Brewer
 	 *
 	 */
-	private class PlaceAndPosition implements Serializable{
+	public class PlaceAndPosition implements Serializable{
 
 
 		private static final long serialVersionUID = -553310728828326027L;

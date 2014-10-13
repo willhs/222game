@@ -660,6 +660,11 @@ public class PlaceMaker{
 		}
 	}
 
+	public void addPortal(SimplePortal sp){
+		portals.add(sp);
+		drawables.add(sp);
+	}
+
 	public void loadPlace(Place place){
 		createdTrixels.clear();
 		floorTrixels.clear();
@@ -669,9 +674,8 @@ public class PlaceMaker{
 
 		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
 			Drawable d = placeDrawables.next();
-			drawables.add(d);
-			if(d instanceof SimplePortal){
-				portals.add((SimplePortal)d);
+			if(!(d instanceof Portal)){
+				drawables.add(d);
 			}
 		}
 		for (Iterator<Enviroment> placeEnvironments = place.getEnviroment(); placeEnvironments.hasNext();){

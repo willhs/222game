@@ -15,7 +15,11 @@ import java.awt.event.MouseEvent;
  * @author Nicky van Hulst
  * */
 public class MainMenu implements GraphicsPane, Animated{
+	
+	//number of buttons to be created
 	private final int numbOfButtons = 5;
+	
+	//panel to draw on
 	private BlankPanel panel;
 
 	//the currently selected button
@@ -58,7 +62,7 @@ public class MainMenu implements GraphicsPane, Animated{
 	/**
 	 * Sets up all of the button locations for the main menu
 	 * */
-	public void setUpButtons(){
+	private void setUpButtons(){
 		int height = GameWindow.FRAME_HEIGHT;
 		int y = height/numbOfButtons;
 		int buttonGap = 20;
@@ -80,6 +84,7 @@ public class MainMenu implements GraphicsPane, Animated{
 		buttonNames[4] = "Quit";
 	}
 
+	
 	/**
 	 *Draws all of the elements of the menu on the screen
 	 * */
