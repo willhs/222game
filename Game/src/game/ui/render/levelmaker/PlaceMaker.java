@@ -491,48 +491,6 @@ public class PlaceMaker{
 		return levelString.toString();
 	}
 
-	/**
-	 * Reads a place file and makes us
-	 * @param placeFile
-	 * @return
-	 */
-	public static Place makePlaceFromFile(File placeFile){
-		String title = "222game level";
-		String floorTrixelsHeader = "Floor trixels";
-
-		Set<Cube> floorCubes = new HashSet<Cube>();
-		Set<Cube> createdCubes = new HashSet<Cube>();
-		Set<Drawable> drawables = new HashSet<Drawable>();
-
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(placeFile));
-
-			ensureMatch(reader.readLine(), title); // skip title line
-			float version = Float.parseFloat(reader.readLine()); // version number of level maker
-			reader.readLine(); // blank line
-
-			ensureMatch(reader.readLine(), floorTrixelsHeader); // declaration that next tokens = floor trixels
-			int floorTrixelsNum = Integer.parseInt(reader.readLine()); // number of floor trixels
-			reader.readLine(); // details next tokens
-			reader.readLine(); // blank
-
-			for (int f = 0; f < floorTrixelsNum; f++){
-				String[] trixelInfo = reader.readLine().split(SEPARATOR);
-				//floorCubes.add(new Cube())
-			}
-
-			reader.close();
-
-		} catch (IOException e) {
-			failParsing("Some IO problem");
-			e.printStackTrace();
-		}
-
-		return null; // TODO finish
-
-	}
-
-
 	public static void failParsing(String reason){
 		System.err.println("************\nError reading place file\n***************");
 		System.err.println(reason);
@@ -646,7 +604,7 @@ public class PlaceMaker{
 	 * Makes a place object using the information in
 	 * @return
 	 */
-	public Place makePlace(){
+	public Place toPlace(){
 
 		List<Item> items = new ArrayList<Item>();
 		List<Enviroment> environment = new ArrayList<Enviroment>();
@@ -661,10 +619,10 @@ public class PlaceMaker{
 		}
 
 		for (Trixel floorTrixel : floorTrixels){
-			environment.add(new Cube("floor", floorTrixel, trixelSize));
+			environment.add(new Cube(Cube.FLOOR, floorTrixel, trixelSize));
 		}
 		for (Trixel createdTrixel : createdTrixels){
-			environment.add(new Cube("non-floor", createdTrixel, trixelSize));
+			environment.add(new Cube(Cube.NON_FLOOR, createdTrixel, trixelSize));
 		}
 
 		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);

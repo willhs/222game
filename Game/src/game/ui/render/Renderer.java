@@ -16,6 +16,7 @@ import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
+import game.world.model.Cube;
 import game.world.model.Place;
 import game.world.model.Player;
 import game.world.util.Drawable;
@@ -59,6 +60,8 @@ public class Renderer {
 	 * Draws a place using Graphics object, viewer direction and place
 	 * Floor from the place is converted into trixels which are then drawn
 	 * All drawable objects from the place are drawn as images
+	 *
+	 * ------- SOON TO BE REPLACED/REWRITTEN
 	 *
 	 * @param g
 	 * @param place
@@ -109,6 +112,68 @@ public class Renderer {
 		drawRenderables(renderables, g2);
 
 	}
+
+	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
+
+		Graphics2D g2 = (Graphics2D) g;
+		// enable anti-aliasing
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		List<Trixel> floorTrixels = new ArrayList<Trixel>();
+		List<Trixel> otherTrixels = new ArrayList<Trixel>();
+		List<Drawable> gameObjects = new ArrayList<Drawable>();
+
+		// separate all drawable objects into different lists.
+		Iterator<Drawable> drawablesIter = place.getDrawable();
+		while (drawablesIter.hasNext()){
+			Drawable drawable = drawablesIter.next();
+			if (drawable instanceof Cube){
+				Cube cube = (Cube) drawable;
+				Trixel trixel = new Trixel(cube.getTrixition(), cube.getColor());
+				// trixel is either part of the floor or not
+				if (cube.getName().equals(Cube.FLOOR)){
+					floorTrixels.add(trixel);
+				}
+				else if(cube.getName().equals(Cube.NON_FLOOR)){
+					otherTrixels.add(trixel);
+				}
+			}
+			else {
+				gameObjects.add(drawable);
+			}
+		}
+
+		// get trixelSize (from any of the cubes)
+		int trixelSize = (int)place.getDrawable().next().getBoundingBox().height;
+
+		Point3D floorCentroid = getFloorCentroid(place.getFloor());
+		Point3D pivotPoint = floorCentroid;
+		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;
+
+		// all rotations and translations composed into one affine transform
+		Transform transform = makeTransform(
+				rotateAmount,
+				pivotPoint,
+				viewTranslation
+			);
+
+		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
+		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
+
+		// get everything ready to render
+
+		renderables.addAll(trixelsToRenderables(otherTrixels.iterator(), trixelSize, transform));
+		renderables.addAll(floorTrixelsToRenderables(floorTrixels.iterator(), Trixel.DEFAULT_SIZE, transform));
+		renderables.addAll(drawablesToRenderables(place.getDrawable(), transform, place));
+
+		flipYAxis(renderables);
+
+		// draw everything
+		drawRenderables(renderables, g2);
+
+	}
+
+
 	/**
 	 * Draws trixels and drawables using a graphics object
 	 * Currently used for the level maker
