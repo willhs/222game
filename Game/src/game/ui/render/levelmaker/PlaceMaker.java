@@ -13,15 +13,18 @@ import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
+import game.world.model.AirTank;
 import game.world.model.Chest;
 import game.world.model.Cube;
 import game.world.model.Enviroment;
 import game.world.model.Inventory;
 import game.world.model.Item;
 import game.world.model.Place;
+import game.world.model.Plant;
 import game.world.model.Portal;
 import game.world.model.Room;
 import game.world.model.Table;
+import game.world.model.Tree;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
@@ -53,11 +56,13 @@ import org.omg.CORBA.Environment;
  */
 public class PlaceMaker{
 
-	public static final String TREE_MODE = "Tree";
+	public static final String PLANT_MODE = "Plant";
 	public static final String DOOR_MODE = "Door";
-	public static final String CHEST_MODE = "Chest";
+	public static final String AIR_TANK_MODE = "Air_tank";
+	public static final String TREE_MODE = "Tree";
 	public static final String TRIXEL_MODE = "Trixel";
-	public static final String[] MODES = {TREE_MODE, DOOR_MODE, CHEST_MODE, TRIXEL_MODE};
+	public static final String CHEST_MODE = "Chest";
+	public static final String[] MODES = {PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;
@@ -282,9 +287,14 @@ public class PlaceMaker{
 			createdTrixels.add(newTrixel);
 		//	drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
+		if (drawMode == PLANT_MODE){
+			drawables.add(new Plant("Plant", aboveTrixel));
+		}
 		if (drawMode == TREE_MODE){
-			// TODO: replace this table with tree once tree is drawable
-			drawables.add(new Table("Tree", aboveTrixel, new Rectangle3D(40,40,40)));
+			drawables.add(new Tree("Tree", aboveTrixel));
+		}
+		if (drawMode == AIR_TANK_MODE){
+			drawables.add(new AirTank("Air tank", aboveTrixel));
 		}
 		if (drawMode == CHEST_MODE){
 			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
@@ -563,7 +573,7 @@ public class PlaceMaker{
 	 * Makes a place object using the information in
 	 * @return
 	 */
-	public Place makePlace(){
+	public Place toPlace(){
 
 		List<Item> items = new ArrayList<Item>();
 		List<Enviroment> environment = new ArrayList<Enviroment>();
@@ -692,5 +702,6 @@ public class PlaceMaker{
 		}
 		name = place.getName();
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
+		updateFaces();
 	}
 }

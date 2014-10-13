@@ -16,16 +16,16 @@ import javax.imageio.ImageIO;
 /**
  * @author hardwiwill
  *
- * Contains references to all resources (e.g. images)
+ * Contains references to all resources (images and worlds)
  */
-public class ImageStorage {
+public class Res {
 
 	public static final char SEP = File.separatorChar;
 	public static final String RES_PATH = "res"+SEP;
 	public static final String IMG_PATH = RES_PATH + "img" + SEP;
-	public static final String LEVEL_PATH = RES_PATH + "level" + SEP;
-	public static final String FLOOR_PATH = LEVEL_PATH + "floor" + SEP;
-	public static final String LEVELS_PATH = LEVEL_PATH + "levels" + SEP;
+	public static final String WORLD_PATH = RES_PATH + "world" + SEP;
+	public static final String FLOOR_PATH = WORLD_PATH + "floor" + SEP;
+	public static final String WORLDS_PATH = WORLD_PATH + "worlds" + SEP;
 
 	public static final String UNKNOWN_IMAGE_PATH = RES_PATH + "unknown_image.png";
 
@@ -39,24 +39,22 @@ public class ImageStorage {
 	public static void readInAllCommonImages(){
 
 		addImage("space_ship");
-		addImage("Char3");
-		addImage("Char2");
-		addImage("Char1");
 		addImage("Player");
 		addImage("Tree");
 		addImage("Table");
 		addImage("Key");
 		addImage("Star1");
 		addImage("Door");
-		addImage("Chest");
 		addImage("OpenChest");
-		addImage("Tree");
 		addImage("oxygen_tank_labelled");
-		addImage("Trixel");
 
+		addImagesFromDir("character");
+		addImagesFromDir("label");
 		addImagesFromDir("crystal");
 		addImagesFromDir("teleporter");
 		addImagesFromDir("vine");
+		addImagesFromDir("tree");
+		addImagesFromDir("plant");
 	}
 
 	/**

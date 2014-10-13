@@ -1,7 +1,7 @@
 package game.ui.window;
 
 import game.ui.render.Renderer;
-import game.ui.render.ImageStorage;
+import game.ui.render.Res;
 import game.ui.window.menus.InventoryMenu;
 import game.ui.window.menus.MainMenu;
 import game.ui.window.menus.MenuUtil;
@@ -224,31 +224,6 @@ public class GameScreen implements GraphicsPane  {
 			gameOver = true;
 	}
 	
-	
-	/**
-	 * Draws the time left in the game
-	 * */
-	public void drawTime(Graphics g){
-		Graphics2D g2d = (Graphics2D)g;
-
-		int seconds = Client.getSecondsRemaining();
-		Font myFont = new Font("Tunga",0,50);
-		g.setFont(myFont);
-		g.setColor(Color.white);
-		g.drawString(seconds+"", 50, 100);
-		if(seconds >= 100){
-
-			myFont = new Font("Tunga",0,30);
-			g.setFont(myFont);
-			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_WIDTH);
-			g.setColor(Color.white);
-			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
-			gameOver = true;
-		}
-	}
-	
-	
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
 		if(currentMenu != null){
@@ -415,7 +390,7 @@ public class GameScreen implements GraphicsPane  {
 	private void drawInventory(Graphics g){
 		for(int i = 0; i < items.length; i++){
 			if(items[i] != null){
-				g.drawImage(ImageStorage.getImageFromName(items[i].getImageName()), (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(),boxSize-5,boxSize-5, panel);
+				g.drawImage(Res.getImageFromName(items[i].getImageName()), (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(),boxSize-5,boxSize-5, panel);
 			}
 		}
 	}

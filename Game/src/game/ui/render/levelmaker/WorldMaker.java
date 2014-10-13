@@ -1,15 +1,13 @@
 package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
-import game.ui.render.ImageStorage;
-import game.ui.window.GameWindow;
+import game.ui.render.Res;
 import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
-import game.world.util.Floor;
-import game.world.model.World;
+import game.world.model.Exit;
 import game.world.model.Place;
 import game.world.model.Portal;
-import game.world.model.Exit;
+import game.world.model.World;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,17 +17,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Scanner;
-import java.util.List;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
-import java.io.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,12 +36,10 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.JTabbedPane;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 
 /**
  * @author hardwiwill
@@ -59,8 +56,6 @@ public class WorldMaker extends JPanel{
 	private static final int TEXT_FIELD_SIZE = 20;
 	private JTabbedPane levelTabsPane;
 	private int numTabs = 1;
-	private JTextField roomNameField;
-	private JTextField portalNameField;
 
 	public WorldMaker(){
 
@@ -94,7 +89,7 @@ public class WorldMaker extends JPanel{
 				World world = null;
 				try {
 					world = browseForWorld();
-				} catch (NoFloorChosenException e1) {
+				} catch (NoFileChosenException e1) {
 					return;
 				}
 
@@ -188,13 +183,13 @@ public class WorldMaker extends JPanel{
 		mainControls.add(newLevelButton);
 	}
 
-	/*
+	/**
 	 * Make a JButton with the given mode, its associated image as an icon, and the given listener linked.
 	 * @return JButton for the given mode.
 	 */
 	private JButton makeDrawButton(String mode, ModeButtonListener mbl){
 		JButton button = new JButton(new ImageIcon(
-			MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
+			MenuUtil.scale(Res.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
 		button.addActionListener(mbl);
 		button.setActionCommand(mode);
 		return button;
@@ -245,10 +240,10 @@ public class WorldMaker extends JPanel{
 
 	/**
 	 * @return gets a floor polygon for the level maker to use
-	 * @throws NoFloorChosenException
+	 * @throws NoFileChosenException
 	 */
-	private World browseForWorld() throws NoFloorChosenException {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+ImageStorage.FLOOR_PATH);
+	private World browseForWorld() throws NoFileChosenException {
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
 		final int USER_SELECTION = chooser.showOpenDialog(null);
 
 		File worldFile;
@@ -256,7 +251,7 @@ public class WorldMaker extends JPanel{
 		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
 			worldFile =  chooser.getSelectedFile();
 		}
-		else throw new NoFloorChosenException();
+		else throw new NoFileChosenException();
 
 		return parseWorld(worldFile);
 	}
@@ -298,7 +293,7 @@ public class WorldMaker extends JPanel{
 	 * @param levelMaker
 	 */
 	private void writeToFile(List<LevelPanel> lps) {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+ImageStorage.LEVELS_PATH);
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.WORLDS_PATH);
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
 		File fileToSave;
@@ -317,7 +312,7 @@ public class WorldMaker extends JPanel{
 
 		HashMap<String, Place> places = new HashMap<String, Place>();
 		for(LevelPanel lp : lps){
-			places.put(lp.levelMaker.name, lp.levelMaker.makePlace());
+			places.put(lp.levelMaker.name, lp.levelMaker.toPlace());
 		}
 		for(Map.Entry<String, Place> m : places.entrySet()){
 			System.out.println(m.getKey() + " ::: " + m.getValue());
@@ -328,7 +323,7 @@ public class WorldMaker extends JPanel{
 			Portal portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
 			p.addExit(portal);
-		}	
+		}
 
 		List<Place> placesList = new ArrayList<Place>();
 		for(Map.Entry<String, Place> m : places.entrySet()){

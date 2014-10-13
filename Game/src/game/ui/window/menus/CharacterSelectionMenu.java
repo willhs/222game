@@ -1,6 +1,6 @@
 package game.ui.window.menus;
 
-import game.ui.render.ImageStorage;
+import game.ui.render.Res;
 import game.ui.window.BlankPanel;
 import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
@@ -154,7 +154,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		if(charNum == characterSelected)g.setColor(Color.blue);
 		g2d.draw(character);
 		g2d.drawRect((int)character.getX()+20, (int)character.getY()+10, (int)character.getHeight()-20, (int)character.getHeight()-20);
-		g.drawImage(MenuUtil.scale(ImageStorage.getImageFromName("Char"+charNum),(int)character.getHeight()-20,(int)character.getHeight()-20),(int)character.getX()+20,(int)character.getY()+5, panel);
+		g.drawImage(MenuUtil.scale(Res.getImageFromName("Char"+charNum),(int)character.getHeight()-20,(int)character.getHeight()-20),(int)character.getX()+20,(int)character.getY()+5, panel);
 		g2d.setColor(Color.white);
 	}
 

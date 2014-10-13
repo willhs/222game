@@ -31,9 +31,7 @@ public class Client extends Thread{
 	//Flag for printing debug messages
 	private static boolean printing = false;
 
-	//The number of remaining seconds in the game.  Updated by server.
-	private static int remainingSecondsFromServer = 0;
-	private static int lastTimeUpdate = 0;
+	//Time the world was last ticked
 	private static long timeAtLastTick = 0L;
 
 	/*
@@ -159,15 +157,6 @@ public class Client extends Thread{
 	}
 
 	/*
-	 * Get the number of seconds remaining.  This is calculated based on remaining seconds integer
-	 * sent by the server along with the world when we connect.
-	 * @return number of seconds remaining in the game
-	 */
-	public static int getSecondsRemaining(){
-		return remainingSecondsFromServer - ((((int)System.currentTimeMillis())/1000)-lastTimeUpdate);
-	}
-
-	/*
 	 * The full client loop.  Creates connections to server, then runs the main loop which
 	 * reads one item from the incoming queue and processes it, then sends one item
 	 * from the outgoing queue, then re-renders the game.
@@ -206,12 +195,6 @@ public class Client extends Thread{
 						//Set the room as the player's current place
 						Room cp = (Room)world.getCurrentPlace();
 						GameWindow.setRoom((Room)(cp != null ? cp : world.getPlaces().next()));
-					}
-					else if(received instanceof Integer){//If it's an integer, the server is telling us the remaining time
-						//So save the value the server sends and keep the time it was sent at, so we can calculate the number
-						//of seconds remaining at any time.
-						remainingSecondsFromServer = ((Integer)received).intValue();
-						lastTimeUpdate = (int)System.currentTimeMillis() / 1000;
 					}else{
 						print("[Client] No idea what this is: " + received);
 					}
@@ -223,7 +206,6 @@ public class Client extends Thread{
 					if(cmd.equals("Quit")){
 						throw new QuitException();
 					}
-					print("[Client]: " + getSecondsRemaining());
 				}
 
 				long currentTime = System.currentTimeMillis();

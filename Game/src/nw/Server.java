@@ -23,9 +23,6 @@ public class Server extends Thread{
 	private OutputStream outStream;
 	private int id;
 
-	private static int startTime = 0;
-	private static int timeLimit = 50;
-
 	//One hashmap of output streams shared by all connections.  Every time something needs to be sent out
 	//to all clients (almost everything), it is sent out on each stream in this hashmap.
 	//Neds to be a hashmap so we can remove the right stream on exit.
@@ -70,7 +67,6 @@ public class Server extends Thread{
 
 		world = new World(places);
 		world.addExit(exit);
-		startTime = (int)System.currentTimeMillis();
 	}
 
 	/*
@@ -87,15 +83,6 @@ public class Server extends Thread{
 		if(printing){
 			System.out.println(msg);
 		}
-	}
-
-	/*
-	 * Get the number of seconds remaining in the game.
-	 * @return number of seconds remaining
-	 */
-	public static int getRemainingSeconds(){
-		int timeElapsed = (((int)System.currentTimeMillis()) - startTime)/1000;
-		return timeLimit - timeElapsed;
 	}
 
 	/*
@@ -124,11 +111,8 @@ public class Server extends Thread{
 			BufferedInputStream bis = new BufferedInputStream(inStream);
 			in = new ObjectInputStream(bis);//And also in an ObjectInputStream as above
 
-			long time = System.currentTimeMillis();//Save the time for interval broadcasts
-
 			synchronized(world){
 				out.writeObject(world);//Send the whole world to the client
-				out.writeObject(new Integer(getRemainingSeconds()));//Send the number of seconds remaining in the game
 			}
 			while(true){//Forever:
 	

@@ -2,7 +2,7 @@ package game.ui.render.texture;
 
 import java.awt.image.BufferedImage;
 
-import game.ui.render.ImageStorage;
+import game.ui.render.Res;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.model.Place;
@@ -32,7 +32,7 @@ public class Vine implements Drawable{
 	 * @return
 	 */
 	private Rectangle3D generateBoxGivenHeight(float newHeight) {
-		BufferedImage image = ImageStorage.getImageFromName(imageName);
+		BufferedImage image = Res.getImageFromName(imageName);
 		float scalar = newHeight / image.getHeight();
 		float newWidth = scalar * image.getWidth();
 		return new Rectangle3D(newWidth, newHeight, 1);

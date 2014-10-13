@@ -5,6 +5,6 @@ package game.ui.render.levelmaker;
  *
  * I'm experimenting with using custom exceptions.
  */
-public class NoFloorChosenException extends Exception {
+public class NoFileChosenException extends Exception {
 
 }

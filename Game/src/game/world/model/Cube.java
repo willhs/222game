@@ -14,6 +14,8 @@ import java.awt.Color;
  */
 public class Cube extends Enviroment{
 
+	public static final String FLOOR = "floor";
+	public static final String NON_FLOOR = "non_floor";
 	/**
 	 * So it's easier to convert between Cube and Trixel.
 	 */
