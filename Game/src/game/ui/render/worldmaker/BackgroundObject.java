@@ -1,6 +1,6 @@
-package game.ui.render.levelmaker;
+package game.ui.render.worldmaker;
 
-import game.ui.render.ImageStorage;
+import game.ui.render.Res;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.model.Place;
@@ -19,7 +19,7 @@ public class BackgroundObject implements Drawable{
 	public BackgroundObject(Point3D position, int size){
 		imageName = selectRandomImage();
 		this.position = position;
-		BufferedImage image = ImageStorage.getImageFromName(imageName);
+		BufferedImage image = Res.getImageFromName(imageName);
 		float scale = size/Math.max(image.getWidth(), image.getHeight());
 		this.boundingBox = new Rectangle3D(image.getWidth()*scale, image.getHeight()*scale, 1);
 	}

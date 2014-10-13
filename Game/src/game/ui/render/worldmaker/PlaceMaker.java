@@ -1,4 +1,4 @@
-package game.ui.render.levelmaker;
+package game.ui.render.worldmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.able.GamePolygon;
@@ -11,26 +11,23 @@ import game.ui.render.util.DepthComparator;
 import game.ui.render.util.Transform;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
+import game.world.model.AirTank;
 import game.world.model.Chest;
 import game.world.model.Cube;
 import game.world.model.Enviroment;
 import game.world.model.Inventory;
 import game.world.model.Item;
 import game.world.model.Place;
+import game.world.model.Plant;
 import game.world.model.Portal;
 import game.world.model.Room;
-import game.world.model.Table;
+import game.world.model.Tree;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
 import java.awt.Polygon;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,8 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import org.omg.CORBA.Environment;
 
 /**
  * @author hardwiwill
@@ -53,17 +48,21 @@ import org.omg.CORBA.Environment;
  */
 public class PlaceMaker{
 
-	public static final String TREE_MODE = "Tree";
+	public static final String PLANT_MODE = "Plant";
 	public static final String DOOR_MODE = "Door";
-	public static final String CHEST_MODE = "Chest";
+	public static final String AIR_TANK_MODE = "Air_tank";
+	public static final String TREE_MODE = "Tree";
 	public static final String TRIXEL_MODE = "Trixel";
-	public static final String[] MODES = {TREE_MODE, DOOR_MODE, CHEST_MODE, TRIXEL_MODE};
+	public static final String CHEST_MODE = "Chest";
+	public static final String[] MODES = {PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;
 	public static final int START_COLOUR_DEVIATION = 20;
 	public static final int DEFAULT_TRIXEL_SIZE = Trixel.DEFAULT_SIZE;
 	private static final float VERSION_NUMBER = 1.0f;
+
+
 	/**
 	 * the amount in which to rotate the level/place (so that it can be updated)
 	 */
@@ -93,7 +92,7 @@ public class PlaceMaker{
 	/**
 	 * portals
 	 */
-	private Set<SimplePortal> portals;
+	public static Set<SimplePortal> portals;
 	/**
 	 * a temporary variable for when portals are being placed
 	 */
@@ -101,7 +100,7 @@ public class PlaceMaker{
 	/**
 	 * name of the level
 	 */
-	private String name;
+	public String name;
 	/**
 	 * the center of the floor
 	 */
@@ -282,9 +281,15 @@ public class PlaceMaker{
 			createdTrixels.add(newTrixel);
 		//	drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
-		if (drawMode == TREE_MODE){
+		if (drawMode == PLANT_MODE){
 			// TODO: replace this table with tree once tree is drawable
-			drawables.add(new Table("Tree", aboveTrixel, new Rectangle3D(40,40,40)));
+			drawables.add(new Plant("Plant", aboveTrixel));
+		}
+		if (drawMode == TREE_MODE){
+			drawables.add(new Tree("Tree", aboveTrixel));
+		}
+		if (drawMode == AIR_TANK_MODE){
+			drawables.add(new AirTank("Air tank", aboveTrixel));
 		}
 		if (drawMode == CHEST_MODE){
 			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
@@ -450,57 +455,7 @@ public class PlaceMaker{
 
 	private final static String SEPARATOR = "\t";
 
-	@Override
-	public String toString(){
 
-		StringBuilder levelString = new StringBuilder();
-
-		// WRITE EVERYTHING
-		levelString.append("222game level");
-		levelString.append(VERSION_NUMBER);
-		levelString.append("\n");
-		levelString.append("Floor trixels");
-		levelString.append(floorTrixels.size());
-		levelString.append("Trixition"+SEPARATOR+"Colour");
-		levelString.append("\n");
-
-		for (Trixel floorTrixel : floorTrixels){
-			levelString.append(floorTrixel);
-		}
-
-		levelString.append("\n");
-		levelString.append("Created trixels");
-		levelString.append(createdTrixels.size());
-		levelString.append("Trixition"+SEPARATOR+"Colour");
-		levelString.append("\n");
-
-		for (Trixel createdTrixel : createdTrixels){
-			levelString.append(createdTrixel);
-		}
-
-		levelString.append("\n");
-		levelString.append("Drawable objects");
-		levelString.append(drawables.size());
-		levelString.append("Classname"+SEPARATOR+"ImageName"+SEPARATOR+"Position"+SEPARATOR+"BoundingBox"+SEPARATOR+"SpecificInfo");
-		levelString.append("\n");
-
-		for (Drawable drawable : drawables){
-			levelString.append(drawable); // TODO sort this part out
-		}
-
-		return levelString.toString();
-	}
-
-	public static void failParsing(String reason){
-		System.err.println("************\nError reading place file\n***************");
-		System.err.println(reason);
-	}
-
-	public static void ensureMatch(String toMatch, String token){
-		if (!toMatch.equals(token)){
-			failParsing(toMatch + " didn't match: '"+token+"'");
-		}
-	}
 
 	/**
 	 * sets the colour of the next trixel
@@ -592,7 +547,7 @@ public class PlaceMaker{
 	}
 
 	/**
-	 * Resets level to it's default state
+	 * Resets level to its default state
 	 */
 	private void clearLevel() {
 		floorTrixels.clear();
@@ -627,7 +582,7 @@ public class PlaceMaker{
 
 		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
 
-		return new Room(items, environment, floorPolygon, getName());
+		return new Room(items, environment, floorPolygon, name);
 	}
 
 	/**
@@ -685,7 +640,7 @@ public class PlaceMaker{
 		this.name = name;
 	}
 
-	private class SimplePortal extends Portal{
+	public class SimplePortal extends Portal{
 		public PlaceMaker lm;
 		public Point3D location;
 		public SimplePortal toPortal;
@@ -699,5 +654,39 @@ public class PlaceMaker{
 		public Point3D getPosition(Place place){
 			return getPosition();
 		}
+	}
+
+	public void addPortal(SimplePortal sp){
+		portals.add(sp);
+		drawables.add(sp);
+	}
+
+	public void loadPlace(Place place){
+		createdTrixels.clear();
+		floorTrixels.clear();
+		drawables.clear();
+		portals.clear();
+		tempPortal = null;
+
+		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
+			Drawable d = placeDrawables.next();
+			if(!(d instanceof Portal)){
+				drawables.add(d);
+			}
+		}
+		for (Iterator<Enviroment> placeEnvironments = place.getEnviroment(); placeEnvironments.hasNext();){
+			Enviroment env = placeEnvironments.next();
+			if(env instanceof Cube){
+				Cube c = (Cube)env;
+				Trixel t = new Trixel(c.getTrixition(), c.getColor());
+				if(c.getName().equals(Cube.FLOOR)){
+					floorTrixels.add(t);
+				}else if(c.getName().equals(Cube.NON_FLOOR)){
+					createdTrixels.add(t);
+				}
+			}
+		}
+		name = place.getName();
+		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
 	}
 }

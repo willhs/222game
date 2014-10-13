@@ -243,7 +243,7 @@ public class Renderer {
 			//System.out.println("drawable image name: "+drawable.getImageName());
 
 			// drawable is an image
-			GameImage image = new GameImage(ImageStorage.getImageFromName(drawable.getImageName()),
+			GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
 					drawable.getPosition(place),
 					drawable.getBoundingBox());
 
@@ -441,7 +441,7 @@ public class Renderer {
 		 * @return whether a Drawable object should be represented as an image.
 		 */
 		private static boolean isImage(Drawable drawable) {
-			return ImageStorage.isImage(drawable.getImageName());
+			return Res.isImage(drawable.getImageName());
 		}
 
 

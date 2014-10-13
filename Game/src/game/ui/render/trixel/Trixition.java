@@ -1,4 +1,5 @@
 package game.ui.render.trixel;
+import java.io.Serializable;
 
 /**
  * @author hardwiwill
@@ -6,7 +7,7 @@ package game.ui.render.trixel;
  * The position of a Trixel in the trixel space.
  * Can be converted into real space, using TrixelUtil.trixitionToPosition
  */
-public class Trixition {
+public class Trixition implements Serializable{
 
 	public final int x, y, z;
 

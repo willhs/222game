@@ -1,4 +1,4 @@
-package game.ui.render.levelmaker;
+package game.ui.render.worldmaker;
 
 import game.ui.render.util.DepthComparable;
 import game.ui.render.util.Transform;

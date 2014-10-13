@@ -1,6 +1,6 @@
 package game.ui.window;
 
-import game.ui.render.ImageStorage;
+import game.ui.render.Res;
 import game.world.model.Room;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
@@ -78,9 +78,9 @@ public class GameWindow extends JFrame{
 
 	public static void main(String[] args){
 		//read in the resources
-		ImageStorage.readInAllCommonImages();
+		Res.readInAllCommonImages();
 		//read in the resources
-		ImageStorage.readInAllCommonImages();
+		Res.readInAllCommonImages();
 		GameWindow window = new GameWindow();
 		thread = new TestThread(20, window);
 		thread.start();//start the thread

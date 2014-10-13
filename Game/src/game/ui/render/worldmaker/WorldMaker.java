@@ -1,11 +1,15 @@
-package game.ui.render.levelmaker;
+package game.ui.render.worldmaker;
 
 import game.ui.render.Renderer;
-import game.ui.render.ImageStorage;
+import game.ui.render.Res;
 import game.ui.window.GameWindow;
 import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
 import game.world.util.Floor;
+import game.world.model.World;
+import game.world.model.Place;
+import game.world.model.Portal;
+import game.world.model.Exit;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,6 +26,10 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -51,8 +59,6 @@ public class WorldMaker extends JPanel{
 	private static final int TEXT_FIELD_SIZE = 20;
 	private JTabbedPane levelTabsPane;
 	private int numTabs = 1;
-	private JTextField roomNameField;
-	private JTextField portalNameField;
 
 	public WorldMaker(){
 
@@ -83,16 +89,14 @@ public class WorldMaker extends JPanel{
 		JButton loadButton = new JButton("Load");
 		loadButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				// initilise level maker
-				Floor floor = null;
+				World world = null;
 				try {
-					floor = getFloorPolygon();
-				} catch (NoFloorChosenException e1) {
+					world = browseForWorld();
+				} catch (NoFileChosenException e1) {
 					return;
 				}
 
-				getCurrentLevelMaker().loadFloor(floor);
-				getCurrentDrawing().repaint();
+				loadWorld(world);
 			}
 		});
 		mainControls.add(loadButton);
@@ -111,7 +115,8 @@ public class WorldMaker extends JPanel{
 			public void actionPerformed(ActionEvent e){
 				List<LevelPanel> lps = new ArrayList<LevelPanel>();
 				for(int i = 0; i<numTabs; i++){
-					lps.add((LevelPanel)levelTabsPane.getTabComponentAt(i));
+					lps.add((LevelPanel)levelTabsPane.getComponentAt(i));
+					System.out.println(levelTabsPane.getComponentAt(i));
 				}
 				writeToFile(lps);
 			}
@@ -181,13 +186,13 @@ public class WorldMaker extends JPanel{
 		mainControls.add(newLevelButton);
 	}
 
-	/*
+	/**
 	 * Make a JButton with the given mode, its associated image as an icon, and the given listener linked.
 	 * @return JButton for the given mode.
 	 */
 	private JButton makeDrawButton(String mode, ModeButtonListener mbl){
 		JButton button = new JButton(new ImageIcon(
-			MenuUtil.scale(ImageStorage.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
+			MenuUtil.scale(Res.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
 		button.addActionListener(mbl);
 		button.setActionCommand(mode);
 		return button;
@@ -238,52 +243,33 @@ public class WorldMaker extends JPanel{
 
 	/**
 	 * @return gets a floor polygon for the level maker to use
-	 * @throws NoFloorChosenException
+	 * @throws NoFileChosenException
 	 */
-	private Floor getFloorPolygon() throws NoFloorChosenException {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+ImageStorage.FLOOR_PATH);
+	private World browseForWorld() throws NoFileChosenException {
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
 		final int USER_SELECTION = chooser.showOpenDialog(null);
 
-		File floorFile;
+		File worldFile;
 
 		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
-			floorFile =  chooser.getSelectedFile();
+			worldFile =  chooser.getSelectedFile();
 		}
-		else throw new NoFloorChosenException();
+		else throw new NoFileChosenException();
 
-		return parseFloorFile(floorFile);
+		return parseWorld(worldFile);
 	}
 
-	/**
-	 * PRE: floorFile must be a valid floor file: 2 lines with equal number of integer tokens
-	 * @param floorFile
-	 * @return a polygon obtained from the floorFile
-	 */
-	private Floor parseFloorFile(File floorFile) {
-
-		Scanner floorFileScanner = null;
-		try {
-			floorFileScanner = new Scanner(floorFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+	private World parseWorld(File worldFile){
+		World world = null;
+		try{
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(worldFile)));
+			world = (World)ois.readObject();
+		}catch(ClassNotFoundException e){
+			System.err.println(e);
+		}catch(IOException e){
+			System.err.println(e);
 		}
-		floorFileScanner.nextLine(); // skip first line
-
-		String[] xpointStrings = floorFileScanner.nextLine().split("\t");
-		String[] ypointStrings = floorFileScanner.nextLine().split("\t");
-		floorFileScanner.close();
-
-		int numPoints = xpointStrings.length;
-
-		Point3D[] points = new Point3D[numPoints];
-
-		for (int i = 0; i < numPoints; i++){
-			int x = Integer.parseInt(xpointStrings[i]);
-			int z = Integer.parseInt(ypointStrings[i]);
-			points[i] = new Point3D(x,0,z);
-		}
-
-		return new Floor(points);
+		return world;
 	}
 
 	/**
@@ -310,7 +296,7 @@ public class WorldMaker extends JPanel{
 	 * @param levelMaker
 	 */
 	private void writeToFile(List<LevelPanel> lps) {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+ImageStorage.LEVELS_PATH);
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.WORLDS_PATH);
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
 		File fileToSave;
@@ -320,23 +306,82 @@ public class WorldMaker extends JPanel{
 		} else return;
 
 		// Set up file writer
-		PrintWriter writer = null;
+		ObjectOutputStream oos = null;
 		try {
-			writer = new PrintWriter(fileToSave, "UTF-8");
+			oos = new ObjectOutputStream(new FileOutputStream(fileToSave));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+		HashMap<String, Place> places = new HashMap<String, Place>();
 		for(LevelPanel lp : lps){
-			//This is where we do literally everything
-			//1. Make levels from the LevelPanels, not including the portals
-			//2. Make Portal objects using the places and SimplePortals
-			//3. Somehow add the portals to the new places
-			//4. Write all places to file.
+			places.put(lp.levelMaker.name, lp.levelMaker.toPlace());
+		}
+		for(Map.Entry<String, Place> m : places.entrySet()){
+			System.out.println(m.getKey() + " ::: " + m.getValue());
 		}
 
-		//writer.println(levelMaker);
-		writer.close();
+		for(PlaceMaker.SimplePortal sp : PlaceMaker.portals){
+			Place p = places.get(sp.lm.name);
+			Portal portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
+                                                 places.get(sp.toPortal.lm.name), sp.toPortal.location);
+			p.addExit(portal);
+		}
+
+		List<Place> placesList = new ArrayList<Place>();
+		for(Map.Entry<String, Place> m : places.entrySet()){
+			placesList.add(m.getValue());
+		}
+
+		try{
+			oos.writeObject(new World(placesList));
+			oos.close();
+		}catch(IOException e){
+			System.err.println("Writing failed.  Exception was : " + e);
+		}
+	}
+
+	private void loadWorld(World world){
+		for(int i=0; i<numTabs; i++){
+			levelTabsPane.remove(0);
+		}
+		numTabs = 0;
+		Place place;
+		List<Portal> portals = new ArrayList<Portal>();
+		HashMap<String, PlaceMaker> placeMakers = new HashMap<String, PlaceMaker>();
+
+		for(Iterator<Place> places = world.getPlaces(); places.hasNext();){
+			numTabs++;
+			place = places.next();
+
+			String name = place.getName();
+			LevelPanel lp = makeNewDrawPanel(name);
+			levelTabsPane.addTab(name, null, lp, name);
+			lp.levelMaker.loadPlace(place);
+
+			placeMakers.put(name, lp.levelMaker);
+			for(Iterator<Exit> exits = place.getExits(); exits.hasNext();){
+				portals.add((Portal)exits.next());
+			}
+		}
+
+		for(Portal portal : portals){
+			Place from = portal.getConnectedPlaces().get(0).place;
+			Place to = portal.getConnectedPlaces().get(1).place;
+
+			Point3D fromPos = portal.getConnectedPlaces().get(0).position;
+			Point3D toPos = portal.getConnectedPlaces().get(1).position;
+
+			PlaceMaker fromLp = placeMakers.get(from.getName());
+			PlaceMaker toLp = placeMakers.get(to.getName());
+
+			PlaceMaker.SimplePortal fromPortal = fromLp.new SimplePortal(fromLp, fromPos, null);
+			PlaceMaker.SimplePortal toPortal = toLp.new SimplePortal(toLp, toPos, fromPortal);
+			fromPortal.toPortal = toPortal;
+
+			fromLp.addPortal(fromPortal);
+			toLp.addPortal(toPortal);
+		}
 	}
 
 	public class WillMouseMotionListener extends MouseAdapter{
