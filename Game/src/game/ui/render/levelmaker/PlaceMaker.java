@@ -692,5 +692,6 @@ public class PlaceMaker{
 		}
 		name = place.getName();
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
+		updateFaces();
 	}
 }
