@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import nw.Client;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class GameScreen implements GraphicsPane  {
 
@@ -34,6 +34,9 @@ public class GameScreen implements GraphicsPane  {
 
 	//list of key presses to pass on to the client
 	private ArrayList<String> releventQueKeypress;
+	
+	//a list of numbers for the inventory
+	private ArrayList<String> numblist;
 
 	//inventory bar fields
 	private int numbofButtons = 6;
@@ -56,9 +59,11 @@ public class GameScreen implements GraphicsPane  {
 
 	//the inventory menu
 	private InventoryMenu popUpInventory;
-
+	
+	//this clients player
 	private Player player;
-
+	
+	//the state of the game
 	private boolean gameOver;
 
 
@@ -74,10 +79,14 @@ public class GameScreen implements GraphicsPane  {
 		this.items = new Item[6];
 		this.player = player;
 		this.popUpInventory = new InventoryMenu(panel, this, player);
-
+		
 		popUpInventory.updateInventory();
-		releventQueKeypress = createKeylist();
 		rotateVector = new Vector3D(0f, 0f, 0f);
+		releventQueKeypress  = new ArrayList<String>();
+		numblist = new ArrayList<String>();
+		
+		//sets up the lists
+		createKeylist();
 		setUpInventoryBarButtons();
 	}
 
@@ -104,24 +113,29 @@ public class GameScreen implements GraphicsPane  {
 		}
 	}
 
-
+	
 	/**
 	 * Creates a list of the relevant key presses the client needs to
 	 * know about
 	 * */
-	private ArrayList<String> createKeylist(){
-		ArrayList<String> keyList = new ArrayList<String>();
+	private void createKeylist(){
 
 		//add relevent key presses
-		keyList.add("Up");
-		keyList.add("Down");
-		keyList.add("Right");
-		keyList.add("Left");
-		keyList.add("Interact");
-		keyList.add("Drop");
-		keyList.add("PickUp");
+		releventQueKeypress.add("Up");
+		releventQueKeypress.add("Down");
+		releventQueKeypress.add("Right");
+		releventQueKeypress.add("Left");
+		releventQueKeypress.add("Interact");
+		releventQueKeypress.add("Drop");
+		releventQueKeypress.add("PickUp");
 
-		return keyList;
+		//sets up the numeber list
+		numblist.add("1");
+		numblist.add("2");
+		numblist.add("3");
+		numblist.add("4");
+		numblist.add("5");
+		numblist.add("6");
 	}
 
 	@Override
@@ -150,70 +164,66 @@ public class GameScreen implements GraphicsPane  {
 
 		//draws the payers remaining oxygen
 		drawOxygen(g2d);
-
-		//seconds stuff
-		//drawTime(g2d);
 	}
-
-	public void drawOxygen(Graphics2D g){
+	
+	
+	/**
+	 * Draws the oxygen tank and level on the game screen
+	 * */
+	private void drawOxygen(Graphics2D g){
+		
+		//gets the clients player air level
 		int airLevel = player.getAirLevel();
-
+		
+		//draw the air level
 		g.setColor(new Color(0,191,255));
 		g.fillRect(100, 50, airLevel*2, 50);
-
+		
+		//draw the tank
 		g.setColor(Color.red);
 		g.fill(new Arc2D.Double(75, 50, 50, 50, 90, 90, Arc2D.PIE));
-		Arc2D arc =  new Arc2D.Double(75, 50, 50, 50, 180, 90, Arc2D.PIE);
-
 		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 0, 90, Arc2D.PIE));
 		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 270, 90, Arc2D.PIE));
-		g.fill(arc);
-
+		g.fill(new Arc2D.Double(75, 50, 50, 50, 180, 90, Arc2D.PIE));
 		g.setColor(Color.red);
 		g.drawRect(100, 50, 200, 50);
-
+		
+		//change the font
 		Font myFont = new Font("Tunga",0,20);
 		g.setFont(myFont);
 		g.setColor(Color.white);
-
+		
+		//draw the seconds remaining of the players air
 		g.drawString(airLevel+"", 100 + 100 - g.getFontMetrics(myFont).stringWidth(""+airLevel)/2, (int) ((50 + 50 - (g.getFontMetrics(myFont).getHeight()/2)))-3);
-
-		if(airLevel >=190)gameOver(g);
+		
+		//if the air level is below 0 the game is over
+		if(airLevel >=101)gameOver(g);
 	}
-
+	
+	
+	/**
+	 * Draws the game over screen and sets game over 
+	 * to true
+	 * */
 	public void gameOver(Graphics g){
 			Graphics2D g2d = (Graphics2D)g;
-
+			
+			//change font
 			Font myFont = new Font("Tunga",0,30);
 			g.setFont(myFont);
 			g.setColor(Color.BLACK);
+			
+			//draw background
 			g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_WIDTH);
 			g.setColor(Color.white);
+			
+			//draw game over string
 			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
+			
+			//set game over to be true
 			gameOver = true;
-
 	}
-
-	public void drawTime(Graphics g){
-		Graphics2D g2d = (Graphics2D)g;
-
-		int seconds = Client.getSecondsRemaining();
-		Font myFont = new Font("Tunga",0,50);
-		g.setFont(myFont);
-		g.setColor(Color.white);
-		g.drawString(seconds+"", 50, 100);
-		if(seconds >= 100){
-
-			myFont = new Font("Tunga",0,30);
-			g.setFont(myFont);
-			g.setColor(Color.BLACK);
-			g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_WIDTH);
-			g.setColor(Color.white);
-			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
-			gameOver = true;
-		}
-	}
-
+	
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
 		if(currentMenu != null){
@@ -221,14 +231,14 @@ public class GameScreen implements GraphicsPane  {
 			return;
 		}
 	}
-
+	
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(currentMenu != null){
 			currentMenu.handleMouseReleased(e);//pass the mouse movement onto the current menu
 		}
 	}
-
+	
 	@SuppressWarnings("static-access")
 	@Override
 	public void keyPressed(String keyEvent) {
@@ -236,12 +246,13 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu.keyPressed(keyEvent);
 			return;//no need to do anything with the game as the current menu is the pause menu
 		}
-		else if(gameOver){
-			client.quit();
-			panel.setMenu(new MainMenu(panel));
+		else if(gameOver && keyEvent.equals("escape")){
+			client.quit();//disconnect
+			panel.setMenu(new MainMenu(panel));//go back to main menu
 		}
 		else if(keyEvent.equals("inventory")){
 			removeItems();
+			//update inventory
 			popUpInventory.updateInventory();
 			currentMenu = popUpInventory;
 		}
@@ -249,26 +260,10 @@ public class GameScreen implements GraphicsPane  {
 			currentMenu = new PauseMenu(panel, this, starMation);
 		}
 		else if(releventQueKeypress.contains(keyEvent)){
-			System.out.println("Event" + keyEvent);
-			client.makeMove(keyEvent, rotateVector.getY());
+			client.makeMove(keyEvent, rotateVector.getY());//pass key onto client
 		}
-		else if(keyEvent.equals("1")){
-			selectedButton = 0;
-		}
-		else if(keyEvent.equals("2")){
-			selectedButton = 1;
-		}
-		else if(keyEvent.equals("3")){
-			selectedButton = 2;
-		}
-		else if(keyEvent.equals("4")){
-			selectedButton = 3;
-		}
-		else if(keyEvent.equals("5")){
-			selectedButton = 4;
-		}
-		else if(keyEvent.equals("6")){
-			selectedButton = 5;
+		else if(numblist.contains(keyEvent)){
+			selectedButton = Integer.parseInt(keyEvent)-1;
 		}
 		else if(keyEvent.equals("rotate right")){
 			rotateVector =  rotateVector.plus( new Vector3D(0f , 0.05f , 0f));
@@ -280,12 +275,12 @@ public class GameScreen implements GraphicsPane  {
 		//set the item selected
 		updateSelectedItem();
 	}
-
+	
 
 	/**
 	 * Draws the inventory bar at the bottom of the game screen
 	 * */
-	public void drawInventorybar(Graphics g){
+	 private void drawInventorybar(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
 		//modify the stroke size to 4
@@ -299,15 +294,6 @@ public class GameScreen implements GraphicsPane  {
 			g.drawRect((int)inventoryButtons[selectedButton].getX(), (int)inventoryButtons[selectedButton].getY(), boxSize, boxSize);
 		}
 		g2d.setStroke(oldStroke);//reset the bar line widht
-	}
-
-
-	@Override
-	public void handleMousePressed(MouseEvent e) {
-		if(currentMenu != null ){
-			currentMenu.handleMousePressed(e);//pass control to the menu in focus
-			return;
-		}
 	}
 
 
@@ -401,7 +387,7 @@ public class GameScreen implements GraphicsPane  {
 	/**
 	 *Draws the images of the inventory in the bar
 	 * */
-	public void drawInventory(Graphics g){
+	private void drawInventory(Graphics g){
 		for(int i = 0; i < items.length; i++){
 			if(items[i] != null){
 				g.drawImage(Res.getImageFromName(items[i].getImageName()), (int)inventoryButtons[i].getX(), (int)inventoryButtons[i].getY(),boxSize-5,boxSize-5, panel);
@@ -427,8 +413,13 @@ public class GameScreen implements GraphicsPane  {
 	 * */
 	public void setMenu(GraphicsPane menu){this.currentMenu = menu;}
 
+	
 	/**
-	 * Returns the selectted inventory button
+	 * Returns the selected inventory button
 	 * */
 	public int getSelectedButton(){return this.selectedButton;}
+
+
+	@Override
+	public void handleMousePressed(MouseEvent e) {}
 }

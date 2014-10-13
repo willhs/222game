@@ -17,7 +17,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import nw.Client;
-
+/**
+ * @author Nicky van Hulst 300294657
+ * */
 public class CharacterSelectionMenu implements GraphicsPane{
 
 	//button fields
@@ -188,7 +190,6 @@ public class CharacterSelectionMenu implements GraphicsPane{
 			characterSelected = 3;
 		}
 		 if(nameBox.contains(x,y)){
-			 System.out.println("Selected");
 			nameBoxSelected = true;
 			return;
 		}

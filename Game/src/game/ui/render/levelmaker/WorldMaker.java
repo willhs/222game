@@ -1,15 +1,13 @@
-package game.ui.render.worldmaker;
+package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.Res;
-import game.ui.window.GameWindow;
 import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
-import game.world.util.Floor;
-import game.world.model.World;
+import game.world.model.Exit;
 import game.world.model.Place;
 import game.world.model.Portal;
-import game.world.model.Exit;
+import game.world.model.World;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,17 +17,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Scanner;
-import java.util.List;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
-import java.io.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,12 +36,10 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.JTabbedPane;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 
 /**
  * @author hardwiwill

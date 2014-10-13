@@ -1,4 +1,4 @@
-package game.ui.render.worldmaker;
+package game.ui.render.levelmaker;
 
 import game.ui.render.Res;
 import game.world.dimensions.Point3D;

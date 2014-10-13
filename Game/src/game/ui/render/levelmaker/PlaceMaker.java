@@ -1,4 +1,4 @@
-package game.ui.render.worldmaker;
+package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.able.GamePolygon;
@@ -11,6 +11,7 @@ import game.ui.render.util.DepthComparator;
 import game.ui.render.util.Transform;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.AirTank;
 import game.world.model.Chest;
@@ -22,12 +23,17 @@ import game.world.model.Place;
 import game.world.model.Plant;
 import game.world.model.Portal;
 import game.world.model.Room;
+import game.world.model.Table;
 import game.world.model.Tree;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
 import java.awt.Polygon;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,6 +41,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import org.omg.CORBA.Environment;
 
 /**
  * @author hardwiwill
@@ -61,8 +69,6 @@ public class PlaceMaker{
 	public static final int START_COLOUR_DEVIATION = 20;
 	public static final int DEFAULT_TRIXEL_SIZE = Trixel.DEFAULT_SIZE;
 	private static final float VERSION_NUMBER = 1.0f;
-
-
 	/**
 	 * the amount in which to rotate the level/place (so that it can be updated)
 	 */
@@ -282,7 +288,6 @@ public class PlaceMaker{
 		//	drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
 		if (drawMode == PLANT_MODE){
-			// TODO: replace this table with tree once tree is drawable
 			drawables.add(new Plant("Plant", aboveTrixel));
 		}
 		if (drawMode == TREE_MODE){
@@ -455,7 +460,16 @@ public class PlaceMaker{
 
 	private final static String SEPARATOR = "\t";
 
+	public static void failParsing(String reason){
+		System.err.println("************\nError reading place file\n***************");
+		System.err.println(reason);
+	}
 
+	public static void ensureMatch(String toMatch, String token){
+		if (!toMatch.equals(token)){
+			failParsing(toMatch + " didn't match: '"+token+"'");
+		}
+	}
 
 	/**
 	 * sets the colour of the next trixel
@@ -574,15 +588,15 @@ public class PlaceMaker{
 		}
 
 		for (Trixel floorTrixel : floorTrixels){
-			environment.add(new Cube(Cube.FLOOR, floorTrixel, trixelSize));
+			environment.add(new Cube("floor", floorTrixel, trixelSize));
 		}
 		for (Trixel createdTrixel : createdTrixels){
-			environment.add(new Cube(Cube.NON_FLOOR, createdTrixel, trixelSize));
+			environment.add(new Cube("non-floor", createdTrixel, trixelSize));
 		}
 
 		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
 
-		return new Room(items, environment, floorPolygon, name);
+		return new Room(items, environment, floorPolygon, getName());
 	}
 
 	/**
@@ -678,15 +692,16 @@ public class PlaceMaker{
 			Enviroment env = placeEnvironments.next();
 			if(env instanceof Cube){
 				Cube c = (Cube)env;
-				Trixel t = new Trixel(c.getTrixition(), c.getColor());
-				if(c.getName().equals(Cube.FLOOR)){
+				Trixel t = new Trixel(c.getTrixition());
+				if(c.getName().equals("floor")){
 					floorTrixels.add(t);
-				}else if(c.getName().equals(Cube.NON_FLOOR)){
+				}else if(c.getName().equals("non-floor")){
 					createdTrixels.add(t);
 				}
 			}
 		}
 		name = place.getName();
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
+		updateFaces();
 	}
 }

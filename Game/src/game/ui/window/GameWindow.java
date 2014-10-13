@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 /**
- * @author Nicky van HUlst
+ * @author Nicky van Hulst 300295657
  * */
 public class GameWindow extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -26,8 +26,9 @@ public class GameWindow extends JFrame{
 	//the map containing the key combinations
 	public static HashMap<String , Integer> keyMap;
 
+	//the players current room
 	public static Room currentRoom;
-	public static Thread thread;
+
 
 	/**
 	 * Constructor for the GameFrame
@@ -75,14 +76,15 @@ public class GameWindow extends JFrame{
 		GameWindow.currentRoom = currentRoom;
 	}
 
-
+	/**
+	 * Starts the game
+	 * */
 	public static void main(String[] args){
-		//read in the resources
-		Res.readInAllCommonImages();
+
 		//read in the resources
 		Res.readInAllCommonImages();
 		GameWindow window = new GameWindow();
-		thread = new TestThread(20, window);
+		Thread thread = new WindowThread(20, window);
 		thread.start();//start the thread
 	}
 }

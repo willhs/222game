@@ -15,7 +15,7 @@ import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300295657
  * */
 public class PauseMenu implements GraphicsPane {
 	private GameScreen game;
@@ -52,7 +52,7 @@ public class PauseMenu implements GraphicsPane {
 	/**
 	 * Sets up all of the button locations for the pause menu
 	 * */
-	public void setUpButtons(){
+	private void setUpButtons(){
 		int y = GameWindow.FRAME_HEIGHT/numbOfButtons;
 		int buttonGap = 20;
 		int recHeight = 50;
@@ -91,7 +91,7 @@ public class PauseMenu implements GraphicsPane {
 	/**
 	 * Draws the frame around the pause menu
 	 * */
-	public void drawFrame(Graphics g){
+	private void drawFrame(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
 		int borderGap = 20;
@@ -165,9 +165,12 @@ public class PauseMenu implements GraphicsPane {
 			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
 	}
-
+	
+	
+	/**
+	 * Sets the current Menu
+	 * */
 	public void setMenu(GraphicsPane menu){
-		System.out.println("Setting menu");
 		this.currentMenu = menu;
 	}
 

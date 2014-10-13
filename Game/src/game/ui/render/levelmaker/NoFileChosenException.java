@@ -1,4 +1,4 @@
-package game.ui.render.worldmaker;
+package game.ui.render.levelmaker;
 
 /**
  * @author hardwiwill

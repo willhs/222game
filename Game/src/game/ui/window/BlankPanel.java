@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 /**
- *@author Nicky van Hulst
+ *@author Nicky van Hulst 300294657
  * */
 public class BlankPanel extends JPanel{
 	private static final long serialVersionUID = 1L;
@@ -19,7 +19,7 @@ public class BlankPanel extends JPanel{
 	//the menu the panel is rendering at the moment
 	private GraphicsPane currentMenu;
 
-
+	
 	/**
 	 * Constructor for the blank panel sets up the panel
 	 * with the current menu being the main menu
@@ -28,7 +28,8 @@ public class BlankPanel extends JPanel{
 
 		//set the size of the panel
 		setSize(new Dimension(GameWindow.FRAME_WIDTH,GameWindow.FRAME_HEIGHT));
-
+		
+		//background color
 		setBackground(Color.black);
 
 		//set up the mouse listener
@@ -64,7 +65,7 @@ public class BlankPanel extends JPanel{
 	/**
 	 * Sets up the mouse listener for the panel
 	 * */
-	public void setUpMouseListner(){
+	private void setUpMouseListner(){
 		this.addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e){

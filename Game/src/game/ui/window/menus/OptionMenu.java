@@ -10,7 +10,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class OptionMenu implements GraphicsPane, Animated {
 	
@@ -86,7 +86,6 @@ public class OptionMenu implements GraphicsPane, Animated {
 
 		if(nextMenu!=null && nextMenu instanceof Animated){
 			if(((Animated) nextMenu).isAnimating()){
-				System.out.println("Next Menu animating");
 				((Animated) nextMenu).animate();
 				nextMenu.render(g);
 			}
@@ -130,6 +129,7 @@ public class OptionMenu implements GraphicsPane, Animated {
 		}
 	}
 
+	
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(currentMenu != null){
@@ -151,7 +151,6 @@ public class OptionMenu implements GraphicsPane, Animated {
 			selectedButton = MenuUtil.moveButtonSelectionUp(selectedButton, buttons.length);
 		}
 	}
-
 
 	@Override
 	public void animate() {

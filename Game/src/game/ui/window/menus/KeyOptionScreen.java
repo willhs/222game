@@ -13,10 +13,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class KeyOptionScreen implements GraphicsPane {
+	
+	//stores the keys of the game
 	private HashMap<String,Integer> keyMap;
+	
+	//the panel to draw on
 	private BlankPanel panel;
 
 	//buttons fields
@@ -24,7 +28,6 @@ public class KeyOptionScreen implements GraphicsPane {
 	private String[] buttonNames;
 	private int numbOfButtons = 1;
 	private int selectedButton;
-
 
 	//size of the table
 	private int tableWidth  = 500;
@@ -180,7 +183,6 @@ public class KeyOptionScreen implements GraphicsPane {
 			else{
 				g.drawString("_", x + 20 + colWidth, y + 15);
 				keySelected = key;
-				System.out.println(key);
 			}
 			y+=colHeight;
 			row++;
