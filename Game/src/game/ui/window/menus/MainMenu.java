@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class MainMenu implements GraphicsPane, Animated{
 	

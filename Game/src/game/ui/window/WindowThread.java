@@ -1,8 +1,6 @@
 package game.ui.window;
 
-/**
- * 
- * */
+
 public class WindowThread extends Thread {
 	private final int delay; // delay between pulses 
 	private final GameWindow display;
