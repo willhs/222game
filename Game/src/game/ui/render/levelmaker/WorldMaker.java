@@ -9,6 +9,7 @@ import game.world.util.Floor;
 import game.world.model.World;
 import game.world.model.Place;
 import game.world.model.Portal;
+import game.world.model.Exit;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -97,19 +98,7 @@ public class WorldMaker extends JPanel{
 					return;
 				}
 
-				for(int i=0; i<numTabs; i++){
-					levelTabsPane.remove(0);
-				}
-				numTabs = 0;
-				Place place;
-				for(Iterator<Place> places = world.getPlaces(); places.hasNext();){
-					numTabs++;
-					place = places.next();
-					String name = "Room " + (numTabs);
-					LevelPanel lp = makeNewDrawPanel(name);
-					levelTabsPane.addTab(name, null, lp, name);
-					lp.levelMaker.loadPlace(place);
-				}
+				loadWorld(world);
 			}
 		});
 		mainControls.add(loadButton);
@@ -336,8 +325,6 @@ public class WorldMaker extends JPanel{
 
 		for(PlaceMaker.SimplePortal sp : PlaceMaker.portals){
 			Place p = places.get(sp.lm.name);
-			System.out.println("From room " + sp.lm.name + " result " + places.get(sp.lm.name) + " loc " + sp.location);
-			System.out.println("to room " + sp.toPortal.lm.name + " result " + places.get(sp.toPortal.lm.name) + " loc " + sp.toPortal.location);
 			Portal portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
 			p.addExit(portal);
@@ -353,6 +340,49 @@ public class WorldMaker extends JPanel{
 			oos.close();
 		}catch(IOException e){
 			System.err.println("Writing failed.  Exception was : " + e);
+		}
+	}
+
+	private void loadWorld(World world){
+		for(int i=0; i<numTabs; i++){
+			levelTabsPane.remove(0);
+		}
+		numTabs = 0;
+		Place place;
+		List<Portal> portals = new ArrayList<Portal>();
+		HashMap<String, PlaceMaker> placeMakers = new HashMap<String, PlaceMaker>();
+
+		for(Iterator<Place> places = world.getPlaces(); places.hasNext();){
+			numTabs++;
+			place = places.next();
+
+			String name = place.getName();
+			LevelPanel lp = makeNewDrawPanel(name);
+			levelTabsPane.addTab(name, null, lp, name);
+			lp.levelMaker.loadPlace(place);
+
+			placeMakers.put(name, lp.levelMaker);
+			for(Iterator<Exit> exits = place.getExits(); exits.hasNext();){
+				portals.add((Portal)exits.next());
+			}
+		}
+
+		for(Portal portal : portals){
+			Place from = portal.getConnectedPlaces().get(0).place;
+			Place to = portal.getConnectedPlaces().get(1).place;
+
+			Point3D fromPos = portal.getConnectedPlaces().get(0).position;
+			Point3D toPos = portal.getConnectedPlaces().get(1).position;
+
+			PlaceMaker fromLp = placeMakers.get(from.getName());
+			PlaceMaker toLp = placeMakers.get(to.getName());
+
+			PlaceMaker.SimplePortal fromPortal = fromLp.new SimplePortal(fromLp, fromPos, null);
+			PlaceMaker.SimplePortal toPortal = toLp.new SimplePortal(toLp, toPos, fromPortal);
+			fromPortal.toPortal = toPortal;
+
+			fromLp.addPortal(fromPortal);
+			toLp.addPortal(toPortal);
 		}
 	}
 

@@ -179,7 +179,7 @@ public class Renderer {
 
 			// drawable is an image
 			GameImage image = new GameImage(ImageStorage.getImageFromName(drawable.getImageName()),
-					drawable.getPosition(),
+					drawable.getPosition(place),
 					drawable.getBoundingBox());
 
 
