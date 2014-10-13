@@ -62,10 +62,48 @@ public class PlaceTests {
 	}
 
 	@Test
-	public void testContains(){
+	public void testContainsTest(){
 		Place place = getAPlace();
 		Point3D point = new Point3D(2,0,2);
 		assertTrue(place.contains(point));
+		point = new Point3D(222,0,222);
+		assertFalse(place.contains(point));
+	}
+
+	@Test
+	public void itemAddandRemoveTest(){
+		Place place = getAPlace();
+		Item item = new AirTank("Air", new Point3D(0,0,0));
+		place.addItem(item);
+		int count = 0;
+		Iterator<Item> iterator = place.getItems();
+		while (iterator.hasNext()){
+			iterator.next();
+			count++;
+		}
+		assertTrue(count == 1);
+		place.removeItem(item);
+		count = 0;
+		iterator = place.getItems();
+		while (iterator.hasNext()){
+			iterator.next();
+			count++;
+		}
+		assertTrue(count == 0);
+	}
+
+	@Test
+	public void exitAddTest(){
+		Place place = getAPlace();
+		Exit exit = new Portal("TestExit", place, new Point3D(0,0,0), place, new Point3D(0,0,0));
+		place.addExit(exit);
+		int count = 0;
+		Iterator<Exit> iterator = place.getExits();
+		while (iterator.hasNext()) {
+			iterator.next();
+			count++;
+		}
+		assertTrue(count == 1);
 	}
 
 	// ===============HelperMethods================//
