@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class HelpMenu implements GraphicsPane, Animated{
 

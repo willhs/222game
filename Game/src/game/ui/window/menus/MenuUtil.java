@@ -1,7 +1,6 @@
 package game.ui.window.menus;
 
 import game.ui.window.GameWindow;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -11,7 +10,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class MenuUtil {
 
@@ -37,18 +36,15 @@ public class MenuUtil {
 			g2d.draw(buttons[i]);
 
 			if(selectedButton == i){
-				g.setColor(Color.red);
+				g.setColor(new Color(1f,0,0,0.2f));
 				g2d.fill(buttons[i]);
+				g.setColor(new Color(1f,1f,1f,0.9f));
+				g2d.draw(buttons[i]);
+
 			}
 
 			//draws the string in the center of the current button
-			if(selectedButton == i){
-				g.setColor(Color.white);
-			}
-			else{
-				g.setColor(Color.white);
-			}
-
+			g.setColor(Color.white);
 			g2d.drawString(buttonNames[i], buttons[i].x + ((buttons[i].width/2) - g.getFontMetrics(myFont).stringWidth(buttonNames[i])/2), (int) ((buttons[i].y + buttons[i].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
 		}
 	}

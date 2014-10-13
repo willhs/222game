@@ -7,11 +7,18 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
+/**
+ * @author Nicky van Hulst 300294657
+ * */
 public class StarMation {
+
+	//list of the stars to draw
 	ArrayList<Star> stars;
 
+	//the number of stars to generate 
 	private int numbofStars = 200;
+
+	//the size of the stars 
 	private int maxWidth;
 	private int maxHeight;
 	private int size = 60;
@@ -33,6 +40,8 @@ public class StarMation {
 	 * Creates the number of stars based on the number of stars variable
 	 * */
 	private void setUpStarMation(){
+
+		//create stars up to the number of stars field
 		for(int i = 0; i < numbofStars; i++){
 			stars.add(createStar(false));
 		}
@@ -52,11 +61,11 @@ public class StarMation {
 
 		//if the star is outside the screen there should be 50/50 change to spawn outside x axis or y axis
 		if(outside){
-		if(halfChance > 5){
-			randomY = maxHeight - 50;
-		}
-		else{
-			randomX = -20;
+			if(halfChance > 5){
+				randomY = maxHeight - 50;
+			}
+			else{
+				randomX = -20;
 			}
 		}
 
@@ -93,7 +102,7 @@ public class StarMation {
 		}
 	}
 
-	 public class Star{
+	public class Star{
 		private int x;
 		private int y;
 		public int speed;
@@ -102,25 +111,21 @@ public class StarMation {
 		private BufferedImage image;
 
 		public Star(BufferedImage image, int x, int y){
-			 this.x = x;
-			 this.y = y;
-			 this.image = image;
-			 if((int)(Math.random()*100) > 50){
-
-				// this.image = ImageStorage.getImageFromName("space_ship");
-			 }
-			 this.speed = (int)(Math.random()*speedRange);
-			 if(speed < 1)speed = 1;
+			this.x = x;
+			this.y = y;
+			this.image = image;
+			this.speed = (int)(Math.random()*speedRange);
+			if(speed < 1)speed = 1;
 		}
 
-		 public BufferedImage getImage(){
-			 return this.image;
-		 }
+		public BufferedImage getImage(){
+			return this.image;
+		}
 
-		 public int getX(){ return this.x;}
-		 public int getY(){return this.y;}
+		public int getX(){ return this.x;}
+		public int getY(){return this.y;}
 
-		 public void setY(int y){this.y = y;}
-		 public void setX(int x){this.x = x;}
+		public void setY(int y){this.y = y;}
+		public void setX(int x){this.x = x;}
 	}
 }

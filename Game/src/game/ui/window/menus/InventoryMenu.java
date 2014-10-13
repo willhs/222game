@@ -18,7 +18,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class InventoryMenu implements GraphicsPane {
 
@@ -96,11 +96,10 @@ public class InventoryMenu implements GraphicsPane {
 	 *Gets the inventory from the player and places it in the inventory
 	 *grid
 	 * */
-	public void setUpInventoryFromPlayer(){
+	private void setUpInventoryFromPlayer(){
 		int i = 0;
 		for(Item item : player.getInventory()){
-			if(i >=  items.length)return;//TODO check with someone
-			System.out.println("inventory");
+			if(i >=  items.length)return;//no more space in the inventory
 			items[i] = item;
 			i++;
 		}
@@ -152,7 +151,7 @@ public class InventoryMenu implements GraphicsPane {
 	 * draws the grid on the screen representing the inventory
 	 * changes the grid color if one of the squares is selected
 	 * */
-	public void drawInventoryGrid(Graphics g){
+	private void drawInventoryGrid(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
 		//modify the stroke size to 4
@@ -235,7 +234,7 @@ public class InventoryMenu implements GraphicsPane {
 	/**
 	 *Draws the outside of the inventory menu on the game screen
 	 * */
-	public void drawFrame(Graphics g){
+	private void drawFrame(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
 		//increase the border size to 4
@@ -253,6 +252,8 @@ public class InventoryMenu implements GraphicsPane {
 		//reset the border size
 		g2d.setStroke(oldStroke);
 	}
+	
+	
 	/**
 	 *Sets up the characters inventory
 	 * */

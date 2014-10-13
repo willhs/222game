@@ -5,10 +5,11 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public class keyInputManagment implements KeyEventDispatcher{
-
+	
+	//panel to draw on
 	private BlankPanel panel;
 
 	//map mapping strings to keys
@@ -118,7 +119,6 @@ public class keyInputManagment implements KeyEventDispatcher{
 		tempKeyMap.put("rotate left", KeyEvent.VK_LEFT);//f
 		tempKeyMap.put("Drop", KeyEvent.VK_E);
 		tempKeyMap.put("PickUp", KeyEvent.VK_Q);
-		
 
 		return tempKeyMap;
 	}
@@ -134,5 +134,4 @@ public class keyInputManagment implements KeyEventDispatcher{
 	 * Returns the last key press from the user
 	 * */
 	public static KeyEvent getLastKeyEvent(){return lastKeyEvent;}
-
 }
