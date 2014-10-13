@@ -14,7 +14,7 @@ import java.io.Serializable;
  *
  */
 public class Player implements Character, Serializable{
-	
+
 	/**
 	 * Generic id.
 	 */
