@@ -583,7 +583,7 @@ public class PlaceMaker{
 		}
 
 		for (Trixel floorTrixel : floorTrixels){
-			environment.add(new Cube("floor", floorTrixel, trixelSize));
+			//environment.add(new Cube("floor", floorTrixel, trixelSize));
 		}
 		for (Trixel createdTrixel : createdTrixels){
 			environment.add(new Cube("non-floor", createdTrixel, trixelSize));

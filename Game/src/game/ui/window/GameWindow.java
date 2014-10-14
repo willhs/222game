@@ -20,8 +20,9 @@ public class GameWindow extends JFrame{
 
 	//size fields
 	private static final int WINDOW_SIZE = 90;
-	public static final int FRAME_HEIGHT = WINDOW_SIZE*9;
-	public static final int FRAME_WIDTH = WINDOW_SIZE*16;
+	public static final int FRAME_HEIGHT = 768;//WINDOW_SIZE*9;
+	public static final int FRAME_WIDTH = 1024;//WINDOW_SIZE*16;
+
 
 	//the map containing the key combinations
 	public static HashMap<String , Integer> keyMap;
@@ -42,7 +43,7 @@ public class GameWindow extends JFrame{
 		setUpKeyListner();
 
 		//set the size of the frame
-		setResizable(false);
+		setResizable(true);
 		setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		setLocationRelativeTo(null);
 		setVisible(true);

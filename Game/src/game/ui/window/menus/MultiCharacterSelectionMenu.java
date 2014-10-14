@@ -18,7 +18,7 @@ import game.world.model.Player;
  * */
 public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
-	//text field fields
+	//text field fields (typing fields twice is not a mistake)
 	private Rectangle textFieldPort;
 	private boolean portSelected;
 	private Rectangle textFieldHostName;
@@ -43,12 +43,12 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	 * */
 	public MultiCharacterSelectionMenu(BlankPanel panel) {
 		super(panel);
-		
-		//set up the 2 text fields as rectangles 
+
+		//set up the 2 text fields as rectangles
 		textFieldHostName = new Rectangle(startX,startY,200,30);
 		textFieldPort = new Rectangle(startX+ 200 + 20,startY,200,30);
 	}
-	
+
 
 	@Override
 	public void render(Graphics g){
@@ -56,22 +56,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		//draws the texts fields the user can enter information into
 		drawTextFields(g);
-
-		//draw the string if there is an error
-		drawErrorString(g);
-	}
-
-
-	/**
-	 *Draws the String on the screen telling the user about the current
-	 *error
-	 * */
-	private void drawErrorString(Graphics g){
-		Font myFont = new Font("arial",0,20);
-		g.setFont(myFont);
-		g.setColor(Color.red);
-		g.drawString(error, (int) ((int) (buttons[1].getX()+5) + buttons[1].getWidth()), (int) ((buttons[1].y + buttons[1].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
-		g.setColor(Color.white);
 	}
 
 
@@ -113,8 +97,8 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		g2d.draw(textFieldPort);
 		g.setColor(Color.white);
 	}
-	
-	
+
+
 	@Override
 	public void okPressed(){
 
@@ -143,7 +127,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		//no errors at this point so create the game player and client and change menu
 		Player player = new Player(super.name);
-		
+
 		//set the image name for the player
 		player.setImageName("Char"+characterSelected);
 
@@ -160,7 +144,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			name = "";
 			return;
 		}
-		
+
 		//display the game screen
 		panel.setMenu(new GameScreen(panel, client,player));
 	}
@@ -193,6 +177,9 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		if(e.getKeyCode() == KeyEvent.VK_TAB){
 			handleTabPress();//tab pressed
+		}
+		else if(keyEvent.equals("enter")){
+			okPressed();
 		}
 		if(super.nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);//the name text box needs to be updated
@@ -297,7 +284,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 			return;
 		}
 	}
-	
+
 	//class the wrap a string to send by reference used by the text boxes
 	class textBoxWrapper{
 		public String s;

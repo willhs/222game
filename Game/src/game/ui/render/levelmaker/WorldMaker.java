@@ -170,7 +170,7 @@ public class WorldMaker extends JPanel{
 		}
 
 		levelTabsPane = new JTabbedPane();
-		String name = "Room 1";
+		String name = "Room1";
 		levelTabsPane.addTab(name, null, makeNewDrawPanel(name), name);
 		add(levelTabsPane, BorderLayout.CENTER);
 
@@ -178,7 +178,7 @@ public class WorldMaker extends JPanel{
 		newLevelButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String name = "Room " + ++numTabs;
+				String name = "Room" + ++numTabs;
 				levelTabsPane.addTab(name, null, makeNewDrawPanel(name), name);
 				getCurrentDrawing().repaint();
 			}

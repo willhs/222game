@@ -115,6 +115,20 @@ public class CharacterSelectionMenu implements GraphicsPane{
 
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 		drawBoxes(g);
+
+		drawErrorString(g);
+	}
+
+	/**
+	 *Draws the String on the screen telling the user about the current
+	 *error
+	 * */
+	private void drawErrorString(Graphics g){
+		Font myFont = new Font("arial",0,20);
+		g.setFont(myFont);
+		g.setColor(Color.red);
+		g.drawString(error, (int) ((int) (buttons[1].getX()+5) + buttons[1].getWidth()), (int) ((buttons[1].y + buttons[1].getHeight() - (g.getFontMetrics(myFont).getHeight()/2))));
+		g.setColor(Color.white);
 	}
 
 
@@ -199,7 +213,8 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("enter")){
-			buttonPressed();
+			//buttonPressed();
+			okPressed();
 		}
 		if(nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);

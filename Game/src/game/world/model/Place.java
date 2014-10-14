@@ -11,9 +11,9 @@ import java.util.*;
 
 /**
  * Place Defines what it is to be a place in the world
- * 
+ *
  * @author Shane Brewer 300289850
- * 
+ *
  */
 public abstract class Place implements Serializable {
 
@@ -37,7 +37,7 @@ public abstract class Place implements Serializable {
 	/**
 	 * Should return the iterator of exits that the place has. Exits can't be
 	 * remove from a room.
-	 * 
+	 *
 	 * @return - Iterator of exits.
 	 */
 	public Iterator<Exit> getExits() {
@@ -47,7 +47,7 @@ public abstract class Place implements Serializable {
 	/**
 	 * Should return the list of Items, items can be remove form the place to
 	 * something that is in that place for example a container or player.
-	 * 
+	 *
 	 * @return - List of items currently in the place.
 	 */
 	public Iterator<Item> getItems() {
@@ -57,7 +57,7 @@ public abstract class Place implements Serializable {
 	/**
 	 * Should return a list of players that are in a room player can move from
 	 * room to room so player can be removed and added to the list.
-	 * 
+	 *
 	 * @return - list of players.
 	 */
 	public Iterator<Player> getPlayers() {
@@ -66,7 +66,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Gets all the drawable items in the room.
-	 * 
+	 *
 	 * @return - returns a iterator over all the drawable things in the room.
 	 */
 	public Iterator<Drawable> getDrawable() {
@@ -79,7 +79,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Checks weather a point is in a place or not.
-	 * 
+	 *
 	 * @param point
 	 *            - point to be checked
 	 * @return - returns true if the point is within the place.
@@ -90,7 +90,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Checks weather a point in the 3D space is in the place
-	 * 
+	 *
 	 * @param point
 	 *            - 3D point is space.
 	 * @return - true if it is in the place.
@@ -101,7 +101,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Returns the floor of the room a floor is a arraylist of 3D points
-	 * 
+	 *
 	 * @return - the floor.
 	 */
 	public Floor getFloor() {
@@ -116,7 +116,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Checks that a rectangle is withing the space of the room.
-	 * 
+	 *
 	 * @param point
 	 *            - 3dPoint that represents the middle point of the "Thing" in
 	 *            3d space.
@@ -141,7 +141,7 @@ public abstract class Place implements Serializable {
 	/**
 	 * Sets the player a point. Should only be used if the player is not in any
 	 * place.
-	 * 
+	 *
 	 * @param player
 	 *            - to be placed.
 	 * @return - returns true if placed.
@@ -150,6 +150,7 @@ public abstract class Place implements Serializable {
 		players.add(player);
 		for (float x = 0; x < floor.getBounds().x + floor.getBounds().width; x+=1f) {
 			for (float z = 0; z < floor.getBounds().y + floor.getBounds().height; z+=1f) {
+
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z),
 						this)) {
 					return true;
@@ -161,7 +162,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Removes the item from the room.
-	 * 
+	 *
 	 * @param item
 	 *            - item to be removed.
 	 */
@@ -171,7 +172,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Adds a item to the room
-	 * 
+	 *
 	 * @param item
 	 *            - item to be added.
 	 */
@@ -181,7 +182,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Removes a player from the room.
-	 * 
+	 *
 	 * @param player
 	 *            - player to be removed.
 	 */
@@ -191,7 +192,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Adds a player to the place.
-	 * 
+	 *
 	 * @param player
 	 *            - player to be added.
 	 */
@@ -201,7 +202,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Gets the name of the place.
-	 * 
+	 *
 	 * @return - returns the name of the place this should be unique to this
 	 *         place.
 	 */
@@ -211,7 +212,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Adds the exit to the place.
-	 * 
+	 *
 	 * @param exit
 	 *            - the exit to be added
 	 */
@@ -221,7 +222,7 @@ public abstract class Place implements Serializable {
 
 	/**
 	 * Gets the enviroment for the place.
-	 * 
+	 *
 	 * @return - the enviroment iterator.
 	 */
 	public Iterator<Enviroment> getEnviroment() {

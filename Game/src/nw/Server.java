@@ -49,12 +49,6 @@ public class Server extends Thread{
 		File f = new File("world");
 		if(f.exists() && !f.isDirectory()){
 			world = WorldMaker.parseWorld(f);
-			Iterator<Place> i =  world.getPlaces();
-			Room p = (Room)i.next();
-			Polygon floor = p.floor;
-			System.out.println(p.getFloor());
-			System.out.println(floor);
-			System.out.println(floor.getBounds());
 			return;
 		}
 
