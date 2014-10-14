@@ -28,7 +28,6 @@ public class PlayerMovementTest {
 			fail("Player should have moved");
 		}
 
-
 	}
 
 	private World makeWorld(){

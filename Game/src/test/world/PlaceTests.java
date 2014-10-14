@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import game.world.dimensions.Point3D;
 import game.world.model.*;
 import game.world.util.Drawable;
+import game.world.util.Floor;
 
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -104,6 +105,31 @@ public class PlaceTests {
 			count++;
 		}
 		assertTrue(count == 1);
+	}
+
+	@Test
+	public void getFloorTest(){
+		int[] xpoints = new int[]{0,200,200,0,0};
+		int[] ypoints = new int[]{0,0,200,200,0};
+		Place place = getAPlace();
+		Floor floor = place.getFloor();
+		Point3D[] points = floor.getPoints();
+		for (int i = 0; i < points.length ; i++){
+			if (points[i].x != xpoints[i] && points[i].y != ypoints[i]){
+				fail("x and y points not equal");
+			}
+		}
+	}
+
+	@Test
+	/**
+	 * This method relyes on the contains method in place and
+	 * The movement handler working.
+	 */
+	public void setStartPlaceTest(){
+		Place place = getAPlace();
+		Player player = new Player("Jim");
+		assertTrue(place.setStartPoint(player));
 	}
 
 	// ===============HelperMethods================//
