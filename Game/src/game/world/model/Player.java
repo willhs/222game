@@ -112,14 +112,23 @@ public class Player implements Character, Serializable{
 		return getPosition();
 	}
 
+	/**
+	 * Gets the player current airLevel
+	 */
 	public int getAirLevel(){
 		return airLevel;
 	}
 
+	/**
+	 * Ticks the players air level down.
+	 */
 	public void tickAirLevel(){
 		airLevel--;
 	}
 
+	/**
+	 * adds more air to the player.
+	 */
 	public void addAir(){
 		airLevel = 100;
 	}

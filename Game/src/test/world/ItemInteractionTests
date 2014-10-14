@@ -1,0 +1,10 @@
+package test.world;
+
+
+import org.junit.Test;
+
+
+
+public class ItemInteractionTests{
+	
+}
