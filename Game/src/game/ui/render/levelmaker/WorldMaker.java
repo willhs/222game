@@ -4,6 +4,7 @@ import game.ui.render.Renderer;
 import game.ui.render.Res;
 import game.ui.window.menus.MenuUtil;
 import game.world.dimensions.Point3D;
+import game.world.dimensions.Vector3D;
 import game.world.model.Exit;
 import game.world.model.Place;
 import game.world.model.Portal;
@@ -13,6 +14,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -151,6 +153,7 @@ public class WorldMaker extends JPanel{
 		randomiseBaseColourButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				getCurrentLevelMaker().randomiseBaseColour();
+				repaint();
 			}
 		});
 		colourPanel.add(randomiseBaseColourButton);
@@ -226,6 +229,17 @@ public class WorldMaker extends JPanel{
 				// displays current colour
 				g.setColor(levelMaker.getTrixelColour());
 				g.fillRect(0, 0, 20, 20);
+
+				// display light direction
+				Vector3D lightDir = Renderer.lightDir;
+				Point origin = new Point(200,200);
+				int lineScalar = 40;
+				Point p2 = new Point((int)(origin.x+lightDir.x*lineScalar), origin.y+(int)(-lightDir.y*lineScalar));
+				int maxOval = 40;
+				int ovalSize = (int)(((lightDir.z+1)/2)*maxOval);
+
+				g.drawLine(origin.x, origin.y, p2.x, p2.y);
+				g.drawOval(p2.x-ovalSize/2, p2.y-ovalSize/2, ovalSize, ovalSize);
 			}
 		};
 
@@ -319,7 +333,7 @@ public class WorldMaker extends JPanel{
 			System.out.println(m.getKey() + " ::: " + m.getValue());
 		}
 
-		for(PlaceMaker.SimplePortal sp : PlaceMaker.portals){
+		for(PlaceMaker.SimplePortal sp : PlaceMaker.getPortals()){
 			Place p = places.get(sp.lm.name);
 			Portal portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
