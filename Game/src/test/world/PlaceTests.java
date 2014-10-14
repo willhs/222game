@@ -14,6 +14,87 @@ import org.junit.Test;
 
 public class PlaceTests {
 
+	/**
+	 * Tests the contains method.
+	 */
+	@Test
+	public void testContainsTest(){
+		Place place = getAPlace();
+		Point3D point = new Point3D(2,0,2);
+		assertTrue(place.contains(point));
+		point = new Point3D(222,0,222);
+		assertFalse(place.contains(point));
+	}
+
+	/**
+	 * Tests item adding and removing .
+	 */
+	@Test
+	public void itemAddandRemoveTest(){
+		Place place = getAPlace();
+		Item item = new AirTank("Air", new Point3D(0,0,0));
+		place.addItem(item);
+		int count = 0;
+		Iterator<Item> iterator = place.getItems();
+		while (iterator.hasNext()){
+			iterator.next();
+			count++;
+		}
+		assertTrue(count == 1);
+		place.removeItem(item);
+		count = 0;
+		iterator = place.getItems();
+		while (iterator.hasNext()){
+			iterator.next();
+			count++;
+		}
+		assertTrue(count == 0);
+	}
+
+	/**
+	 * Tests the adding of exits to a place
+	 */
+	@Test
+	public void exitAddTest(){
+		Place place = getAPlace();
+		Exit exit = new Portal("TestExit", place, new Point3D(0,0,0), place, new Point3D(0,0,0));
+		place.addExit(exit);
+		int count = 0;
+		Iterator<Exit> iterator = place.getExits();
+		while (iterator.hasNext()) {
+			iterator.next();
+			count++;
+		}
+		assertTrue(count == 1);
+	}
+
+	/**
+	 * This method relyes on the contains method in place and
+	 * The movement handler working.
+	 */
+	@Test
+	public void setStartPlaceTest(){
+		Place place = getAPlace();
+		Player player = new Player("Jim");
+		assertTrue(place.setStartPoint(player));
+	}
+
+	//===================Getter tests============================//
+
+	@Test
+	public void getFloorTest(){
+		int[] xpoints = new int[]{0,200,200,0,0};
+		int[] ypoints = new int[]{0,0,200,200,0};
+		Place place = getAPlace();
+		Floor floor = place.getFloor();
+		Point3D[] points = floor.getPoints();
+		for (int i = 0; i < points.length ; i++){
+			if (points[i].x != xpoints[i] && points[i].y != ypoints[i]){
+				fail("x and y points not equal");
+			}
+		}
+	}
+
 	@Test
 	public void chcekGetterTests1() {
 		Place place = getAPlace();
@@ -62,75 +143,7 @@ public class PlaceTests {
 		}
 	}
 
-	@Test
-	public void testContainsTest(){
-		Place place = getAPlace();
-		Point3D point = new Point3D(2,0,2);
-		assertTrue(place.contains(point));
-		point = new Point3D(222,0,222);
-		assertFalse(place.contains(point));
-	}
-
-	@Test
-	public void itemAddandRemoveTest(){
-		Place place = getAPlace();
-		Item item = new AirTank("Air", new Point3D(0,0,0));
-		place.addItem(item);
-		int count = 0;
-		Iterator<Item> iterator = place.getItems();
-		while (iterator.hasNext()){
-			iterator.next();
-			count++;
-		}
-		assertTrue(count == 1);
-		place.removeItem(item);
-		count = 0;
-		iterator = place.getItems();
-		while (iterator.hasNext()){
-			iterator.next();
-			count++;
-		}
-		assertTrue(count == 0);
-	}
-
-	@Test
-	public void exitAddTest(){
-		Place place = getAPlace();
-		Exit exit = new Portal("TestExit", place, new Point3D(0,0,0), place, new Point3D(0,0,0));
-		place.addExit(exit);
-		int count = 0;
-		Iterator<Exit> iterator = place.getExits();
-		while (iterator.hasNext()) {
-			iterator.next();
-			count++;
-		}
-		assertTrue(count == 1);
-	}
-
-	@Test
-	public void getFloorTest(){
-		int[] xpoints = new int[]{0,200,200,0,0};
-		int[] ypoints = new int[]{0,0,200,200,0};
-		Place place = getAPlace();
-		Floor floor = place.getFloor();
-		Point3D[] points = floor.getPoints();
-		for (int i = 0; i < points.length ; i++){
-			if (points[i].x != xpoints[i] && points[i].y != ypoints[i]){
-				fail("x and y points not equal");
-			}
-		}
-	}
-
-	@Test
-	/**
-	 * This method relyes on the contains method in place and
-	 * The movement handler working.
-	 */
-	public void setStartPlaceTest(){
-		Place place = getAPlace();
-		Player player = new Player("Jim");
-		assertTrue(place.setStartPoint(player));
-	}
+	//===========================getter tests end=====================//
 
 	// ===============HelperMethods================//
 	public Place getAPlace() {
