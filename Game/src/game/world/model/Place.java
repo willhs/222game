@@ -148,8 +148,8 @@ public abstract class Place implements Serializable {
 	 */
 	public boolean setStartPoint(Player player) {
 		players.add(player);
-		for (float x = 0; x < floor.getBounds().x + floor.getBounds().width; x+=0.1f) {
-			for (float z = 0; z < floor.getBounds().y + floor.getBounds().height; z+=0.1f) {
+		for (float x = 0; x < floor.getBounds().x + floor.getBounds().width; x+=1) {
+			for (float z = 0; z < floor.getBounds().y + floor.getBounds().height; z+=1) {
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z),
 						this)) {
 					return true;
