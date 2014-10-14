@@ -47,7 +47,7 @@ public class Renderer {
 	// TEMPORARY
 
 	public static final Transform ISOMETRIC_ROTATION = Transform.newXRotation((float)(Math.PI/4)).compose(Transform.newYRotation((float)(Math.PI/4)));
-	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,500,0);
+	public static final Vector3D STANDARD_VIEW_TRANSLATION = new Vector3D(0,350,0);
 
 	private static final int FRAME_TOP = GameWindow.FRAME_HEIGHT;
 
@@ -65,6 +65,7 @@ public class Renderer {
 	 *
 	 * @param g
 	 * @param place
+	 * @deprecated
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount, Player currentPlayer){
 		resetColour(); //  TODO: replace this random colour implementation
@@ -82,7 +83,7 @@ public class Renderer {
 
 		Point3D SCREEN_CENTER = new Point3D(GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2, 0);
 
-		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION;//playerPos.distanceTo(SCREEN_CENTER);
+		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION.plus(new Vector3D(0,150,0));//playerPos.distanceTo(SCREEN_CENTER);
 
 		// all rotations and translations composed into one affine transform
 		Transform transform = makeTransform(
@@ -91,9 +92,6 @@ public class Renderer {
 				viewTranslation
 			);
 
-		//Point3D transformedPlayerPos = transform.multiply(playerPos);
-		//transform = transform.compose(Transform.newTranslation(SCREEN_CENTER.distanceTo(transformedPlayerPos)));
-
 		// place all floorTrixels
 		int floorTrixelsY = -Trixel.DEFAULT_SIZE; // the y position of all floor trixels
 		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, Trixel.DEFAULT_SIZE, floorTrixelsY);
@@ -101,8 +99,9 @@ public class Renderer {
 		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
 		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
 
-		// get everything ready to render
+		// change light direction
 
+		// get everything ready to render
 		renderables.addAll(floorTrixelsToRenderables(floorTrixels.iterator(), Trixel.DEFAULT_SIZE, transform));
 		renderables.addAll(drawablesToRenderables(place.getDrawable(), transform, place));
 
@@ -113,6 +112,12 @@ public class Renderer {
 
 	}
 
+	/**
+	 * To replace the above renderPlace method
+	 * @param g
+	 * @param place
+	 * @param rotateAmount
+	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
 
 		Graphics2D g2 = (Graphics2D) g;
@@ -124,8 +129,7 @@ public class Renderer {
 		List<Drawable> gameObjects = new ArrayList<Drawable>();
 
 		// separate all drawable objects into different lists.
-		Iterator<Drawable> drawablesIter = place.getDrawable();
-		while (drawablesIter.hasNext()){
+		for (Iterator<Drawable> drawablesIter = place.getDrawable(); drawablesIter.hasNext();){
 			Drawable drawable = drawablesIter.next();
 			if (drawable instanceof Cube){
 				Cube cube = (Cube) drawable;
@@ -190,9 +194,6 @@ public class Renderer {
 
 		Graphics2D g2 = (Graphics2D) g;
 
-		//lightDir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
-		//lightDir = transform.multiply(lightDir);
-
 		// enable anti-aliasing
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -220,8 +221,13 @@ public class Renderer {
 		while (trixels.hasNext()){
 			Trixel trixel = trixels.next();
 			for (TrixelFace face : TrixelUtil.makeTrixelFaces(trixel, trixelSize)){
-				face.transform(transform);
-				if (face.isFacingViewer()){ // only draw faces which are facing the viewer
+				// make a clone because transform() is a mutating method which can't be undone.
+				TrixelFace faceClone = face.clone();
+				faceClone.transform(transform);
+
+				if (faceClone.isFacingViewer()){ // only draw faces which are facing the viewer
+					face.setShadedColour(getTestLightSources(), DEFAULT_AMBIENT_LIGHT);
+					face.transform(transform);
 					renderables.add(Renderer.makeGamePolygonFromTrixelFace(face));
 				}
 			}
@@ -259,7 +265,6 @@ public class Renderer {
 						image.getPosition().getTranslatedPoint(
 								new Vector3D(-drawable.getBoundingBox().width/2,
 										(drawable.getBoundingBox().height/4)*3, 0)));
-
 
 				renderables.add(text);
 			}
@@ -350,6 +355,9 @@ public class Renderer {
 			return new Line3D[]{xLine, yLine, zLine};
 		}
 		/**
+		 * Makes a game polygon from a trixel face.
+		 * Sets shading of polygon depending on light sources.
+		 *
 		 * @param face
 		 * @return game polygon representing a trixel face
 		 */
@@ -365,8 +373,7 @@ public class Renderer {
 				zTotal += (int)vertices[i].getZ();
 			}
 			float zAverage = zTotal/vertices.length;
-			Color shadedColour = face.makeShadedColour(getTestLightSources(), DEFAULT_AMBIENT_LIGHT);
-			return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, shadedColour);
+			return new GamePolygon(xpoints, ypoints, vertices.length, zAverage, face.getShadedColour());
 		}
 
 		/**
@@ -551,6 +558,13 @@ public class Renderer {
 
 		public static void resetColour(){
 			randomGen = new Random(RANDOM_SEED);
+		}
+
+		/**
+		 * resets the light direction to it's initial value.
+		 */
+		public static void resetLightDir(){
+			lightDir = new Vector3D(0.39056706f, -0.13019001f, -0.9113221f);
 		}
 
 }
