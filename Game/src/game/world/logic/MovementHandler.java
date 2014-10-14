@@ -74,7 +74,7 @@ public class MovementHandler {
 		Rectangle3D playerBox = player.getBoundingBox();
 		while (enviroments.hasNext()) {
 			Enviroment enviroment = enviroments.next();
-			if (playerBox.collisionDetection(playerPoint,
+			if (enviroment.isCollidable() && playerBox.collisionDetection(playerPoint,
 					enviroment.getBoundingBox(), enviroment.getPosition())) {
 				return true;
 			}
