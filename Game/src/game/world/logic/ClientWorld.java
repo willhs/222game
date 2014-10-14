@@ -135,6 +135,7 @@ public abstract class ClientWorld extends ServerWorld {
 		return command;
 	}
 
+
 	/**
 	 * Gets the Interaction command from the exit. This one dose some
 	 * computation to find a exit nere the player that they can interact with.
@@ -240,20 +241,6 @@ public abstract class ClientWorld extends ServerWorld {
 
 
 	//=============================================Getters End===================================//
-
-
-
-	/**
-	 * replaces the current place with a new one.
-	 *
-	 * @param place
-	 *            - the place that this current player should be in.
-	 */
-	public void replaceCurrentPlace(Place place) {
-		place.removePlayer(clientsPlayer);
-		place.addPlayer(clientsPlayer);
-		currentPlace = place;
-	}
 
 	protected void setCurrentPlace(Place place){
 		currentPlace = place;

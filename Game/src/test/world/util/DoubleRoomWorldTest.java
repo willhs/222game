@@ -26,41 +26,16 @@ public class DoubleRoomWorldTest {
 
 		Exit exit = new Portal("Door1", firstRoom, new Point3D(400, 0, 400),
 				secondRoom, new Point3D(400, 0, 500));
-		World world = new World(places);
+
+		world = new World(places);
 		world.addExit(exit);
 		firstRoom.addExit(exit);
 		secondRoom.addExit(exit);
 
-		System.out.println(exit.getPosition(firstRoom));
-		System.out.println();
-		System.out.println(exit.getPosition(secondRoom));
-		System.out.println();
+	}
 
-		Player player = new Player("Jim");
-		world.addPlayerToGameWorld(player);
-
-		System.out.println(player.name);
-		System.out.println(player.getPosition());
-		System.out.println();
-
-		System.out.println(world.getPlaceOfPlayer(player).getName());
-		System.out.println();
-
-		System.out.println(MovementHandler.playerMove(player, new Point3D(426, 0,
-				426), world.getPlaceOfPlayer(player)));
-		System.out.println(player.getPosition());
-
-		System.out.println();
-		System.out.println(MovementHandler.exitPlace(player, firstRoom, exit));
-
-		System.out.println();
-		System.out.println(world.getPlaceOfPlayer(player).getName());
-
-		System.out.println();
-		System.out.println(player.getPosition());
-
-
-
+	public World getWorld(){
+		return world;
 	}
 
 	public static void main(String[] args) {

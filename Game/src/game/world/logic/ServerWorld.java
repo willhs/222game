@@ -74,16 +74,6 @@ public abstract class ServerWorld implements Serializable {
 	public abstract Place getPlaceOfPlayer(Player player);
 
 	/**
-	 * This method will return a iterator of players in a place. not really
-	 * needed if you have the place but added.
-	 *
-	 * @param place
-	 *            - place that the players are in.
-	 * @return - returns the list of players in that place.
-	 */
-	public abstract Iterator<Player> getPlayerOfPlace(Place place);
-
-	/**
 	 * Finds a place in the game world for the player.
 	 *
 	 * @param player

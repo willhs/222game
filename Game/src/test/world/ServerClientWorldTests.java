@@ -27,10 +27,6 @@ public class ServerClientWorldTests {
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
-		clientWorld.getCommand("Up", 0);
-		clientWorld.getCommand("Down", 0);
-		clientWorld.getCommand("Left", 0);
-		clientWorld.getCommand("Right", 0);
 		Iterator<Player> players = clientWorld.getPlayers();
 		boolean um = false;
 		while(players.hasNext()){
@@ -57,12 +53,10 @@ public class ServerClientWorldTests {
 			clientWorld.applyCommand(c);
 		}
 		String cmd = clientWorld.getCommand("Up", 0);
-		System.out.println(p.getPosition());
 		commands = serverWorld.applyCommand(cmd);
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
-		System.out.println(p.getPosition());
 		Iterator<Player> players = clientWorld.getPlayers();
 		boolean um = false;
 		while(players.hasNext()){

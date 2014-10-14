@@ -188,25 +188,31 @@ public class MovementHandler {
 	 * @return - returns true if the player exited correctly.
 	 */
 	public static boolean exitPlace(Player player, Place place, Exit exit) {
+		// None of the parameters should be null.
 		if (player == null || exit == null || place == null){
 			return false;
 		}
+		// The player needs to be in proximity of the exit
 		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
 				exit.getPosition(place), exit.getBoundingBox())) {
 			return false;
 		}
+		// Checks if the exit is locked.
 		if (exit.isLocked()) {
+			// will try to unlock the exit
 			if (!exit.unlock(player.getInventory())) {
 				return false;
 			}
 		}
+		// gets the place the player is moving to.
 		Place otherPlace = exit.getOtherPlace(place);
+		// will set a new psoition for the player and remove and add him/her.
 		if (setPlayerExitPosition(player, exit, otherPlace)){
 			place.removePlayer(player);
 			otherPlace.addPlayer(player);
 			return true;
 		}
-
+		// will fail if no position in other place is found.
 		return false;
 	}
 
