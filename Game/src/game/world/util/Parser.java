@@ -16,8 +16,13 @@ public class Parser {
 		String name = "";
 		scan.next();
 		scan.next();
+
 		name = scan.next();
-		scan.next();
+		String temp = scan.next();
+		while(!temp.equals(")")){
+			name = name+" "+temp;
+			temp = scan.next();
+		}
 		return name;
 	}
 
