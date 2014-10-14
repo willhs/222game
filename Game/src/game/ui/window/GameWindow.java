@@ -19,10 +19,12 @@ public class GameWindow extends JFrame{
 	private static final String title = "Game";
 
 	//size fields
-	private static final int WINDOW_SIZE = 90;
-	public static final int FRAME_HEIGHT = 768;//WINDOW_SIZE*9;
-	public static final int FRAME_WIDTH = 1024;//WINDOW_SIZE*16;
+	private static final int WINDOW_SIZE = 85;
+	public static final int FRAME_HEIGHT = 9*WINDOW_SIZE;//WINDOW_SIZE*9;
+	public static final int FRAME_WIDTH = 16*WINDOW_SIZE;//WINDOW_SIZE*16;
 
+	//768
+	//1400
 
 	//the map containing the key combinations
 	public static HashMap<String , Integer> keyMap;
@@ -36,6 +38,10 @@ public class GameWindow extends JFrame{
 	 * */
 	public GameWindow(){
 		super(title);
+
+		System.out.println("Width = " + FRAME_WIDTH);
+		System.out.println("Height = " + FRAME_HEIGHT);
+
 
 		this.blankPanel = new BlankPanel();
 
