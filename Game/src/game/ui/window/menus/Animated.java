@@ -1,7 +1,7 @@
 package game.ui.window.menus;
 
 /**
- * @author Nicky van Hulst
+ * @author Nicky van Hulst 300294657
  * */
 public interface Animated {
 

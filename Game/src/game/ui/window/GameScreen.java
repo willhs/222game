@@ -421,5 +421,10 @@ public class GameScreen implements GraphicsPane  {
 
 
 	@Override
-	public void handleMousePressed(MouseEvent e) {}
+	public void handleMousePressed(MouseEvent e) {
+		if(currentMenu != null ){
+			currentMenu.handleMousePressed(e);//pass control to the menu in focus
+			return;
+		}
+	}
 }
