@@ -146,7 +146,7 @@ public class InventoryMenu implements GraphicsPane {
 		}
 	}
 
-	
+
 	/**
 	 * draws the grid on the screen representing the inventory
 	 * changes the grid color if one of the squares is selected
@@ -322,7 +322,7 @@ public class InventoryMenu implements GraphicsPane {
 		if(selectedGrid != -1 && items[selectedGrid] != null){
 			g.setColor(Color.black);
 			g.setColor(Color.white);
-			g.drawString(items[selectedGrid].getName(), currMouseX+5,currMouseY+10);
+			g.drawString(items[selectedGrid].getName(), currMouseX+5,currMouseY-10);
 			g.setColor(Color.white);
 		}
 	}
