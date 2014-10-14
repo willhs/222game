@@ -94,8 +94,11 @@ public class Client extends Thread{
 			connectError = "Connection rejected - Server down or incorrect port";
 			return false;
 		}catch(IOException e){
-			System.out.println("Failed to connected.  Exception was: " + e);
+			System.out.println("Failed to connect.  Exception was: " + e);
 			connectError = "Unknown error";
+			return false;
+		}catch(IllegalArgumentException e){
+			connectError = "Incorrect format: " + e.getMessage();
 			return false;
 		}
 
