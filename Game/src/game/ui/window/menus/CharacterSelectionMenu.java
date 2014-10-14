@@ -213,7 +213,8 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(keyEvent.equals("enter")){
-			buttonPressed();
+			//buttonPressed();
+			okPressed();
 		}
 		if(nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);

@@ -18,7 +18,7 @@ import game.world.model.Player;
  * */
 public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
-	//text field fields
+	//text field fields (typing fields twice is not a mistake)
 	private Rectangle textFieldPort;
 	private boolean portSelected;
 	private Rectangle textFieldHostName;
@@ -56,7 +56,6 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		//draws the texts fields the user can enter information into
 		drawTextFields(g);
-
 	}
 
 
@@ -178,6 +177,9 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		if(e.getKeyCode() == KeyEvent.VK_TAB){
 			handleTabPress();//tab pressed
+		}
+		else if(keyEvent.equals("enter")){
+			okPressed();
 		}
 		if(super.nameBoxSelected){
 			handleNameBoxKeyPress(keyEvent);//the name text box needs to be updated
