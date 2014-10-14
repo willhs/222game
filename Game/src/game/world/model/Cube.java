@@ -47,6 +47,13 @@ public class Cube extends Enviroment{
         this.colour = trixel.getColor();
     }
 
+    public Cube(String name, Trixel trixel, int size, boolean isCollidable) {
+        super(name, TrixelUtil.trixitionToPosition(trixel.getTrixition(), size), new Rectangle3D(size, size, size));
+        this.trixition = trixel.getTrixition();
+        this.colour = trixel.getColor();
+        this.isCollidable = isCollidable;
+    }
+
     public Trixition getTrixition(){
     	return trixition;
     }
