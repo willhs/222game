@@ -21,7 +21,7 @@ import java.util.List;
  * Represents a face of a Trixel
  * 4 vertices, area = Trixel.SIZE
  */
-public class TrixelFace implements DepthComparable, Transformable{
+public class TrixelFace implements DepthComparable, Transformable, Cloneable{
 
 	private final Point3D[] vertices;
 
@@ -29,6 +29,8 @@ public class TrixelFace implements DepthComparable, Transformable{
 	 * The trixel which this face is partly representing.
 	 */
 	private Trixel parent;
+
+	private Color shadedColour;
 	/**
 	 * PRE: must have 4 vertices
 	 * PRE: must be ordered so that lines from each point in order (i to i+1)
@@ -40,6 +42,7 @@ public class TrixelFace implements DepthComparable, Transformable{
 	public TrixelFace(Point3D[] vertices, Trixel parent){
 		this.vertices = vertices;
 		this.parent = parent;
+		this.shadedColour = parent.getColor();
 	}
 
 	/* Gets center z position
@@ -83,7 +86,7 @@ public class TrixelFace implements DepthComparable, Transformable{
 	 * @param ambientLight
 	 * @return the colour given light sources and ambient light
 	 */
-	public Color makeShadedColour(Iterator<LightSource> lights, Color ambientLight){
+	public void setShadedColour(Iterator<LightSource> lights, Color ambientLight){
 		float reflectionR = 0, reflectionG = 0, reflectionB = 0;
 		Vector3D normal = calculateNormal();
 
@@ -113,7 +116,7 @@ public class TrixelFace implements DepthComparable, Transformable{
 		reflectionG = Math.min(reflectionG, 1);
 		reflectionB = Math.min(reflectionB, 1);
 
-		return new Color((int)(getBaseColour().getRed()*reflectionR), (int)(getBaseColour().getGreen()*reflectionG), (int)(getBaseColour().getBlue()*reflectionB));
+		shadedColour = new Color((int)(getBaseColour().getRed()*reflectionR), (int)(getBaseColour().getGreen()*reflectionG), (int)(getBaseColour().getBlue()*reflectionB));
 	}
 
 	@Override
@@ -165,6 +168,23 @@ public class TrixelFace implements DepthComparable, Transformable{
 		Point3D v2 = highestVertices.get(1);
 
 		return (v1.x < v2.x ? v1.distanceTo(v2) : v2.distanceTo(v1)).unitVector();
+	}
+
+	public Color getShadedColour() {
+		return shadedColour;
+	}
+
+	@Override
+	public TrixelFace clone(){
+		return new TrixelFace(vertices.clone(), parent);
+	}
+
+	public void setVertices(Point3D[] vertices){
+		if (vertices.length != this.vertices.length)
+			throw new IllegalArgumentException("Illegal number of vertices");
+		for (int i = 0; i < this.vertices.length; i++){
+			this.vertices[i] = vertices[i];
+		}
 	}
 
 }

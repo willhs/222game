@@ -68,13 +68,12 @@ public class PlaceMaker{
 	public static final int MAX_COLOUR_DEVIATION = 100;
 	public static final int START_COLOUR_DEVIATION = 20;
 	public static final int DEFAULT_TRIXEL_SIZE = Trixel.DEFAULT_SIZE;
-	private static final float VERSION_NUMBER = 1.0f;
 	/**
 	 * the amount in which to rotate the level/place (so that it can be updated)
 	 */
 	private Vector3D rotateAmounts = new Vector3D(0,0,0);
 	/**
-	 * all faces which have been rotated
+	 * all objects which have been rotated
 	 */
 	private List<DepthComparable> rotatedObjects;
 
@@ -98,7 +97,7 @@ public class PlaceMaker{
 	/**
 	 * portals
 	 */
-	public static Set<SimplePortal> portals;
+	private static Set<SimplePortal> portals;
 	/**
 	 * a temporary variable for when portals are being placed
 	 */
@@ -147,7 +146,7 @@ public class PlaceMaker{
 
 		// initialise drawables, portals
 		drawables = new HashSet<Drawable>();
-		portals = new HashSet<SimplePortal>();
+		setPortals(new HashSet<SimplePortal>());
 
 		// intialise colour
 		randomiseBaseColour();
@@ -174,6 +173,14 @@ public class PlaceMaker{
 	public void loadFloor(Floor floor){
 		clearLevel();
 
+		// move level to the center of the screen
+		floorCentroid = Renderer.getFloorCentroid(floor);
+		Point3D idealCentroid = new Point3D(GameWindow.FRAME_WIDTH/2, floorCentroid.y, GameWindow.FRAME_HEIGHT/2);
+		Vector3D distToScreenCenter = floorCentroid.distanceTo(idealCentroid);
+		floor.transform(Transform.newTranslation(distToScreenCenter));
+		// re-calculate floor centroid.
+		floorCentroid = Renderer.getFloorCentroid(floor);
+
 		// initialise trixels
 		for (Trixel t : TrixelUtil.polygon2DToTrixels(
 			Renderer.floorToVerticalPolygon(floor), trixelSize, -trixelSize)){
@@ -183,30 +190,15 @@ public class PlaceMaker{
 
 		this.floor = floor;
 
-		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
-
-		// move level to the center of the screen
-		Point3D idealCentroid = new Point3D(GameWindow.FRAME_WIDTH/2, floorCentroid.y, floorCentroid.z);
-		Vector3D distToScreenCenter = floorCentroid.distanceTo(idealCentroid);
-		transformFloor(Transform.newTranslation(distToScreenCenter));
-
 		updateFaces();
 	}
 
+
 	/**
-	 * Transforms the floor object and floor trixels.
-	 * @param transform
+	 * updates trixel faces and the current rotation.
 	 */
-	private void transformFloor(Transform transform) {
-		for (Trixel floorTrixel : floorTrixels){
-			// longest line ever
-			//System.out.println("trixition before: "+floorTrixel.getTrixition());
-			Point3D newPosition = transform.multiply(TrixelUtil.trixitionToPosition(floorTrixel.getTrixition(), trixelSize));
-			floorTrixel.setTrixition(TrixelUtil.positionToTrixition(newPosition, trixelSize));
-			//System.out.println("trixition after: "+floorTrixel.getTrixition());
-		}
-		floor.transform(transform);
-		floorCentroid = transform.multiply(floorCentroid);
+	private void updateFaces() {
+		updateRotation(0,0);
 	}
 
 	/**
@@ -218,14 +210,16 @@ public class PlaceMaker{
 
 		rotateAmounts = getNewRotateAmount(rotateX, rotateY);
 		Transform trans = makeTransform(rotateAmounts);
-
 		lastTransform = trans;
 
 		updateTransformedObjects();
+		// update light direction
+		Renderer.resetLightDir();
+		//Renderer.lightDir = Transform.newYRotation(rotateAmounts.y).multiply(Renderer.lightDir);
 	}
 
 	/**
-	 * Re-makes and orders a list of trixel faces from ordered by closest first
+	 * Re-makes and orders a list of trixel faces and drawables from ordered by closest first
 	 */
 	public void updateTransformedObjects() {
 		// reset rotated trixels
@@ -258,7 +252,7 @@ public class PlaceMaker{
 	 */
 	private Transform makeTransform(Vector3D rotateAmounts) {
 
-		Vector3D viewTranslation = new Vector3D(0,Renderer.STANDARD_VIEW_TRANSLATION.y-150, 0);//new Vector3D(0,0,0);
+		Vector3D viewTranslation = new Vector3D(0,Renderer.STANDARD_VIEW_TRANSLATION.y, 0);//new Vector3D(0,0,0);
 		return Renderer.makeTransform(rotateAmounts, floorCentroid, viewTranslation);
 	}
 
@@ -303,14 +297,14 @@ public class PlaceMaker{
 			if(tempPortal == null){
 				tempPortal = new SimplePortal(this, aboveTrixel, null);
 				drawables.add(tempPortal);
-				portals.add(tempPortal);
+				getPortals().add(tempPortal);
 				System.out.println("Made start portal at " + aboveTrixel + " in room " + getName());
 			}else{
 				if(tempPortal.lm != this){
 					SimplePortal newSP = new SimplePortal(this, aboveTrixel, tempPortal);
 					tempPortal.toPortal = newSP;
 					drawables.add(newSP);
-					portals.add(newSP);
+					getPortals().add(newSP);
 					tempPortal = null;
 					System.out.println("Made portal link from " + aboveTrixel + " in " + getName() + " to " + newSP.toPortal.location + " in " + newSP.toPortal.lm.getName());
 				}
@@ -329,6 +323,7 @@ public class PlaceMaker{
 
 		DepthComparable something = findSomethingAtPoint(x,y);
 
+		System.out.println(something);
 		if (something == null)	return;
 
 		if (something instanceof TrixelFace){
@@ -600,13 +595,6 @@ public class PlaceMaker{
 	}
 
 	/**
-	 * updates trixel faces and the current rotation.
-	 */
-	private void updateFaces() {
-		updateRotation(0,0);
-	}
-
-	/**
 	 * Test method for generating random background objects.
 	 *
 	 */
@@ -703,5 +691,13 @@ public class PlaceMaker{
 		name = place.getName();
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
 		updateFaces();
+	}
+
+	public static Set<SimplePortal> getPortals() {
+		return portals;
+	}
+
+	public static void setPortals(Set<SimplePortal> portals) {
+		PlaceMaker.portals = portals;
 	}
 }
