@@ -89,7 +89,6 @@ public class MainMenu implements GraphicsPane, Animated{
 	 *Draws all of the elements of the menu on the screen
 	 * */
 	public void render(Graphics g){
-		//g.drawImage(backgroundImage, 0, 0,panel);
 		startMation.render(g);
 		//drawBackGroundImage(g);
 		MenuUtil.drawButtons(g,selectedButton,buttons,buttonNames);

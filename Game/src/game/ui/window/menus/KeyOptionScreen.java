@@ -12,14 +12,16 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+
+import javax.swing.JFrame;
 /**
  * @author Nicky van Hulst 300294657
  * */
 public class KeyOptionScreen implements GraphicsPane {
-	
+
 	//stores the keys of the game
 	private HashMap<String,Integer> keyMap;
-	
+
 	//the panel to draw on
 	private BlankPanel panel;
 
@@ -35,23 +37,24 @@ public class KeyOptionScreen implements GraphicsPane {
 	private int colHeight = 20; //could do calculation baesd on size of screen and size of key map
 	private int startX = (GameWindow.FRAME_WIDTH/2)- (tableWidth/2);
 	private int startY = 50;
-	
-	//the row the mouse is on 
+
+	//the row the mouse is on
 	private int mouseOnRow = -1;
-	
+
 	//if the user has clicked on a valid row
 	private boolean selectedRow;
-	
+
 	//the currently selected key
 	private String keySelected;
-	
-	//error string 
+
+	//error string
 	private String errorMessege;
-	
+
 	//the background animation
 	private StarMation starMation;
-	
-	
+
+
+
 	/**
 	 * Constructor for the key option screen
 	 * */
@@ -64,7 +67,7 @@ public class KeyOptionScreen implements GraphicsPane {
 		this.buttonNames = new String[numbOfButtons];
 		this.panel = panel;
 		this.errorMessege = "";
-		
+
 		setupButtons();
 	}
 
@@ -107,7 +110,7 @@ public class KeyOptionScreen implements GraphicsPane {
 		}
 	}
 
-	
+
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		//the mouse is currently on a row
@@ -119,7 +122,7 @@ public class KeyOptionScreen implements GraphicsPane {
 		}
 	}
 
-	
+
 	@Override
 	public void keyPressed(String keyEvent) {
 		//check if escape is pressed
@@ -150,7 +153,7 @@ public class KeyOptionScreen implements GraphicsPane {
 		}
 	}
 
-	
+
 	/**
 	 * Draws the key table onto the graphics object
 	 * @return

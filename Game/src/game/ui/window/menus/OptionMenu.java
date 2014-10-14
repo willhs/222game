@@ -1,25 +1,35 @@
 package game.ui.window.menus;
 
 import game.ui.window.BlankPanel;
+import game.ui.window.GameScreen;
 import game.ui.window.GameWindow;
 import game.ui.window.GraphicsPane;
 import game.ui.window.StarMation;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.*;
+
+import javax.swing.JFrame;
+
+import com.sun.org.apache.bcel.internal.generic.Select;
 
 /**
  * @author Nicky van Hulst 300294657
  * */
 public class OptionMenu implements GraphicsPane, Animated {
-	
-	//panel to draw on 
+
+	//panel to draw on
 	private BlankPanel panel;
-	
+
 	//number of buttons to be created
 	private int numbOfButtons;
-	
+
 	//arrays for buttons and button names
 	private Rectangle[] buttons;
 	private String[] buttonNames;
@@ -40,7 +50,15 @@ public class OptionMenu implements GraphicsPane, Animated {
 	private int speedIncrease = 1;
 	private StarMation starMation;
 
-	
+	//radio button fields
+	Ellipse2D.Double radio1;
+	Ellipse2D.Double radio2;
+	String radio1Label;
+	String radio2Label;
+
+	private int radioSelected = 0;
+
+
 	/**
 	 * Constructor for the optionMenu
 	 * */
@@ -53,6 +71,7 @@ public class OptionMenu implements GraphicsPane, Animated {
 		this.buttonNames = new String[numbOfButtons];
 
 		setupButtons();
+		setUpResolution();
 	}
 
 
@@ -74,10 +93,34 @@ public class OptionMenu implements GraphicsPane, Animated {
 		buttonNames[1] = "Key Bindings";
 	}
 
+	public void setUpResolution(){
+		int x = GameWindow.FRAME_WIDTH/2;
+		int y = 100;
+
+		int w = 10;
+		int h = 10;
+
+		radio1 = new Ellipse2D.Double(x, y, w, h);
+		radio2 = new Ellipse2D.Double(x, y+w+5, w, h);
+
+		//word out string metrics
+
+
+		radio1Label = "1360 x 765 ";
+		radio2Label = "1024 x 768 ";
+
+	}
+
 
 	@Override
 	public void render(Graphics g){
-		//g.drawImage(backgroundImage, 0, 0,panel);
+		Graphics2D g2d = (Graphics2D)g;
+		updateRes();
+		//set my font
+		Font oldFont = g.getFont();
+		Font myFont = new Font("Tunga",0,20);
+		g.setFont(myFont);
+
 		starMation.render(g);
 		if(currentMenu != null){
 			currentMenu.render(g);
@@ -92,7 +135,48 @@ public class OptionMenu implements GraphicsPane, Animated {
 		}
 
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
-		g.drawString("OPTIONS", GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2);
+
+		//radio button
+		int stringWidth = g.getFontMetrics(myFont).stringWidth(radio1Label);
+		int stringX =  (GameWindow.FRAME_WIDTH/2)- (stringWidth/2);
+
+		int r1y = 40;
+		int r2y = 70;
+
+		g.setColor(Color.white);
+		g.drawString(radio1Label, stringX, 50);
+		g.drawString(radio2Label, stringX, 80);
+
+		radio1.x = stringX+stringWidth + 10;
+		radio2.x = stringX+stringWidth + 10;
+
+		radio1.y = r1y;
+		radio2.y = r2y;
+
+		g.setColor(Color.white);
+		g2d.draw(radio1);
+		g2d.draw(radio2);
+
+		g.setColor(Color.red);
+		if(radioSelected == 1){
+			g2d.fill(radio1);
+		}
+		else if(radioSelected == 2){
+			g2d.fill(radio2);
+		}
+
+		g.setFont(oldFont);
+	}
+
+	public void updateRes(){
+		if(radioSelected == 1){
+			System.out.println("Radio 1");
+			panel.setPreferredSize(new Dimension(1360, 765));//projector 1
+		}
+		else if(radioSelected == 2){
+			System.out.println("Radio 2");
+			panel.setPreferredSize(new Dimension(1024, 768));//projector 2
+		}
 	}
 
 	@Override
@@ -127,9 +211,15 @@ public class OptionMenu implements GraphicsPane, Animated {
 		else if(selectedButton == 1){//key binding menu button
 			currentMenu = new KeyOptionScreen(panel);
 		}
+		else if(radio1.contains(e.getX(),e.getY())){
+			radioSelected = 1;
+		}
+		else if(radio2.contains(e.getX(),e.getY())){
+			radioSelected = 2;
+		}
 	}
 
-	
+
 	@Override
 	public void keyPressed(String keyEvent) {
 		if(currentMenu != null){
