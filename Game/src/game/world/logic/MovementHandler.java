@@ -35,21 +35,27 @@ public class MovementHandler {
 		if (player == null || to == null || place == null){
 			return false;
 		}
+		// Makes sure the player is in the place.
 		if (!place.contains(to)) {
 			return false;
 		}
+		// makes sure the players bounding box is in the place.
 		if (!place.contains(to, player.getBoundingBox())) {
 			return false;
 		}
+		// checks if there are any item collitions.
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
 			return false;
 		}
+		// checks if there are player collitions
 		if (checkPlayerCollision(player, to, place.getPlayers())) {
 			return false;
 		}
+		// checks if there are enviromental oliitions.
 		if (checkEnviromentalCollision(player, to, place.getEnviroment())){
 			return false;
 		}
+		// checks for eixt coliitions
 		if (checkExitCollision(player, to, place,  place.getExits())){
 			return false;
 		}

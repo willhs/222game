@@ -1,18 +1,13 @@
 package game.world.logic;
 
 import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
-import game.world.dimensions.Vector3D;
-import game.world.model.Enviroment;
-import game.world.model.Exit;
-import game.world.model.Item;
-import game.world.model.Place;
-import game.world.model.Player;
+import game.world.dimensions.*;
+import game.world.model.*;
 
 import java.util.Iterator;
 
 /**
- * 
+ *  Handles item interaction.
  * @author Shane Brewer 300289850
  * 
  */
@@ -32,19 +27,24 @@ public class ItemInteractionHandler {
 	 * @return - true if and only if the the player now has the item.
 	 */
 	public static boolean pickupItem(Player player, Item item, Place place) {
+		// None of the paramters should be null
 		if (player == null || item == null || place == null) {
 			return false;
 		}
-		if (!checkPlayers(place, player) && !checkItems(place, item)) {
+		// the place must contain both the player and the item.
+		if (!place.containsPlayer(player) && !place.containsItem(item)) {
 			return false;
 		}
+		// the player must be withing range to pick up an item.
 		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
 				item.getPosition(), item.getBoundingBox())) {
 			return false;
 		}
+		// item must be able to be picked up.
 		if (!item.canPickUp()) {
 			return false;
 		}
+		// removes it from place and adds it to the player.
 		place.removeItem(item);
 		item.setPosition(new Point3D(0, 0, 0));
 		player.addItem(item);
@@ -79,44 +79,6 @@ public class ItemInteractionHandler {
 	}
 
 	/**
-	 * Checks that the player is in the room
-	 * 
-	 * @param place
-	 *            - place player should be in.
-	 * @param player
-	 *            - player to check.
-	 * @return - true only if player is in the room.
-	 */
-	protected static boolean checkPlayers(Place place, Player player) {
-		Iterator<Player> players = place.getPlayers();
-		while (players.hasNext()) {
-			if (players.next().equals(player)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Checks that the item is in the room.
-	 * 
-	 * @param place
-	 *            -place that the item should be.
-	 * @param item
-	 *            - item that should be in the room.
-	 * @return - true only if the item is in the room.
-	 */
-	protected static boolean checkItems(Place place, Item item) {
-		Iterator<Item> items = place.getItems();
-		while (items.hasNext()) {
-			if (items.next().equals(item)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Handles the droping of items in the game world.
 	 * 
 	 * @param player
@@ -128,21 +90,29 @@ public class ItemInteractionHandler {
 	 * @return - true only if the item was droped propperly.
 	 */
 	public static boolean dropItem(Player player, Item item, Place place) {
+		// None of the values should be null.
 		if (player == null || item == null || place == null) {
 			return false;
 		}
-		if (!checkPlayers(place, player)) {
+		// Player must be in the place to drop the item there.
+		if (!place.containsPlayer(player)) {
 			return false;
 		}
+		// Check if the item can be droped.
 		if (!item.canDrop()) {
 			return false;
 		}
+		// Checks both that the item was in the inventory and is able to be remove.
 		if (!player.getInventory().removeItem(item)) {
 			return false;
 		}
+		// checks if it can fina the item a drop point if it can
+		// then it will set that items point.
 		if (!setItemDropPoint(player, item, place)) {
+			player.addItem(item);
 			return false;
 		}
+		// at this point the item can be added to the game world.
 		place.addItem(item);
 		return true;
 	}
@@ -164,15 +134,19 @@ public class ItemInteractionHandler {
 				player.getPosition(place));
 		Rectangle3D itemRect = item.getBoundingBox().apply3Dpoint(
 				item.getPosition());
+		// Sets up the valsues for the x and z and xMax and yMax.
 		int x = (int) (rect.x - PLAYER_ITEM_DISTANCE - itemRect.width / 2);
 		int z = (int) (rect.z - PLAYER_ITEM_DISTANCE - itemRect.length / 2);
 		int maxX = (int) (rect.x + rect.width + PLAYER_ITEM_DISTANCE + itemRect.width / 2);
 		int maxZ = (int) (rect.z + rect.length + PLAYER_ITEM_DISTANCE + itemRect.length / 2);
 		for (; x < maxX; x++) {
 			for (; z < maxZ; z++) {
+				//make a poistion for the item to be droped 
 				Point3D position = new Point3D(x, 0, z);
+				// Makes a check if te tiem can be droped there.
 				if (canItemBeHere(item, position, place)
 						&& place.contains(position, item.getBoundingBox())) {
+					//if it can then this is the items new position.
 					item.setPosition(position);
 					return true;
 				}
