@@ -299,7 +299,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		String imageName = "Char"+characterSelected;
 		player.setImageName(imageName);
 
-		Client client = new Client(panel);
+		Client client = new Client(true);
 		client.addPlayerToWorld(player);
 		panel.setMenu(new GameScreen(panel, client,player));
 	}

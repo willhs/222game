@@ -12,13 +12,12 @@ import java.awt.Component;
 public class Client extends Thread{
 	private static Server server;//This client may instantiate a server if single player mode is chosen
 	private static ClientWorld world = null;
-	private static boolean singlePlayerMode = false;
+	private static boolean singlePlayerMode;
 
 	//The two client IO streams
 	private static InputStream inStream;
 	private static OutputStream outStream;
 
-	private static Component frame;//The frame to call repaint() on
 	private static Player player;//The player to enter the game, given by the caller
 
 	//Keep the last command so we can ignore duplicate commands
@@ -34,16 +33,52 @@ public class Client extends Thread{
 	//Time the world was last ticked
 	private static long timeAtLastTick = 0L;
 
-	/*
-	 * Instantiate Client in multiplayer mode, join a remote game
-	 * @param player The player joining the game
-	 * @param host The hostname of the server
-	 * @param port Port of game on server
-	 * @param frame Frame to call repaint() on within gameloop
+	//Last connection error if there was one.
+	private static String connectError = "";
+
+	/**
+	 * Instantiate Client 
+	 * @param singlePlayerMode flag for single player mode
 	 */
-	public Client(String host, int port, Component frame){
-		this.frame = frame;
+	public Client(boolean singlePlayerMode){
 		this.player = player;
+		this.singlePlayerMode = singlePlayerMode;
+
+		if(singlePlayerMode){
+			try{
+				//Server's io streams
+				PipedInputStream sIn = new PipedInputStream();
+				PipedOutputStream sOut = new PipedOutputStream();
+
+				//Client's io streams, with links to the servers (other side of the links are created automatically)
+				inStream = new PipedInputStream(sOut);
+				outStream = new PipedOutputStream(sIn);
+
+				//Create new server with the server's streams
+				server = new Server(sIn, sOut, 0);
+				server.initialiseWorld();//Initialise the static world before starting
+				server.start();
+
+				start();
+				waitForConnection();
+			}catch(IOException e){
+				System.err.println(e);
+			}
+		}
+	}
+
+	/**
+	 * Connect to a server if we're in multiplayer mode. Return true for success, false otherwise
+	 * @param host The string hostname of the server to connect to.
+	 * @param port Port number the game is on.
+	 * @return true if connection was successful, false otherwise.
+	 */
+	public boolean connect(String host, int port){
+		if(singlePlayerMode){
+			System.err.println("You tried to connect to a multiplayer game in single player mode!");
+			return false;
+		}
+
 		//This is multiplayer mode, so we assume a server is already active at hort/port
 		try{
 			//Make socket
@@ -52,47 +87,35 @@ public class Client extends Thread{
 			//Get the streams
 			inStream = sock.getInputStream();
 			outStream = sock.getOutputStream();
-
-			start();
-			waitForConnection();
+		}catch(UnknownHostException e){
+			connectError = "Unknown host";
+			return false;
+		}catch(ConnectException e){
+			connectError = "Connection rejected - Server down or incorrect port";
+			return false;
 		}catch(IOException e){
-			System.err.println(e);
+			System.out.println("Failed to connected.  Exception was: " + e);
+			connectError = "Unknown error";
+			return false;
 		}
+
+		start();
+		waitForConnection();
+
+		connectError = "";
+
+		return true;
 	}
 
-	/*
-	 * Instantiate the client in single player mode, creating a faux server
-	 * @param player Player to put in the game when created
-	 * @param frame Frame to call repaint() on within gameloop
+	/**
+	 * Get the error from the last connection attempt, if there was one
+	 * @return The error from the last connection attempt;
 	 */
-	public Client(Component frame){
-		this.frame = frame;
-		this.player = player;
-		singlePlayerMode = true;
-		//This is single player, so we instantiate a server here then use local io streams
-		//for communication between us and it.
-		try{
-			//Server's io streams
-			PipedInputStream sIn = new PipedInputStream();
-			PipedOutputStream sOut = new PipedOutputStream();
-
-			//Client's io streams, with links to the servers (other side of the links are created automatically)
-			inStream = new PipedInputStream(sOut);
-			outStream = new PipedOutputStream(sIn);
-
-			//Create new server with the server's streams
-			server = new Server(sIn, sOut, 0);
-			server.initialiseWorld();//Initialise the static world before starting
-			server.start();
-
-			start();
-			waitForConnection();
-		}catch(IOException e){
-			System.err.println(e);
-		}
+	public String getConnectionError(){
+		return connectError;
 	}
 
-	/*
+	/**
 	 * Move a local player by adding the move (left, right etc) to the
 	 * key code queue to be processed and sent to the server
 	 * @param move The move to be sent
@@ -107,7 +130,7 @@ public class Client extends Thread{
 		}
 	}
 
-	/*
+	/**
 	 * Wait until connection has been established and world has been received.
 	 */
 	public static void waitForConnection(){
@@ -118,7 +141,7 @@ public class Client extends Thread{
 		}
 	}
 
-	/*
+	/**
 	 * Create the command string for adding a player to the server and send it.
 	 * Raise an error if the world says there's already a player with that name.
 	 * @param p Player to add to the world
@@ -135,7 +158,7 @@ public class Client extends Thread{
 		return true;
 	}
 
-	/*
+	/**
 	 * Tell the Server and the Client thread to close the connection
 	 */
 	public void quit(){
@@ -147,8 +170,9 @@ public class Client extends Thread{
 		}
 	}
 
-	/*
+	/**
 	 * Print debug message if printing is enabled
+	 * @param msg Message to be printed
 	 */
 	public static void print(String msg){
 		if(printing){
@@ -156,7 +180,7 @@ public class Client extends Thread{
 		}
 	}
 
-	/*
+	/**
 	 * The full client loop.  Creates connections to server, then runs the main loop which
 	 * reads one item from the incoming queue and processes it, then sends one item
 	 * from the outgoing queue, then re-renders the game.
@@ -214,7 +238,6 @@ public class Client extends Thread{
 					world.tick();
 				}
 
-				frame.repaint();//Repaint the game
 				Thread.sleep(10);
 			}
 
@@ -238,9 +261,10 @@ public class Client extends Thread{
 	public static void main(String[] args){
 		GameWindow gw = new GameWindow();
 		if(args.length == 3){
-			new Client(args[0], Integer.parseInt(args[1]), gw).start();
+			Client client = new Client(false);
+			client.connect(args[0], Integer.parseInt(args[1]));
 		}else if(args.length == 0){
-			new Client(gw).start();
+			new Client(true);
 		}else{
 			System.err.println("Usage: java Client [host] [port] playername    [or nothing for single player]");
 			System.exit(1);
