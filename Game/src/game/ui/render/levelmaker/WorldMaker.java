@@ -256,7 +256,7 @@ public class WorldMaker extends JPanel{
 		return parseWorld(worldFile);
 	}
 
-	private World parseWorld(File worldFile){
+	public static World parseWorld(File worldFile){
 		World world = null;
 		try{
 			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(worldFile)));
@@ -297,6 +297,7 @@ public class WorldMaker extends JPanel{
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
 		File fileToSave;
+		List<Portal> portals = new ArrayList<Portal>();
 
 		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
 			fileToSave =  chooser.getSelectedFile();
@@ -323,6 +324,7 @@ public class WorldMaker extends JPanel{
 			Portal portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
 			p.addExit(portal);
+			portals.add(portal);
 		}
 
 		List<Place> placesList = new ArrayList<Place>();
@@ -330,8 +332,13 @@ public class WorldMaker extends JPanel{
 			placesList.add(m.getValue());
 		}
 
+		World newWorld = new World(placesList);
+		for(Portal p : portals){
+			newWorld.addExit(p);
+		}
+
 		try{
-			oos.writeObject(new World(placesList));
+			oos.writeObject(newWorld);
 			oos.close();
 		}catch(IOException e){
 			System.err.println("Writing failed.  Exception was : " + e);
