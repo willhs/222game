@@ -2,6 +2,7 @@ package nw;
 import game.world.dimensions.*;
 import game.world.model.*;
 import game.world.logic.*;
+import game.ui.render.levelmaker.WorldMaker;
 
 import java.awt.Polygon;
 import java.net.*;
@@ -9,6 +10,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.awt.Polygon;
+import java.util.Iterator;
 
 class QuitException extends Exception{
 	public QuitException(){super();}
@@ -43,6 +46,18 @@ public class Server extends Thread{
 	 * On the first day, God called this function.
 	 */
 	public static void initialiseWorld(){
+		File f = new File("world");
+		if(f.exists() && !f.isDirectory()){
+			world = WorldMaker.parseWorld(f);
+			Iterator<Place> i =  world.getPlaces();
+			Room p = (Room)i.next();
+			Polygon floor = p.floor;
+			System.out.println(p.getFloor());
+			System.out.println(floor);
+			System.out.println(floor.getBounds());
+			return;
+		}
+
 		int[] xpoints = new int[] { 200, 800, 800, 200 };
 		int[] ypoints = new int[] { 200, 200, 800, 800 };
 		Polygon firstFloor = new Polygon(xpoints, ypoints, xpoints.length);
