@@ -3,7 +3,7 @@ import java.io.Serializable;
 
 import java.io.Serializable;
 /**
- * @author pondy & will A NOW IMMUTABLE representation of a 3d point
+ * @author pondy & will A NOW IMMUTABLE representation of a 3d point and Shane Brewer 300289850
  */
 public class Point3D implements Serializable{
 	// ---- PONDY'S COMMENTS:
@@ -103,6 +103,10 @@ public class Point3D implements Serializable{
 		return new Vector3D(one.x - two.x, one.y - two.y, one.z - two.z);
 	}
 
+
+	/**
+	 * Made by Shane Brewer 300289850
+	 */
 	public static Point3D addDirection(Point3D currentPlace, Vector3D direction) {
 		return new Point3D(currentPlace.x + direction.x, currentPlace.y
 				+ direction.y, currentPlace.z + direction.z);

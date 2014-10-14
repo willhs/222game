@@ -48,10 +48,16 @@ public class Inventory implements Iterable<Item>, Serializable{
 		return items.iterator();
 	}
 	
+	/**
+	 * returns true if the item isin the inventory.
+	 */
 	public boolean isIn(Item item){
 		return items.contains(item);
 	}
 	
+	/**
+	 * return true if the inventory is empty.
+	 */
 	public boolean isEmpty(){
 		return items.isEmpty();
 	}
