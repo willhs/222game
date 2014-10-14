@@ -43,9 +43,9 @@ public class MovementHandler {
 		if (player == null || to == null || place == null){
 			return false;
 		}
-		if (!place.contains(to, player.getBoundingBox())) {
-			return false;
-		}
+		//if (!place.contains(to, player.getBoundingBox())) {
+		//	return false;
+		//}
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
 			return false;
 		}

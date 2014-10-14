@@ -20,10 +20,11 @@ import java.util.Map;
  */
 public class World extends ClientWorld implements Serializable{
 
+
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1031554607357849018L;
 	private Place startPlace;
 	// both of these once set should not change.
 	private final List<Player> players;
@@ -61,7 +62,7 @@ public class World extends ClientWorld implements Serializable{
 					}
 				}
 			}
-			
+
 		}
 
 	}
@@ -141,6 +142,17 @@ public class World extends ClientWorld implements Serializable{
 		places.remove(place);
 		places.add(place);
 		allPlaces.put(place.getName(), place);
+		Iterator<Item> it = place.getItems();
+		while (it.hasNext()){
+			Item i = it.next();
+			allItems.put(i.getName(), i);
+			if (i instanceof Container){
+				Container con = (Container)i;
+				for (Item consItem: con.getContents()){
+					allItems.put(consItem.getName(), consItem);
+				}
+			}
+		}
 	}
 
 	@Override
