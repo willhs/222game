@@ -21,7 +21,7 @@ public class Cube extends Enviroment{
 	 */
 	private Trixition trixition;
 	private Color colour;
-    public boolean canCollidable;
+    public boolean isCollidable;
 
     public Cube(String name, Point3D position, boolean isCollidable) {
         super(name, position, new Rectangle3D(20, 20, 20));

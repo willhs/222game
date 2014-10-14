@@ -1,12 +1,7 @@
 package game.world.logic;
 
-import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
-import game.world.model.Enviroment;
-import game.world.model.Exit;
-import game.world.model.Item;
-import game.world.model.Place;
-import game.world.model.Player;
+import game.world.dimensions.*;
+import game.world.model.*;
 
 import java.util.Iterator;
 
@@ -37,15 +32,15 @@ public class MovementHandler {
 	 */
 	public static boolean playerMove(Player player, Point3D to, Place place,
 			Item... toIgnore) {
-		if (!place.contains(to)) {
-			return false;
-		}
 		if (player == null || to == null || place == null){
 			return false;
 		}
-		//if (!place.contains(to, player.getBoundingBox())) {
-		//	return false;
-		//}
+		if (!place.contains(to)) {
+			return false;
+		}
+		if (!place.contains(to, player.getBoundingBox())) {
+			return false;
+		}
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
 			return false;
 		}
@@ -239,7 +234,6 @@ public class MovementHandler {
 	 */
 	private static boolean setPlayerExitPosition(Player player, Exit exit, Place place){
 		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
-		System.out.println("Should make it here.");
 		Rectangle3D playerRect = player.getBoundingBox();
 		float x = (float)(rect.x-EXITING_DISTANCE);
 		float z = (int)(rect.z-EXITING_DISTANCE);
@@ -248,7 +242,6 @@ public class MovementHandler {
 		for (;x < maxX; x+=0.1f){
 			for (;z < maxZ; z+=0.1f){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
-					System.out.println("Should make it here.");
 					return true;
 				}
 			}

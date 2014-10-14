@@ -3,9 +3,7 @@ package test.world.logic;
 import static org.junit.Assert.fail;
 import game.world.dimensions.Point3D;
 import game.world.logic.MovementHandler;
-import game.world.model.Place;
-import game.world.model.Player;
-import game.world.model.World;
+import game.world.model.*;
 
 import org.junit.Test;
 
