@@ -44,7 +44,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 	private Rectangle character3;
 
 	//the character that is selected
-	int characterSelected = -1;
+	int characterSelected = 1;
 
 	private int startX = 20;
 	private int startY = 20;
