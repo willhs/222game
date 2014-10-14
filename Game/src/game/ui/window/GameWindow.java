@@ -20,8 +20,8 @@ public class GameWindow extends JFrame{
 
 	//size fields
 	private static final int WINDOW_SIZE = 85;
-	public static final int FRAME_HEIGHT = 9*WINDOW_SIZE;//WINDOW_SIZE*9;
-	public static final int FRAME_WIDTH = 16*WINDOW_SIZE;//WINDOW_SIZE*16;
+	public static int FRAME_HEIGHT = 9*WINDOW_SIZE;//WINDOW_SIZE*9;
+	public static int FRAME_WIDTH = 16*WINDOW_SIZE;//WINDOW_SIZE*16;
 
 	//768
 	//1400
@@ -81,6 +81,14 @@ public class GameWindow extends JFrame{
 	 * */
 	public static void setRoom(Room currentRoom){
 		GameWindow.currentRoom = currentRoom;
+	}
+
+	public static void setWidth(int width){
+		FRAME_WIDTH = width;
+	}
+
+	public static void setHeight(int height){
+		FRAME_HEIGHT = height;
 	}
 
 	/**

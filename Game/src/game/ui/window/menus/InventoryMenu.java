@@ -315,6 +315,7 @@ public class InventoryMenu implements GraphicsPane {
 		}
 	}
 
+
 	/**
 	 * The pop up menu for items
 	 * */
@@ -341,8 +342,14 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
-		origClickX = e.getX();
-		origClickY = e.getY();
+		if(selectedGrid == -1){
+			origClickX = gridX+50;
+			origClickY = gridY+50;
+		}
+		else{
+			origClickX = e.getX();
+			origClickY = e.getY();
+		}
 
 		if(selectedGrid != -1 && selectedItem !=null && items[selectedGrid] == null){
 			items[selectedGrid] = selectedItem;
@@ -352,6 +359,7 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void keyPressed(String keyEvent) {
+		prevTime = System.currentTimeMillis();
 		if(keyEvent.equals("escape") || keyEvent.equals("inventory")){
 			game.setMenu(null);//inventory menu no longer to be required to render so set to null in the gameScreen
 		}
@@ -360,8 +368,6 @@ public class InventoryMenu implements GraphicsPane {
 
 	@Override
 	public void handleMousePressed(MouseEvent e) {
-		origClickX = e.getX();
-		origClickY = e.getY();
 
 		//first check if there is is a selected image
 		if(selectedItem != null){
