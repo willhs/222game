@@ -143,4 +143,8 @@ public class Vector3D implements Serializable{
 		return mag;
 	}
 
+	public Vector3D negate() {
+		return new Vector3D(-x,-y,-z);
+	}
+
 }

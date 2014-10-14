@@ -66,6 +66,7 @@ public class Renderer {
 	 * @param rotateAmount
 	 */
 	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount){
+		long startTime = System.currentTimeMillis();
 
 		Graphics2D g2 = (Graphics2D) g;
 		// enable anti-aliasing
@@ -127,7 +128,7 @@ public class Renderer {
 
 		// draw everything
 		drawRenderables(renderables, g2);
-
+		//System.out.println(System.currentTimeMillis() - startTime);
 	}
 
 
@@ -199,18 +200,13 @@ public class Renderer {
 		while (drawables.hasNext()){
 			Drawable drawable = drawables.next();
 
-			System.out.println("drawable name: "+drawable.getName());
-
 			// drawable is an image
 			GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
 					drawable.getPosition(place),
 					drawable.getBoundingBox());
 
-
 			image.transform(transform);
 			renderables.add(image);
-
-			//System.out.println("drawable position: "+image.getPosition());
 
 			// if it's player, put name above head
 			if (drawable instanceof Player){

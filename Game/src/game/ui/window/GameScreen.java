@@ -28,6 +28,7 @@ import nw.Client;
  * */
 public class GameScreen implements GraphicsPane  {
 
+
 	//the menu drawn on top on the game screen
 	private GraphicsPane currentMenu;
 	private BlankPanel panel;
@@ -53,6 +54,13 @@ public class GameScreen implements GraphicsPane  {
 	//world fields
 	private Vector3D rotateVector;
 	private Client client;
+
+	//will's rotation fields
+	private static final float ROTATE_TICK = (float)(Math.PI/32); // how much to rotate by (doesn't quite work currently)
+	private static final float START_VEL = (float)(Math.PI/20); // starting rotate velocity
+	private static final float SLOW_DOWN_SPEED = 0.03f; // how fast the rotation slows down
+	private Vector3D rotateVelocity = new Vector3D(0,0,0); // how fast to rotate
+	private Vector3D nextRotation = new Vector3D(0,0,0); // the next angle to rotate to. (doesn't quite work).
 
 	//the animation of stars
 	private StarMation starMation;
@@ -143,6 +151,7 @@ public class GameScreen implements GraphicsPane  {
 		Graphics2D g2d = (Graphics2D)g;
 
 		popUpInventory.updateInventory();
+		updateRotation();
 
 		//render the star animation
 		starMation.render(g);
@@ -165,6 +174,27 @@ public class GameScreen implements GraphicsPane  {
 
 		//draws the payers remaining oxygen
 		drawOxygen(g2d);
+	}
+
+
+	/**
+	 * Updates the current rotation
+	 * @author hardwiwill
+	 */
+	private void updateRotation() {
+
+		// if going past stop point, stop all movement.
+		if (rotateVelocity.mag < 0.01){
+			rotateVelocity = new Vector3D(0,0,0);
+			return;
+		}
+		Vector3D rotateAcceleration = nextRotation.minus(rotateVector).makeScaled(SLOW_DOWN_SPEED);
+		rotateVelocity = rotateVelocity.plus(rotateAcceleration);
+		rotateVector = rotateVector.plus(rotateVelocity);
+
+		/*System.out.println("acc	"+rotateAcceleration);
+		System.out.println("vel	"+rotateVelocity);
+		System.out.println("nex	"+nextRotation);*/
 	}
 
 
@@ -267,10 +297,15 @@ public class GameScreen implements GraphicsPane  {
 			selectedButton = Integer.parseInt(keyEvent)-1;
 		}
 		else if(keyEvent.equals("rotate right")){
-			rotateVector =  rotateVector.plus( new Vector3D(0f , 0.05f , 0f));
+			//rotateVector =  rotateVector.plus( new Vector3D(0f , 0.05f , 0f));
+			nextRotation = rotateVector.plus(new Vector3D(0, ROTATE_TICK, 0));
+			rotateVelocity = new Vector3D(0,START_VEL,0);
+
 		}
 		else if(keyEvent.equals("rotate left")){
-			rotateVector =  rotateVector.plus( new Vector3D(0f , -0.05f , 0f));
+			//rotateVector =  rotateVector.plus( new Vector3D(0f , 0.05f , 0f));
+			nextRotation = rotateVector.minus(new Vector3D(0, ROTATE_TICK, 0));
+			rotateVelocity = new Vector3D(0,-START_VEL,0);
 		}
 
 		//set the item selected
