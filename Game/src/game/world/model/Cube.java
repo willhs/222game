@@ -21,6 +21,12 @@ public class Cube extends Enviroment{
 	 */
 	private Trixition trixition;
 	private Color colour;
+    public boolean canCollidable;
+
+    public Cube(String name, Point3D position, boolean isCollidable) {
+        super(name, position, new Rectangle3D(20, 20, 20));
+        this.isCollidable = isCollidable;
+    }
 
     public Cube(String name, Point3D position) {
         super(name, position, new Rectangle3D(20, 20, 20));
@@ -58,4 +64,8 @@ public class Cube extends Enviroment{
 	public Color getColor(){
 		return colour;
 	}
+
+    public boolean isCollidable(){
+        return isCollidable;
+    }
 }

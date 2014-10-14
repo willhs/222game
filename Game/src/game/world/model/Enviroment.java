@@ -35,4 +35,7 @@ public  abstract class Enviroment implements Serializable, Drawable{
 		return boundingBox;
 	}
 
+	public boolean isCollidable(){
+		return true;
+	}
 }
