@@ -229,17 +229,6 @@ public class WorldMaker extends JPanel{
 				// displays current colour
 				g.setColor(levelMaker.getTrixelColour());
 				g.fillRect(0, 0, 20, 20);
-
-				// display light direction
-				Vector3D lightDir = Renderer.lightDir;
-				Point origin = new Point(200,200);
-				int lineScalar = 40;
-				Point p2 = new Point((int)(origin.x+lightDir.x*lineScalar), origin.y+(int)(-lightDir.y*lineScalar));
-				int maxOval = 40;
-				int ovalSize = (int)(((lightDir.z+1)/2)*maxOval);
-
-				g.drawLine(origin.x, origin.y, p2.x, p2.y);
-				g.drawOval(p2.x-ovalSize/2, p2.y-ovalSize/2, ovalSize, ovalSize);
 			}
 		};
 

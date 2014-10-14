@@ -270,16 +270,15 @@ public class PlaceMaker{
 		TrixelFace face = getTrixelFaceAt(x, y);
 		if (face == null)	return;
 
-		Trixel trixel = face.getParentTrixel();
+		Trixel clickedTrixel = face.getParentTrixel();
 
 		// make a new thing next to this trixel
-		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(trixel, trixelSize);
+		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(clickedTrixel, trixelSize);
 		//Point3D randomAboveTrixel = aboveTrixel.getTranslatedPoint(new Vector3D((float)Math.random()*Trixel.SIZE, 0, (float)Math.random()*Trixel.SIZE));
 
 		if (drawMode == TRIXEL_MODE){
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
-		//	drawables.addAll(makeVinesAroundTrixel(newTrixel));
 		}
 		if (drawMode == PLANT_MODE){
 			drawables.add(new Plant("Plant", aboveTrixel));
@@ -413,6 +412,36 @@ public class PlaceMaker{
 		return lastTransform;
 	}
 
+	/**
+	 * Makes a place object using the information in
+	 * @return
+	 */
+	public Place toPlace(){
+
+		List<Item> items = new ArrayList<Item>();
+		List<Enviroment> environment = new ArrayList<Enviroment>();
+
+		for (Drawable drawable : drawables){
+			if (drawable instanceof Item){
+				items.add((Item) drawable);
+			}
+			if (drawable instanceof Enviroment){
+				environment.add((Enviroment) drawable);
+			}
+		}
+
+		for (Trixel floorTrixel : floorTrixels){
+			environment.add(new Cube(Cube.FLOOR, floorTrixel, trixelSize, false));
+		}
+		for (Trixel createdTrixel : createdTrixels){
+			environment.add(new Cube(Cube.NON_FLOOR, createdTrixel, trixelSize, true));
+		}
+
+		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
+
+		return new Room(items, environment, floorPolygon, getName());
+	}
+
 	private List<Vine> makeVinesAroundTrixel(Trixel newTrixel) {
 		float minHeight = trixelSize/2;
 		float maxHeight = trixelSize;
@@ -452,19 +481,6 @@ public class PlaceMaker{
 		return vines;
 	}
 
-
-	private final static String SEPARATOR = "\t";
-
-	public static void failParsing(String reason){
-		System.err.println("************\nError reading place file\n***************");
-		System.err.println(reason);
-	}
-
-	public static void ensureMatch(String toMatch, String token){
-		if (!toMatch.equals(token)){
-			failParsing(toMatch + " didn't match: '"+token+"'");
-		}
-	}
 
 	/**
 	 * sets the colour of the next trixel
@@ -564,35 +580,7 @@ public class PlaceMaker{
 		drawables.clear();
 	}
 
-	/**
-	 * Makes a place object using the information in
-	 * @return
-	 */
-	public Place toPlace(){
 
-		List<Item> items = new ArrayList<Item>();
-		List<Enviroment> environment = new ArrayList<Enviroment>();
-
-		for (Drawable drawable : drawables){
-			if (drawable instanceof Item){
-				items.add((Item) drawable);
-			}
-			if (drawable instanceof Enviroment){
-				environment.add((Enviroment) drawable);
-			}
-		}
-
-		for (Trixel floorTrixel : floorTrixels){
-			//environment.add(new Cube("floor", floorTrixel, trixelSize));
-		}
-		for (Trixel createdTrixel : createdTrixels){
-			environment.add(new Cube("non-floor", createdTrixel, trixelSize));
-		}
-
-		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
-
-		return new Room(items, environment, floorPolygon, getName());
-	}
 
 	/**
 	 * Test method for generating random background objects.

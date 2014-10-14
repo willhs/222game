@@ -34,7 +34,7 @@ public class GameScreen implements GraphicsPane  {
 
 	//list of key presses to pass on to the client
 	private ArrayList<String> releventQueKeypress;
-	
+
 	//a list of numbers for the inventory
 	private ArrayList<String> numblist;
 
@@ -59,10 +59,10 @@ public class GameScreen implements GraphicsPane  {
 
 	//the inventory menu
 	private InventoryMenu popUpInventory;
-	
+
 	//this clients player
 	private Player player;
-	
+
 	//the state of the game
 	private boolean gameOver;
 
@@ -79,12 +79,12 @@ public class GameScreen implements GraphicsPane  {
 		this.items = new Item[6];
 		this.player = player;
 		this.popUpInventory = new InventoryMenu(panel, this, player);
-		
+
 		popUpInventory.updateInventory();
 		rotateVector = new Vector3D(0f, 0f, 0f);
 		releventQueKeypress  = new ArrayList<String>();
 		numblist = new ArrayList<String>();
-		
+
 		//sets up the lists
 		createKeylist();
 		setUpInventoryBarButtons();
@@ -113,7 +113,7 @@ public class GameScreen implements GraphicsPane  {
 		}
 	}
 
-	
+
 	/**
 	 * Creates a list of the relevant key presses the client needs to
 	 * know about
@@ -150,7 +150,8 @@ public class GameScreen implements GraphicsPane  {
 
 		//render the game
 		if(GameWindow.currentRoom != null){
-			Renderer.renderPlace(g,GameWindow.currentRoom,rotateVector, player);
+			//Renderer.renderPlace(g, GameWindow.currentRoom, rotateVector, player);
+			Renderer.renderPlace(g, GameWindow.currentRoom, rotateVector);
 		}
 
 		//draws the selected inventory bar
@@ -165,20 +166,20 @@ public class GameScreen implements GraphicsPane  {
 		//draws the payers remaining oxygen
 		drawOxygen(g2d);
 	}
-	
-	
+
+
 	/**
 	 * Draws the oxygen tank and level on the game screen
 	 * */
 	private void drawOxygen(Graphics2D g){
-		
+
 		//gets the clients player air level
 		int airLevel = player.getAirLevel();
-		
+
 		//draw the air level
 		g.setColor(new Color(0,191,255));
 		g.fillRect(100, 50, airLevel*2, 50);
-		
+
 		//draw the tank
 		g.setColor(Color.red);
 		g.fill(new Arc2D.Double(75, 50, 50, 50, 90, 90, Arc2D.PIE));
@@ -187,43 +188,43 @@ public class GameScreen implements GraphicsPane  {
 		g.fill(new Arc2D.Double(75, 50, 50, 50, 180, 90, Arc2D.PIE));
 		g.setColor(Color.red);
 		g.drawRect(100, 50, 200, 50);
-		
+
 		//change the font
 		Font myFont = new Font("Tunga",0,20);
 		g.setFont(myFont);
 		g.setColor(Color.white);
-		
+
 		//draw the seconds remaining of the players air
 		g.drawString(airLevel+"", 100 + 100 - g.getFontMetrics(myFont).stringWidth(""+airLevel)/2, (int) ((50 + 50 - (g.getFontMetrics(myFont).getHeight()/2)))-3);
-		
+
 		//if the air level is below 0 the game is over
 		if(airLevel >=101)gameOver(g);
 	}
-	
-	
+
+
 	/**
-	 * Draws the game over screen and sets game over 
+	 * Draws the game over screen and sets game over
 	 * to true
 	 * */
 	public void gameOver(Graphics g){
 			Graphics2D g2d = (Graphics2D)g;
-			
+
 			//change font
 			Font myFont = new Font("Tunga",0,30);
 			g.setFont(myFont);
 			g.setColor(Color.BLACK);
-			
+
 			//draw background
 			g.fillRect(0, 0, GameWindow.FRAME_WIDTH, GameWindow.FRAME_WIDTH);
 			g.setColor(Color.white);
-			
+
 			//draw game over string
 			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
-			
+
 			//set game over to be true
 			gameOver = true;
 	}
-	
+
 	@Override
 	public void handleMouseMoved(MouseEvent e) {
 		if(currentMenu != null){
@@ -231,14 +232,14 @@ public class GameScreen implements GraphicsPane  {
 			return;
 		}
 	}
-	
+
 	@Override
 	public void handleMouseReleased(MouseEvent e) {
 		if(currentMenu != null){
 			currentMenu.handleMouseReleased(e);//pass the mouse movement onto the current menu
 		}
 	}
-	
+
 	@SuppressWarnings("static-access")
 	@Override
 	public void keyPressed(String keyEvent) {
@@ -275,7 +276,7 @@ public class GameScreen implements GraphicsPane  {
 		//set the item selected
 		updateSelectedItem();
 	}
-	
+
 
 	/**
 	 * Draws the inventory bar at the bottom of the game screen
@@ -413,7 +414,7 @@ public class GameScreen implements GraphicsPane  {
 	 * */
 	public void setMenu(GraphicsPane menu){this.currentMenu = menu;}
 
-	
+
 	/**
 	 * Returns the selected inventory button
 	 * */

@@ -61,59 +61,6 @@ public class Renderer {
 	 * Floor from the place is converted into trixels which are then drawn
 	 * All drawable objects from the place are drawn as images
 	 *
-	 * ------- SOON TO BE REPLACED/REWRITTEN
-	 *
-	 * @param g
-	 * @param place
-	 * @deprecated
-	 */
-	public static void renderPlace(Graphics g, Place place, Vector3D rotateAmount, Player currentPlayer){
-		resetColour(); //  TODO: replace this random colour implementation
-
-		Graphics2D g2 = (Graphics2D) g;
-		// enable anti-aliasing
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		// convert floor into trixels and add those to toDraw
-		Floor floor = place.getFloor();
-		Polygon floorPolygon = floorToVerticalPolygon(floor);
-		Point3D floorCentroid = getFloorCentroid(floor);
-		Point3D playerPos = currentPlayer.getPosition();
-		Point3D pivotPoint = floorCentroid;//new Point3D(playerPos.x, playerPos.y, playerPos.z);
-
-		Point3D SCREEN_CENTER = new Point3D(GameWindow.FRAME_WIDTH/2, GameWindow.FRAME_HEIGHT/2, 0);
-
-		Vector3D viewTranslation = STANDARD_VIEW_TRANSLATION.plus(new Vector3D(0,150,0));//playerPos.distanceTo(SCREEN_CENTER);
-
-		// all rotations and translations composed into one affine transform
-		Transform transform = makeTransform(
-				rotateAmount,
-				pivotPoint,
-				viewTranslation
-			);
-
-		// place all floorTrixels
-		int floorTrixelsY = -Trixel.DEFAULT_SIZE; // the y position of all floor trixels
-		List<Trixel> floorTrixels = TrixelUtil.polygon2DToTrixels(floorPolygon, Trixel.DEFAULT_SIZE, floorTrixelsY);
-
-		//all objects to be drawn (either trixels or 2d images) sorted in order of z (depth) component
-		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
-
-		// change light direction
-
-		// get everything ready to render
-		renderables.addAll(floorTrixelsToRenderables(floorTrixels.iterator(), Trixel.DEFAULT_SIZE, transform));
-		renderables.addAll(drawablesToRenderables(place.getDrawable(), transform, place));
-
-		flipYAxis(renderables);
-
-		// draw everything
-		drawRenderables(renderables, g2);
-
-	}
-
-	/**
-	 * To replace the above renderPlace method
 	 * @param g
 	 * @param place
 	 * @param rotateAmount
@@ -148,7 +95,14 @@ public class Renderer {
 		}
 
 		// get trixelSize (from any of the cubes)
-		int trixelSize = (int)place.getDrawable().next().getBoundingBox().height;
+		int trixelSize=Trixel.DEFAULT_SIZE;
+		for (Iterator<Drawable> drawablesIter = place.getDrawable(); drawablesIter.hasNext();){
+			Drawable drawable = drawablesIter.next();
+			if (drawable instanceof Cube){
+				trixelSize = (int)((Cube)drawable).getBoundingBox().height;
+				break;
+			}
+		}
 
 		Point3D floorCentroid = getFloorCentroid(place.getFloor());
 		Point3D pivotPoint = floorCentroid;
@@ -165,10 +119,9 @@ public class Renderer {
 		Queue<Renderable> renderables = new PriorityQueue<Renderable>(50, new DepthComparator());
 
 		// get everything ready to render
-
-		renderables.addAll(trixelsToRenderables(otherTrixels.iterator(), trixelSize, transform));
 		renderables.addAll(floorTrixelsToRenderables(floorTrixels.iterator(), Trixel.DEFAULT_SIZE, transform));
-		renderables.addAll(drawablesToRenderables(place.getDrawable(), transform, place));
+		renderables.addAll(trixelsToRenderables(otherTrixels.iterator(), trixelSize, transform));
+		renderables.addAll(drawablesToRenderables(gameObjects.iterator(), transform, place));
 
 		flipYAxis(renderables);
 
@@ -246,7 +199,7 @@ public class Renderer {
 		while (drawables.hasNext()){
 			Drawable drawable = drawables.next();
 
-			//System.out.println("drawable image name: "+drawable.getImageName());
+			System.out.println("drawable name: "+drawable.getName());
 
 			// drawable is an image
 			GameImage image = new GameImage(Res.getImageFromName(drawable.getImageName()),
