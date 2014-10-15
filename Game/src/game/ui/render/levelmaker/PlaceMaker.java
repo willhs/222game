@@ -11,7 +11,6 @@ import game.ui.render.util.DepthComparator;
 import game.ui.render.util.Transform;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
-import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.AirTank;
 import game.world.model.Chest;
@@ -23,17 +22,12 @@ import game.world.model.Place;
 import game.world.model.Plant;
 import game.world.model.Portal;
 import game.world.model.Room;
-import game.world.model.Table;
 import game.world.model.Tree;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
 import java.awt.Color;
 import java.awt.Polygon;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,8 +36,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.omg.CORBA.Environment;
-
 /**
  * @author hardwiwill
  *
@@ -51,8 +43,6 @@ import org.omg.CORBA.Environment;
  * Starts with a flat plane of trixels, made with a floor object.
  * This can be expanded on using any of the tools.
  * View of the trixels can be rotated.
- *
- * TODO: Save the level in a file for use in the game.
  */
 public class PlaceMaker{
 
@@ -62,6 +52,9 @@ public class PlaceMaker{
 	public static final String TREE_MODE = "Tree";
 	public static final String TRIXEL_MODE = "Trixel";
 	public static final String CHEST_MODE = "Chest";
+	/**
+	 * All of the draw modes that the world maker can be in
+	 */
 	public static final String[] MODES = {PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
@@ -313,7 +306,8 @@ public class PlaceMaker{
 	}
 
 	/**
-	 * deletes a trixel at this x, y location
+	 * Deletes a trixel at this x, y location.
+	 * Can't be a floor trixel.
 	 * @param x
 	 * @param y
 	 */
@@ -330,7 +324,6 @@ public class PlaceMaker{
 			Trixel trixel = face.getParentTrixel();
 			// could be either a floor or created trixel.
 			createdTrixels.remove(trixel);
-			floorTrixels.remove(trixel);
 		}
 		else if (something instanceof DrawablePlaceHolder){
 			DrawablePlaceHolder placeHolder = (DrawablePlaceHolder) something;
@@ -369,6 +362,12 @@ public class PlaceMaker{
 		return null;
 	}
 
+	/**
+	 * Finds an object (either a drawable or a trixel) at the view-space point x,y.
+	 * @param x
+	 * @param y
+	 * @return the object at this point.
+	 */
 	private DepthComparable findSomethingAtPoint(int x, int y){
 		for (DepthComparable object : rotatedObjects){
 			if (object instanceof TrixelFace){
@@ -379,10 +378,10 @@ public class PlaceMaker{
 				}
 			}
 			else if (object instanceof DrawablePlaceHolder){
-				DrawablePlaceHolder temp = (DrawablePlaceHolder) object;
+				DrawablePlaceHolder drawable = (DrawablePlaceHolder) object;
 
-				if (temp.pointIsIn(x, y)){
-					return temp;
+				if (drawable.pointIsIn(x, y)){
+					return drawable;
 				}
 			}
 		}
@@ -413,7 +412,7 @@ public class PlaceMaker{
 	}
 
 	/**
-	 * Makes a place object using the information in
+	 * Makes a place object using the information in the level.
 	 * @return
 	 */
 	public Place toPlace(){
@@ -469,13 +468,6 @@ public class PlaceMaker{
 
 				vines.add(new Vine(vinePosition, height));
 
-				/*System.out.println("center:\t" + center);
-				System.out.println("top line gradient:\t"+topLineGradient);
-				System.out.println("dist:\t"+dist);
-				System.out.println("trans from center:\t"+translateFromCenter);
-				System.out.println("randomTop:\t"+randomTopPoint);
-				System.out.println("height:\t"+height);
-				System.out.println("vinePosition:\t"+vinePosition);*/
 			}
 		}
 		return vines;

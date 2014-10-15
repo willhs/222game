@@ -46,10 +46,11 @@ import javax.swing.event.ChangeListener;
 /**
  * @author hardwiwill
  *
- * The view/controller element of the Level maker.
+ * The view/controller element of the World maker.
  * Deals with user-input like clicking, dragging, interacting with buttons and other GUI elements.
  * Triggers methods in the levelMaker with this input.
  * Draws the Level when it's updated.
+ * Allows user to create new places.
  *
  */
 public class WorldMaker extends JPanel{
