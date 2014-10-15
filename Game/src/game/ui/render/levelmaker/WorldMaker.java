@@ -46,7 +46,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- * @author hardwiwill
+ * @author Will Hardwick-Smith 300285801
+ * @author Aaron Haslett 300306981
  *
  * The view/controller element of the World maker.
  * Deals with user-input like clicking, dragging, interacting with buttons and other GUI elements.

@@ -9,6 +9,10 @@ import java.net.*;
 import java.util.*;
 import java.awt.Component;
 
+/**
+ *@author Aaron Haslett 300306981
+ */
+
 public class Client extends Thread{
 	private static Server server;//This client may instantiate a server if single player mode is chosen
 	private static ClientWorld world = null;

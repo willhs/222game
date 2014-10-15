@@ -39,7 +39,8 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * @author hardwiwill
+ * @author Will Hardwick-Smith 300285801
+ * @author Aaron Haslett 300306981
  *
  * Used for designing levels for the 222game.
  * Starts with a flat plane of trixels, made with a floor object.

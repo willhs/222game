@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.awt.Polygon;
 import java.util.Iterator;
 
+/**
+ *@author Aaron Haslett 300306981
+ */
+
 class QuitException extends Exception{
 	public QuitException(){super();}
 }
