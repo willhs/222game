@@ -8,7 +8,6 @@ import game.ui.render.able.Renderable;
 import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
-import game.ui.render.util.DepthComparable;
 import game.ui.render.util.DepthComparator;
 import game.ui.render.util.LightSource;
 import game.ui.render.util.Transform;
@@ -17,6 +16,7 @@ import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
 import game.world.model.Cube;
+import game.world.model.FinishPortal;
 import game.world.model.Place;
 import game.world.model.Player;
 import game.world.util.Drawable;
@@ -28,7 +28,6 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -210,12 +209,20 @@ public class Renderer {
 
 			// if it's player, put name above head
 			if (drawable instanceof Player){
-				GameText text = new GameText(drawable.getName(),
+				GameText playerName = new GameText(drawable.getName(),
 						image.getPosition().getTranslatedPoint(
 								new Vector3D(-drawable.getBoundingBox().width/2,
 										(drawable.getBoundingBox().height/4)*3, 0)));
 
-				renderables.add(text);
+				renderables.add(playerName);
+			}
+
+			if (drawable instanceof FinishPortal){
+				GameText numCrystals = new GameText("needs " + ((FinishPortal)drawable).getLockNumber() + "crystal",
+						image.getPosition().getTranslatedPoint(
+								new Vector3D(-drawable.getBoundingBox().width/4,
+										(drawable.getBoundingBox().height/2), 0)));
+				renderables.add(numCrystals);
 			}
 		}
 		return renderables;
