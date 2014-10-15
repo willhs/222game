@@ -3,7 +3,7 @@ package game;
 import game.ui.window.GameWindow;
 
 /**
- * For initiliasing the Game
+ * For initialising the Game
  */
 public class Main {
 

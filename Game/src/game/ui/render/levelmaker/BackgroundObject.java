@@ -8,6 +8,10 @@ import game.world.util.Drawable;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * @author hardwiwill
+ *
+ */
 public class BackgroundObject implements Drawable{
 
 	private static final int numImages = 20;
