@@ -13,18 +13,7 @@ import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
 import game.world.dimensions.Vector3D;
-import game.world.model.AirTank;
-import game.world.model.Chest;
-import game.world.model.Cube;
-import game.world.model.Enviroment;
-import game.world.model.Inventory;
-import game.world.model.Item;
-import game.world.model.Place;
-import game.world.model.Plant;
-import game.world.model.Portal;
-import game.world.model.Room;
-import game.world.model.Table;
-import game.world.model.Tree;
+import game.world.model.*;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
@@ -62,7 +51,8 @@ public class PlaceMaker{
 	public static final String TREE_MODE = "Tree";
 	public static final String TRIXEL_MODE = "Trixel";
 	public static final String CHEST_MODE = "Chest";
-	public static final String[] MODES = {PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE};
+	public static final String CRYSTAL_MODE = "Crystal";
+	public static final String[] MODES = {CHEST_MODE, PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE, CRYSTAL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;
@@ -270,29 +260,28 @@ public class PlaceMaker{
 		TrixelFace face = getTrixelFaceAt(x, y);
 		if (face == null)	return;
 
+		DepthComparable thingClicked = findSomethingAtPoint(x,y);
 		Trixel clickedTrixel = face.getParentTrixel();
-
 		// make a new thing next to this trixel
 		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(clickedTrixel, trixelSize);
-		//Point3D randomAboveTrixel = aboveTrixel.getTranslatedPoint(new Vector3D((float)Math.random()*Trixel.SIZE, 0, (float)Math.random()*Trixel.SIZE));
+		Drawable thingToAdd = null;
 
-		if (drawMode == TRIXEL_MODE){
+		if (drawMode == PLANT_MODE){
+			thingToAdd = new Plant("Plant", aboveTrixel);
+		}else if (drawMode == TREE_MODE){
+			thingToAdd = new Tree("Tree", aboveTrixel);
+		}else if (drawMode == AIR_TANK_MODE){
+			thingToAdd = new AirTank("Air tank", aboveTrixel);
+		}else if (drawMode == CHEST_MODE){
+			thingToAdd = new Chest("Chest", new Inventory(), aboveTrixel);
+		}else if (drawMode == CRYSTAL_MODE){
+			thingToAdd = new Crystal("Crystal", aboveTrixel);
+		}
+		else if (drawMode == TRIXEL_MODE){
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
-		}
-		if (drawMode == PLANT_MODE){
-			drawables.add(new Plant("Plant", aboveTrixel));
-		}
-		if (drawMode == TREE_MODE){
-			drawables.add(new Tree("Tree", aboveTrixel));
-		}
-		if (drawMode == AIR_TANK_MODE){
-			drawables.add(new AirTank("Air tank", aboveTrixel));
-		}
-		if (drawMode == CHEST_MODE){
-			drawables.add(new Chest("Chest", new Inventory(), aboveTrixel));
-		}
-		if (drawMode == DOOR_MODE){
+			return;
+		}else if (drawMode == DOOR_MODE){
 			if(tempPortal == null){
 				tempPortal = new SimplePortal(this, aboveTrixel, null);
 				drawables.add(tempPortal);
@@ -308,7 +297,20 @@ public class PlaceMaker{
 					System.out.println("Made portal link from " + aboveTrixel + " in " + getName() + " to " + newSP.toPortal.location + " in " + newSP.toPortal.lm.getName());
 				}
 			}
+			return;
 		}
+
+		if(thingClicked instanceof DrawablePlaceHolder){
+			Drawable d = ((DrawablePlaceHolder)thingClicked).getDrawable();
+			if(d instanceof Chest){
+				((Chest)d).getContents().addItem((Item)thingToAdd);
+				System.out.println("Added thing to chest");
+			}
+		}
+		else{
+			drawables.add(thingToAdd);
+		}
+
 		updateTransformedObjects();
 	}
 
@@ -335,10 +337,27 @@ public class PlaceMaker{
 		else if (something instanceof DrawablePlaceHolder){
 			DrawablePlaceHolder placeHolder = (DrawablePlaceHolder) something;
 			Drawable drawable = placeHolder.getDrawable();
-			drawables.remove(drawable);
+			if(drawable instanceof SimplePortal){
+				removePortal((SimplePortal)drawable);
+			}else{
+				drawables.remove(drawable);
+			}
 		}
 
 		updateTransformedObjects();
+	}
+
+	public void removePortal(SimplePortal portal){
+		if(portal == null){return;}
+		if(portal.lm == this && portal == tempPortal){
+			tempPortal = null;
+			return;
+		}
+		drawables.remove(portal);
+		if(portal.toPortal != null){
+			portal.toPortal.toPortal = null;
+			portal.toPortal.lm.removePortal(portal.toPortal);
+		}
 	}
 
 	/**
@@ -578,6 +597,10 @@ public class PlaceMaker{
 		floorTrixels.clear();
 		createdTrixels.clear();
 		drawables.clear();
+		portals.clear();
+		if(tempPortal != null){
+			removePortal(tempPortal);
+		}
 	}
 
 
