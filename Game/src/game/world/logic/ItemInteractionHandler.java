@@ -188,7 +188,7 @@ public class ItemInteractionHandler {
 		while (enviroment.hasNext()) {
 			Enviroment envir = enviroment.next();
 			if (envir.getBoundingBox().collisionDetection(envir.getPosition(),
-					currnetItem.getBoundingBox(), point)) {
+					currnetItem.getBoundingBox(), point) && envir.isCollidable()) {
 				return false;
 			}
 		}
