@@ -325,10 +325,10 @@ public class WorldMaker extends JPanel{
 			Place p = places.get(sp.lm.name);
 			Exit portal;
 			if(sp.locked){
-				portal = new LockedPortal("Portal", places.get(sp.lm.name), sp.location,
+				portal = new LockedPortal(sp.getName(), places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
 			}else{
-				portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
+				portal = new Portal(sp.getName(), places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
 			}
 			p.addExit(portal);

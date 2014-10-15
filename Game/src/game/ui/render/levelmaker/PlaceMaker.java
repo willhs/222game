@@ -54,6 +54,10 @@ public class PlaceMaker{
 	public static final int MAX_COLOUR_DEVIATION = 100;
 	public static final int START_COLOUR_DEVIATION = 20;
 	public static final int DEFAULT_TRIXEL_SIZE = Trixel.DEFAULT_SIZE;
+
+	//id for keeping item names unique
+	private static int id = 0;
+
 	/**
 	 * the amount in which to rotate the level/place (so that it can be updated)
 	 */
@@ -263,15 +267,15 @@ public class PlaceMaker{
 		Drawable thingToAdd = null;
 
 		if (drawMode == PLANT_MODE){
-			thingToAdd = new Plant("Plant", aboveTrixel);
+			thingToAdd = new Plant("Plant" + (id++), aboveTrixel);
 		}else if (drawMode == TREE_MODE){
-			thingToAdd = new Tree("Tree", aboveTrixel);
+			thingToAdd = new Tree("Tree" + (id++), aboveTrixel);
 		}else if (drawMode == AIR_TANK_MODE){
-			thingToAdd = new AirTank("Air tank", aboveTrixel);
+			thingToAdd = new AirTank("Air tank" + (id++), aboveTrixel);
 		}else if (drawMode == CHEST_MODE){
-			thingToAdd = new Chest("Chest", new Inventory(), aboveTrixel);
+			thingToAdd = new Chest("Chest" + (id++), new Inventory(), aboveTrixel);
 		}else if (drawMode == CRYSTAL_MODE){
-			thingToAdd = new Crystal("Crystal", aboveTrixel);
+			thingToAdd = new Crystal("Crystal" + (id++), aboveTrixel);
 		}else if (drawMode == TRIXEL_MODE){
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
@@ -668,7 +672,8 @@ public class PlaceMaker{
 		public boolean locked;
 
 		public SimplePortal(PlaceMaker lm, Point3D location, SimplePortal toPortal, boolean locked){
-			super(locked?"LockedPortal":"Portal", null, location, null, null);
+			super((locked?"LockedPortal":"Portal") + id, null, location, null, null);
+			id++;
 			this.lm = lm;
 			this.location = location;
 			this.toPortal = toPortal;
