@@ -52,7 +52,9 @@ public class PlaceMaker{
 	public static final String TRIXEL_MODE = "Trixel";
 	public static final String CHEST_MODE = "Chest";
 	public static final String CRYSTAL_MODE = "Crystal";
-	public static final String[] MODES = {CHEST_MODE, PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE, CRYSTAL_MODE};
+	public static final String LOCKED_PORTAL_MODE = "LockedPortal";
+	public static final String[] MODES = {CHEST_MODE, PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE,
+	                                      CRYSTAL_MODE, LOCKED_PORTAL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;
@@ -276,20 +278,20 @@ public class PlaceMaker{
 			thingToAdd = new Chest("Chest", new Inventory(), aboveTrixel);
 		}else if (drawMode == CRYSTAL_MODE){
 			thingToAdd = new Crystal("Crystal", aboveTrixel);
-		}
-		else if (drawMode == TRIXEL_MODE){
+		}else if (drawMode == TRIXEL_MODE){
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
 			return;
-		}else if (drawMode == DOOR_MODE){
+		}else if (drawMode == DOOR_MODE || drawMode == LOCKED_PORTAL_MODE){
+			boolean locked = drawMode == LOCKED_PORTAL_MODE;
 			if(tempPortal == null){
-				tempPortal = new SimplePortal(this, aboveTrixel, null);
+				tempPortal = new SimplePortal(this, aboveTrixel, null, locked);
 				drawables.add(tempPortal);
 				getPortals().add(tempPortal);
 				System.out.println("Made start portal at " + aboveTrixel + " in room " + getName());
-			}else{
+			}else if(tempPortal.locked == locked){
 				if(tempPortal.lm != this){
-					SimplePortal newSP = new SimplePortal(this, aboveTrixel, tempPortal);
+					SimplePortal newSP = new SimplePortal(this, aboveTrixel, tempPortal, locked);
 					tempPortal.toPortal = newSP;
 					drawables.add(newSP);
 					getPortals().add(newSP);
@@ -657,15 +659,22 @@ public class PlaceMaker{
 		public PlaceMaker lm;
 		public Point3D location;
 		public SimplePortal toPortal;
+		public boolean locked;
 
-		public SimplePortal(PlaceMaker lm, Point3D location, SimplePortal toPortal){
-			super("Portal", null, location, null, null);
+		public SimplePortal(PlaceMaker lm, Point3D location, SimplePortal toPortal, boolean locked){
+			super(locked?"LockedPortal":"Portal", null, location, null, null);
 			this.lm = lm;
 			this.location = location;
 			this.toPortal = toPortal;
+			this.locked = locked;
 		}
+		@Override
 		public Point3D getPosition(Place place){
 			return getPosition();
+		}
+		@Override
+		public String getImageName() {
+			return locked ? "teleport_off":"teleporter_on";
 		}
 	}
 
@@ -683,7 +692,7 @@ public class PlaceMaker{
 
 		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
 			Drawable d = placeDrawables.next();
-			if(!(d instanceof Portal)){
+			if(!(d instanceof Portal) && !(d instanceof LockedPortal)){
 				drawables.add(d);
 			}
 		}
@@ -691,7 +700,7 @@ public class PlaceMaker{
 			Enviroment env = placeEnvironments.next();
 			if(env instanceof Cube){
 				Cube c = (Cube)env;
-				Trixel t = new Trixel(c.getTrixition());
+				Trixel t = new Trixel(c.getTrixition(), c.getColor());
 				if(c.getName().equals("floor")){
 					floorTrixels.add(t);
 				}else if(c.getName().equals("non-floor")){
@@ -701,6 +710,7 @@ public class PlaceMaker{
 		}
 		name = place.getName();
 		floorCentroid = TrixelUtil.findTrixelsCentroid(floorTrixels.iterator(), trixelSize);
+		floor = place.getFloor();
 		updateFaces();
 	}
 
