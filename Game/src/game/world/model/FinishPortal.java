@@ -2,6 +2,7 @@ package game.world.model;
 
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Rectangle3D;
+import game.world.model.Exit.PlaceAndPosition;
 
 /**
  * End game protal hard to open
@@ -11,12 +12,15 @@ public class FinishPortal extends  LockedPortal{
 
 	private Place place;
 	private int lockNumber;
+	private Point3D position;
 
 	public FinishPortal(String name, Place placeOne,
 			Point3D positionInPlaceOne, int lockNumber) {
 		super(name, placeOne, positionInPlaceOne, placeOne, positionInPlaceOne,
 				lockNumber);
 		place = placeOne;
+		this.position = positionInPlaceOne;
+		this.lockNumber = lockNumber;
 	}
 
 	@Override
@@ -26,7 +30,7 @@ public class FinishPortal extends  LockedPortal{
 
 	@Override
 	public Rectangle3D getBoundingBox(){
-		return new Rectangle3D(100,200,100);
+		return new Rectangle3D(50,50,50);
 	}
 
 	@Override
@@ -40,6 +44,16 @@ public class FinishPortal extends  LockedPortal{
 	 */
 	public int getLockNumber(){
 		return lockNumber;
+	}
+
+	@Override
+	public Point3D getPosition(Place place){
+		return position;
+	}
+
+	@Override
+	public Point3D getPosition(){
+		return position;
 	}
 
 }

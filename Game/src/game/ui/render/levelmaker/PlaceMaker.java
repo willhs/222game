@@ -16,6 +16,7 @@ import game.world.model.Chest;
 import game.world.model.Crystal;
 import game.world.model.Cube;
 import game.world.model.Enviroment;
+import game.world.model.FinishPortal;
 import game.world.model.Inventory;
 import game.world.model.Item;
 import game.world.model.LockedPortal;
@@ -55,11 +56,12 @@ public class PlaceMaker{
 	public static final String CHEST_MODE = "Chest";
 	public static final String CRYSTAL_MODE = "Crystal";
 	public static final String LOCKED_PORTAL_MODE = "LockedPortal";
+	public static final String FINISH_PORTAL_MODE = "FinishPortal";
 	/**
 	 * All of the draw modes that the world maker can be in
 	 */
 	public static final String[] MODES = {CHEST_MODE, PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE,
-	                                      CRYSTAL_MODE, LOCKED_PORTAL_MODE};
+	                                      CRYSTAL_MODE, LOCKED_PORTAL_MODE, FINISH_PORTAL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;
@@ -68,6 +70,9 @@ public class PlaceMaker{
 
 	//id for keeping item names unique
 	private static int id = 0;
+	public static FinishPortal finishPortal = null;
+	public static Point3D finishPortalPoint = null;
+	public static PlaceMaker finishPortalLM = null;
 
 	/**
 	 * the amount in which to rotate the level/place (so that it can be updated)
@@ -309,6 +314,12 @@ public class PlaceMaker{
 				}
 			}
 			return;
+		}else if (drawMode == FINISH_PORTAL_MODE){
+			if(finishPortal != null){return;}
+			finishPortal = new FinishPortal("FinishPortal" + (id++), null, aboveTrixel, 10);
+			finishPortalPoint = aboveTrixel;
+			finishPortalLM = this;
+			thingToAdd = finishPortal;
 		}
 
 		if(thingClicked instanceof DrawablePlaceHolder){
@@ -353,7 +364,12 @@ public class PlaceMaker{
 			}else{
 				drawables.remove(drawable);
 			}
-			//System.out.println("box: "+placeHolder.getBoundingBox() + " point: "+placeHolder.getPosition());
+
+			if(drawable instanceof FinishPortal){
+				finishPortal = null;
+				finishPortalPoint = null;
+				finishPortalLM = null;
+			}
 		}
 
 		updateTransformedObjects();
@@ -669,7 +685,7 @@ public class PlaceMaker{
 	}
 
 	/**
-	 * Add a portal to this PlaceMaker 
+	 * Add a portal to this PlaceMaker
 	 * @param sp SimplePortal to add to Place being made
 	 */
 	public void addPortal(SimplePortal sp){
@@ -688,7 +704,7 @@ public class PlaceMaker{
 		portals.clear();
 		tempPortal = null;
 
-		//Add every non-portal drawable to the 
+		//Add every non-portal drawable to the
 		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
 			Drawable d = placeDrawables.next();
 			if(!(d instanceof Portal) && !(d instanceof LockedPortal)){
