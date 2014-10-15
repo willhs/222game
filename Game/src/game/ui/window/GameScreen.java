@@ -150,6 +150,11 @@ public class GameScreen implements GraphicsPane  {
 	public void render(Graphics g){
 		Graphics2D g2d = (Graphics2D)g;
 
+		//check if the game is over
+		if(client.hasWon()){
+			gameOver(g,"You Win");
+		}
+
 		popUpInventory.updateInventory();
 		updateRotation();
 
@@ -228,7 +233,7 @@ public class GameScreen implements GraphicsPane  {
 		g.drawString(airLevel+"", 100 + 100 - g.getFontMetrics(myFont).stringWidth(""+airLevel)/2, (int) ((50 + 50 - (g.getFontMetrics(myFont).getHeight()/2)))-3);
 
 		//if the air level is below 0 the game is over
-		if(airLevel <=0)gameOver(g);
+		if(airLevel <=0)gameOver(g, "Game Over");
 	}
 
 
@@ -236,7 +241,7 @@ public class GameScreen implements GraphicsPane  {
 	 * Draws the game over screen and sets game over
 	 * to true
 	 * */
-	public void gameOver(Graphics g){
+	public void gameOver(Graphics g, String type){
 			Graphics2D g2d = (Graphics2D)g;
 
 
@@ -250,7 +255,7 @@ public class GameScreen implements GraphicsPane  {
 			g.setColor(Color.white);
 
 			//draw game over string
-			g2d.drawString("Game Over", 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth("Game Over")/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
+			g2d.drawString(type, 0 + ((GameWindow.FRAME_WIDTH/2) - g.getFontMetrics(myFont).stringWidth(type)/2), (int) (((GameWindow.FRAME_HEIGHT/2) - (g.getFontMetrics(myFont).getHeight()/2))));
 
 			//set game over to be true
 			gameOver = true;

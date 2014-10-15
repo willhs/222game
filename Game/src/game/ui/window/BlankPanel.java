@@ -95,9 +95,9 @@ public class BlankPanel extends JPanel{
 	@Override
 	public void setPreferredSize(Dimension preferredSize){
 		super.setPreferredSize(preferredSize);
-		repaint();
+		//repaint();
 		frame.setSize(preferredSize);
-		
+
 		//frame.pack();
 	}
 

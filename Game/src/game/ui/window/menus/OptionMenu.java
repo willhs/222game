@@ -53,9 +53,11 @@ public class OptionMenu implements GraphicsPane, Animated {
 	//radio button fields
 	Ellipse2D.Double radio1;
 	Ellipse2D.Double radio2;
+	Ellipse2D.Double radio3;
+
 	String radio1Label;
 	String radio2Label;
-
+	String radio3Label;
 	private int radioSelected = 0;
 
 
@@ -102,13 +104,13 @@ public class OptionMenu implements GraphicsPane, Animated {
 
 		radio1 = new Ellipse2D.Double(x, y, w, h);
 		radio2 = new Ellipse2D.Double(x, y+w+5, w, h);
+		radio3 = new Ellipse2D.Double(x, y+w+5+w+5, w, h);
+
 
 		//word out string metrics
-
-
 		radio1Label = "1360 x 765 ";
 		radio2Label = "1024 x 768 ";
-
+		radio3Label = "1440 x 810 ";
 	}
 
 
@@ -138,26 +140,33 @@ public class OptionMenu implements GraphicsPane, Animated {
 
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 
+		if(animating || animatingIn)return;
+
 		//radio button
 		int stringWidth = g.getFontMetrics(myFont).stringWidth(radio1Label);
 		int stringX =  (GameWindow.FRAME_WIDTH/2)- (stringWidth/2);
 
-		int r1y = 35;
-		int r2y = 65;
+		int r1y = 85;
+		int r2y = 115;
+		int r3y = 145;
 
 		g.setColor(Color.white);
-		g.drawString(radio1Label, stringX, 50);
-		g.drawString(radio2Label, stringX, 80);
+		g.drawString(radio1Label, stringX, 100);
+		g.drawString(radio2Label, stringX, 130);
+		g.drawString(radio3Label, stringX, 160);
 
 		radio1.x = stringX+stringWidth + 10;
 		radio2.x = stringX+stringWidth + 10;
+		radio3.x = stringX+stringWidth + 10;
 
 		radio1.y = r1y;
 		radio2.y = r2y;
+		radio3.y = r3y;
 
 		g.setColor(Color.white);
 		g2d.draw(radio1);
 		g2d.draw(radio2);
+		g2d.draw(radio3);
 
 		g.setColor(Color.red);
 		if(radioSelected == 1){
@@ -166,18 +175,22 @@ public class OptionMenu implements GraphicsPane, Animated {
 		else if(radioSelected == 2){
 			g2d.fill(radio2);
 		}
+		else if(radioSelected == 3){
+			g2d.fill(radio3);
+		}
 
 		g.setFont(oldFont);
 	}
 
 	public void updateRes(){
 		if(radioSelected == 1){
-			System.out.println("Radio 1");
 			panel.setPreferredSize(new Dimension(1360, 765));//projector 1
 		}
 		else if(radioSelected == 2){
-			System.out.println("Radio 2");
 			panel.setPreferredSize(new Dimension(1024, 768));//projector 2
+		}
+		else if(radioSelected == 3){
+			panel.setPreferredSize(new Dimension(1440, 810));//projector 2
 		}
 	}
 
@@ -218,6 +231,9 @@ public class OptionMenu implements GraphicsPane, Animated {
 		}
 		else if(radio2.contains(e.getX(),e.getY())){
 			radioSelected = 2;
+		}
+		else if(radio3.contains(e.getX(),e.getY())){
+			radioSelected = 3;
 		}
 	}
 
