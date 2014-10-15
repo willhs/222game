@@ -23,15 +23,6 @@ public class Cube extends Enviroment{
 	private Color colour;
     public boolean isCollidable;
 
-    public Cube(String name, Point3D position, boolean isCollidable) {
-        super(name, position, new Rectangle3D(20, 20, 20));
-        this.isCollidable = isCollidable;
-    }
-
-    public Cube(String name, Point3D position) {
-        super(name, position, new Rectangle3D(20, 20, 20));
-    }
-
     /**
      * The LevelMaker will use this constructor
      * so it's easier to convert between Cube and Trixel.

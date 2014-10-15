@@ -6,6 +6,11 @@ import game.world.model.*;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author Shane Brewer 300289850
+ *
+ */
 public class InventoryTests {
 
 	@Test
