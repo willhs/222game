@@ -19,6 +19,8 @@ public class FinishPortal extends  LockedPortal{
 		super(name, placeOne, positionInPlaceOne, placeOne, positionInPlaceOne,
 				lockNumber);
 		place = placeOne;
+		this.position = positionInPlaceOne;
+		this.lockNumber = lockNumber;
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class FinishPortal extends  LockedPortal{
 
 	@Override
 	public Rectangle3D getBoundingBox(){
-		return new Rectangle3D(100,200,100);
+		return new Rectangle3D(50,50,50);
 	}
 
 	@Override
