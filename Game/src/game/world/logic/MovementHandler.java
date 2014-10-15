@@ -248,10 +248,10 @@ public class MovementHandler {
 		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
 		Rectangle3D playerRect = player.getBoundingBox();
 		float x = (float)(rect.x-EXITING_DISTANCE);
-		float z = (int)(rect.z-EXITING_DISTANCE);
 		float maxX = (int)(rect.x+rect.width+EXITING_DISTANCE);
 		float maxZ = (int)(rect.z+rect.length+EXITING_DISTANCE);
 		for (;x < maxX; x+=0.1f){
+			float z = (int)(rect.z-EXITING_DISTANCE);
 			for (;z < maxZ; z+=0.1f){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
 					return true;
