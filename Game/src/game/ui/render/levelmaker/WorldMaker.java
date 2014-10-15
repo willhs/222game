@@ -88,18 +88,18 @@ public class WorldMaker extends JPanel{
 		mainControls.add(trixelSizeField);
 
 		JButton loadButton = new JButton("Load");
-		loadButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				World world = null;
-				try {
-					world = browseForWorld();
-				} catch (NoFileChosenException e1) {
-					return;
-				}
-
-				loadWorld(world);
-			}
-		});
+//		loadButton.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e){
+//				World world = null;
+//				try {
+//					//world = browseForWorld();
+//				} catch (NoFileChosenException e1) {
+//					return;
+//				}
+//
+//				loadWorld(world);
+//			}
+//		});
 		mainControls.add(loadButton);
 
 		JButton loadRandomPolygonButton = new JButton("Load random");
@@ -244,28 +244,28 @@ public class WorldMaker extends JPanel{
 		return draw;
 	}
 
-	/**
-	 * @return gets a floor polygon for the level maker to use
-	 * @throws NoFileChosenException
-	 */
-	private World browseForWorld() throws NoFileChosenException {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
-		final int USER_SELECTION = chooser.showOpenDialog(null);
+//	/**
+//	 * @return gets a floor polygon for the level maker to use
+//	 * @throws NoFileChosenException
+//	 */
+//	private World browseForWorld() throws NoFileChosenException {
+//		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
+//		final int USER_SELECTION = chooser.showOpenDialog(null);
+//
+//		File worldFile;
+//
+//		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
+//			worldFile =  chooser.getSelectedFile();
+//		}
+//		else throw new NoFileChosenException();
+//
+//		return parseWorld(worldFile);
+//	}
 
-		File worldFile;
-
-		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
-			worldFile =  chooser.getSelectedFile();
-		}
-		else throw new NoFileChosenException();
-
-		return parseWorld(worldFile);
-	}
-
-	public static World parseWorld(File worldFile){
+	public static World parseWorld(String worldFile){
 		World world = null;
 		try{
-			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(worldFile)));
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(WorldMaker.class.getResourceAsStream("../../../../"+worldFile)));
 			world = (World)ois.readObject();
 		}catch(ClassNotFoundException e){
 			System.err.println(e);

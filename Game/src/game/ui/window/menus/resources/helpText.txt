@@ -1,5 +1,7 @@
 
-	The aim of the game is to do something and win the game
+	The aim of the game is to collect 10 of the Crystals to open the final portal
+	to the nearest inhabited planet. While trying to stay alive by collecting
+	the oxygen tanks scattered around the place.
 
    	W - A - S - D to move around
 

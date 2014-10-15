@@ -97,8 +97,8 @@ public class OptionMenu implements GraphicsPane, Animated {
 		int x = GameWindow.FRAME_WIDTH/2;
 		int y = 100;
 
-		int w = 10;
-		int h = 10;
+		int w = 15;
+		int h = 15;
 
 		radio1 = new Ellipse2D.Double(x, y, w, h);
 		radio2 = new Ellipse2D.Double(x, y+w+5, w, h);
@@ -117,9 +117,7 @@ public class OptionMenu implements GraphicsPane, Animated {
 		Graphics2D g2d = (Graphics2D)g;
 		updateRes();
 		//set my font
-		Font oldFont = g.getFont();
-		Font myFont = new Font("Tunga",0,20);
-		g.setFont(myFont);
+
 
 		starMation.render(g);
 		if(currentMenu != null){
@@ -134,14 +132,18 @@ public class OptionMenu implements GraphicsPane, Animated {
 			}
 		}
 
+		Font oldFont = g.getFont();
+		Font myFont = new Font("Tunga",0,20);
+		g.setFont(myFont);
+
 		MenuUtil.drawButtons(g, selectedButton, buttons, buttonNames);
 
 		//radio button
 		int stringWidth = g.getFontMetrics(myFont).stringWidth(radio1Label);
 		int stringX =  (GameWindow.FRAME_WIDTH/2)- (stringWidth/2);
 
-		int r1y = 40;
-		int r2y = 70;
+		int r1y = 35;
+		int r2y = 65;
 
 		g.setColor(Color.white);
 		g.drawString(radio1Label, stringX, 50);
