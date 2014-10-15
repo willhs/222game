@@ -8,6 +8,11 @@ import game.world.dimensions.*;
 import game.world.model.*;
 import game.world.util.Drawable;
 
+/**
+ *
+ * @author Shane Brewer 300289850
+ *
+ */
 public class PlayerTests {
 
 	@Test

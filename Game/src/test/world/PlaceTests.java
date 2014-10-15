@@ -12,6 +12,11 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author Shane Brewer 300289850
+ *
+ */
 public class PlaceTests {
 
 	/**

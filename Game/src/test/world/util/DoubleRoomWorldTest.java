@@ -7,6 +7,11 @@ import game.world.dimensions.Point3D;
 import game.world.logic.MovementHandler;
 import game.world.model.*;
 
+/**
+ *
+ * @author Shane Brewer 300289850
+ *
+ */
 public class DoubleRoomWorldTest {
 	public World world;
 
@@ -38,7 +43,4 @@ public class DoubleRoomWorldTest {
 		return world;
 	}
 
-	public static void main(String[] args) {
-		DoubleRoomWorldTest world = new DoubleRoomWorldTest();
-	}
 }
