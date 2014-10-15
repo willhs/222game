@@ -8,6 +8,7 @@ import game.world.dimensions.Vector3D;
 import game.world.model.Exit;
 import game.world.model.Place;
 import game.world.model.Portal;
+import game.world.model.LockedPortal;
 import game.world.model.World;
 
 import java.awt.BorderLayout;
@@ -46,10 +47,11 @@ import javax.swing.event.ChangeListener;
 /**
  * @author hardwiwill
  *
- * The view/controller element of the Level maker.
+ * The view/controller element of the World maker.
  * Deals with user-input like clicking, dragging, interacting with buttons and other GUI elements.
  * Triggers methods in the levelMaker with this input.
  * Draws the Level when it's updated.
+ * Allows user to create new places.
  *
  */
 public class WorldMaker extends JPanel{
@@ -191,6 +193,7 @@ public class WorldMaker extends JPanel{
 	 * @return JButton for the given mode.
 	 */
 	private JButton makeDrawButton(String mode, ModeButtonListener mbl){
+		System.out.println("mode: "+mode);
 		JButton button = new JButton(new ImageIcon(
 			MenuUtil.scale(Res.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
 		button.addActionListener(mbl);
@@ -300,7 +303,7 @@ public class WorldMaker extends JPanel{
 		final int USER_SELECTION = chooser.showSaveDialog(null);
 
 		File fileToSave;
-		List<Portal> portals = new ArrayList<Portal>();
+		List<Exit> portals = new ArrayList<Exit>();
 
 		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
 			fileToSave =  chooser.getSelectedFile();
@@ -324,8 +327,14 @@ public class WorldMaker extends JPanel{
 
 		for(PlaceMaker.SimplePortal sp : PlaceMaker.getPortals()){
 			Place p = places.get(sp.lm.name);
-			Portal portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
+			Exit portal;
+			if(sp.locked){
+				portal = new LockedPortal("Portal", places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
+			}else{
+				portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
+                                                 places.get(sp.toPortal.lm.name), sp.toPortal.location);
+			}
 			p.addExit(portal);
 			portals.add(portal);
 		}
@@ -336,7 +345,7 @@ public class WorldMaker extends JPanel{
 		}
 
 		World newWorld = new World(placesList);
-		for(Portal p : portals){
+		for(Exit p : portals){
 			newWorld.addExit(p);
 		}
 
@@ -349,12 +358,10 @@ public class WorldMaker extends JPanel{
 	}
 
 	private void loadWorld(World world){
-		for(int i=0; i<numTabs; i++){
-			levelTabsPane.remove(0);
-		}
+		levelTabsPane.removeAll();
 		numTabs = 0;
 		Place place;
-		List<Portal> portals = new ArrayList<Portal>();
+		List<Exit> portals = new ArrayList<Exit>();
 		HashMap<String, PlaceMaker> placeMakers = new HashMap<String, PlaceMaker>();
 
 		for(Iterator<Place> places = world.getPlaces(); places.hasNext();){
@@ -368,11 +375,11 @@ public class WorldMaker extends JPanel{
 
 			placeMakers.put(name, lp.levelMaker);
 			for(Iterator<Exit> exits = place.getExits(); exits.hasNext();){
-				portals.add((Portal)exits.next());
+				portals.add(exits.next());
 			}
 		}
 
-		for(Portal portal : portals){
+		for(Exit portal : portals){
 			Place from = portal.getConnectedPlaces().get(0).place;
 			Place to = portal.getConnectedPlaces().get(1).place;
 
@@ -382,8 +389,9 @@ public class WorldMaker extends JPanel{
 			PlaceMaker fromLp = placeMakers.get(from.getName());
 			PlaceMaker toLp = placeMakers.get(to.getName());
 
-			PlaceMaker.SimplePortal fromPortal = fromLp.new SimplePortal(fromLp, fromPos, null);
-			PlaceMaker.SimplePortal toPortal = toLp.new SimplePortal(toLp, toPos, fromPortal);
+			boolean locked = portal instanceof LockedPortal;
+			PlaceMaker.SimplePortal fromPortal = fromLp.new SimplePortal(fromLp, fromPos, null, locked);
+			PlaceMaker.SimplePortal toPortal = toLp.new SimplePortal(toLp, toPos, fromPortal, locked);
 			fromPortal.toPortal = toPortal;
 
 			fromLp.addPortal(fromPortal);

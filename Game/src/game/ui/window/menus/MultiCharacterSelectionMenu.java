@@ -265,8 +265,8 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 
 		//if the key pressed is ' ' add to the string
 		if(e.getKeyCode() == KeyEvent.VK_SPACE){
-			textBox = textBox.concat(" ").toLowerCase();
-			text.s = textBox;
+			//textBox = textBox.concat(" ").toLowerCase();
+			//text.s = textBox;
 			return;
 		}
 

@@ -247,7 +247,7 @@ public class CharacterSelectionMenu implements GraphicsPane{
 		//check if its a number or letter
 		if(key.length() == 1 || keyEvent.equals("space")){
 			if(keyEvent.equals("space")){
-				name = name.concat(" ");
+				//name = name.concat(" "); parser in network does not like spaces
 				nextCap = true;
 				return;
 			}
