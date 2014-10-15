@@ -39,10 +39,6 @@ public class GameWindow extends JFrame{
 	public GameWindow(){
 		super(title);
 
-		System.out.println("Width = " + FRAME_WIDTH);
-		System.out.println("Height = " + FRAME_HEIGHT);
-
-
 		this.blankPanel = new BlankPanel(this);
 
 		//set up the globalKey listener
