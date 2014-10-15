@@ -19,7 +19,7 @@ public class GameWindow extends JFrame{
 	private static final String title = "Game";
 
 	//size fields
-	private static final int WINDOW_SIZE = 85;
+	private static final int WINDOW_SIZE = 90;
 	public static int FRAME_HEIGHT = 9*WINDOW_SIZE;//WINDOW_SIZE*9;
 	public static int FRAME_WIDTH = 16*WINDOW_SIZE;//WINDOW_SIZE*16;
 
@@ -38,10 +38,6 @@ public class GameWindow extends JFrame{
 	 * */
 	public GameWindow(){
 		super(title);
-
-		System.out.println("Width = " + FRAME_WIDTH);
-		System.out.println("Height = " + FRAME_HEIGHT);
-
 
 		this.blankPanel = new BlankPanel(this);
 
