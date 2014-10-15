@@ -21,10 +21,7 @@ import java.util.Map;
 public class World extends ClientWorld implements Serializable{
 
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1031554607357849018L;
+	
 	private Place startPlace;
 	// both of these once set should not change.
 	private final List<Player> players;
@@ -93,11 +90,6 @@ public class World extends ClientWorld implements Serializable{
 	}
 
 	@Override
-	public Iterator<Player> getPlayerOfPlace(Place place){
-		return place.getPlayers();
-	}
-
-	@Override
 	public boolean addPlayerToGameWorld(Player player){
 		players.add(player);
 		allPlayers.put(player.getName(), player);
@@ -108,7 +100,7 @@ public class World extends ClientWorld implements Serializable{
 	}
 
 	@Override
-	protected Place getStartPlace() {
+	public Place getStartPlace() {
 		return startPlace;
 	}
 
@@ -134,25 +126,6 @@ public class World extends ClientWorld implements Serializable{
 	@Override
 	public void addExit(Exit exit){
 		allExits.put(exit.getName(), exit);
-	}
-
-	@Override
-	public void replaceCurrentPlace(Place place) {
-		super.replaceCurrentPlace(place);
-		places.remove(place);
-		places.add(place);
-		allPlaces.put(place.getName(), place);
-		Iterator<Item> it = place.getItems();
-		while (it.hasNext()){
-			Item i = it.next();
-			allItems.put(i.getName(), i);
-			if (i instanceof Container){
-				Container con = (Container)i;
-				for (Item consItem: con.getContents()){
-					allItems.put(consItem.getName(), consItem);
-				}
-			}
-		}
 	}
 
 	@Override

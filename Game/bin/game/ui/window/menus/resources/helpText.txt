@@ -1,0 +1,13 @@
+
+	The aim of the game is to do something and win the game
+
+   	W - A - S - D to move around
+
+    E to pick up an item
+
+    Q to drop an item
+
+    I to access inventory
+
+    ESC to access the pause menu
+

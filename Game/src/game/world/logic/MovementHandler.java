@@ -35,21 +35,27 @@ public class MovementHandler {
 		if (player == null || to == null || place == null){
 			return false;
 		}
+		// Makes sure the player is in the place.
 		if (!place.contains(to)) {
 			return false;
 		}
+		// makes sure the players bounding box is in the place.
 		if (!place.contains(to, player.getBoundingBox())) {
 			return false;
 		}
+		// checks if there are any item collitions.
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
 			return false;
 		}
+		// checks if there are player collitions
 		if (checkPlayerCollision(player, to, place.getPlayers())) {
 			return false;
 		}
+		// checks if there are enviromental oliitions.
 		if (checkEnviromentalCollision(player, to, place.getEnviroment())){
 			return false;
 		}
+		// checks for eixt coliitions
 		if (checkExitCollision(player, to, place,  place.getExits())){
 			return false;
 		}
@@ -182,25 +188,31 @@ public class MovementHandler {
 	 * @return - returns true if the player exited correctly.
 	 */
 	public static boolean exitPlace(Player player, Place place, Exit exit) {
+		// None of the parameters should be null.
 		if (player == null || exit == null || place == null){
 			return false;
 		}
+		// The player needs to be in proximity of the exit
 		if (!checkProximity(player.getPosition(), player.getBoundingBox(),
 				exit.getPosition(place), exit.getBoundingBox())) {
 			return false;
 		}
+		// Checks if the exit is locked.
 		if (exit.isLocked()) {
+			// will try to unlock the exit
 			if (!exit.unlock(player.getInventory())) {
 				return false;
 			}
 		}
+		// gets the place the player is moving to.
 		Place otherPlace = exit.getOtherPlace(place);
+		// will set a new psoition for the player and remove and add him/her.
 		if (setPlayerExitPosition(player, exit, otherPlace)){
 			place.removePlayer(player);
 			otherPlace.addPlayer(player);
 			return true;
 		}
-
+		// will fail if no position in other place is found.
 		return false;
 	}
 
@@ -236,10 +248,10 @@ public class MovementHandler {
 		Rectangle3D rect = exit.getBoundingBox().apply3Dpoint(exit.getPosition(place));
 		Rectangle3D playerRect = player.getBoundingBox();
 		float x = (float)(rect.x-EXITING_DISTANCE);
-		float z = (int)(rect.z-EXITING_DISTANCE);
 		float maxX = (int)(rect.x+rect.width+EXITING_DISTANCE);
 		float maxZ = (int)(rect.z+rect.length+EXITING_DISTANCE);
 		for (;x < maxX; x+=0.1f){
+			float z = (int)(rect.z-EXITING_DISTANCE);
 			for (;z < maxZ; z+=0.1f){
 				if (MovementHandler.playerMove(player, new Point3D(x, 0, z), place)){
 					return true;

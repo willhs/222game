@@ -24,7 +24,7 @@ public class GameWindow extends JFrame{
 	public static int FRAME_WIDTH = 16*WINDOW_SIZE;//WINDOW_SIZE*16;
 
 	//768
-	//1400
+	//1024
 
 	//the map containing the key combinations
 	public static HashMap<String , Integer> keyMap;
@@ -43,13 +43,13 @@ public class GameWindow extends JFrame{
 		System.out.println("Height = " + FRAME_HEIGHT);
 
 
-		this.blankPanel = new BlankPanel();
+		this.blankPanel = new BlankPanel(this);
 
 		//set up the globalKey listener
 		setUpKeyListner();
 
 		//set the size of the frame
-		setResizable(true);
+		setResizable(false);
 		setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -90,6 +90,19 @@ public class GameWindow extends JFrame{
 	public static void setHeight(int height){
 		FRAME_HEIGHT = height;
 	}
+
+	public void updateRes(int width, int height){
+		this.setSize(new Dimension(width,height));
+	}
+
+	@Override
+	public void setSize(Dimension d){
+		super.setSize(d);
+
+		FRAME_HEIGHT = this.getHeight();
+		FRAME_WIDTH = this.getWidth();
+	}
+
 
 	/**
 	 * Starts the game

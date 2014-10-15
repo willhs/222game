@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 /**
  *@author Nicky van Hulst 300294657
@@ -19,16 +20,21 @@ public class BlankPanel extends JPanel{
 	//the menu the panel is rendering at the moment
 	private GraphicsPane currentMenu;
 
-	
+	//the main frame
+	private JFrame frame;
+
 	/**
 	 * Constructor for the blank panel sets up the panel
 	 * with the current menu being the main menu
 	 * */
-	public BlankPanel(){
+	public BlankPanel(JFrame frame){
+
+		//set the frame
+		this.frame = frame;
 
 		//set the size of the panel
 		setSize(new Dimension(GameWindow.FRAME_WIDTH,GameWindow.FRAME_HEIGHT));
-		
+
 		//background color
 		setBackground(Color.black);
 
@@ -84,6 +90,15 @@ public class BlankPanel extends JPanel{
 				currentMenu.handleMousePressed(e);//passes info on to current menu
 			}
 		});
+	}
+
+	@Override
+	public void setPreferredSize(Dimension preferredSize){
+		super.setPreferredSize(preferredSize);
+		repaint();
+		frame.setSize(preferredSize);
+		
+		//frame.pack();
 	}
 
 

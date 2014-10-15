@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author Shane Brewer
+ * @author Shane Brewer 300289850
  *
  */
 public class SingleRoomWorldTest {
@@ -23,8 +23,6 @@ public class SingleRoomWorldTest {
 	public SingleRoomWorldTest(){
 		int[] xpoints = new int[]{200,800,800,200};
 		int[] ypoints = new int[]{200,200,800,800};
-		//int[] xpoints = new int[]{0, 400, 400, 0};
-		//int[] ypoints = new int[]{0, 0, 400, 400};
 
 		Polygon p = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> items = new ArrayList<Item>();
@@ -34,15 +32,6 @@ public class SingleRoomWorldTest {
 		rooms.add(room);
 
 		world = new World(rooms);
-		Player player = new Player("Tim");
-		// first test of new method in the game world class that adds a player to the world.
-
-		world.addPlayerToGameWorld(player);
-
-		//player.getInventory().addItem(new Key("Key1", new Point3D(0,0,0)));
 	}
 
-	public static void main(String[] args) {
-		SingleRoomWorldTest n = new SingleRoomWorldTest();
-	}
 }

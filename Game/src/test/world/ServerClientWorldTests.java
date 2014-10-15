@@ -13,6 +13,11 @@ import org.junit.Test;
 
 import test.world.util.SingleRoomWorldTest;
 
+/**
+ *
+ * @author Shane Brewer 300289850
+ *
+ */
 public class ServerClientWorldTests {
 
 	@Test
@@ -27,19 +32,15 @@ public class ServerClientWorldTests {
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
-		clientWorld.getCommand("Up", 0);
-		clientWorld.getCommand("Down", 0);
-		clientWorld.getCommand("Left", 0);
-		clientWorld.getCommand("Right", 0);
 		Iterator<Player> players = clientWorld.getPlayers();
-		boolean um = false;
+		boolean wasFound = false;
 		while(players.hasNext()){
 			if (players.next().getName().equals("FattyBoomBoom")){
 				assertTrue(true);
-				um = true;
+				wasFound = true;
 			}
 		}
-		if (!um){
+		if (!wasFound){
 			fail("Not yet implemented");
 		}
 	}
@@ -57,21 +58,19 @@ public class ServerClientWorldTests {
 			clientWorld.applyCommand(c);
 		}
 		String cmd = clientWorld.getCommand("Up", 0);
-		System.out.println(p.getPosition());
 		commands = serverWorld.applyCommand(cmd);
 		for (String c: commands){
 			clientWorld.applyCommand(c);
 		}
-		System.out.println(p.getPosition());
 		Iterator<Player> players = clientWorld.getPlayers();
-		boolean um = false;
+		boolean wasFound = false;
 		while(players.hasNext()){
 			Player pp = players.next();
 			if (pp.getName().equals("FattyBoomBoom")){
-				um = true;
+				wasFound = true;
 			}
 		}
-		if (!um){
+		if (!wasFound){
 			fail("Not yet implemented");
 		}
 	}
