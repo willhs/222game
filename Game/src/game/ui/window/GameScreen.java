@@ -153,6 +153,7 @@ public class GameScreen implements GraphicsPane  {
 		//check if the game is over
 		if(client.hasWon()){
 			gameOver(g,"You Win");
+			return;
 		}
 
 		popUpInventory.updateInventory();
@@ -355,8 +356,13 @@ public class GameScreen implements GraphicsPane  {
 	 * Returns whether or not the there is an item at this location
 	 * */
 	public boolean containsItem(int gridNumb){
-		if(gridNumb < 1 || gridNumb >= items.length)return false;
-		if(items[gridNumb] != null)return true;
+		if(gridNumb < 0 || gridNumb >= items.length)return false;
+		System.out.println(gridNumb);
+		if(items[gridNumb] != null){
+			System.out.println("true");
+			return true;
+		}
+		System.out.println("false");
 		return false;
 	}
 

@@ -125,7 +125,7 @@ public class InventoryMenu implements GraphicsPane {
 						in = true;//the item is already in  the item array
 					}
 				}
-				if( game.inInventory(item))in = true;//becuase if all empty needs to check the other inventory
+				if(game.inInventory(item))in = true;//becuase if all empty needs to check the other inventory
 			}
 			if(!in){//the item is not in the items array so add it in
 
