@@ -13,6 +13,9 @@ import game.ui.window.GameScreen;
 import game.ui.window.keyInputManagment;
 import game.world.model.Player;
 
+import java.net.UnknownHostException;
+import java.net.ConnectException;
+
 /**
  * @author Nicky van Hulst 300294657
  * */
@@ -44,6 +47,7 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 	public MultiCharacterSelectionMenu(BlankPanel panel) {
 		super(panel);
 
+		client = new Client(false);
 		//set up the 2 text fields as rectangles
 		textFieldHostName = new Rectangle(startX,startY,200,30);
 		textFieldPort = new Rectangle(startX+ 200 + 20,startY,200,30);
@@ -131,9 +135,12 @@ public class MultiCharacterSelectionMenu extends CharacterSelectionMenu {
 		//set the image name for the player
 		player.setImageName("Char"+characterSelected);
 
-		//if not already connected connet to the server
+		//if not already connected connect to the server
 		if(!connected){
-			client = new Client(hostString.s,portNumb,panel);
+			if(!client.connect(hostString.s, portNumb)){
+				error = client.getConnectionError();
+				return;
+			}
 			connected = true;
 		}
 
