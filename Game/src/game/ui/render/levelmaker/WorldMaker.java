@@ -193,6 +193,7 @@ public class WorldMaker extends JPanel{
 	 * @return JButton for the given mode.
 	 */
 	private JButton makeDrawButton(String mode, ModeButtonListener mbl){
+		System.out.println("mode: "+mode);
 		JButton button = new JButton(new ImageIcon(
 			MenuUtil.scale(Res.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
 		button.addActionListener(mbl);
