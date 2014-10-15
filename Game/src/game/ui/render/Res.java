@@ -211,7 +211,8 @@ public class Res {
 
 
 	/**
-	 * if no image found, return 'unknown image' image if unknown image isn't
+	 * if no image found, return 'unknown image' image.
+	 * if unknown image isn't
 	 * found, throw error
 	 *
 	 * @param fileName

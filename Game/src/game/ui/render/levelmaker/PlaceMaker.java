@@ -2,7 +2,6 @@ package game.ui.render.levelmaker;
 
 import game.ui.render.Renderer;
 import game.ui.render.able.GamePolygon;
-import game.ui.render.texture.Vine;
 import game.ui.render.trixel.Trixel;
 import game.ui.render.trixel.TrixelFace;
 import game.ui.render.trixel.TrixelUtil;
@@ -12,7 +11,20 @@ import game.ui.render.util.Transform;
 import game.ui.window.GameWindow;
 import game.world.dimensions.Point3D;
 import game.world.dimensions.Vector3D;
-import game.world.model.*;
+import game.world.model.AirTank;
+import game.world.model.Chest;
+import game.world.model.Crystal;
+import game.world.model.Cube;
+import game.world.model.Enviroment;
+import game.world.model.FinishPortal;
+import game.world.model.Inventory;
+import game.world.model.Item;
+import game.world.model.LockedPortal;
+import game.world.model.Place;
+import game.world.model.Plant;
+import game.world.model.Portal;
+import game.world.model.Room;
+import game.world.model.Tree;
 import game.world.util.Drawable;
 import game.world.util.Floor;
 
@@ -341,7 +353,7 @@ public class PlaceMaker{
 		if (something instanceof TrixelFace){
 			TrixelFace face = (TrixelFace) something;
 			Trixel trixel = face.getParentTrixel();
-			// could be either a floor or created trixel.
+			// could be either a floor or created trixel. Only delete floor trixel
 			createdTrixels.remove(trixel);
 		}
 		else if (something instanceof DrawablePlaceHolder){
@@ -484,39 +496,6 @@ public class PlaceMaker{
 		return new Room(items, environment, floorPolygon, getName());
 	}
 
-	private List<Vine> makeVinesAroundTrixel(Trixel newTrixel) {
-		float minHeight = trixelSize/2;
-		float maxHeight = trixelSize;
-		TrixelFace[] faces = TrixelUtil.makeTrixelFaces(newTrixel, trixelSize);
-		// the faces around the side of the trixel (all but top and bottom).
-		TrixelFace[] vineFaces = new TrixelFace[] { faces[0], faces[1], faces[4], faces[5] };
-		List<Vine> vines = new ArrayList<Vine>();
-
-		for (TrixelFace vineFace : vineFaces){
-
-			int numVines = (int)(Math.random()*3);
-			Vector3D topLineGradient = vineFace.findTopLineGradient();
-
-			for (int v = 0; v < numVines; v++){
-				Point3D center = vineFace.findCenterPoint();
-
-				float dist = (float)(Math.random()*trixelSize - (trixelSize/2)); // travel to random x,z pos within trixel face
-				// translation from center to random top point
-				Vector3D translateFromCenter = new Vector3D((dist*topLineGradient.x),
-						trixelSize/2,
-						dist*topLineGradient.z);
-				Point3D randomTopPoint = center.getTranslatedPoint(translateFromCenter);
-				float height = (float)((Math.random()*(maxHeight-minHeight))+minHeight);
-				Point3D vinePosition = randomTopPoint.getTranslatedPoint(new Vector3D(0,-height, 0));
-
-				vines.add(new Vine(vinePosition, height));
-
-			}
-		}
-		return vines;
-	}
-
-
 	/**
 	 * sets the colour of the next trixel
 	 * @param colour
@@ -622,7 +601,7 @@ public class PlaceMaker{
 
 
 	/**
-	 * Test method for generating random background objects.
+	 * A testing method for generating random background objects.
 	 *
 	 */
 	private List<BackgroundObject> generateRandomBackgroundObjects(){
@@ -706,7 +685,7 @@ public class PlaceMaker{
 	}
 
 	/**
-	 * Add a portal to this PlaceMaker 
+	 * Add a portal to this PlaceMaker
 	 * @param sp SimplePortal to add to Place being made
 	 */
 	public void addPortal(SimplePortal sp){
@@ -725,7 +704,7 @@ public class PlaceMaker{
 		portals.clear();
 		tempPortal = null;
 
-		//Add every non-portal drawable to the 
+		//Add every non-portal drawable to the
 		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
 			Drawable d = placeDrawables.next();
 			if(!(d instanceof Portal) && !(d instanceof LockedPortal)){

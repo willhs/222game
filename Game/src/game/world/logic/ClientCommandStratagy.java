@@ -46,6 +46,7 @@ class ClientExitStratagy implements ClientCommandStratagy{
 		if (!exit.isLocked() && exit instanceof FinishPortal){
 			world.changeHasWon(true);
 			System.out.println("Should win");
+			System.out.println(world.hasWon());
 		}
 		// removes the player form his old place.
 		place.removePlayer(player);

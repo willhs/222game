@@ -39,10 +39,10 @@ public class MovementHandler {
 		if (!place.contains(to)) {
 			return false;
 		}
-		// makes sure the players bounding box is in the place.
-		if (!place.contains(to, player.getBoundingBox())) {
-			return false;
-		}
+//		// makes sure the players bounding box is in the place.
+//		if (!place.contains(to, player.getBoundingBox())) {
+//			return false;
+//		}
 		// checks if there are any item collitions.
 		if (checkItemCollision(player, to, place.getItems(), toIgnore)) {
 			return false;
