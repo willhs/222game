@@ -10,6 +10,7 @@ import game.world.model.Place;
 import game.world.model.Portal;
 import game.world.model.LockedPortal;
 import game.world.model.World;
+import game.world.model.FinishPortal;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -343,6 +344,13 @@ public class WorldMaker extends JPanel{
 		World newWorld = new World(placesList);
 		for(Exit p : portals){
 			newWorld.addExit(p);
+		}
+
+		if(PlaceMaker.finishPortal != null){
+			Place p = places.get(PlaceMaker.finishPortalLM.getName());
+			FinishPortal fp = new FinishPortal("FinishPortal", p, PlaceMaker.finishPortalPoint, 10);
+			newWorld.addExit(fp);
+			p.addExit(fp);
 		}
 
 		try{

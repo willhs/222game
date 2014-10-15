@@ -44,11 +44,12 @@ public class PlaceMaker{
 	public static final String CHEST_MODE = "Chest";
 	public static final String CRYSTAL_MODE = "Crystal";
 	public static final String LOCKED_PORTAL_MODE = "LockedPortal";
+	public static final String FINISH_PORTAL_MODE = "FinishPortal";
 	/**
 	 * All of the draw modes that the world maker can be in
 	 */
 	public static final String[] MODES = {CHEST_MODE, PLANT_MODE, TREE_MODE, DOOR_MODE, AIR_TANK_MODE, TRIXEL_MODE,
-	                                      CRYSTAL_MODE, LOCKED_PORTAL_MODE};
+	                                      CRYSTAL_MODE, LOCKED_PORTAL_MODE, FINISH_PORTAL_MODE};
 
 	public static final int MIN_COLOUR_DEVIATION = 0;
 	public static final int MAX_COLOUR_DEVIATION = 100;
@@ -57,6 +58,9 @@ public class PlaceMaker{
 
 	//id for keeping item names unique
 	private static int id = 0;
+	public static FinishPortal finishPortal = null;
+	public static Point3D finishPortalPoint = null;
+	public static PlaceMaker finishPortalLM = null;
 
 	/**
 	 * the amount in which to rotate the level/place (so that it can be updated)
@@ -298,6 +302,12 @@ public class PlaceMaker{
 				}
 			}
 			return;
+		}else if (drawMode == FINISH_PORTAL_MODE){
+			if(finishPortal != null){return;}
+			finishPortal = new FinishPortal("FinishPortal" + (id++), null, aboveTrixel, 10);
+			finishPortalPoint = aboveTrixel;
+			finishPortalLM = this;
+			thingToAdd = finishPortal;
 		}
 
 		if(thingClicked instanceof DrawablePlaceHolder){
@@ -341,6 +351,12 @@ public class PlaceMaker{
 				removePortal((SimplePortal)drawable);
 			}else{
 				drawables.remove(drawable);
+			}
+
+			if(drawable instanceof FinishPortal){
+				finishPortal = null;
+				finishPortalPoint = null;
+				finishPortalLM = null;
 			}
 		}
 
