@@ -65,7 +65,6 @@ public class ItemInteractionTests{
 		Player player = new Player("Jim");
 
 		world.addPlayerToGameWorld(player);
-		System.out.println(player.getPosition());
 		Item item = new Crystal("ccc2", new Point3D(0,0,0));
 		player.addItem(item);
 

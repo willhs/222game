@@ -135,6 +135,8 @@ public class Res {
 		addImage("teleporter_on");
 		addImage("tentacle");
 		addImage("unknown_image");
+		addImage("LockedPortal");
+		addImage("FinishPortal");
 	}
 
 	/**

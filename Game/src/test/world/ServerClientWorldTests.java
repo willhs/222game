@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import test.world.util.SingleRoomWorldTest;
+import test.world.util.*;
 
 /**
  *

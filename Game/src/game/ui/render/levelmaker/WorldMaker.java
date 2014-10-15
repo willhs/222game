@@ -47,10 +47,11 @@ import javax.swing.event.ChangeListener;
 /**
  * @author hardwiwill
  *
- * The view/controller element of the Level maker.
+ * The view/controller element of the World maker.
  * Deals with user-input like clicking, dragging, interacting with buttons and other GUI elements.
  * Triggers methods in the levelMaker with this input.
  * Draws the Level when it's updated.
+ * Allows user to create new places.
  *
  */
 public class WorldMaker extends JPanel{
@@ -87,18 +88,18 @@ public class WorldMaker extends JPanel{
 		mainControls.add(trixelSizeField);
 
 		JButton loadButton = new JButton("Load");
-		loadButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				World world = null;
-				try {
-					world = browseForWorld();
-				} catch (NoFileChosenException e1) {
-					return;
-				}
-
-				loadWorld(world);
-			}
-		});
+//		loadButton.addActionListener(new ActionListener(){
+//			public void actionPerformed(ActionEvent e){
+//				World world = null;
+//				try {
+//					//world = browseForWorld();
+//				} catch (NoFileChosenException e1) {
+//					return;
+//				}
+//
+//				loadWorld(world);
+//			}
+//		});
 		mainControls.add(loadButton);
 
 		JButton loadRandomPolygonButton = new JButton("Load random");
@@ -192,6 +193,7 @@ public class WorldMaker extends JPanel{
 	 * @return JButton for the given mode.
 	 */
 	private JButton makeDrawButton(String mode, ModeButtonListener mbl){
+		System.out.println("mode: "+mode);
 		JButton button = new JButton(new ImageIcon(
 			MenuUtil.scale(Res.getImageFromName(mode), ICON_SIZE, ICON_SIZE)));
 		button.addActionListener(mbl);
@@ -242,28 +244,28 @@ public class WorldMaker extends JPanel{
 		return draw;
 	}
 
-	/**
-	 * @return gets a floor polygon for the level maker to use
-	 * @throws NoFileChosenException
-	 */
-	private World browseForWorld() throws NoFileChosenException {
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
-		final int USER_SELECTION = chooser.showOpenDialog(null);
+//	/**
+//	 * @return gets a floor polygon for the level maker to use
+//	 * @throws NoFileChosenException
+//	 */
+//	private World browseForWorld() throws NoFileChosenException {
+//		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
+//		final int USER_SELECTION = chooser.showOpenDialog(null);
+//
+//		File worldFile;
+//
+//		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
+//			worldFile =  chooser.getSelectedFile();
+//		}
+//		else throw new NoFileChosenException();
+//
+//		return parseWorld(worldFile);
+//	}
 
-		File worldFile;
-
-		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
-			worldFile =  chooser.getSelectedFile();
-		}
-		else throw new NoFileChosenException();
-
-		return parseWorld(worldFile);
-	}
-
-	public static World parseWorld(File worldFile){
+	public static World parseWorld(String worldFile){
 		World world = null;
 		try{
-			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(worldFile)));
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(WorldMaker.class.getResourceAsStream("../../../../"+worldFile)));
 			world = (World)ois.readObject();
 		}catch(ClassNotFoundException e){
 			System.err.println(e);

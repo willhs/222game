@@ -9,7 +9,7 @@ import java.util.Iterator;
 /**
  *  Handles item interaction.
  * @author Shane Brewer 300289850
- * 
+ *
  */
 public class ItemInteractionHandler {
 
@@ -17,7 +17,7 @@ public class ItemInteractionHandler {
 
 	/**
 	 * Used by the Game Event handler to have a Player pick up an item.
-	 * 
+	 *
 	 * @param player
 	 *            - player that is to pick up the item
 	 * @param item
@@ -55,7 +55,7 @@ public class ItemInteractionHandler {
 	/**
 	 * Makes sure that the item and player are within a certain proximity of
 	 * each other
-	 * 
+	 *
 	 * @param pointOne
 	 *            - point of the player.
 	 * @param boundingOne
@@ -80,7 +80,7 @@ public class ItemInteractionHandler {
 
 	/**
 	 * Handles the droping of items in the game world.
-	 * 
+	 *
 	 * @param player
 	 *            - the player that is droping the item.
 	 * @param item
@@ -119,7 +119,7 @@ public class ItemInteractionHandler {
 
 	/**
 	 * Sets the items drop point.
-	 * 
+	 *
 	 * @param player
 	 *            - the player that is to drop the item.
 	 * @param item
@@ -140,9 +140,8 @@ public class ItemInteractionHandler {
 		int maxZ = (int) (rect.z + rect.length + PLAYER_ITEM_DISTANCE + itemRect.length);
 		for (; x < maxX; x++) {
 			int z = (int) (rect.z - PLAYER_ITEM_DISTANCE - itemRect.length / 2);
-			//System.out.println("Z = "+z);
 			for (; z < maxZ; z++) {
-				//make a poistion for the item to be droped 
+				//make a poistion for the item to be droped
 				Point3D position = new Point3D(x, 0, z);
 				// Makes a check if te tiem can be droped there.
 				if (canItemBeHere(item, position, place)
@@ -158,7 +157,7 @@ public class ItemInteractionHandler {
 
 	/**
 	 * Checks if the placement at this position is ok.
-	 * 
+	 *
 	 * @param currnetItem
 	 *            - the current item.
 	 * @param point
