@@ -345,14 +345,15 @@ public class PlaceMaker{
 
 	public void removePortal(SimplePortal portal){
 		if(portal == null){return;}
-		if(portal.lm == this && portal == tempPortal){
-			tempPortal = null;
-			return;
-		}
-		drawables.remove(portal);
-		if(portal.toPortal != null){
-			portal.toPortal.toPortal = null;
-			portal.toPortal.lm.removePortal(portal.toPortal);
+		if(portal.lm == this){
+			drawables.remove(portal);
+			if(tempPortal == portal){
+				tempPortal = null;
+			}
+			if(portal.toPortal != null){
+				portal.toPortal.toPortal = null;
+				portal.toPortal.lm.removePortal(portal.toPortal);
+			}
 		}
 	}
 

@@ -244,28 +244,24 @@ public class WorldMaker extends JPanel{
 		return draw;
 	}
 
-//	/**
-//	 * @return gets a floor polygon for the level maker to use
-//	 * @throws NoFileChosenException
-//	 */
-//	private World browseForWorld() throws NoFileChosenException {
-//		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
-//		final int USER_SELECTION = chooser.showOpenDialog(null);
-//
-//		File worldFile;
-//
-//		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
-//			worldFile =  chooser.getSelectedFile();
-//		}
-//		else throw new NoFileChosenException();
-//
-//		return parseWorld(worldFile);
-//	}
+	private World browseForWorld() throws NoFileChosenException {
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
+		final int USER_SELECTION = chooser.showOpenDialog(null);
 
-	public static World parseWorld(String worldFile){
+		File worldFile;
+
+		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
+			worldFile =  chooser.getSelectedFile();
+		}
+		else throw new NoFileChosenException();
+
+		return parseWorld(worldFile);
+	}
+
+	public static World parseWorld(File worldFile){
 		World world = null;
 		try{
-			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(WorldMaker.class.getResourceAsStream("../../../../"+worldFile)));
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(worldFile)));
 			world = (World)ois.readObject();
 		}catch(ClassNotFoundException e){
 			System.err.println(e);
