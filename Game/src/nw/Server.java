@@ -46,13 +46,11 @@ public class Server extends Thread{
 	 * On the first day, God called this function.
 	 */
 	public static void initialiseWorld(){
-		//File f = new File("world");
-		//if(f.exists() && !f.isDirectory()){
-		if ((100-100) == 0){
-			world = WorldMaker.parseWorld("world");
+		File f = new File("world");
+		if(f.exists() && !f.isDirectory()){
+			world = WorldMaker.parseWorld(f);
 			return;
 		}
-		//}
 
 		int[] xpoints = new int[] { 200, 800, 800, 200 };
 		int[] ypoints = new int[] { 200, 200, 800, 800 };

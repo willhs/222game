@@ -218,9 +218,9 @@ public class Renderer {
 			}
 
 			if (drawable instanceof FinishPortal){
-				GameText numCrystals = new GameText("needs " + ((FinishPortal)drawable).getLockNumber() + "crystal",
+				GameText numCrystals = new GameText("needs " + ((FinishPortal)drawable).getLockNumber() + " crystals",
 						image.getPosition().getTranslatedPoint(
-								new Vector3D(-drawable.getBoundingBox().width/4,
+								new Vector3D(-drawable.getBoundingBox().width,
 										(drawable.getBoundingBox().height/2), 0)));
 				renderables.add(numCrystals);
 			}

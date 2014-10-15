@@ -119,6 +119,16 @@ public class Client extends Thread{
 	}
 
 	/**
+	 * Return whether the game has been won
+	 */
+	public boolean hasWon(){
+		if(world != null){
+			return world.hasWon();
+		}
+		return false;
+	}
+
+	/**
 	 * Move a local player by adding the move (left, right etc) to the
 	 * key code queue to be processed and sent to the server
 	 * @param move The move to be sent

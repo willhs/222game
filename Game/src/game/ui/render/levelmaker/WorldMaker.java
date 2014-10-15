@@ -245,33 +245,29 @@ public class WorldMaker extends JPanel{
 		return draw;
 	}
 
-//	/**
-//	 * @return gets a floor polygon for the level maker to use
-//	 * @throws NoFileChosenException
-//	 */
-//	private World browseForWorld() throws NoFileChosenException {
-//		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
-//		final int USER_SELECTION = chooser.showOpenDialog(null);
-//
-//		File worldFile;
-//
-//		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
-//			worldFile =  chooser.getSelectedFile();
-//		}
-//		else throw new NoFileChosenException();
-//
-//		return parseWorld(worldFile);
-//	}
+	private World browseForWorld() throws NoFileChosenException {
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
+		final int USER_SELECTION = chooser.showOpenDialog(null);
 
+		File worldFile;
+
+		if (USER_SELECTION == JFileChooser.APPROVE_OPTION){
+			worldFile =  chooser.getSelectedFile();
+		}
+		else throw new NoFileChosenException();
+
+		return parseWorld(worldFile);
+	}
 	/**
 	 * Parses a world file a makes a World object
 	 * @param worldFile
 	 * @return
 	 */
-	public static World parseWorld(String worldFile){
+
+	public static World parseWorld(File worldFile){
 		World world = null;
 		try{
-			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(WorldMaker.class.getResourceAsStream("../../../../"+worldFile)));
+			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(worldFile)));
 			world = (World)ois.readObject();
 		}catch(ClassNotFoundException e){
 			System.err.println(e);
@@ -335,10 +331,10 @@ public class WorldMaker extends JPanel{
 			Place p = places.get(sp.lm.name);
 			Exit portal;
 			if(sp.locked){
-				portal = new LockedPortal("Portal", places.get(sp.lm.name), sp.location,
+				portal = new LockedPortal(sp.getName(), places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
 			}else{
-				portal = new Portal("Portal", places.get(sp.lm.name), sp.location,
+				portal = new Portal(sp.getName(), places.get(sp.lm.name), sp.location,
                                                  places.get(sp.toPortal.lm.name), sp.toPortal.location);
 			}
 			p.addExit(portal);
