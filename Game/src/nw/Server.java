@@ -46,11 +46,13 @@ public class Server extends Thread{
 	 * On the first day, God called this function.
 	 */
 	public static void initialiseWorld(){
-		File f = new File("world");
-		if(f.exists() && !f.isDirectory()){
-			world = WorldMaker.parseWorld(f);
+		//File f = new File("world");
+		//if(f.exists() && !f.isDirectory()){
+		if ((100-100) == 0){
+			world = WorldMaker.parseWorld("world");
 			return;
 		}
+		//}
 
 		int[] xpoints = new int[] { 200, 800, 800, 200 };
 		int[] ypoints = new int[] { 200, 200, 800, 800 };
@@ -64,11 +66,11 @@ public class Server extends Thread{
 		c.getContents().addItem(new Crystal("FlappyBird", new Point3D(0, 0, 0)));
 		secondItems.add(c);
 		Room secondRoom = new Room(secondItems, new ArrayList<Enviroment>(), secontFloor, "Room2");
-		
+
 		List<Place> places = new ArrayList<Place>();
 		places.add(firstRoom);
 		places.add(secondRoom);
-		
+
 		Exit exit = new Portal("Door1", firstRoom, new Point3D(400, 0, 400),
 		                secondRoom, new Point3D(400, 0, 500));
 		firstRoom.addExit(exit);
@@ -124,7 +126,7 @@ public class Server extends Thread{
 				out.writeObject(world);//Send the whole world to the client
 			}
 			while(true){//Forever:
-	
+
 				if(bis.available() != 0){//If there are any objects incoming
 					received = in.readObject();//Get one
 					if(received instanceof String){//If it's a string, it's a command, let's process it
@@ -134,9 +136,9 @@ public class Server extends Thread{
 							throw new QuitException();
 						}
 						//System.out.println(getRemainingSeconds() + " remaining");
-						
+
 						for(String cmd : world.applyCommand((String)received)){//Apply the command and
-							print("[Server] Returning: " + cmd);	
+							print("[Server] Returning: " + cmd);
 							Server.send(cmd);//Send each resulting command to all clients.
 						}
 					}else{

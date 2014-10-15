@@ -3,14 +3,14 @@ package game.world.logic;
 import game.world.model.*;
 
 /**
- * 
+ *
  * @author Shane Brewer 300289850
  *
  */
 public class ContainerInteractionHandler {
 
 	/**
-	 * Checks the logic and removes items and adds to the player if 
+	 * Checks the logic and removes items and adds to the player if
 	 * it is ok to do so.
 	 */
 	public static boolean getItemsFromContainer(Player player,
