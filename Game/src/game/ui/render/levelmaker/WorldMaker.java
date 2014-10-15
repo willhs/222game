@@ -90,18 +90,18 @@ public class WorldMaker extends JPanel{
 		mainControls.add(trixelSizeField);
 
 		JButton loadButton = new JButton("Load");
-//		loadButton.addActionListener(new ActionListener(){
-//			public void actionPerformed(ActionEvent e){
-//				World world = null;
-//				try {
-//					//world = browseForWorld();
-//				} catch (NoFileChosenException e1) {
-//					return;
-//				}
-//
-//				loadWorld(world);
-//			}
-//		});
+		loadButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				World world = null;
+				try {
+					world = browseForWorld();
+				} catch (NoFileChosenException e1) {
+					return;
+				}
+
+				loadWorld(world);
+			}
+		});
 		mainControls.add(loadButton);
 
 		JButton loadRandomPolygonButton = new JButton("Load random");
@@ -246,6 +246,10 @@ public class WorldMaker extends JPanel{
 		return draw;
 	}
 
+	/**
+	 * Browse for a world, parse it and return it
+	 * @return The world selected and parsed
+	 */
 	private World browseForWorld() throws NoFileChosenException {
 		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir")+File.separator+Res.FLOOR_PATH);
 		final int USER_SELECTION = chooser.showOpenDialog(null);
@@ -259,12 +263,12 @@ public class WorldMaker extends JPanel{
 
 		return parseWorld(worldFile);
 	}
+
 	/**
 	 * Parses a world file a makes a World object
 	 * @param worldFile
 	 * @return
 	 */
-
 	public static World parseWorld(File worldFile){
 		World world = null;
 		try{
@@ -320,6 +324,7 @@ public class WorldMaker extends JPanel{
 			e.printStackTrace();
 		}
 
+		//Make a hashmap for PlaceMaker generated places
 		HashMap<String, Place> places = new HashMap<String, Place>();
 		for(LevelPanel lp : lps){
 			places.put(lp.levelMaker.name, lp.levelMaker.toPlace());
@@ -328,6 +333,7 @@ public class WorldMaker extends JPanel{
 			System.out.println(m.getKey() + " ::: " + m.getValue());
 		}
 
+		//Add portals to places
 		for(PlaceMaker.SimplePortal sp : PlaceMaker.getPortals()){
 			Place p = places.get(sp.lm.name);
 			Exit portal;
@@ -342,16 +348,19 @@ public class WorldMaker extends JPanel{
 			portals.add(portal);
 		}
 
+		//Construct a places list for passing to the new world
 		List<Place> placesList = new ArrayList<Place>();
 		for(Map.Entry<String, Place> m : places.entrySet()){
 			placesList.add(m.getValue());
 		}
 
+		//Construct the new world
 		World newWorld = new World(placesList);
 		for(Exit p : portals){
 			newWorld.addExit(p);
 		}
 
+		//Add the finish portal if there is one
 		if(PlaceMaker.finishPortal != null){
 			Place p = places.get(PlaceMaker.finishPortalLM.getName());
 			FinishPortal fp = new FinishPortal("FinishPortal", p, PlaceMaker.finishPortalPoint, 10);
@@ -359,6 +368,7 @@ public class WorldMaker extends JPanel{
 			p.addExit(fp);
 		}
 
+		//Write the world to file
 		try{
 			oos.writeObject(newWorld);
 			oos.close();
@@ -372,12 +382,14 @@ public class WorldMaker extends JPanel{
 	 * @param world
 	 */
 	private void loadWorld(World world){
+		//Wipe all tabs
 		levelTabsPane.removeAll();
 		numTabs = 0;
 		Place place;
 		List<Exit> portals = new ArrayList<Exit>();
 		HashMap<String, PlaceMaker> placeMakers = new HashMap<String, PlaceMaker>();
 
+		//Add a tab for each place in the world
 		for(Iterator<Place> places = world.getPlaces(); places.hasNext();){
 			numTabs++;
 			place = places.next();
@@ -387,12 +399,14 @@ public class WorldMaker extends JPanel{
 			levelTabsPane.addTab(name, null, lp, name);
 			lp.levelMaker.loadPlace(place);
 
+			//Keep a list of all portals
 			placeMakers.put(name, lp.levelMaker);
 			for(Iterator<Exit> exits = place.getExits(); exits.hasNext();){
 				portals.add(exits.next());
 			}
 		}
 
+		//Add each portal to its PlaceMaker
 		for(Exit portal : portals){
 			Place from = portal.getConnectedPlaces().get(0).place;
 			Place to = portal.getConnectedPlaces().get(1).place;

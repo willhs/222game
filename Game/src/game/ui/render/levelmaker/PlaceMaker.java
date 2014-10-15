@@ -282,6 +282,7 @@ public class PlaceMaker{
 		Point3D aboveTrixel = TrixelUtil.findTopCenterOfTrixel(clickedTrixel, trixelSize);
 		Drawable thingToAdd = null;
 
+		// Normal item/environment adds
 		if (drawMode == PLANT_MODE){
 			thingToAdd = new Plant("Plant" + (id++), aboveTrixel);
 		}else if (drawMode == TREE_MODE){
@@ -292,19 +293,19 @@ public class PlaceMaker{
 			thingToAdd = new Chest("Chest" + (id++), new Inventory(), aboveTrixel);
 		}else if (drawMode == CRYSTAL_MODE){
 			thingToAdd = new Crystal("Crystal" + (id++), aboveTrixel);
-		}else if (drawMode == TRIXEL_MODE){
+		}else if (drawMode == TRIXEL_MODE){//Trixels
 			Trixel newTrixel = makeTrixelNextToFace(face, baseColour);
 			createdTrixels.add(newTrixel);
 			return;
-		}else if (drawMode == DOOR_MODE || drawMode == LOCKED_PORTAL_MODE){
+		}else if (drawMode == DOOR_MODE || drawMode == LOCKED_PORTAL_MODE){//Portals
 			boolean locked = drawMode == LOCKED_PORTAL_MODE;
-			if(tempPortal == null){
+			if(tempPortal == null){//If this is the first half of a portal link, set the tempPortal variable
 				tempPortal = new SimplePortal(this, aboveTrixel, null, locked);
 				drawables.add(tempPortal);
 				getPortals().add(tempPortal);
 				System.out.println("Made start portal at " + aboveTrixel + " in room " + getName());
-			}else if(tempPortal.locked == locked){
-				if(tempPortal.lm != this){
+			}else if(tempPortal.locked == locked){//Otherwise, if this is the second half and the portal type matches
+				if(tempPortal.lm != this){//We can't set a portal link between two places in the same room.
 					SimplePortal newSP = new SimplePortal(this, aboveTrixel, tempPortal, locked);
 					tempPortal.toPortal = newSP;
 					drawables.add(newSP);
@@ -314,22 +315,24 @@ public class PlaceMaker{
 				}
 			}
 			return;
-		}else if (drawMode == FINISH_PORTAL_MODE){
+		}else if (drawMode == FINISH_PORTAL_MODE){//The finish portal is a special case.
 			if(finishPortal != null){return;}
+			//Remember its fields for WorldMaker to use
 			finishPortal = new FinishPortal("FinishPortal" + (id++), null, aboveTrixel, 10);
 			finishPortalPoint = aboveTrixel;
 			finishPortalLM = this;
 			thingToAdd = finishPortal;
 		}
 
+		//If we clicked on a chest, and we've selected an item, then add that item to the chest.
 		if(thingClicked instanceof DrawablePlaceHolder){
 			Drawable d = ((DrawablePlaceHolder)thingClicked).getDrawable();
-			if(d instanceof Chest){
+			if(d instanceof Chest && thingToAdd instanceof Item){
 				((Chest)d).getContents().addItem((Item)thingToAdd);
 				System.out.println("Added thing to chest");
 			}
 		}
-		else{
+		else{//Add the selected thing to drawables so it'll be rendered
 			drawables.add(thingToAdd);
 		}
 
@@ -375,14 +378,18 @@ public class PlaceMaker{
 		updateTransformedObjects();
 	}
 
+	/**
+	 * Remove a portal from this PlaceMaker, and any portals it links to in other PlaceMakers
+	 * @param portal Portal to remove
+	 */
 	public void removePortal(SimplePortal portal){
 		if(portal == null){return;}
-		if(portal.lm == this){
+		if(portal.lm == this){//Don't remove the portal if it's not in this PlaceMaker
 			drawables.remove(portal);
-			if(tempPortal == portal){
+			if(tempPortal == portal){//If the portal is the current tempPortal then clear that variable
 				tempPortal = null;
 			}
-			if(portal.toPortal != null){
+			if(portal.toPortal != null){//Remove the other half of the link if it is declared
 				portal.toPortal.toPortal = null;
 				portal.toPortal.lm.removePortal(portal.toPortal);
 			}
@@ -475,6 +482,7 @@ public class PlaceMaker{
 		List<Item> items = new ArrayList<Item>();
 		List<Enviroment> environment = new ArrayList<Enviroment>();
 
+		//Add all drawable objects to the correct list except for portals
 		for (Drawable drawable : drawables){
 			if (drawable instanceof Item){
 				items.add((Item) drawable);
@@ -484,6 +492,8 @@ public class PlaceMaker{
 			}
 		}
 
+		//Trixels are split into floorTrixels and createdTrixels in PlaceMaker, save them both
+		//with a field in Cube to show the difference
 		for (Trixel floorTrixel : floorTrixels){
 			environment.add(new Cube(Cube.FLOOR, floorTrixel, trixelSize, false));
 		}
@@ -491,6 +501,7 @@ public class PlaceMaker{
 			environment.add(new Cube(Cube.NON_FLOOR, createdTrixel, trixelSize, true));
 		}
 
+		//Get the floor polygon from the floor we generated earlier
 		Polygon floorPolygon = Renderer.floorToVerticalPolygon(floor);
 
 		return new Room(items, environment, floorPolygon, getName());
@@ -519,14 +530,25 @@ public class PlaceMaker{
 		PlaceMaker.drawMode  = drawMode;
 	}
 
+	/**
+	 * Get the draw mode
+	 * @return the current draw mode
+	 */
 	public String getDrawMode(){
 		return drawMode;
 	}
 
+	/**
+	 * Set the random colour deviation used when generating floors and trixels
+	 */
 	public void setColourDeviation(int deviation) {
 		randomColourDeviation = deviation;
 	}
 
+	/**
+	 * Get all objects in the world, stored as a drawables list in this class
+	 * @return A list of all drawable objects in the world
+	 */
 	public Iterator<Drawable> getWorldObjects() {
 		return drawables.iterator();
 	}
@@ -540,18 +562,35 @@ public class PlaceMaker{
 		return allTrixels.iterator();
 	}
 
+	/**
+	 * Get the list of trixels making up the floor
+	 * @return All trixels making up the floor
+	 */
 	public Iterator<Trixel> getFloorTrixels() {
 		return floorTrixels.iterator();
 	}
 
+	/**
+	 * Get all trixels created by the user
+	 * @return All user created trixels
+	 */
 	public Iterator<Trixel> getCreatedTrixels(){
 		return createdTrixels.iterator();
 	}
 
+	/**
+	 * Set the integer size used to draw pixels
+	 * @param trixelSize Size of constructed trixels
+	 */
 	public void setTrixelSize(int trixelSize) {
 		this.trixelSize = trixelSize;
 
 	}
+
+	/**
+	 * Get the trixel size
+	 * @return Size of trixels
+	 */
 	public int getTrixelSize() {
 		return trixelSize;
 	}
@@ -570,6 +609,7 @@ public class PlaceMaker{
 
 		Point3D[] vertices = new Point3D[numPoints];
 
+		//Iterate through the randomly chosen range and construct points
 		for (int i = 0; i < numPoints; i++){
 			int x = (int)(Math.random()*maxXValue);
 			int z = (int)(Math.random()*maxYValue);
@@ -596,48 +636,6 @@ public class PlaceMaker{
 		if(tempPortal != null){
 			removePortal(tempPortal);
 		}
-	}
-
-
-
-	/**
-	 * A testing method for generating random background objects.
-	 *
-	 */
-	private List<BackgroundObject> generateRandomBackgroundObjects(){
-		int maxObjectsCount = 20;
-		int minObjectsCount = 10;
-		int minSize = 10;
-		int maxSize = 100;
-		int minYDist = -1000;
-		int maxYDist = 1000;
-		int minXZ = 100;// the min x or z value.
-		int maxXZ = 1000;
-
-		Random r = new Random();
-
-		int objectsCount = r.nextInt(maxObjectsCount-minObjectsCount) + minObjectsCount;
-		List<BackgroundObject> background = new ArrayList<BackgroundObject>();
-
-		for (int i = 0; i < objectsCount; i++){
-			int size = r.nextInt(maxSize-minSize) + minSize;
-
-			int xPos = r.nextInt(maxXZ-minXZ) + (minXZ * (r.nextInt(2) == 0 ? 1 : -1)); // 50/50 of being pos or neg
-			// y is more constrained, because the game is currently seen from a constant y-axis angle
-			int yPos = (int) (floorCentroid.y + r.nextInt(maxYDist-minYDist) + minYDist);
-			int zPos = r.nextInt(maxXZ-minXZ) + (minXZ * (r.nextInt(2) == 0 ? 1 : -1));
-
-			//System.out.println("background object: "+xPos + " " + yPos + " " + zPos);
-
-			Point3D pos = new Point3D(xPos, yPos, zPos);
-
-			// rotate
-			pos = Renderer.makeReverseTransform(rotateAmounts, floorCentroid, Renderer.STANDARD_VIEW_TRANSLATION).multiply(pos);
-
-			background.add(new BackgroundObject(pos, size));
-		}
-
-		return background;
 	}
 
 	/**
@@ -704,13 +702,14 @@ public class PlaceMaker{
 		portals.clear();
 		tempPortal = null;
 
-		//Add every non-portal drawable to the
+		//Add every non-portal drawable to the drawables
 		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
 			Drawable d = placeDrawables.next();
 			if(!(d instanceof Portal) && !(d instanceof LockedPortal)){
 				drawables.add(d);
 			}
 		}
+		//Add the environment
 		for (Iterator<Enviroment> placeEnvironments = place.getEnviroment(); placeEnvironments.hasNext();){
 			Enviroment env = placeEnvironments.next();
 			if(env instanceof Cube){
@@ -729,10 +728,18 @@ public class PlaceMaker{
 		updateFaces();
 	}
 
+	/**
+	 * Get all portals across all PlaceMakers
+	 * @return All portals defined across all PlaceMakers
+	 */
 	public static Set<SimplePortal> getPortals() {
 		return portals;
 	}
 
+	/**
+	 * Set a new list of portals
+	 * @param portals Set of SimplePortal objects
+	 */
 	public static void setPortals(Set<SimplePortal> portals) {
 		PlaceMaker.portals = portals;
 	}
