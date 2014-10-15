@@ -647,14 +647,26 @@ public class PlaceMaker{
 		return background;
 	}
 
+	/**
+	 * Get the name of the place this PlaceMaker is making
+	 * @return name of the place of this PlaceMaker
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Set the name of the place this PlaceMaker is making
+	 * @param name Name of the place of this PlaceMaker
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * A temporary portal class used to represent a real portal between saves/loads because
+	 * when constructing a portal we don't have a second place until the second portal is placed.
+	 */
 	public class SimplePortal extends Portal{
 		public PlaceMaker lm;
 		public Point3D location;
@@ -678,11 +690,19 @@ public class PlaceMaker{
 		}
 	}
 
+	/**
+	 * Add a portal to this PlaceMaker 
+	 * @param sp SimplePortal to add to Place being made
+	 */
 	public void addPortal(SimplePortal sp){
 		portals.add(sp);
 		drawables.add(sp);
 	}
 
+	/**
+	 * Load the given place into this PlaceMaker
+	 * @param place Place to load into this PlaceMaker
+	 */
 	public void loadPlace(Place place){
 		createdTrixels.clear();
 		floorTrixels.clear();
@@ -690,6 +710,7 @@ public class PlaceMaker{
 		portals.clear();
 		tempPortal = null;
 
+		//Add every non-portal drawable to the 
 		for (Iterator<Drawable> placeDrawables = place.getDrawable(); placeDrawables.hasNext();){
 			Drawable d = placeDrawables.next();
 			if(!(d instanceof Portal) && !(d instanceof LockedPortal)){
