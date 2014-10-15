@@ -5,7 +5,7 @@ import game.world.dimensions.Vector3D;
 import java.awt.Color;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * A light source.
  * Light sources emanate from infinitely far away, so as to reduce computation difficulty.

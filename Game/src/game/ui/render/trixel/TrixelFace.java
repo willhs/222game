@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author will
+ * @author will	hardwick-smith 300285801
  *
  * Represents a face of a Trixel
  * 4 vertices, area = Trixel.SIZE

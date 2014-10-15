@@ -3,7 +3,7 @@ package game.ui.render.trixel;
 import java.awt.Color;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * Trixel - a pixel in tri dimensions. Also known as Voxel. Naming inspired by it's usage in FEZ game.
  *

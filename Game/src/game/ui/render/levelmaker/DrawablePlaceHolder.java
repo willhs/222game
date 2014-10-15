@@ -12,7 +12,7 @@ import java.awt.Polygon;
 import java.util.Arrays;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  * Placeholder for a drawable.
  * Made for hacky reasons: need a transformable drawable with a link back to drawable
  */

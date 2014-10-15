@@ -5,7 +5,7 @@ import game.ui.render.util.Transformable;
 import game.world.dimensions.Point3D;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * A line from p1, to p2.
  */

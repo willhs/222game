@@ -1,7 +1,7 @@
 package game.ui.render.util;
 
 /**
- * @author will
+ * @author will hardwick-smith	300285801
  *
  * Represents anything that has a depth component
  */

@@ -9,7 +9,7 @@ import game.world.util.Drawable;
 import java.awt.image.BufferedImage;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  */
 public class BackgroundObject implements Drawable{

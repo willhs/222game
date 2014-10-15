@@ -17,7 +17,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  *         Contains references to all resources (images and worlds)
  */

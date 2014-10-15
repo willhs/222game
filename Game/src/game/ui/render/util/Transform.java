@@ -10,7 +10,8 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 
 /**
- * @author hardwiwill & pondy; pondy wrote most of this class.
+ * @author hardwiwill 300285801
+ * @author pondy; pondy wrote most of this class.
  *
  * 3x4 array representing an affine transformation
  * (= a 4x4 matrix in which the bottom row is always {0 0 0 1} )

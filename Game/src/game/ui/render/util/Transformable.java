@@ -2,7 +2,7 @@ package game.ui.render.util;
 
 
 /**
- * @author will
+ * @author will hardwick-smith	300285801
  *
  * Able to be transformed with 3d vector transformations.
  */

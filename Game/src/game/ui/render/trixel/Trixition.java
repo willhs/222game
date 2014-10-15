@@ -2,7 +2,7 @@ package game.ui.render.trixel;
 import java.io.Serializable;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * The position of a Trixel in the trixel space.
  * Can be converted into real space, using TrixelUtil.trixitionToPosition

@@ -3,7 +3,7 @@ package game.ui.render.able;
 import game.world.dimensions.Point3D;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * Used for drawing text at a position
  */

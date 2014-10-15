@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * For helper methods involving trixels,
  * Functions include converting between trixitions and 3d points in the world,

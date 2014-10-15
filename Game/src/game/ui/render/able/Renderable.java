@@ -6,7 +6,7 @@ import game.ui.render.util.DepthComparable;
 /**
  * Ready for rendering.
  *
- * @author hardwiwill
+ * @author hardwiwill	300285801
  */
 public interface Renderable extends DepthComparable{
 

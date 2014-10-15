@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.Polygon;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * A java.awt.Polygon with a depth component.
  */

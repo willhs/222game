@@ -8,7 +8,7 @@ import game.world.dimensions.Rectangle3D;
 import java.awt.image.BufferedImage;
 
 /**
- * @author hardwiwill
+ * @author hardwiwill	300285801
  *
  * An image at a point
  */

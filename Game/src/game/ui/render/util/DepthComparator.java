@@ -3,7 +3,7 @@ package game.ui.render.util;
 import java.util.Comparator;
 
 /**
- * @author will
+ * @author will hardwick-smith	300285801
  *
  * compares depth components
  */
