@@ -7,6 +7,8 @@ import game.world.util.Parser;
 
 import java.util.*;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
+
 /**
  * Handles all the client side modeling and some interation.
  *
@@ -15,6 +17,7 @@ import java.util.*;
  */
 public abstract class ClientWorld extends ServerWorld {
 
+	private boolean hasWon;
 	private float movmentScaler = 8.0f;
 	private HashMap<String, Transform> keyPressToDirection;
 	private Map<String, ClientCommandStratagy> clientCommands;
@@ -238,7 +241,21 @@ public abstract class ClientWorld extends ServerWorld {
 		return currentPlace;
 	}
 
+	/**
+	 * Check for if the game is over
+	 * @return - true if the game is over.
+	 */
+	public boolean hasWon(){
+		return hasWon;
+	}
 
+	/**
+	 * Change the hasWon boolean
+	 * @param change - change for hasWon.
+	 */
+	protected void changeHasWon(boolean change){
+		hasWon = change;
+	}
 
 	//=============================================Getters End===================================//
 

@@ -41,6 +41,10 @@ class ClientExitStratagy implements ClientCommandStratagy{
 		Place place = world.getPlaceByName(placeName);
 		Exit exit = world.getExitByName(exitName);
 		exit.setLocked(false);
+		if (!exit.isLocked() && exit instanceof FinishPortal){
+			world.changeHasWon(true);
+			System.out.println("Should win");
+		}
 		// removes the player form his old place.
 		place.removePlayer(player);
 		// adds him to the new one.
