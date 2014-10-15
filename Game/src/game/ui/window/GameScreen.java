@@ -211,7 +211,7 @@ public class GameScreen implements GraphicsPane  {
 		g.fillRect(100, 50, airLevel*2, 50);
 
 		//draw the tank
-		g.setColor(Color.red);
+		g.setColor(new Color(1f,0,0,0.5f));
 		g.fill(new Arc2D.Double(75, 50, 50, 50, 90, 90, Arc2D.PIE));
 		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 0, 90, Arc2D.PIE));
 		g.fill(new Arc2D.Double(200+75, 50, 50, 50, 270, 90, Arc2D.PIE));
@@ -228,7 +228,7 @@ public class GameScreen implements GraphicsPane  {
 		g.drawString(airLevel+"", 100 + 100 - g.getFontMetrics(myFont).stringWidth(""+airLevel)/2, (int) ((50 + 50 - (g.getFontMetrics(myFont).getHeight()/2)))-3);
 
 		//if the air level is below 0 the game is over
-		if(airLevel >=101)gameOver(g);
+		if(airLevel <=0)gameOver(g);
 	}
 
 
@@ -238,6 +238,7 @@ public class GameScreen implements GraphicsPane  {
 	 * */
 	public void gameOver(Graphics g){
 			Graphics2D g2d = (Graphics2D)g;
+
 
 			//change font
 			Font myFont = new Font("Tunga",0,30);
