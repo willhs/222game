@@ -327,7 +327,7 @@ public class PlaceMaker{
 		if (something instanceof TrixelFace){
 			TrixelFace face = (TrixelFace) something;
 			Trixel trixel = face.getParentTrixel();
-			// could be either a floor or created trixel.
+			// could be either a floor or created trixel. Only delete floor trixel
 			createdTrixels.remove(trixel);
 		}
 		else if (something instanceof DrawablePlaceHolder){
@@ -338,6 +338,7 @@ public class PlaceMaker{
 			}else{
 				drawables.remove(drawable);
 			}
+			//System.out.println("box: "+placeHolder.getBoundingBox() + " point: "+placeHolder.getPosition());
 		}
 
 		updateTransformedObjects();

@@ -79,10 +79,14 @@ public class DrawablePlaceHolder implements Drawable, DepthComparable, Transform
 				(int)(pos.x+box.width/2),
 				(int)(pos.x-box.width/2)};
 		int[] ypoints = new int[]{
-				(int)(pos.y + box.length/2 - box.height),
-				(int)(pos.y + box.length/2 - box.height),
-				(int)(pos.y + box.length/2),
-				(int)(pos.y + box.length/2)};
+				(int)(pos.y - box.length/2 + box.height),
+				(int)(pos.y - box.length/2 + box.height),
+				(int)(pos.y - box.length/2),
+				(int)(pos.y - box.length/2)};
+
+
+		System.out.println("x: "+x+" y; "+y);
+		System.out.println("poly: \n"+Arrays.toString(xpoints) + "\n" + Arrays.toString(ypoints));
 
 		return new Polygon(xpoints, ypoints, xpoints.length).contains(x, y);
 	}
