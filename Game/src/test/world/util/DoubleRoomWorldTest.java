@@ -23,6 +23,9 @@ public class DoubleRoomWorldTest {
 		Room firstRoom = new Room(firstItems, new ArrayList<Enviroment>(), firstFloor, "Room1");
 		Polygon secontFloor = new Polygon(xpoints, ypoints, xpoints.length);
 		List<Item> secondItems = new ArrayList<Item>();
+		Chest con = new Chest("chest", new Inventory(), new Point3D(300, 0, 300));
+		con.getContents().addItem(new Crystal("c", new Point3D(0,0,0)));
+		secondItems.add(con);
 		Room secondRoom = new Room(secondItems, new ArrayList<Enviroment>(), secontFloor, "Room2");
 
 		List<Place> places = new ArrayList<Place>();
@@ -39,7 +42,7 @@ public class DoubleRoomWorldTest {
 
 	}
 
-	public World getWorld(){
+	public World getWorld() {
 		return world;
 	}
 
