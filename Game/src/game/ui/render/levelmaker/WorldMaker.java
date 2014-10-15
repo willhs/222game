@@ -61,9 +61,10 @@ public class WorldMaker extends JPanel{
 	private JTabbedPane levelTabsPane;
 	private int numTabs = 1;
 
+	/**
+	 *	Initialises GUI elements.
+	 */
 	public WorldMaker(){
-
-		// initialise GUI stuff
 
 		setLayout(new BorderLayout());
 
@@ -235,7 +236,7 @@ public class WorldMaker extends JPanel{
 			}
 		};
 
-		WillMouseMotionListener listener = new WillMouseMotionListener();
+		MakerMouseMotionListener listener = new MakerMouseMotionListener();
 		draw.addMouseListener(listener);
 		draw.addMouseMotionListener(listener);
 		draw.setBackground(Color.BLACK);
@@ -262,6 +263,11 @@ public class WorldMaker extends JPanel{
 //		return parseWorld(worldFile);
 //	}
 
+	/**
+	 * Parses a world file a makes a World object
+	 * @param worldFile
+	 * @return
+	 */
 	public static World parseWorld(String worldFile){
 		World world = null;
 		try{
@@ -357,6 +363,10 @@ public class WorldMaker extends JPanel{
 		}
 	}
 
+	/**
+	 * Loads a world into the WorldMaker.
+	 * @param world
+	 */
 	private void loadWorld(World world){
 		levelTabsPane.removeAll();
 		numTabs = 0;
@@ -399,7 +409,11 @@ public class WorldMaker extends JPanel{
 		}
 	}
 
-	public class WillMouseMotionListener extends MouseAdapter{
+	/**
+	 * @author hardwiwill
+	 * Listens for mouse events for the WorldMaker.
+	 */
+	public class MakerMouseMotionListener extends MouseAdapter{
 
 		private int mouseX, mouseY;
 

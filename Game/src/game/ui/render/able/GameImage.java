@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 /**
  * @author hardwiwill
  *
- * Contains an (2d) image at a point
+ * An image at a point
  */
 public class GameImage implements Renderable, Transformable{
 
@@ -25,7 +25,7 @@ public class GameImage implements Renderable, Transformable{
 	}
 
 	@Override
-	public float getDepth() { // TODO: make this proper:
+	public float getDepth() { // TODO: make this be relative to the position instead of the length:
 		return position.getZ() + boundingBox.length/4;
 	}
 
