@@ -28,14 +28,14 @@ public class ServerClientWorldTests {
 			clientWorld.applyCommand(c);
 		}
 		Iterator<Player> players = clientWorld.getPlayers();
-		boolean um = false;
+		boolean wasFound = false;
 		while(players.hasNext()){
 			if (players.next().getName().equals("FattyBoomBoom")){
 				assertTrue(true);
-				um = true;
+				wasFound = true;
 			}
 		}
-		if (!um){
+		if (!wasFound){
 			fail("Not yet implemented");
 		}
 	}
@@ -58,14 +58,14 @@ public class ServerClientWorldTests {
 			clientWorld.applyCommand(c);
 		}
 		Iterator<Player> players = clientWorld.getPlayers();
-		boolean um = false;
+		boolean wasFound = false;
 		while(players.hasNext()){
 			Player pp = players.next();
 			if (pp.getName().equals("FattyBoomBoom")){
-				um = true;
+				wasFound = true;
 			}
 		}
-		if (!um){
+		if (!wasFound){
 			fail("Not yet implemented");
 		}
 	}

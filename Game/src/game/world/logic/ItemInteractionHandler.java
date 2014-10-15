@@ -136,10 +136,11 @@ public class ItemInteractionHandler {
 				item.getPosition());
 		// Sets up the valsues for the x and z and xMax and yMax.
 		int x = (int) (rect.x - PLAYER_ITEM_DISTANCE - itemRect.width / 2);
-		int z = (int) (rect.z - PLAYER_ITEM_DISTANCE - itemRect.length / 2);
-		int maxX = (int) (rect.x + rect.width + PLAYER_ITEM_DISTANCE + itemRect.width / 2);
-		int maxZ = (int) (rect.z + rect.length + PLAYER_ITEM_DISTANCE + itemRect.length / 2);
+		int maxX = (int) (rect.x + rect.width + PLAYER_ITEM_DISTANCE + itemRect.width);
+		int maxZ = (int) (rect.z + rect.length + PLAYER_ITEM_DISTANCE + itemRect.length);
 		for (; x < maxX; x++) {
+			int z = (int) (rect.z - PLAYER_ITEM_DISTANCE - itemRect.length / 2);
+			//System.out.println("Z = "+z);
 			for (; z < maxZ; z++) {
 				//make a poistion for the item to be droped 
 				Point3D position = new Point3D(x, 0, z);
