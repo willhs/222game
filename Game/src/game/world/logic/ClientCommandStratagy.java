@@ -23,6 +23,8 @@ public interface ClientCommandStratagy extends Serializable{
 }
 
 class ClientExitStratagy implements ClientCommandStratagy{
+
+	@Override
 	public void clientSetCommand(Scanner scan, ClientWorld world){
 		// gets the name of the player that is to be moved.
 		Parser.removeUnneedText("Name", scan);
@@ -41,6 +43,10 @@ class ClientExitStratagy implements ClientCommandStratagy{
 		Place place = world.getPlaceByName(placeName);
 		Exit exit = world.getExitByName(exitName);
 		exit.setLocked(false);
+		if (!exit.isLocked() && exit instanceof FinishPortal){
+			world.changeHasWon(true);
+			System.out.println("Should win");
+		}
 		// removes the player form his old place.
 		place.removePlayer(player);
 		// adds him to the new one.
@@ -58,6 +64,8 @@ class ClientExitStratagy implements ClientCommandStratagy{
 
 
 class ClientItemPickupStratagy implements ClientCommandStratagy{
+
+	@Override
 	public void clientSetCommand(Scanner scan, ClientWorld world){
 		// Gets the players name.
 		Parser.removeUnneedText("Name", scan);
@@ -82,6 +90,8 @@ class ClientItemPickupStratagy implements ClientCommandStratagy{
 }
 
 class ClientItemDropStratagy implements ClientCommandStratagy{
+
+	@Override
 	public void clientSetCommand(Scanner scan, ClientWorld world){
 		// Gets the players name.
 		Parser.removeUnneedText("Name", scan);
@@ -109,6 +119,8 @@ class ClientItemDropStratagy implements ClientCommandStratagy{
 }
 
 class ClientContainerStratagy implements ClientCommandStratagy{
+
+	@Override
 	public void clientSetCommand(Scanner scan, ClientWorld world){
 		// Gets the player name.
 		Parser.removeUnneedText("Name", scan);
@@ -132,6 +144,8 @@ class ClientContainerStratagy implements ClientCommandStratagy{
 }
 
 class ClientMoveStratagy implements ClientCommandStratagy{
+
+	@Override
 	public void clientSetCommand(Scanner scan, ClientWorld world){
 		// Gets the players name.
 		Parser.removeUnneedText("Name", scan);
@@ -146,6 +160,8 @@ class ClientMoveStratagy implements ClientCommandStratagy{
 }
 
 class ClientAddPlayerStratagy implements ClientCommandStratagy{
+
+	@Override
 	public void clientSetCommand(Scanner scan, ClientWorld world){
 		// Gets the player name.
 		Parser.removeUnneedText("Name", scan);
@@ -177,6 +193,8 @@ class ClientAddPlayerStratagy implements ClientCommandStratagy{
 }
 
 class ClientUseStratagy implements ClientCommandStratagy{
+
+	@Override
 	public void clientSetCommand(Scanner scan, ClientWorld world){
 		// Gets the player name.
 		Parser.removeUnneedText("Name", scan);

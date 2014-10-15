@@ -6,6 +6,11 @@ import game.world.dimensions.Rectangle3D;
 
 import org.junit.Test;
 
+/**
+ *
+ * @author Shane Brewer 300289850
+ *
+ */
 public class CollisionDetectionTests {
 
 	@Test
@@ -17,7 +22,7 @@ public class CollisionDetectionTests {
 			fail("They should collied");
 		}
 	}
-	
+
 	@Test
 	public void collistionHappensTest2() {
 		Rectangle3D one = new Rectangle3D(20,20,20);
@@ -28,7 +33,7 @@ public class CollisionDetectionTests {
 			fail("They should collied the tip of the box is inside the other box.");
 		}
 	}
-	
+
 	@Test
 	public void collistionDosentHappenTest1() {
 		Rectangle3D one = new Rectangle3D(20,20,20);
@@ -39,7 +44,7 @@ public class CollisionDetectionTests {
 			fail("They should not have collided");
 		}
 	}
-	
+
 	@Test
 	public void collistionDosentHappenTest2() {
 		Rectangle3D one = new Rectangle3D(20,20,20);

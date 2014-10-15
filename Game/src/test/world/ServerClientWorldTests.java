@@ -13,6 +13,11 @@ import org.junit.Test;
 
 import test.world.util.SingleRoomWorldTest;
 
+/**
+ *
+ * @author Shane Brewer 300289850
+ *
+ */
 public class ServerClientWorldTests {
 
 	@Test
